@@ -10,6 +10,18 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 
 ## [Unreleased]
 
+## [1.1.6]
+
+### Fixes
+- Fix editing an extension's settings (e.g. a custom URL) crashing with a `ClassCastException`
+- Fix extensions targeting the current `tachiyomix 1.6` protocol failing to load correctly: the `SManga`/`SChapter` interfaces were missing the `memo` field some extensions rely on (contributed by [@Sacha1016](https://github.com/Sacha1016))
+- Fix `SManga.copy()` silently dropping the `update_strategy` field
+- Fix the About screen's Discord/website links pointing at Mihon's own community, which this fork isn't affiliated with
+- Fix download notifications using generic Android system icons instead of this app's own
+
+### Other
+- CI: docs-only pushes (README/CHANGELOG) no longer trigger a nightly build/release
+
 ## [1.1.5]
 
 ### Fixes
