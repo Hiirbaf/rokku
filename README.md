@@ -151,6 +151,12 @@ Keep in mind this is maintained in personal time, so responses and updates may b
 
 Thank you to everyone who contributed to the projects this fork builds on: [Yōkai](https://github.com/null2264/yokai), [Mihon](https://github.com/mihonapp/mihon) (formerly Tachiyomi), and [TachiyomiJ2K](https://github.com/Jays2Kings/tachiyomiJ2K). This project wouldn't exist without that work.
 
+Thank you to everyone who has contributed directly to Rokku!
+
+<a href="https://github.com/thiago8rocha/Rokku/graphs/contributors">
+    <img src="https://contrib.rocks/image?repo=thiago8rocha/Rokku" alt="Rokku contributors" title="Rokku contributors" width="600"/>
+</a>
+
 ### Disclaimer
 
 The developer(s) of this application does not have any affiliation with the content providers available, and this application hosts zero content.
