@@ -28,6 +28,8 @@ A free and open source manga reader
 
 Rokku is a fork of [Yokai](https://github.com/null2264/yokai), which is itself a fork of [TachiyomiJ2K](https://github.com/Jays2Kings/tachiyomiJ2K) and [Mihon](https://github.com/mihonapp/mihon) (formerly Tachiyomi).
 
+The name is a play on the developer's surname (Rocha, "rock" in Portuguese): 岩 (*iwa*), the kanji used as the project's symbol, is the traditional Japanese word for rock — used for natural rock formations, mountains, rock climbing, and geology. "Rokku" (ロック) is the same word in its more modern/loanword sense, closer to pop culture and "rock" as in rock 'n' roll.
+
 This fork was created for personal use, after Yokai fell behind on the current Keiyoushi extension ecosystem, dependencies, and various other fixes it never received. Updates are sporadic, and the legacy View-based UI/architecture inherited from Yokai/J2K is intentionally kept as-is — this isn't a redesign.
 
 ## Features
