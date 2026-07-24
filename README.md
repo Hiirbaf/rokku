@@ -28,11 +28,9 @@ A free and open source manga reader
 
 Rokku is a fork of [Yokai](https://github.com/null2264/yokai), which is itself a fork of [TachiyomiJ2K](https://github.com/Jays2Kings/tachiyomiJ2K) and [Mihon](https://github.com/mihonapp/mihon) (formerly Tachiyomi).
 
-This fork was created for personal use, mainly to bring Yokai back up to date with the current Keiyoushi extension ecosystem after it was declared obsolete. It started as a maintenance-only effort, but has since grown to include small fixes and improvements beyond that, including contributions from other people. Updates are sporadic, and the legacy View-based UI/architecture inherited from Yokai/J2K is intentionally kept as-is — this isn't a redesign.
+This fork was created for personal use, after Yokai fell behind on the current Keiyoushi extension ecosystem, dependencies, and various other fixes it never received. Updates are sporadic, and the legacy View-based UI/architecture inherited from Yokai/J2K is intentionally kept as-is — this isn't a redesign.
 
 ## Features
-
-*The sections below reflect the history of this codebase across its previous forks. They're kept here for context and credit, not as a claim of original work on my part.*
 
 <div align="left">
 
@@ -81,7 +79,7 @@ This fork focuses on maintenance: dependency updates and keeping up with upstrea
 
 </details>
 
-<details>
+<details open="">
     <summary><h3>From J2K</h3></summary>
 
 * UI redesign.
@@ -111,8 +109,6 @@ This fork focuses on maintenance: dependency updates and keeping up with upstrea
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-
-Keep in mind this is maintained in personal time, so responses and updates may be sporadic — see the note above.
 
 <div align="left">
 
@@ -149,9 +145,7 @@ Keep in mind this is maintained in personal time, so responses and updates may b
 
 ### Credits
 
-Thank you to everyone who contributed to the projects this fork builds on: [Yōkai](https://github.com/null2264/yokai), [Mihon](https://github.com/mihonapp/mihon) (formerly Tachiyomi), and [TachiyomiJ2K](https://github.com/Jays2Kings/tachiyomiJ2K). This project wouldn't exist without that work.
-
-Thank you to everyone who has contributed directly to Rokku!
+Thank you to all the people who have contributed!
 
 <a href="https://github.com/thiago8rocha/Rokku/graphs/contributors">
     <img src="https://contrib.rocks/image?repo=thiago8rocha/Rokku" alt="Rokku contributors" title="Rokku contributors" width="600"/>
