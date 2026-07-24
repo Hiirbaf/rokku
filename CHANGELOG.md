@@ -10,6 +10,18 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 
 ## [Unreleased]
 
+## [1.1.7]
+
+### Fixes
+- Fix migration screen crashing (double-unlock) and getting progressively slower with each migrated manga
+- Fix manga description showing blank when opening from the library until a manual refresh
+- Fix library selection being cleared every time a background chapter download completed
+- Fix chapter list stutter and a stuck download-completion animation while other manga download in the background
+- Fix a ~1s freeze and missed taps when marking a single chapter as read/bookmarked
+- Fix the per-category library update spinner not animating, or getting stuck off
+- Fix a UI freeze when starting a category update while another one was already running
+- Add progress feedback to Migrate All / Copy All
+
 ## [1.1.6]
 
 ### Fixes
