@@ -22,6 +22,7 @@ class AppUpdateBroadcast : BroadcastReceiver() {
                     context.startActivity(confirmIntent?.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
                 }
                 PackageInstaller.STATUS_SUCCESS -> {
+                    AppDownloadInstallJob.installResolved = true
                     val prefs = PreferenceManager.getDefaultSharedPreferences(context)
                     prefs.edit {
                         remove(AppDownloadInstallJob.NOTIFY_ON_INSTALL_KEY)
@@ -36,6 +37,7 @@ class AppUpdateBroadcast : BroadcastReceiver() {
                     }
                 }
                 PackageInstaller.STATUS_FAILURE, PackageInstaller.STATUS_FAILURE_ABORTED, PackageInstaller.STATUS_FAILURE_BLOCKED, PackageInstaller.STATUS_FAILURE_CONFLICT, PackageInstaller.STATUS_FAILURE_INCOMPATIBLE, PackageInstaller.STATUS_FAILURE_INVALID, PackageInstaller.STATUS_FAILURE_STORAGE -> {
+                    AppDownloadInstallJob.installResolved = true
                     if (status != PackageInstaller.STATUS_FAILURE_ABORTED) {
                         context.toast(MR.strings.could_not_install_update)
                         val uri = intent.getStringExtra(AppDownloadInstallJob.EXTRA_FILE_URI) ?: return

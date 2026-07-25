@@ -206,6 +206,7 @@ class AppDownloadInstallJob(private val context: Context, workerParams: WorkerPa
 
             val pendingIntent = PendingIntent.getBroadcast(context, -10053, newIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE)
             val statusReceiver = pendingIntent.intentSender
+            installResolved = false
             session.commit(statusReceiver)
             notifier.onInstalling()
             withContext(Dispatchers.IO) {
@@ -217,11 +218,16 @@ class AppDownloadInstallJob(private val context: Context, workerParams: WorkerPa
                     // If the package manager crashes for whatever reason (china phone)
                     // set a timeout and let the user manually install
                     if (packageInstaller.getSessionInfo(sessionId) == null && !hasNotification) {
-                        notifier.cancelInstallNotification()
-                        notifier.onDownloadFinished(file.getUriCompat(context))
-                        PreferenceManager.getDefaultSharedPreferences(context).edit {
-                            remove(NOTIFY_ON_INSTALL_KEY)
-                        }
+                        fallBackToManualInstall(file)
+                        return@launchUI
+                    }
+                    // Some OEM skins (e.g. HyperOS/MIUI) silently block the confirm-install
+                    // activity launched from a background broadcast receiver, so the session
+                    // stays alive but stuck waiting on a confirmation the user never sees.
+                    // Give it more time, then fall back to a manual install prompt regardless.
+                    delay(15000)
+                    if (!installResolved) {
+                        fallBackToManualInstall(file)
                     }
                 }
             }
@@ -229,16 +235,22 @@ class AppDownloadInstallJob(private val context: Context, workerParams: WorkerPa
             // Either install package can't be found (probably bots) or there's a security exception
             // with the download manager. Nothing we can workaround.
             context.toast(error.message)
-            notifier.cancelInstallNotification()
-            notifier.onDownloadFinished(file.getUriCompat(context))
-            PreferenceManager.getDefaultSharedPreferences(context).edit {
-                remove(NOTIFY_ON_INSTALL_KEY)
-            }
+            fallBackToManualInstall(file)
+        }
+    }
+
+    private fun fallBackToManualInstall(file: File) {
+        notifier.cancelInstallNotification()
+        notifier.onDownloadFinished(file.getUriCompat(context))
+        PreferenceManager.getDefaultSharedPreferences(context).edit {
+            remove(NOTIFY_ON_INSTALL_KEY)
         }
     }
 
     companion object {
         private const val TAG = "AppDownloadInstaller"
+        @Volatile
+        internal var installResolved = false
         const val PACKAGE_INSTALLED_ACTION =
             "${BuildConfig.APPLICATION_ID}.SESSION_SELF_API_PACKAGE_INSTALLED"
         internal const val EXTRA_FILE_URI = "${BuildConfig.APPLICATION_ID}.AppInstaller.FILE_URI"
