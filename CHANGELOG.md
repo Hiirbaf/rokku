@@ -10,6 +10,12 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 
 ## [Unreleased]
 
+## [1.1.8]
+
+### Fixes
+- Fix manga details sometimes only loading info or chapters (never both) until a manual reload, caused by two concurrent calls to the same source request racing against its concurrency guard (contributed by [@Hiirbaf](https://github.com/Hiirbaf))
+- Fix in-app updates sometimes getting stuck on "Installing" forever on some OEM devices, by falling back to a manual install prompt if the install confirmation never appears
+
 ## [1.1.7]
 
 ### Fixes
