@@ -14,6 +14,7 @@ A free and open source manga reader
 
 [![CI](https://github.com/thiago8rocha/Rokku/actions/workflows/build_push.yml/badge.svg?labelColor=27303D)](https://github.com/thiago8rocha/Rokku/actions/workflows/build_push.yml)
 [![License: Apache-2.0](https://img.shields.io/github/license/thiago8rocha/Rokku?labelColor=27303D&color=0877d2)](/LICENSE)
+[![Translation status](https://img.shields.io/weblate/progress/rokku?labelColor=27303D&color=946300)](https://hosted.weblate.org/engage/rokku/)
 
 <img src="./.github/readme-images/screens.gif" alt="Rokku screenshots" />
 
