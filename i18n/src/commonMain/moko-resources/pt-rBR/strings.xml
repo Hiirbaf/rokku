@@ -1114,4 +1114,5 @@
     <string name="content_type">Tipo de conteúdo</string>
     <string name="crash_screen_restart_application">Reiniciar a aplicação</string>
     <string name="refresh">Atualizar</string>
+    <string name="migrating_progress">Migrando…</string>
 </resources>

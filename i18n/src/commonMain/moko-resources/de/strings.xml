@@ -991,4 +991,7 @@
     <string name="app_settings">App-Einstellungen</string>
     <string name="pref_debug_info">Debug-Info</string>
     <string name="label_background_activity">Hintergrundaktivität</string>
+    <string name="action_menu_overflow_description">Weitere Optionen</string>
+    <string name="action_bar_up_description">Nach oben navigieren</string>
+    <string name="onboarding_heading">Willkommen!</string>
 </resources>
