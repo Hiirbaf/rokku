@@ -10,6 +10,18 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 
 ## [Unreleased]
 
+## [1.2.0]
+
+### Additions
+- Add a "Suggestions" section to the manga details page and a dedicated full-list screen, showing related titles from the same source (Settings → Browse, off by default)
+
+### Fixes
+- Fix the webtoon reader visibly resizing/jumping when transitioning between pages split from a long strip image
+- Fix source search/browse results not reflecting a manga's library status if it was favorited a few screens deeper in the navigation (e.g. via a suggested manga)
+
+### Other
+- Standardize Settings descriptions to not end with a trailing period
+
 ## [1.1.8]
 
 ### Fixes
