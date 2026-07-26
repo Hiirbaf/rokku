@@ -23,6 +23,7 @@ import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.core.widget.TextViewCompat
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.transition.TransitionSet
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import coil3.asDrawable
@@ -40,6 +41,8 @@ import eu.kanade.tachiyomi.source.SourceManager
 import eu.kanade.tachiyomi.source.model.SManga
 import eu.kanade.tachiyomi.source.nameBasedOnEnabledLanguages
 import eu.kanade.tachiyomi.ui.base.holder.BaseFlexibleViewHolder
+import eu.kanade.tachiyomi.ui.manga.related.RelatedMangaCardAdapter
+import eu.kanade.tachiyomi.ui.manga.related.RelatedMangaCardItem
 import eu.kanade.tachiyomi.util.isLocal
 import eu.kanade.tachiyomi.util.lang.toNormalized
 import eu.kanade.tachiyomi.util.system.getResourceColor
@@ -79,6 +82,15 @@ class MangaHeaderHolder(
     private var showMoreButton = true
     var hadSelection = false
     private var canCollapse = true
+
+    private val relatedCardAdapter = RelatedMangaCardAdapter(
+        object : RelatedMangaCardAdapter.OnMangaClickListener {
+            override fun onMangaClick(manga: Manga) {
+                adapter.delegate.openRelatedManga(manga)
+            }
+        },
+        compact = true,
+    )
 
     init {
 
@@ -171,6 +183,9 @@ class MangaHeaderHolder(
             applyBlur()
             mangaCover.setOnClickListener { adapter.delegate.zoomImageFromThumb(coverCard) }
             trackButton.setOnClickListener { adapter.delegate.showTrackingSheet() }
+            relatedRecycler?.layoutManager = LinearLayoutManager(itemView.context, LinearLayoutManager.HORIZONTAL, false)
+            relatedRecycler?.adapter = relatedCardAdapter
+            relatedTitleWrapper?.setOnClickListener { adapter.delegate.openRelatedMangaScreen() }
             if (startExpanded) {
                 expandDesc()
             } else {
@@ -458,6 +473,8 @@ class MangaHeaderHolder(
             height = adapter.delegate.topCoverHeight()
         }
 
+        bindRelatedManga(presenter)
+
         binding.mangaStatus.isVisible = manga.status != 0
         binding.mangaStatus.text = (
             itemView.context.getString(
@@ -499,6 +516,22 @@ class MangaHeaderHolder(
         if (adapter.preferences.themeMangaDetails().get()) {
             updateColors(false)
         }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun bindRelatedManga(presenter: MangaDetailsPresenter) {
+        binding ?: return
+        if (!presenter.isRelatedMangaEnabled()) {
+            binding.relatedMangaGroup?.isVisible = false
+            return
+        }
+        binding.relatedMangaGroup?.isVisible = true
+
+        val item = presenter.relatedMangaItem
+        binding.relatedProgress?.isVisible = item.isLoading
+        binding.relatedNoResults?.isVisible = !item.isLoading && item.mangas.isEmpty()
+        binding.relatedCard?.isVisible = item.isLoading || item.mangas.isNotEmpty()
+        relatedCardAdapter.updateDataSet(item.mangas.map { RelatedMangaCardItem(it) })
     }
 
     private fun setGenreTags(binding: MangaHeaderItemBinding, manga: Manga) {

@@ -6,6 +6,10 @@ import eu.kanade.tachiyomi.source.model.Page
 import eu.kanade.tachiyomi.source.model.SChapter
 import eu.kanade.tachiyomi.source.model.SManga
 import eu.kanade.tachiyomi.source.model.SMangaUpdate
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.supervisorScope
 import rx.Observable
 
 /**
@@ -94,6 +98,128 @@ interface Source {
      * @return the pages for the chapter.
      */
     suspend fun getPageList(chapter: SChapter): List<Page>
+
+    /**
+     * Whether this source provides its own related manga lookup (via [fetchRelatedMangaList])
+     * rather than relying on the default title-keyword search fallback.
+     *
+     * @default false
+     * @since Rokku 1.1.7
+     */
+    val supportsRelatedMangas: Boolean get() = false
+
+    /**
+     * Opt out of the default title-keyword search fallback for related manga, e.g. if it
+     * tends to produce noisy/irrelevant results for this source.
+     *
+     * @default false
+     * @since Rokku 1.1.7
+     */
+    val disableRelatedMangasBySearch: Boolean get() = false
+
+    /**
+     * Opt out of related manga lookups entirely for this source.
+     *
+     * @default false
+     * @since Rokku 1.1.7
+     */
+    val disableRelatedMangas: Boolean get() = false
+
+    /**
+     * Get all the available related manga for a manga. Normally not needed to override -
+     * override [fetchRelatedMangaList] and set [supportsRelatedMangas] instead.
+     *
+     * @since Rokku 1.1.7
+     * @param manga the manga to get related manga for.
+     * @param pushResults called with each batch of results as they come in; keyed by the
+     * keyword/label they came from, with a completion flag.
+     */
+    suspend fun getRelatedMangaList(
+        manga: SManga,
+        exceptionHandler: (Throwable) -> Unit,
+        pushResults: suspend (relatedManga: Pair<String, List<SManga>>, completed: Boolean) -> Unit,
+    ) {
+        val handler = CoroutineExceptionHandler { _, e -> exceptionHandler(e) }
+        if (!disableRelatedMangas) {
+            supervisorScope {
+                if (supportsRelatedMangas) launch(handler) { getRelatedMangaListByExtension(manga, exceptionHandler, pushResults) }
+                if (!disableRelatedMangasBySearch) launch(handler) { getRelatedMangaListBySearch(manga, exceptionHandler, pushResults) }
+            }
+        }
+    }
+
+    /**
+     * Get related manga provided by the source itself (see [fetchRelatedMangaList]).
+     *
+     * @since Rokku 1.1.7
+     */
+    suspend fun getRelatedMangaListByExtension(
+        manga: SManga,
+        exceptionHandler: (Throwable) -> Unit = {},
+        pushResults: suspend (relatedManga: Pair<String, List<SManga>>, completed: Boolean) -> Unit,
+    ) {
+        runCatching { fetchRelatedMangaList(manga) }
+            .onSuccess { if (it.isNotEmpty()) pushResults(Pair("", it), false) }
+            .onFailure { exceptionHandler(it) }
+    }
+
+    /**
+     * Fetch related manga for a manga directly from the source/site. Only called if
+     * [supportsRelatedMangas] is overridden to return true.
+     *
+     * @since Rokku 1.1.7
+     * @throws UnsupportedOperationException if a source doesn't support related manga.
+     */
+    suspend fun fetchRelatedMangaList(manga: SManga): List<SManga> =
+        throw UnsupportedOperationException("Unsupported!")
+
+    /**
+     * Split & strip a manga title into separate searchable keywords, used to look up related
+     * manga via [getRelatedMangaListBySearch].
+     *
+     * @since Rokku 1.1.7
+     */
+    private fun String.stripKeywordForRelatedMangas(): List<String> {
+        val regexWhitespace = Regex("\\s+")
+        val regexSpecialCharacters =
+            Regex("([!~#$%^&*+_|/\\\\,?:;'“”‘’\"<>(){}\\[\\]。・～：—！？、―«»《》〘〙【】「」｜]|\\s-|-\\s|\\s\\.|\\.\\s)")
+        val regexNumberOnly = Regex("^\\d+$")
+
+        return replace(regexSpecialCharacters, " ")
+            .split(regexWhitespace)
+            .map { it.replace(regexNumberOnly, "").lowercase() }
+            .filter { it.length > 1 }
+    }
+
+    /**
+     * Get related manga by searching for each keyword extracted from the manga's title.
+     * Works with any source, since it only relies on [getSearchManga].
+     *
+     * @since Rokku 1.1.7
+     */
+    suspend fun getRelatedMangaListBySearch(
+        manga: SManga,
+        exceptionHandler: (Throwable) -> Unit = {},
+        pushResults: suspend (relatedManga: Pair<String, List<SManga>>, completed: Boolean) -> Unit,
+    ) {
+        val keywords = LinkedHashSet<String>()
+        keywords.add(manga.title)
+        manga.title.stripKeywordForRelatedMangas()
+            .filterNot { word -> keywords.any { it.equals(word, ignoreCase = true) } }
+            .forEach { keywords.add(it) }
+        if (keywords.isEmpty()) return
+
+        coroutineScope {
+            val filterList = getFilterList()
+            keywords.map { keyword ->
+                launch {
+                    runCatching { getSearchManga(1, keyword, filterList).mangas }
+                        .onSuccess { if (it.isNotEmpty()) pushResults(Pair(keyword, it), false) }
+                        .onFailure { exceptionHandler(it) }
+                }
+            }
+        }
+    }
 
     @Deprecated("Use the combined suspend API instead", ReplaceWith("getMangaUpdate"))
     fun fetchMangaDetails(manga: SManga): Observable<SManga> =

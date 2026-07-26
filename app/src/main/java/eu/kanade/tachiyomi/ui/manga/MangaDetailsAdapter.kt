@@ -150,5 +150,7 @@ class MangaDetailsAdapter(
         fun showTrackingSheet()
         fun updateScroll()
         fun setFavButtonPopup(popupView: View)
+        fun openRelatedManga(manga: eu.kanade.tachiyomi.domain.manga.models.Manga)
+        fun openRelatedMangaScreen()
     }
 }

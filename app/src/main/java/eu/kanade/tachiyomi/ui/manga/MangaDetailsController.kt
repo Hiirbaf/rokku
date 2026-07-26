@@ -742,6 +742,7 @@ class MangaDetailsController :
 
     override fun onAttach(view: View) {
         super.onAttach(view)
+        presenter.refreshRelatedMangaFavorites()
         if (!returningFromReader) return
         returningFromReader = false
         runBlocking {
@@ -760,6 +761,10 @@ class MangaDetailsController :
         super.onChangeStarted(handler, type)
         isPushing = true
         if (type.isEnter) {
+            // The fade transition doesn't detach this controller's view on push (kept alive
+            // underneath for cheap back navigation), so onAttach() won't fire again when
+            // returning here - this is the hook that does, e.g. after favoriting a related manga.
+            presenter.refreshRelatedMangaFavorites()
             if (isControllerVisible) {
                 activityBinding?.appBar?.y = 0f
                 activityBinding?.appBar?.updateAppBarAfterY(binding.recycler)
@@ -946,6 +951,27 @@ class MangaDetailsController :
             adapter?.removeAllScrollableHeaders()
             adapter?.addScrollableHeader(presenter.headerItem)
         }
+    }
+
+    fun updateRelatedManga() {
+        view ?: return
+        getHeader()?.bindRelatedManga(presenter)
+    }
+
+    override fun openRelatedManga(manga: Manga) {
+        router.pushController(MangaDetailsController(manga, true).withFadeTransaction())
+    }
+
+    override fun openRelatedMangaScreen() {
+        val mangaIds = presenter.relatedMangaItem.mangas.mapNotNull { it.id }
+        if (mangaIds.isEmpty()) return
+        router.pushController(
+            yokai.presentation.manga.related.RelatedMangaController(
+                presenter.mangaId,
+                presenter.manga.title,
+                mangaIds,
+            ).withFadeTransaction(),
+        )
     }
 
     @SuppressLint("NotifyDataSetChanged")
