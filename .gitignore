@@ -15,3 +15,6 @@ weblate.conf
 # Signing keystores must never be committed
 *.jks
 *.keystore
+
+# Local scratch APKs used for manual testing
+/build-output/
