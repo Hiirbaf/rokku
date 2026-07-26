@@ -10,6 +10,7 @@ fun SChapter.toChapter(): ChapterImpl {
         date_upload = this@toChapter.date_upload
         chapter_number = this@toChapter.chapter_number
         scanlator = this@toChapter.scanlator
+        memo = this@toChapter.memo
     }
 }
 

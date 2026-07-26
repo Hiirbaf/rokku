@@ -41,6 +41,7 @@ data class LibraryManga(
             filteredScanlators: String?,
             updateStrategy: Long,
             coverLastModified: Long,
+            memo: String,
             // libraryManga
             total: Long,
             readCount: Double,
@@ -71,6 +72,7 @@ data class LibraryManga(
                 filteredScanlators = filteredScanlators,
                 updateStrategy = updateStrategy,
                 coverLastModified = coverLastModified,
+                memo = memo,
             ),
             read = readCount.roundToInt(),
             unread = maxOf((total - readCount).roundToInt(), 0),
@@ -135,6 +137,9 @@ data class LibraryManga(
                 filteredScanlators = filteredScanlators,
                 updateStrategy = updateStrategy,
                 coverLastModified = coverLastModified,
+                // Excluded from this lightweight query (see comment above); not needed for
+                // library display, only for the reader's source URL-matching checks.
+                memo = "{}",
             ),
             read = readCount.roundToInt(),
             unread = maxOf((total - readCount).roundToInt(), 0),
