@@ -10,6 +10,11 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 
 ## [Unreleased]
 
+## [1.2.1]
+
+### Fixes
+- Fix chapters from some sources (e.g. Asura Scans, Hive Scans, Kayn, Vortex) failing to open with a "Refresh Chapter List" error, caused by the local database silently discarding the `memo` metadata some sources rely on to validate a chapter before loading it
+
 ## [1.2.0]
 
 ### Additions
