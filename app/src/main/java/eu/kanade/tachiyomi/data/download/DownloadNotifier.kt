@@ -60,7 +60,27 @@ internal class DownloadNotifier(private val context: Context) {
      */
     private fun NotificationCompat.Builder.show(id: Int = Notifications.ID_DOWNLOAD_CHAPTER) {
         if (!context.hasNotificationPermission()) return
+        setGroup(GROUP_KEY_DOWNLOADS)
         context.notificationManager.notify(id, build())
+        showGroupSummary()
+    }
+
+    /**
+     * Explicitly declares a group summary for the downloader channel's notifications, with the
+     * app's own icon. Without this, letting the OS auto-bundle 2+ notifications from this channel
+     * (e.g. a download in progress alongside a connection warning) can end up showing a generic
+     * fallback icon on the collapsed summary card instead of ours.
+     */
+    private fun showGroupSummary() {
+        if (!context.hasNotificationPermission()) return
+        val summary = NotificationCompat.Builder(context, Notifications.CHANNEL_DOWNLOADER)
+            .setSmallIcon(R.drawable.ic_file_download_24dp)
+            .setColor(ContextCompat.getColor(context, R.color.secondaryTachiyomi))
+            .setGroup(GROUP_KEY_DOWNLOADS)
+            .setGroupSummary(true)
+            .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_CHILDREN)
+            .build()
+        context.notificationManager.notify(Notifications.ID_DOWNLOAD_GROUP_SUMMARY, summary)
     }
 
     /**
@@ -251,6 +271,7 @@ internal class DownloadNotifier(private val context: Context) {
                 ),
             )
             setTimeoutAfter(30000)
+            setGroup(GROUP_KEY_DOWNLOADS)
         }
             .build()
 
@@ -259,6 +280,7 @@ internal class DownloadNotifier(private val context: Context) {
             Notifications.ID_DOWNLOAD_SIZE_WARNING,
             notification,
         )
+        showGroupSummary()
     }
 
     private fun Context.hasNotificationPermission(): Boolean {
@@ -317,5 +339,9 @@ internal class DownloadNotifier(private val context: Context) {
         // Reset download information
         errorThrown = true
         isDownloading = false
+    }
+
+    companion object {
+        private const val GROUP_KEY_DOWNLOADS = "app.rokku.download"
     }
 }
