@@ -19,7 +19,7 @@ class AppUpdateBroadcast : BroadcastReceiver() {
             when (val status = extras.getInt(PackageInstaller.EXTRA_STATUS)) {
                 PackageInstaller.STATUS_PENDING_USER_ACTION -> {
                     val confirmIntent = extras.getParcelableCompat(Intent.EXTRA_INTENT, Intent::class.java)
-                    context.startActivity(confirmIntent?.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+                    AppUpdateNotifier(context.localeContext).onInstallConfirmationRequired(confirmIntent)
                 }
                 PackageInstaller.STATUS_SUCCESS -> {
                     AppDownloadInstallJob.installResolved = true
