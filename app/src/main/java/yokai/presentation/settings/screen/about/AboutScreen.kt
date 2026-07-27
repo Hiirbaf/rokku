@@ -184,16 +184,9 @@ class AboutScreen : Screen() {
 
                             TextPreferenceWidget(
                                 title = stringResource(MR.strings.help_translate),
-                                onPreferenceClick = { context.openInBrowser("https://hosted.weblate.org/engage/yokai/") },
+                                onPreferenceClick = { context.openInBrowser("https://hosted.weblate.org/engage/rokku/") },
                             )
                         }
-                    }
-
-                    item {
-                        TextPreferenceWidget(
-                            title = stringResource(MR.strings.helpful_translation_links),
-                            onPreferenceClick = { context.openInBrowser("https://mihon.app/docs/contribute#helpful-links") },
-                        )
                     }
 
                     item {
