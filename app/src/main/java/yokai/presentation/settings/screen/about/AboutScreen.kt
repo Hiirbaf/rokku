@@ -219,7 +219,7 @@ class AboutScreen : Screen() {
     private fun getVersionName(): String = when {
         BuildConfig.DEBUG -> "Debug ${BuildConfig.COMMIT_SHA}"
         BuildConfig.NIGHTLY -> "Nightly ${BuildConfig.COMMIT_COUNT} (${BuildConfig.COMMIT_SHA})"
-        else -> "Release ${BuildConfig.VERSION_NAME}"
+        else -> BuildConfig.VERSION_NAME
     }
 
     private fun Context.toastIfNotUserPrompt(message: StringResource, isUserPrompt: Boolean) {
