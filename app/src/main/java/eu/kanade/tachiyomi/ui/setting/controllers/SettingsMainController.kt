@@ -89,10 +89,10 @@ class SettingsMainController : SettingsLegacyController(), FloatingSearchInterfa
             iconRes = R.drawable.ic_storage_24dp
             iconTint = tintColor
             titleRes = MR.strings.data_and_storage
-            onClick { navigateTo(SettingsDataController()) }
+            onClick { navigateTo(SettingsDataLegacyController()) }
             onLongClick {
-                navigateTo(SettingsDataLegacyController())
-                context.toast("You're entering legacy version of 'Data and storage'")
+                navigateTo(SettingsDataController())
+                context.toast("You're entering beta version of 'Data and storage'")
             }
         }
         preference {
