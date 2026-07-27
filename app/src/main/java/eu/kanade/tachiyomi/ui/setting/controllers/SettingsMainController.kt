@@ -14,7 +14,6 @@ import eu.kanade.tachiyomi.ui.main.FloatingSearchInterface
 import eu.kanade.tachiyomi.ui.more.AboutController
 import eu.kanade.tachiyomi.ui.setting.SettingsLegacyController
 import eu.kanade.tachiyomi.ui.setting.controllers.legacy.SettingsAdvancedLegacyController
-import eu.kanade.tachiyomi.ui.setting.controllers.legacy.SettingsDataLegacyController
 import eu.kanade.tachiyomi.ui.setting.controllers.search.SettingsSearchController
 import eu.kanade.tachiyomi.ui.setting.iconRes
 import eu.kanade.tachiyomi.ui.setting.iconTint
@@ -85,15 +84,11 @@ class SettingsMainController : SettingsLegacyController(), FloatingSearchInterfa
             titleRes = MR.strings.tracking
             onClick { navigateTo(SettingsTrackingController()) }
         }
-        preferenceLongClickable {
+        preference {
             iconRes = R.drawable.ic_storage_24dp
             iconTint = tintColor
             titleRes = MR.strings.data_and_storage
-            onClick { navigateTo(SettingsDataLegacyController()) }
-            onLongClick {
-                navigateTo(SettingsDataController())
-                context.toast("You're entering beta version of 'Data and storage'")
-            }
+            onClick { navigateTo(SettingsDataController()) }
         }
         preference {
             iconRes = R.drawable.ic_security_24dp

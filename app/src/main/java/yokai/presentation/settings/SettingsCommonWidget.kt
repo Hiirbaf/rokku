@@ -9,10 +9,10 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
@@ -76,14 +76,18 @@ fun SettingsScaffold(
     val preferences: PreferencesHelper by injectLazy()
     val useLargeAppBar by preferences.useLargeToolbar().collectAsState()
     val listState = rememberLazyListState()
+    val canScroll = remember(listState) { { listState.canScrollForward || listState.canScrollBackward } }
+    val isAtTop = remember(listState) {
+        { listState.firstVisibleItemIndex == 0 && listState.firstVisibleItemScrollOffset == 0 }
+    }
 
     SettingsScaffold(
         title = title,
         appBarType = appBarType ?: if (useLargeAppBar) AppBarType.LARGE else AppBarType.SMALL,
         appBarActions = appBarActions,
         appBarScrollBehavior = if (useLargeAppBar) enterAlwaysCollapsedAppBarScrollBehavior(
-            canScroll = { listState.canScrollForward || listState.canScrollBackward },
-            isAtTop = { listState.firstVisibleItemIndex == 0 && listState.firstVisibleItemScrollOffset == 0 },
+            canScroll = canScroll,
+            isAtTop = isAtTop,
         ) else null,
         textFieldState = textFieldState,
         searchResult = searchResult,
@@ -135,7 +139,6 @@ fun PreferenceScreen(
                     }
                     item {
                         if (i < items.lastIndex) {
-                            HorizontalDivider()
                             Gap(padding = 12.dp)
                         }
                     }

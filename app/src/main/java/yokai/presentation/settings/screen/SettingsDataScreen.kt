@@ -6,10 +6,18 @@ import android.content.Intent
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Help
+import androidx.compose.material3.MultiChoiceSegmentedButtonRow
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -147,48 +155,69 @@ object SettingsDataScreen : ComposableSettings() {
         return Preference.PreferenceGroup(
             title = stringResource(MR.strings.backup_and_restore),
             preferenceItems = persistentListOf(
-                Preference.PreferenceItem.TextPreference(
-                    title = stringResource(MR.strings.create_backup),
-                    subtitle = stringResource(MR.strings.can_be_used_to_restore),
-                    onClick = {
-                        if (!BackupRestoreJob.isRunning(context)) {
-                            if (DeviceUtil.isMiui && DeviceUtil.isMiuiOptimizationDisabled()) {
-                                context.toast(MR.strings.restore_miui_warning, Toast.LENGTH_LONG)
-                            }
+                Preference.PreferenceItem.CustomPreference(
+                    title = stringResource(MR.strings.backup_and_restore),
+                ) {
+                    BasePreferenceWidget(
+                        subcomponent = {
+                            MultiChoiceSegmentedButtonRow(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(intrinsicSize = IntrinsicSize.Min)
+                                    .padding(horizontal = PrefsHorizontalPadding),
+                            ) {
+                                SegmentedButton(
+                                    modifier = Modifier.fillMaxHeight(),
+                                    checked = false,
+                                    onCheckedChange = {
+                                        if (!BackupRestoreJob.isRunning(context)) {
+                                            if (DeviceUtil.isMiui && DeviceUtil.isMiuiOptimizationDisabled()) {
+                                                context.toast(MR.strings.restore_miui_warning, Toast.LENGTH_LONG)
+                                            }
 
-                            val dir = storageManager.getBackupsDirectory()
-                            if (dir == null) {
-                                context.toast(MR.strings.invalid_location_generic)
-                                return@TextPreference
-                            }
+                                            val dir = storageManager.getBackupsDirectory()
+                                            if (dir == null) {
+                                                context.toast(MR.strings.invalid_location_generic)
+                                                return@SegmentedButton
+                                            }
 
-                            scope.launch {
-                                alertDialog.awaitCreateBackup(
-                                    context = context,
-                                    uri = dir.uri,
-                                )
-                            }
-                        } else {
-                            context.toast(MR.strings.backup_in_progress)
-                        }
-                    },
-                ),
-                Preference.PreferenceItem.TextPreference(
-                    title = stringResource(MR.strings.restore_backup),
-                    subtitle = stringResource(MR.strings.restore_from_backup_file),
-                    onClick = {
-                        if (!BackupRestoreJob.isRunning(context)) {
-                            if (DeviceUtil.isMiui && DeviceUtil.isMiuiOptimizationDisabled()) {
-                                context.toast(MR.strings.restore_miui_warning, Toast.LENGTH_LONG)
-                            }
+                                            scope.launch {
+                                                alertDialog.awaitCreateBackup(
+                                                    context = context,
+                                                    uri = dir.uri,
+                                                )
+                                            }
+                                        } else {
+                                            context.toast(MR.strings.backup_in_progress)
+                                        }
+                                    },
+                                    shape = SegmentedButtonDefaults.itemShape(0, 2),
+                                ) {
+                                    Text(stringResource(MR.strings.create_backup))
+                                }
+                                SegmentedButton(
+                                    modifier = Modifier.fillMaxHeight(),
+                                    checked = false,
+                                    onCheckedChange = {
+                                        if (!BackupRestoreJob.isRunning(context)) {
+                                            if (DeviceUtil.isMiui && DeviceUtil.isMiuiOptimizationDisabled()) {
+                                                context.toast(MR.strings.restore_miui_warning, Toast.LENGTH_LONG)
+                                            }
 
-                            scope.launch { extensionManager.getExtensionUpdates(true) }
-                            chooseBackup.launch("*/*")
-                        } else {
-                            context.toast(MR.strings.restore_in_progress)
-                        }
-                    },
-                ),
+                                            scope.launch { extensionManager.getExtensionUpdates(true) }
+                                            chooseBackup.launch("*/*")
+                                        } else {
+                                            context.toast(MR.strings.restore_in_progress)
+                                        }
+                                    },
+                                    shape = SegmentedButtonDefaults.itemShape(1, 2),
+                                ) {
+                                    Text(stringResource(MR.strings.restore_backup))
+                                }
+                            }
+                        },
+                    )
+                },
 
                 // Automatic backups
                 Preference.PreferenceItem.ListPreference(
@@ -232,6 +261,10 @@ object SettingsDataScreen : ComposableSettings() {
         val chapterCache = remember { Injekt.get<ChapterCache>() }
         var cacheReadableSizeSema by remember { mutableIntStateOf(0) }
         val cacheReadableSize = remember(cacheReadableSizeSema) { chapterCache.readableSize }
+        var onlineCoverCacheSizeSema by remember { mutableIntStateOf(0) }
+        val onlineCoverCacheSize = remember(onlineCoverCacheSizeSema) { coverCache.getOnlineCoverCacheSize() }
+        var chapterCoverCacheSizeSema by remember { mutableIntStateOf(0) }
+        val chapterCoverCacheSize = remember(chapterCoverCacheSizeSema) { coverCache.getChapterCacheSize() }
 
         return Preference.PreferenceGroup(
             title = stringResource(MR.strings.storage_usage),
@@ -274,12 +307,13 @@ object SettingsDataScreen : ComposableSettings() {
                     title = stringResource(MR.strings.clear_cached_covers_non_library),
                     subtitle = stringResource(
                         MR.strings.delete_all_covers__not_in_library_used_,
-                        coverCache.getOnlineCoverCacheSize(),
+                        onlineCoverCacheSize,
                     ),
                     onClick = {
                         context.toast(MR.strings.starting_cleanup)
                         scope.launchNonCancellableIO {
                             coverCache.deleteAllCachedCovers()
+                            withUIContext { onlineCoverCacheSizeSema++ }
                         }
                     }
                 ),
@@ -287,12 +321,13 @@ object SettingsDataScreen : ComposableSettings() {
                     title = stringResource(MR.strings.clean_up_cached_covers),
                     subtitle = stringResource(
                         MR.strings.delete_old_covers_in_library_used_,
-                        coverCache.getChapterCacheSize(),
+                        chapterCoverCacheSize,
                     ),
                     onClick = {
                         context.toast(MR.strings.starting_cleanup)
                         scope.launchNonCancellableIO {
                             coverCache.deleteOldCovers()
+                            withUIContext { chapterCoverCacheSizeSema++ }
                         }
                     }
                 ),
