@@ -18,6 +18,11 @@ class AppUpdateBroadcast : BroadcastReceiver() {
             val extras = intent.extras ?: return
             when (val status = extras.getInt(PackageInstaller.EXTRA_STATUS)) {
                 PackageInstaller.STATUS_PENDING_USER_ACTION -> {
+                    // The confirm notification below is itself the recovery path for a blocked
+                    // confirm dialog, so mark this resolved to stop AppDownloadInstallJob's
+                    // timeout fallback from also firing and replacing it with a redundant
+                    // "tap to install manually" notification a few seconds later.
+                    AppDownloadInstallJob.installResolved = true
                     val confirmIntent = extras.getParcelableCompat(Intent.EXTRA_INTENT, Intent::class.java)
                     AppUpdateNotifier(context.localeContext).onInstallConfirmationRequired(confirmIntent)
                 }
