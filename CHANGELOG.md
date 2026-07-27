@@ -10,6 +10,17 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 
 ## [Unreleased]
 
+## [1.2.3]
+
+### Fixes
+- Fix "Data and storage" opening the older, less polished settings screen; it's now the primary screen reached from Settings
+- Fix "Data and storage" (and every other Settings screen using the large collapsible app bar) freezing mid-scroll until the screen was reopened
+- Fix the "In library" badge not showing on the comfortable grid layout when browsing a source or viewing related manga
+- Fix extension installs/updates sometimes getting stuck showing "Downloading" or the install button after finishing, until the extensions sheet was reopened
+- Fix the manga's own source being dropped from the migration search when more than one source was available
+- Fix the app version showing a redundant "Release" prefix in About
+- Fix grouped download notifications sometimes showing a generic icon instead of Rokku's
+
 ## [1.2.2]
 
 ### Additions
