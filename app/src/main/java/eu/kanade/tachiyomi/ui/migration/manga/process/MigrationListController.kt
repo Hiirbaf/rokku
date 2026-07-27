@@ -354,13 +354,12 @@ class MigrationListController(bundle: Bundle? = null) :
                         val value = it.toLongOrNull() ?: return@mapNotNull null
                         sourceManager.get(value) as? CatalogueSource
                     }
-                    val validSources = if (sources.size == 1) {
-                        sources
-                    } else {
-                        sources.filter { it.id != manga.source }
-                    }
+                    // Keep the manga's own source in the list: if the migration match is broken
+                    // (e.g. wrong entry, dead link), the user can search it again against the
+                    // original source to refresh it in place, instead of having to migrate away
+                    // to another source and back.
                     manga.title = manga.title.toNormalized()
-                    val searchController = SearchController(manga, validSources)
+                    val searchController = SearchController(manga, sources)
                     searchController.targetController = this@MigrationListController
                     router.pushController(searchController.withFadeTransaction())
                 }
