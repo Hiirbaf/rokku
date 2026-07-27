@@ -10,6 +10,17 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 
 ## [Unreleased]
 
+## [1.2.2]
+
+### Additions
+- Add an option to pick what to restore from a backup (library, categories, app settings, source settings, extension repos), instead of it being all-or-nothing
+- Back up and restore custom extension repos along with the rest of your data
+
+### Fixes
+- Fix "Data and storage" defaulting to the experimental settings screen instead of the stable one (single tap now opens the stable screen; long-press still opens the experimental one, matching upstream)
+- Fix in-app updates sometimes getting stuck on "Installing" forever, by falling back to a tap-to-confirm notification if the install dialog is blocked by the OS
+- Fix "Help translate" linking to Yokai's translation project instead of Rokku's
+
 ## [1.2.1]
 
 ### Fixes
