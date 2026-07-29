@@ -10,6 +10,11 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 
 ## [Unreleased]
 
+## [1.2.5]
+
+### Fixes
+- Fix a "ghost" download notification staying behind after all downloads finished
+
 ## [1.2.4]
 
 ### Fixes
