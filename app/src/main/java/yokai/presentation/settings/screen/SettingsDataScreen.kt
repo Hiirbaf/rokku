@@ -342,4 +342,4 @@ object SettingsDataScreen : ComposableSettings() {
     }
 }
 
-const val BACKUPS_HELP_URL = "https://mihon.app/docs/guides/backups"
+const val BACKUPS_HELP_URL = "https://rokku-app.github.io/docs/guides/backups"

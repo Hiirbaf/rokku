@@ -1,6 +1,6 @@
 <div align="center">
 
-<a href="https://github.com/thiago8rocha/Rokku">
+<a href="https://github.com/rokku-app/rokku">
     <img src="./.github/readme-images/app-icon.webp" alt="Rokku logo" height="200px" width="200px" />
 </a>
 
@@ -12,16 +12,16 @@
 
 A free and open source manga reader
 
-[![CI](https://github.com/thiago8rocha/Rokku/actions/workflows/build_push.yml/badge.svg?labelColor=27303D)](https://github.com/thiago8rocha/Rokku/actions/workflows/build_push.yml)
-[![License: Apache-2.0](https://img.shields.io/github/license/thiago8rocha/Rokku?labelColor=27303D&color=0877d2)](/LICENSE)
+[![CI](https://github.com/rokku-app/rokku/actions/workflows/build_push.yml/badge.svg?labelColor=27303D)](https://github.com/rokku-app/rokku/actions/workflows/build_push.yml)
+[![License: Apache-2.0](https://img.shields.io/github/license/rokku-app/rokku?labelColor=27303D&color=0877d2)](/LICENSE)
 [![Translation status](https://img.shields.io/weblate/progress/rokku?labelColor=27303D&color=946300)](https://hosted.weblate.org/engage/rokku/)
 
 <img src="./.github/readme-images/screens.gif" alt="Rokku screenshots" />
 
 ## Download
 
-[![Rokku Stable](https://img.shields.io/github/v/release/thiago8rocha/Rokku?maxAge=3600&label=Stable&labelColor=06599d&color=043b69&filter=v*)](https://github.com/thiago8rocha/Rokku/releases)
-[![Rokku Nightly](https://img.shields.io/github/v/release/thiago8rocha/Rokku?maxAge=3600&label=Nightly&labelColor=2c2c47&color=1c1c39&filter=r*&include_prereleases)](https://github.com/thiago8rocha/Rokku/releases)
+[![Rokku Stable](https://img.shields.io/github/v/release/rokku-app/rokku?maxAge=3600&label=Stable&labelColor=06599d&color=043b69&filter=v*)](https://github.com/rokku-app/rokku/releases)
+[![Rokku Nightly](https://img.shields.io/github/v/release/rokku-app/rokku?maxAge=3600&label=Nightly&labelColor=2c2c47&color=1c1c39&filter=r*&include_prereleases)](https://github.com/rokku-app/rokku/releases)
 
 *Requires Android 8.0 or higher.*
 
@@ -119,7 +119,7 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 <details><summary>Issues</summary>
 
-**Before reporting a new issue, take a look at the [FAQ](https://mihon.app/docs/faq/general), the [changelog](https://github.com/thiago8rocha/Rokku/releases) and the already opened [issues](https://github.com/thiago8rocha/Rokku/issues).**
+**Before reporting a new issue, take a look at the [FAQ](https://rokku-app.github.io/docs/faq/general), the [changelog](https://github.com/rokku-app/rokku/releases) and the already opened [issues](https://github.com/rokku-app/rokku/issues).**
 
 </details>
 
@@ -152,8 +152,8 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 Thank you to all the people who have contributed!
 
-<a href="https://github.com/thiago8rocha/Rokku/graphs/contributors">
-    <img src="https://contrib.rocks/image?repo=thiago8rocha/Rokku" alt="Rokku contributors" title="Rokku contributors" width="600"/>
+<a href="https://github.com/rokku-app/rokku/graphs/contributors">
+    <img src="https://contrib.rocks/image?repo=rokku-app/rokku" alt="Rokku contributors" title="Rokku contributors" width="600"/>
 </a>
 
 ### Disclaimer
