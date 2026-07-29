@@ -1,3 +1,5 @@
+import com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsPlugin
+import com.google.gms.googleservices.GoogleServicesPlugin
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
@@ -10,6 +12,16 @@ plugins {
     alias(kotlinx.plugins.parcelize)
     alias(libs.plugins.aboutlibraries)
     alias(libs.plugins.aboutlibraries.android)
+    alias(libs.plugins.firebase.crashlytics) apply false
+    alias(libs.plugins.google.services) apply false
+}
+
+// google-services.json only exists for the "standard" flavor, so only
+// activate Firebase for builds of that flavor -- applying it unconditionally
+// would break "dev" flavor builds, which have no matching config file.
+if (gradle.startParameter.taskRequests.toString().contains("standard", true)) {
+    apply<CrashlyticsPlugin>()
+    apply<GoogleServicesPlugin>()
 }
 
 fun runCommand(command: String): String {
@@ -159,6 +171,10 @@ dependencies {
 
     // Android X libraries
     implementation(androidx.bundles.androidx)
+
+    implementation(platform(libs.firebase))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
 
     // ReactiveX
     implementation(libs.rxandroid)
