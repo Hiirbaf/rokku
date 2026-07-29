@@ -10,6 +10,14 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 
 ## [Unreleased]
 
+## [1.2.4]
+
+### Fixes
+- Fix library update discarding a source's updated manga details (cover, description, status, etc.) whenever it returned them together with the chapter list, instead of only when explicitly requested, and doing a redundant extra request for details it already had
+- Fix the download icon in the chapter list getting stuck instead of animating while a chapter downloads, if the row scrolled off-screen and back mid-download
+- Fix the "New chapters found" notification sometimes showing no content when only one manga had an update, and its "Skipped" counterpart opening the help page instead of the skip log when tapped
+- Restore the animated download icon (matching upstream) instead of a static one, and stop the download notification's group summary from re-posting on every single downloaded page, which could make it visibly flicker/reshuffle in the notification shade
+
 ## [1.2.3]
 
 ### Fixes
