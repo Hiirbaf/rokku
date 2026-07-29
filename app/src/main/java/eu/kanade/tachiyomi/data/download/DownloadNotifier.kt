@@ -25,6 +25,7 @@ import uy.kohesive.injekt.injectLazy
 import yokai.i18n.MR
 import yokai.util.lang.getString
 import java.util.regex.*
+import android.R as AR
 
 /**
  * DownloadNotifier is used to show notifications when downloading one or multiple chapters.
@@ -58,11 +59,17 @@ internal class DownloadNotifier(private val context: Context) {
      *
      * @param id the id of the notification.
      */
-    private fun NotificationCompat.Builder.show(id: Int = Notifications.ID_DOWNLOAD_CHAPTER) {
+    private fun NotificationCompat.Builder.show(id: Int = Notifications.ID_DOWNLOAD_CHAPTER, refreshGroupSummary: Boolean = true) {
         if (!context.hasNotificationPermission()) return
         setGroup(GROUP_KEY_DOWNLOADS)
         context.notificationManager.notify(id, build())
-        showGroupSummary()
+        // Re-posting the group summary is only needed when a notification in the group actually
+        // starts/stops existing, not on every progress tick: onProgressChange() calls show() once
+        // per downloaded page, and re-notifying the summary that often causes the OS's silent
+        // notification bucket to visibly reshuffle/flicker on every page.
+        if (refreshGroupSummary) {
+            showGroupSummary()
+        }
     }
 
     /**
@@ -104,7 +111,10 @@ internal class DownloadNotifier(private val context: Context) {
         with(notification) {
             // Check if first call.
             if (!isDownloading) {
-                setSmallIcon(R.drawable.ic_file_download_24dp)
+                // Android's own animated download icon (a bouncing arrow), same as Mihon/Yokai
+                // use here specifically - unlike the branded icon used everywhere else, this one
+                // only exists as the system drawable; a custom vector can't reproduce it.
+                setSmallIcon(AR.drawable.stat_sys_download)
                 setAutoCancel(false)
                 clearActions()
                 setOngoing(true)
@@ -150,8 +160,9 @@ internal class DownloadNotifier(private val context: Context) {
         // Create notification
         with(notification) {
             // Check if first call.
-            if (!isDownloading) {
-                setSmallIcon(R.drawable.ic_file_download_24dp)
+            val isFirstCall = !isDownloading
+            if (isFirstCall) {
+                setSmallIcon(AR.drawable.stat_sys_download)
                 setAutoCancel(false)
                 clearActions()
                 setOngoing(true)
@@ -188,7 +199,7 @@ internal class DownloadNotifier(private val context: Context) {
             setProgress(download.pages!!.size, download.downloadedImages, false)
 
             // Displays the progress bar on notification
-            show()
+            show(refreshGroupSummary = isFirstCall)
         }
     }
 
