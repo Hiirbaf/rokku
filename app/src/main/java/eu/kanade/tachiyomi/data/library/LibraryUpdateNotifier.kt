@@ -140,11 +140,12 @@ class LibraryUpdateNotifier(private val context: Context) {
             return
         }
 
+        val pendingIntent = NotificationReceiver.openErrorOrSkippedLogPendingActivity(context, uri)
         context.notificationManager.notify(
             Notifications.ID_LIBRARY_SKIPPED,
             context.notificationBuilder(Notifications.CHANNEL_LIBRARY_SKIPPED) {
                 setContentTitle(context.getString(MR.strings.notification_update_skipped, skips.size))
-                setContentText(context.getString(MR.strings.tap_to_learn_more))
+                setContentText(context.getString(MR.strings.tap_to_see_details))
                 setStyle(
                     NotificationCompat.BigTextStyle().bigText(
                         skips.joinToString("\n") {
@@ -152,12 +153,14 @@ class LibraryUpdateNotifier(private val context: Context) {
                         },
                     ),
                 )
-                setContentIntent(NotificationHandler.openUrl(context, HELP_SKIPPED_URL))
+                // Tapping the body opens the log directly, same as the error notification -
+                // the help page is reached via the explicit "Learn why" action instead.
+                setContentIntent(pendingIntent)
                 setSmallIcon(R.drawable.ic_rokku)
                 addAction(
                     R.drawable.ic_file_open_24dp,
                     context.getString(MR.strings.open_log),
-                    NotificationReceiver.openErrorOrSkippedLogPendingActivity(context, uri),
+                    pendingIntent,
                 )
                 addAction(
                     R.drawable.ic_help_outline_24dp,
@@ -268,15 +271,22 @@ class LibraryUpdateNotifier(private val context: Context) {
                         setLargeIcon(notificationBitmap)
                         setContentTitle(context.getString(MR.strings.new_chapters_found))
                         color = ContextCompat.getColor(context, R.color.secondaryTachiyomi)
-                        if (updates.size > 1) {
+                        // Content text must always be set, even when "hide notification content"
+                        // is on and there's a single update: falling through with no content text
+                        // at all left the summary notification visibly empty in that case.
+                        if (!preferences.hideNotificationContent().get()) {
                             setContentText(
-                                context.getString(
-                                    MR.plurals.for_n_titles,
-                                    updates.size,
-                                    updates.size,
-                                ),
+                                if (updates.size > 1) {
+                                    context.getString(
+                                        MR.plurals.for_n_titles,
+                                        updates.size,
+                                        updates.size,
+                                    )
+                                } else {
+                                    updates.keys.first().manga.title.chop(45)
+                                },
                             )
-                            if (!preferences.hideNotificationContent().get()) {
+                            if (updates.size > 1) {
                                 setStyle(
                                     NotificationCompat.BigTextStyle()
                                         .bigText(
@@ -286,8 +296,14 @@ class LibraryUpdateNotifier(private val context: Context) {
                                         ),
                                 )
                             }
-                        } else if (!preferences.hideNotificationContent().get()) {
-                            setContentText(updates.keys.first().manga.title.chop(45))
+                        } else {
+                            setContentText(
+                                context.getString(
+                                    MR.plurals.for_n_titles,
+                                    updates.size,
+                                    updates.size,
+                                ),
+                            )
                         }
                         priority = NotificationCompat.PRIORITY_HIGH
                         setGroup(Notifications.GROUP_NEW_CHAPTERS)
