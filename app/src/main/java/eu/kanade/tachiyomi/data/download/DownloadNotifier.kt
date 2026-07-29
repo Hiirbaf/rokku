@@ -97,6 +97,10 @@ internal class DownloadNotifier(private val context: Context) {
     fun dismiss() {
         context.notificationManager.cancel(Notifications.ID_DOWNLOAD_CHAPTER)
         context.notificationManager.cancel(Notifications.ID_DOWNLOAD_PAUSED)
+        // The group summary posted by showGroupSummary() is never dismissed on its own - without
+        // this it's left behind as a "ghost" notification with no children once the last
+        // downloader notification is cancelled.
+        context.notificationManager.cancel(Notifications.ID_DOWNLOAD_GROUP_SUMMARY)
     }
 
     /**
