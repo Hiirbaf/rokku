@@ -231,9 +231,7 @@
     <string name="backup_created">גיבוי נוצר</string>
     <string name="restore_completed">השחזור הושלם</string>
     <string name="restore_missing_sources">מקורות חסרים:</string>
-    <string name="restore_content_full">מידע מקובץ הגיבוי ישוחזר.
-\n
-\nלאחר מכן צריך להתקין הרחבות חסרות ולהתחבר לשירותי המעקב כדי להשתמש בהם.</string>
+    <string name="restore_content_full">מידע מקובץ הגיבוי ישוחזר. \n \nלאחר מכן צריך להתקין הרחבות חסרות ולהתחבר לשירותי המעקב כדי להשתמש בהם.</string>
     <string name="restoring_backup_canceled">השחזור בוטל</string>
     <string name="backup_restore_invalid_uri">שגיאה: URI ריק</string>
     <string name="creating_backup">מייצר גיבוי</string>
