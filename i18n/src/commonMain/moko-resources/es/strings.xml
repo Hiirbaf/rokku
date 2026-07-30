@@ -666,9 +666,7 @@
     <string name="disabled">Desactivado</string>
     <string name="doh">DNS sobre HTTPS</string>
     <string name="data_management">Gestión de datos</string>
-    <string name="restore_content_full">Datos de la copia de seguridad serán restaurados.
-\n
-\nSe deberá de instalar todos las extensiones faltantes e iniciar sesión en todos los servicios de seguimiento para poder ser usados.</string>
+    <string name="restore_content_full">Datos de la copia de seguridad serán restaurados. \n \nSe deberá de instalar todos las extensiones faltantes e iniciar sesión en todos los servicios de seguimiento para poder ser usados.</string>
     <string name="backup_in_progress">La copia de seguridad ya está en curso</string>
     <string name="restore_in_progress">La restauración ya está en curso</string>
     <string name="pressing_back_to_start">Presionar atrás para la pantalla de inicio</string>
