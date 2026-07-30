@@ -268,7 +268,11 @@ fun <T> Controller.liftAppbarWith(
                     activityBinding?.appBar?.setToolbarModeBy(this@liftAppbarWith)
                     activityBinding?.appBar?.useTabsInPreLayout = false
                     colorToolbar(isToolbarColored)
-                    activityBinding?.appBar?.updateAppBarAfterY(recycler)
+                    // liftAppbarWith never drags the app bar via this recycler, so passing it
+                    // here made updateAppBarAfterY() compute a stale scroll offset - which is
+                    // what caused the migration search toolbar to disappear after a manual
+                    // search and returning. Passing null recomputes from the app bar's own state.
+                    activityBinding?.appBar?.updateAppBarAfterY(null)
                 }
             }
         },
