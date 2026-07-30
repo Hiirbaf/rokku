@@ -307,3 +307,12 @@ tasks {
         )
     }
 }
+
+// AGP9 only generates a unit test task for the "tested" build type (debug) by default; CI
+// expects testReleaseUnitTest/testStandardReleaseUnitTest to exist too, matching the pre-AGP9
+// behavior of a unit test task per build type.
+androidComponents {
+    beforeVariants { variantBuilder ->
+        (variantBuilder as? com.android.build.api.variant.HasUnitTestBuilder)?.enableUnitTest = true
+    }
+}

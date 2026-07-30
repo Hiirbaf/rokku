@@ -47,7 +47,7 @@ jobs:
         run: ./gradlew assembleStandardRelease
 
       - name: Run unit tests
-        run: ./gradlew testReleaseUnitTest testStandardReleaseUnitTest
+        run: ./gradlew testStandardReleaseUnitTest
 
       - name: Publish test report
         uses: mikepenz/action-junit-report@v5
