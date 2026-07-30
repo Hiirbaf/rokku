@@ -24,9 +24,14 @@ import eu.kanade.tachiyomi.util.system.getParcelableCompat
 import eu.kanade.tachiyomi.util.system.notificationBuilder
 import eu.kanade.tachiyomi.util.system.notificationManager
 import eu.kanade.tachiyomi.util.system.toast
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import uy.kohesive.injekt.injectLazy
 import yokai.i18n.MR
 import yokai.util.lang.getString
+import java.util.concurrent.ConcurrentHashMap
 import android.R as AR
 
 /**
@@ -88,6 +93,13 @@ class ExtensionInstallBroadcast : BroadcastReceiver() {
         const val PACKAGE_INSTALLED_ACTION =
             "eu.kanade.tachiyomi.SESSION_API_PACKAGE_INSTALLED"
 
+        // Tracks downloadIds waiting on the tap-to-confirm notification below. If the user
+        // never taps it (or never sees it), nothing else ever resolves the install, leaving
+        // the extension stuck showing "Installing" indefinitely until it's uninstalled and
+        // reinstalled. awaitConfirmationOrFail() clears this after a timeout as a safety net,
+        // mirroring AppDownloadInstallJob's own confirm-dialog timeout fallback.
+        private val awaitingConfirmation = ConcurrentHashMap.newKeySet<Long>()
+
         fun packageInstallStep(context: Context, intent: Intent) {
             val extras = intent.extras ?: return
             if (PACKAGE_INSTALLED_ACTION == intent.action) {
@@ -106,12 +118,15 @@ class ExtensionInstallBroadcast : BroadcastReceiver() {
                             // can tap instead, which always runs in a foreground/user-initiated
                             // context.
                             showInstallConfirmNotification(context, confirmIntent, downloadId)
+                            awaitConfirmationOrFail(context, downloadId)
                         }
                     }
                     PackageInstaller.STATUS_SUCCESS -> {
+                        awaitingConfirmation -= downloadId
                         extensionManager.setInstallationResult(downloadId, true)
                     }
                     PackageInstaller.STATUS_FAILURE, PackageInstaller.STATUS_FAILURE_ABORTED, PackageInstaller.STATUS_FAILURE_BLOCKED, PackageInstaller.STATUS_FAILURE_CONFLICT, PackageInstaller.STATUS_FAILURE_INCOMPATIBLE, PackageInstaller.STATUS_FAILURE_INVALID, PackageInstaller.STATUS_FAILURE_STORAGE -> {
+                        awaitingConfirmation -= downloadId
                         extensionManager.setInstallationResult(downloadId, false)
                         if (status != PackageInstaller.STATUS_FAILURE_ABORTED) {
                             if (DeviceUtil.isMiui) {
@@ -122,8 +137,23 @@ class ExtensionInstallBroadcast : BroadcastReceiver() {
                         }
                     }
                     else -> {
+                        awaitingConfirmation -= downloadId
                         extensionManager.setInstallationResult(downloadId, false)
                     }
+                }
+            }
+        }
+
+        private fun awaitConfirmationOrFail(context: Context, downloadId: Long) {
+            awaitingConfirmation += downloadId
+            val appContext = context.applicationContext
+            @Suppress("OPT_IN_USAGE")
+            GlobalScope.launch(Dispatchers.Main) {
+                delay(20_000)
+                if (awaitingConfirmation.remove(downloadId)) {
+                    val extensionManager: ExtensionManager by injectLazy()
+                    extensionManager.setInstallationResult(downloadId, false)
+                    appContext.toast(MR.strings.could_not_install_extension)
                 }
             }
         }
