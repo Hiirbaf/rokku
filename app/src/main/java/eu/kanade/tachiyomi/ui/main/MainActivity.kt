@@ -277,6 +277,7 @@ open class MainActivity : BaseActivity<MainActivityBinding>() {
                         super.onMapSharedElements(names, sharedElements)
                         return
                     }
+                    if (names.isEmpty()) return
                     val recyclerView = mangaController.binding.recycler
                     val selectedViewHolder =
                         recyclerView.findViewHolderForItemId(chapterIdToExitTo) ?: return
@@ -1420,6 +1421,18 @@ open class MainActivity : BaseActivity<MainActivityBinding>() {
 
     protected fun canShowFloatingToolbar(controller: Controller?) =
         (controller is FloatingSearchInterface && controller.showFloatingBar())
+
+    /**
+     * Resyncs the app bar's toolbar mode and the floating search toolbar's menu with the
+     * currently visible controller. Needed after a config change (e.g. entering/exiting
+     * split screen or a smaller freeform window) since [ExpandedAppBarLayout] can't reach
+     * [router] itself to know which controller is actually showing.
+     */
+    fun refreshToolbarMode() {
+        val controller = if (this::router.isInitialized) router.backstack.lastOrNull()?.controller else null
+        binding.appBar.setToolbarModeBy(controller)
+        setFloatingToolbar(canShowFloatingToolbar(controller), changeBG = false)
+    }
 
     protected open fun syncActivityViewWithController(
         to: Controller?,

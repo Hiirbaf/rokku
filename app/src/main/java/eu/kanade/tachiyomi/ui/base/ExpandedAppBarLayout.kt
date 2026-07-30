@@ -262,12 +262,15 @@ class ExpandedAppBarLayout@JvmOverloads constructor(context: Context, attrs: Att
     private fun shrinkAppBarIfNeeded(config: Configuration?) {
         config ?: return
         dontFullyHideToolbar = config.smallestScreenWidthDp > 600
+        val wasExtraSmall = isExtraSmall
         isExtraSmall = false
         if (config.screenHeightDp < 600) {
             val bigTitleView = bigTitleView ?: return
             isExtraSmall = config.screenWidthDp < 720
             if (isExtraSmall) {
-                setToolbarModeBy(null, true)
+                if (isExtraSmall != wasExtraSmall) {
+                    mainActivity?.refreshToolbarMode()
+                }
                 return
             }
             val attrs = intArrayOf(R.attr.textAppearanceHeadlineMedium)
@@ -286,6 +289,9 @@ class ExpandedAppBarLayout@JvmOverloads constructor(context: Context, attrs: Att
             imageLayout?.updateLayoutParams<MarginLayoutParams> {
                 height = 48.dpToPx
             }
+        }
+        if (isExtraSmall != wasExtraSmall) {
+            mainActivity?.refreshToolbarMode()
         }
     }
 

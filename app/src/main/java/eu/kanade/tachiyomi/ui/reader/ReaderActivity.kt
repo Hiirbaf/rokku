@@ -1109,16 +1109,16 @@ class ReaderActivity : BaseActivity<ReaderActivityBinding>() {
             val isLandscapeFully = currentOrientation == Configuration.ORIENTATION_LANDSCAPE && readerPreferences.landscapeCutoutBehavior().get() == LandscapeCutoutBehaviour.DEFAULT
             val cutOutInsets = if (isLandscapeFully) insets.displayCutout else null
             val vis = insets.isVisible(statusBars())
-            val fullscreen = preferences.fullscreen().get() && !isSplitScreen
+            val fullscreen = preferences.fullscreen().get()
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                if (!firstPass && lastVis != vis && fullscreen) {
+                if (!firstPass && lastVis != vis && fullscreen && !isSplitScreen) {
                     onVisibilityChange(vis)
                 }
                 firstPass = false
                 lastVis = vis
             }
             wic.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_DEFAULT
-            if (!fullscreen && sheetManageNavColor) {
+            if (!(fullscreen && !isSplitScreen) && sheetManageNavColor) {
                 window.navigationBarColor = getResourceColor(R.attr.colorSurface)
             }
             binding.appBar.updateLayoutParams<ViewGroup.MarginLayoutParams> {
@@ -1150,24 +1150,25 @@ class ReaderActivity : BaseActivity<ReaderActivityBinding>() {
                 rightMargin = 12.dpToPx + max(systemInsets.right, cutOutInsets?.safeInsetRight ?: 0)
             }
             binding.chaptersSheet.root.sheetBehavior?.peekHeight =
-                peek + if (fullscreen) {
-                insets.getBottomGestureInsets()
-            } else {
-                val rootInsets = binding.root.rootWindowInsetsCompat ?: insets
-                max(
-                    0,
-                    (rootInsets.getBottomGestureInsets()) -
-                        rootInsets.getInsetsIgnoringVisibility(systemBars()).bottom,
-                )
-            }
+                peek + insets.getBottomGestureInsets()
             binding.chaptersSheet.chapterRecycler.updatePaddingRelative(bottom = systemInsets.bottom)
+            val noInsetForFullScreen = fullscreen && !isSplitScreen
+            binding.viewerContainer.updatePadding(
+                left = if (noInsetForFullScreen) 0 else systemInsets.left,
+                top = if (noInsetForFullScreen) 0 else systemInsets.top,
+                right = if (noInsetForFullScreen) 0 else systemInsets.right,
+                bottom = if (noInsetForFullScreen) 0 else systemInsets.bottom,
+            )
+            binding.pageNumber.updateLayoutParams<CoordinatorLayout.LayoutParams> {
+                bottomMargin = if (noInsetForFullScreen) 0 else systemInsets.bottom
+            }
             binding.viewerContainer.requestLayout()
             updateVerticalSeekbarHeight()
         }
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
             @Suppress("DEPRECATION")
             binding.readerLayout.setOnSystemUiVisibilityChangeListener {
-                if (preferences.fullscreen().get()) {
+                if (preferences.fullscreen().get() && !isSplitScreen) {
                     onVisibilityChange((it and View.SYSTEM_UI_FLAG_HIDE_NAVIGATION) == 0)
                 }
             }
@@ -1327,7 +1328,7 @@ class ReaderActivity : BaseActivity<ReaderActivityBinding>() {
                 binding.chaptersSheet.chaptersBottomSheet.sheetBehavior?.collapse()
             }
         } else {
-            if (preferences.fullscreen().get()) {
+            if (preferences.fullscreen().get() && !isSplitScreen) {
                 wic.hide(systemBars())
                 wic.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_DEFAULT
             }
@@ -1454,6 +1455,21 @@ class ReaderActivity : BaseActivity<ReaderActivityBinding>() {
     override fun onResume() {
         super.onResume()
         viewModel.restartReadTimer()
+    }
+
+    override fun onMultiWindowModeChanged(
+        isInMultiWindowMode: Boolean,
+        newConfig: Configuration,
+    ) {
+        super.onMultiWindowModeChanged(isInMultiWindowMode, newConfig)
+        config?.setFullscreen()
+        if (isInMultiWindowMode) {
+            wic.show(systemBars())
+        } else if (!menuVisible && preferences.fullscreen().get()) {
+            wic.hide(systemBars())
+            wic.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_DEFAULT
+        }
+        binding.root.requestApplyInsets()
     }
 
     fun reloadChapters(doublePages: Boolean, force: Boolean = false) {
@@ -2117,7 +2133,7 @@ class ReaderActivity : BaseActivity<ReaderActivityBinding>() {
 
             basePreferences.displayProfile().changesIn(scope) { setDisplayProfile(it) }
 
-            preferences.fullscreen().changesIn(scope) { setFullscreen(it) }
+            preferences.fullscreen().changesIn(scope) { setFullscreen() }
 
             preferences.keepScreenOn().changesIn(scope) { setKeepScreenOn(it) }
 
@@ -2181,12 +2197,13 @@ class ReaderActivity : BaseActivity<ReaderActivityBinding>() {
         }
 
         /**
-         * Sets the fullscreen reading mode (immersive) according to [enabled].
+         * Sets the fullscreen reading mode (immersive)
          */
-        private fun setFullscreen(enabled: Boolean) {
-            WindowCompat.setDecorFitsSystemWindows(window, !enabled || isSplitScreen)
+        fun setFullscreen() {
+            WindowCompat.setDecorFitsSystemWindows(window, false)
             wic.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_DEFAULT
             binding.root.rootWindowInsetsCompat?.let { setNavColor(it) }
+            binding.root.requestApplyInsets()
         }
 
         /**

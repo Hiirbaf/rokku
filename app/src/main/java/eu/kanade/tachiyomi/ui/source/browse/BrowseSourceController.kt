@@ -13,7 +13,6 @@ import androidx.compose.material.icons.filled.ExploreOff
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.core.view.WindowInsetsCompat.Type.ime
 import androidx.core.view.WindowInsetsCompat.Type.systemBars
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
@@ -290,15 +289,15 @@ open class BrowseSourceController(bundle: Bundle) :
         recycler.adapter = adapter
 
         binding.catalogueView.addView(recycler, 1)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            binding.floatingBrowseBar.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                bottomMargin = 8.dpToPx
+            }
+        }
         scrollViewWith(
             recycler,
             true,
             afterInsets = { insets ->
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
-                    binding.floatingBrowseBar.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-                        bottomMargin = insets.getInsets(systemBars() or ime()).bottom + 8.dpToPx
-                    }
-                }
                 val bigToolbarHeight = fullAppBarHeight ?: 0
                 binding.progress.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                     topMargin = (bigToolbarHeight + insets.getInsets(systemBars()).top) / 2
