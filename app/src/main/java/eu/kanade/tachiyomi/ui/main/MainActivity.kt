@@ -1124,7 +1124,7 @@ open class MainActivity : BaseActivity<MainActivityBinding>() {
             }
             Intent.ACTION_VIEW -> {
                 if (router.backstack.isEmpty()) nav.selectedItemId = R.id.nav_library
-                if (intent.scheme == "tachiyomi" && intent.data?.host == "add-repo") {
+                if (intent.isAddExtensionStoreIntent()) {
                     intent.data?.getQueryParameter("url")?.let { repoUrl ->
                         router.popToRoot()
                         router.pushController(ExtensionRepoController(repoUrl).withFadeTransaction())
@@ -1135,6 +1135,11 @@ open class MainActivity : BaseActivity<MainActivityBinding>() {
         }
 
         return true
+    }
+
+    private fun Intent.isAddExtensionStoreIntent(): Boolean {
+        return (scheme == "tachiyomi" && data?.host == "add-repo") ||
+            (scheme == "mihon" && data?.host == "extension-store")
     }
 
     override fun onProvideAssistContent(outContent: AssistContent) {

@@ -55,7 +55,7 @@
             android:theme="@style/Theme.Tachiyomi.SplashScreen"
             android:exported="true">
 
-            <!-- Deep link to add repos -->
+            <!-- Legacy deeplink to add extension repos -->
             <intent-filter android:label="@string/action_add_repo">
                 <action android:name="android.intent.action.VIEW" />
 
@@ -64,6 +64,17 @@
 
                 <data android:scheme="tachiyomi" />
                 <data android:host="add-repo" />
+            </intent-filter>
+
+            <!-- Deeplink to add extension repos -->
+            <intent-filter android:label="@string/action_add_repo">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="mihon" />
+                <data android:host="extension-store" />
             </intent-filter>
             <meta-data android:name="android.app.searchable" android:resource="@xml/searchable"/>
         </activity>
