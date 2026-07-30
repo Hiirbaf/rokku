@@ -546,9 +546,7 @@
     <string name="backup_has_no_manga">Sa còpia de seguresa non tenet perunu manga.</string>
     <string name="restore_missing_sources">Mitzas chi mancant:</string>
     <string name="restore_missing_trackers">Arrastadores a sos cales no as fatu atzessu:</string>
-    <string name="restore_content_full">Sos datos dae su documentu de sa còpia de seguresa s\'ant a ripristinare.
-\n
-\nA pustis as a dèpere installare sas estensiones chi mancant e atzèdere a sos servìtzios de arrastamentu pro los pòdere impreare.</string>
+    <string name="restore_content_full">Sos datos dae su documentu de sa còpia de seguresa s\'ant a ripristinare. \n \nA pustis as a dèpere installare sas estensiones chi mancant e atzèdere a sos servìtzios de arrastamentu pro los pòdere impreare.</string>
     <string name="restoring_backup_canceled">Riprìstinu annulladu</string>
     <string name="restore_duration">%02d min e %02d seg</string>
     <string name="source_migration_guide">Ghia a su tramudòngiu de sas mitzas</string>
