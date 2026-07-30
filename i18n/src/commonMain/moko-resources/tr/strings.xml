@@ -442,9 +442,7 @@
     <string name="backup_has_no_manga">Yedek bir manga içermiyor.</string>
     <string name="restore_missing_sources">Eksik kaynaklar:</string>
     <string name="restore_missing_trackers">İzleyiciler giriş yapmadı:</string>
-    <string name="restore_content_full">Yedek dosyadaki veriler geri yüklenecek.
-\n
-\nEksik uzantıları yüklemeniz ve daha sonra bunları kullanmak için izleme hizmetlerinde oturum açmanız gerekecektir.</string>
+    <string name="restore_content_full">Yedek dosyadaki veriler geri yüklenecek. \n \nEksik uzantıları yüklemeniz ve daha sonra bunları kullanmak için izleme hizmetlerinde oturum açmanız gerekecektir.</string>
     <string name="restoring_backup_canceled">Geri yükleme iptal edildi</string>
     <string name="restore_duration">%02d dk, %02d sn</string>
     <string name="no_chapters_error">Bölüm bulunamadı</string>
