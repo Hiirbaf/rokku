@@ -702,9 +702,7 @@
     <string name="restore_error">バックアップの復元に失敗しました</string>
     <string name="restore_missing_sources">ソースがありません：</string>
     <string name="restore_missing_trackers">ログインしていないトラッカー：</string>
-    <string name="restore_content_full">バックアップファイルからデータを復旧します。
-\n
-\n後で手動で必要な拡張機能をインストールし、使用したい追跡サービスにログインしてください。</string>
+    <string name="restore_content_full">バックアップファイルからデータを復旧します。 \n \n後で手動で必要な拡張機能をインストールし、使用したい追跡サービスにログインしてください。</string>
     <string name="restoring_backup_canceled">復元をキャンセルしました</string>
     <string name="backup_restore_invalid_uri">エラー：URIは空です</string>
     <string name="creating_backup">バックアップを作成中</string>
