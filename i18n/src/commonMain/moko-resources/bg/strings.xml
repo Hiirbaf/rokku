@@ -464,9 +464,7 @@
     <string name="tako">Тако</string>
     <string name="side_nav_icon_alignment">Подравняване на страничната навигационна икона</string>
     <string name="hide_notification_content">Скривай съдържанието на уведомленията</string>
-    <string name="restore_content_full">Ще бъдат възстановени данните от резервното копие.
-        \n
-        \nТрябва да инсталирате липсващи разширения, ако има такива, и да се впишете в услугите за тракинг, за да ги ползвате.</string>
+    <string name="restore_content_full">Ще бъдат възстановени данните от резервното копие. \n \nТрябва да инсталирате липсващи разширения, ако има такива, и да се впишете в услугите за тракинг, за да ги ползвате.</string>
     <string name="dump_crash_logs">Разтовари записите от сривовете</string>
     <string name="saves_error_logs">Запазва записи от сривове, които може да бъдат споделени с разработчиците</string>
     <string name="doh">DNS пред HTTPS</string>
