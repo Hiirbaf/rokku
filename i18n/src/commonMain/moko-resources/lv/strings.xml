@@ -203,9 +203,7 @@
     <string name="show_number_of_items">Parādīt lietu skaitu</string>
     <string name="hide_notification_content">Slēpt paziņojumu saturu</string>
     <string name="restore_missing_trackers">Nav pieslēgts pie izsekotājiems:</string>
-    <string name="restore_content_full">Dati no dublējuma faila būs atjaunoti.
-\n
-\nJums būs nepieciešams instalēt jebkādus trūkstošos paplašinājumus un pēc tam pieslēgties izsekošanas pakalpojumiem.</string>
+    <string name="restore_content_full">Dati no dublējuma faila būs atjaunoti. \n \nJums būs nepieciešams instalēt jebkādus trūkstošos paplašinājumus un pēc tam pieslēgties izsekošanas pakalpojumiem.</string>
     <string name="webview_is_required">Tachiyomi ir nepieciešams WebView</string>
     <string name="name">Nosaukums</string>
     <string name="ascending">Augoši</string>
