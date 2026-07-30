@@ -13,6 +13,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 object WebViewUtil {
     private const val CHROME_PACKAGE = "com.android.chrome"
     private const val SYSTEM_SETTINGS_PACKAGE = "com.android.settings"
+    private const val YOUTUBE_FOR_TV_PACKAGE = "com.google.android.youtube.tv"
 
     const val MINIMUM_WEBVIEW_VERSION = 118
 
@@ -54,15 +55,22 @@ object WebViewUtil {
         return context.packageManager.hasSystemFeature(PackageManager.FEATURE_WEBVIEW)
     }
 
-    fun spoofedPackageName(context: Context): String {
-        return try {
-            context.packageManager.getPackageInfo(CHROME_PACKAGE, PackageManager.GET_META_DATA)
-
-            CHROME_PACKAGE
-        } catch (_: PackageManager.NameNotFoundException) {
-            SYSTEM_SETTINGS_PACKAGE
-        }
-    }
+    fun spoofedPackageName(context: Context): String =
+        runCatching { context.packageManager.getPackageInfo(CHROME_PACKAGE, 0) }
+            .recoverCatching { context.packageManager.getPackageInfo(SYSTEM_SETTINGS_PACKAGE, 0) }
+            .recoverCatching { context.packageManager.getPackageInfo(YOUTUBE_FOR_TV_PACKAGE, 0) }
+            .fold(
+                onSuccess = { it.packageName },
+                onFailure = {
+                    // Extremely unlikely fallback for devices with neither Chrome, Settings,
+                    // nor YouTube for TV installed - pick anything rather than crash.
+                    @Suppress("DEPRECATION")
+                    context.packageManager
+                        .getInstalledPackages(0)
+                        .random()
+                        .packageName
+                },
+            )
 }
 
 fun WebView.isOutdated(): Boolean {
