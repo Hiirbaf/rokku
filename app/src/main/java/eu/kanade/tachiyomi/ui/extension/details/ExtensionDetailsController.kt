@@ -304,9 +304,16 @@ class ExtensionDetailsController(bundle: Bundle? = null) :
                 dialogSummary = preference.dialogMessage
                 // Forward to the listener with the original EditTextPreference, not this
                 // wrapper - extensions' listeners expect the preference they registered on
-                // and crash with a ClassCastException otherwise.
+                // and crash with a ClassCastException otherwise. Also persist the new value
+                // back onto the original preference, matching the ListPreference case below -
+                // otherwise the change is only ever seen by the listener and never actually saved.
                 onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
-                    preference.onPreferenceChangeListener?.onPreferenceChange(preference, newValue) ?: true
+                    if (preference.callChangeListener(newValue)) {
+                        preference.text = newValue as? String
+                        true
+                    } else {
+                        false
+                    }
                 }
             }
 
