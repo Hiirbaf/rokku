@@ -232,6 +232,8 @@ dependencies {
     implementation(libs.viewstatepageradapter)
     implementation(libs.slice)
     implementation(libs.markwon)
+    implementation(libs.markwon.image)
+    implementation(libs.markwon.linkify)
 
     implementation(libs.photoview)
     implementation(libs.directionalviewpager)

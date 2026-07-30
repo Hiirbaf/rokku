@@ -134,6 +134,12 @@ class SettingsAppearanceController : SettingsLegacyController() {
                 titleRes = MR.strings.theme_buttons_based_on_cover
                 defaultValue = true
             }
+            switchPreference {
+                key = Keys.renderDescriptionImages
+                titleRes = MR.strings.render_description_images
+                summaryRes = MR.strings.render_description_images_summary
+                defaultValue = true
+            }
         }
 
         preferenceCategory {

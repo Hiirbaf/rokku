@@ -51,8 +51,10 @@ import eu.kanade.tachiyomi.util.system.isLTR
 import eu.kanade.tachiyomi.util.view.resetStrokeColor
 import io.noties.markwon.Markwon
 import io.noties.markwon.SoftBreakAddsNewLinePlugin
+import io.noties.markwon.linkify.LinkifyPlugin
 import android.text.method.LinkMovementMethod
 import yokai.i18n.MR
+import yokai.util.coil.MarkwonCoil3ImagesPlugin
 import yokai.util.coil.loadManga
 import yokai.util.lang.getString
 import android.R as AR
@@ -76,7 +78,17 @@ class MangaHeaderHolder(
         null
     }
 
-    private val markwon by lazy { Markwon.builder(itemView.context).usePlugin(SoftBreakAddsNewLinePlugin.create()).build() }
+    private val markwon by lazy {
+        Markwon.builder(itemView.context)
+            .usePlugin(SoftBreakAddsNewLinePlugin.create())
+            .usePlugin(LinkifyPlugin.create())
+            .apply {
+                if (adapter.preferences.renderDescriptionImages().get()) {
+                    usePlugin(MarkwonCoil3ImagesPlugin.create(itemView.context))
+                }
+            }
+            .build()
+    }
 
     private var showReadingButton = true
     private var showMoreButton = true
