@@ -42,8 +42,6 @@ The name is a play on the developer's surname (Rocha, "rock" in Portuguese): 岩
 <details open="">
     <summary><h3>From Rokku</h3></summary>
 
-* Fixed broken extension installs via Shizuku.
-* Fixed the Shikimori tracker.
 * Downloads now resume interrupted pages instead of restarting them.
 * Manga details FAB now shrinks/extends on scroll instead of overlapping the chapter list.
 * Added support for extension-lib 1.6.
