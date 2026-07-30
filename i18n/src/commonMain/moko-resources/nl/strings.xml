@@ -578,9 +578,7 @@
     <string name="menu">menu</string>
     <string name="enable">Inschakelen</string>
     <string name="whats_new_this_release">Wat is er nieuw in deze versie</string>
-    <string name="restore_content_full">Data uit het back-upbestand zal worden teruggezet.
-\n
-\nJe zult missende extensies opnieuw moeten installeren, en opnieuw moeten inloggen bij de trackingdiensten om deze weer te gebruiken.</string>
+    <string name="restore_content_full">Data uit het back-upbestand zal worden teruggezet. \n \nJe zult missende extensies opnieuw moeten installeren, en opnieuw moeten inloggen bij de trackingdiensten om deze weer te gebruiken.</string>
     <string name="restore_in_progress">Er wordt al een back-up hersteld</string>
     <string name="backup_in_progress">Er wordt al een back-up gemaakt</string>
     <string name="pressing_back_to_start">Terug drukken naar startscherm</string>
