@@ -685,9 +685,7 @@
     <string name="doh">DNS di atas HTTPS</string>
     <string name="data_management">Manajemen Data</string>
     <string name="not_logged_into_">Tidak masuk ke %1$s</string>
-    <string name="restore_content_full">Data dari berkas cadangan akan dipulihkan.
-\n
-\nAnda akan perlu untuk memasang ekstensi apapun yang hilang dan masuk ke layanan lecak setelahnya untuk menggunakannya.</string>
+    <string name="restore_content_full">Data dari berkas cadangan akan dipulihkan. \n \nAnda akan perlu untuk memasang ekstensi apapun yang hilang dan masuk ke layanan lecak setelahnya untuk menggunakannya.</string>
     <string name="restore_error">Gagal untuk memulihkan cadangan</string>
     <string name="pressing_back_to_start">Menekan kembali ke layar mulai</string>
     <string name="starting_screen">Layar mulai</string>
