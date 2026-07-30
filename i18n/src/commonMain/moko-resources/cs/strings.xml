@@ -420,9 +420,7 @@
     <string name="backup_failed">Zálohování selhalo</string>
     <string name="restore_missing_sources">Chybějící zdroje:</string>
     <string name="restore_missing_trackers">Sledovače, ve kterých nejsi přihlášený/á:</string>
-    <string name="restore_content_full">Data ze zálohy budou obnovena.
-\n
-\nBudeš poté muset doinstalovat jakékoliv chybějící rozšíření a přihlásit se do sledovacích služeb pro jejich použití.</string>
+    <string name="restore_content_full">Data ze zálohy budou obnovena. \n \nBudeš poté muset doinstalovat jakékoliv chybějící rozšíření a přihlásit se do sledovacích služeb pro jejich použití.</string>
     <string name="progress">Postup</string>
     <string name="complete">Dokončeno</string>
     <string name="crash_logs">Záznamy o pádech</string>
