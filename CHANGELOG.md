@@ -10,6 +10,22 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 
 ## [Unreleased]
 
+## [1.3.1]
+
+### Additions
+- Support the `mihon://extension-store` deep link for adding extension repos, alongside the existing `tachiyomi://add-repo` one (contributed by [@Hiirbaf](https://github.com/Hiirbaf))
+
+### Fixes
+- Fix extension updates getting stuck showing "Installing" forever if the OS silently blocked the install confirmation dialog (common when updating an already-installed extension), leaving no way out except uninstalling and reinstalling the extension
+- Fix the reader not exiting fullscreen/immersive mode correctly in split-screen or multi-window mode
+- Fix the app bar's toolbar mode not resyncing after entering/exiting split screen
+- Fix the floating browse toolbar recalculating its bottom margin (including keyboard insets) on every scroll on Android 10 and below
+- Fix the favorite button's long-press category picker letting a stray tap open a menu underneath it
+- Fix a crash when exiting the reader back to manga details with no shared element to animate
+
+### Other
+- Upgrade to Android Gradle Plugin 9.3.1 and Gradle 9.6.1, matching Mihon
+
 ## [1.3.0]
 
 ### Additions
