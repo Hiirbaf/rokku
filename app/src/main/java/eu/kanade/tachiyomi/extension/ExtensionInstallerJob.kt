@@ -101,6 +101,10 @@ class ExtensionInstallerJob(val context: Context, workerParams: WorkerParameters
         emitScope.launch { list.forEach { extensionManager.setPending(it.pkgName) } }
         var installed = 0
         val installedExtensions = mutableListOf<ExtensionManager.ExtensionInfo>()
+        // isCompleted() is also true for InstallStep.Error - track those separately so a failed
+        // install isn't reported as updated and doesn't silently drop off the pending-updates
+        // count, which would stop it from ever being retried.
+        val failedExtensions = mutableListOf<ExtensionManager.ExtensionInfo>()
         val requestSemaphore = Semaphore(3)
         coroutineScope {
             job = launchIO {
@@ -111,11 +115,15 @@ class ExtensionInstallerJob(val context: Context, workerParams: WorkerParameters
                                 .collect {
                                     if (it.first.isCompleted()) {
                                         activeInstalls.remove(extension.pkgName)
-                                        installedExtensions.add(extension)
-                                        installed++
-                                        val prefCount = preferences.extensionUpdatesCount().get()
-                                        preferences.extensionUpdatesCount()
-                                            .set(max(prefCount - 1, 0))
+                                        if (it.first == InstallStep.Installed) {
+                                            installedExtensions.add(extension)
+                                            installed++
+                                            val prefCount = preferences.extensionUpdatesCount().get()
+                                            preferences.extensionUpdatesCount()
+                                                .set(max(prefCount - 1, 0))
+                                        } else {
+                                            failedExtensions.add(extension)
+                                        }
                                     }
                                     notifier.showProgressNotification(installed, list.size)
                                     if (activeInstalls.isEmpty() || isStopped) {
@@ -131,7 +139,7 @@ class ExtensionInstallerJob(val context: Context, workerParams: WorkerParameters
         if (showUpdatedNotification && installedExtensions.size > 0) {
             notifier.showUpdatedNotification(installedExtensions, preferences.hideNotificationContent().get())
         }
-        if (reRunUpdateCheck || installedExtensions.size != list.size) {
+        if (reRunUpdateCheck || failedExtensions.isNotEmpty()) {
             ExtensionUpdateJob.runJobAgain(context, NetworkType.CONNECTED, false)
         }
 
