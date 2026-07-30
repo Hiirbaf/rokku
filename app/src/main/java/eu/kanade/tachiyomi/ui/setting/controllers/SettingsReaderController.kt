@@ -403,6 +403,28 @@ class SettingsReaderController : SettingsLegacyController() {
 
                 preferences.readWithVolumeKeys().changesIn(viewScope) { isVisible = it }
             }
+            multiSelectListPreferenceMat(activity) {
+                key = Keys.readerVerticalSeekbarModes
+                titleRes = MR.strings.vertical_seekbar
+                val modes = ReadingModeType.entries.filter { it != ReadingModeType.DEFAULT }
+                entriesRes = modes.map { it.stringRes }.toTypedArray()
+                entryValues = modes.map { it.prefValue.toString() }
+                defaultValue = preferences.readerVerticalSeekbarModes().get().toList()
+            }
+            switchPreference {
+                bindTo(preferences.readerVerticalSeekbarDockLeft())
+                titleRes = MR.strings.vertical_seekbar_dock_left
+
+                preferences.readerVerticalSeekbarModes().changesIn(viewScope) { isVisible = it.isNotEmpty() }
+            }
+            intListPreference(activity) {
+                bindTo(preferences.readerVerticalSeekbarHeightPercent())
+                titleRes = MR.strings.vertical_seekbar_height
+                entryValues = (65..100 step 5).toList()
+                entries = entryValues.map { "$it%" }
+
+                preferences.readerVerticalSeekbarModes().changesIn(viewScope) { isVisible = it.isNotEmpty() }
+            }
         }
 
         preferenceCategory {

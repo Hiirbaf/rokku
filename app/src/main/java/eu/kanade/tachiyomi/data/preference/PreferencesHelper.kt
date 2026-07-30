@@ -152,6 +152,15 @@ class PreferencesHelper(val context: Context, val preferenceStore: PreferenceSto
         ReaderBottomButton.BUTTONS_DEFAULTS,
     )
 
+    fun readerVerticalSeekbarModes() = preferenceStore.getStringSet(
+        Keys.readerVerticalSeekbarModes,
+        setOf(ReadingModeType.LONG_STRIP.prefValue.toString(), ReadingModeType.CONTINUOUS_VERTICAL.prefValue.toString()),
+    )
+
+    fun readerVerticalSeekbarDockLeft() = preferenceStore.getBoolean(Keys.readerVerticalSeekbarDockLeft, false)
+
+    fun readerVerticalSeekbarHeightPercent() = preferenceStore.getInt(Keys.readerVerticalSeekbarHeightPercent, 65)
+
     fun showNavigationOverlayNewUser() = preferenceStore.getBoolean(Keys.showNavigationOverlayNewUser, true)
 
     fun showNavigationOverlayNewUserWebtoon() = preferenceStore.getBoolean(Keys.showNavigationOverlayNewUserWebtoon, true)
