@@ -388,9 +388,7 @@
     <string name="backup_has_no_manga">La còpia de seguretat no conté cap manga.</string>
     <string name="restore_missing_sources">Manquen fonts:</string>
     <string name="restore_missing_trackers">Seguidors sense sessió iniciada:</string>
-    <string name="restore_content_full">Es restauraran les dades del fitxer de còpia de seguretat.
-\n
-\nCaldrà que instal·leu les extensions que manquin i que després inicieu la sessió als serveis de seguiment per a utilitzar-los.</string>
+    <string name="restore_content_full">Es restauraran les dades del fitxer de còpia de seguretat. \n \nCaldrà que instal·leu les extensions que manquin i que després inicieu la sessió als serveis de seguiment per a utilitzar-los.</string>
     <string name="source_migration_guide">Guia de migració de fonts</string>
     <string name="nsfw_sources">Fonts NSFW (+18)</string>
     <string name="does_not_prevent_unofficial_nsfw">Això no evita que les extensions no oficials o possiblement mal etiquetades puguin mostrar contingut NSFW (+18) a l’aplicació.</string>
