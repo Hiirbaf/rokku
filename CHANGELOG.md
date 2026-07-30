@@ -10,6 +10,10 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 
 ## [Unreleased]
 
+### Fixes
+- Fix the app icon showing as a generic system icon instead of Rokku's own artwork in condensed/bundled notification stacks on some OEM launchers (e.g. MIUI lock screen), caused by the themed/monochrome launcher icon never being wired up since the Yokai fork
+- Fix the app's own self-update getting stuck showing "Installing" forever if the install confirmation notification was missed, the same issue fixed for extension updates in 1.3.1
+
 ## [1.3.1]
 
 ### Additions
