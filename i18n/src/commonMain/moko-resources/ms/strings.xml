@@ -561,9 +561,7 @@
     <string name="backup_has_no_manga">Sandaran tidak mengandungi apa-apa siri.</string>
     <string name="restore_missing_sources">Tiada sumber:</string>
     <string name="restore_missing_trackers">Penjejak yang tidak dilog masuk:</string>
-    <string name="restore_content_full">Data dari fail sandaran akan dipulihkan.
-\n
-\nAnda perlu memasang sambungan yang hilang dan log masuk ke penjejakan untuk menggunakannya.</string>
+    <string name="restore_content_full">Data dari fail sandaran akan dipulihkan. \n \nAnda perlu memasang sambungan yang hilang dan log masuk ke penjejakan untuk menggunakannya.</string>
     <string name="restoring_backup_canceled">Pemulih dibatalkan</string>
     <string name="restore_duration">%02d minit, %02d saat</string>
     <string name="file_picker_error">Tiada aplikasi memilih fail</string>
