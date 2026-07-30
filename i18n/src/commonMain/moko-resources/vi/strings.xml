@@ -486,9 +486,7 @@
     <string name="restore_missing_trackers">Bộ theo dõi chưa được đăng nhập vào :</string>
     <string name="complete">Hoàn thành</string>
     <string name="progress">Tiến trình</string>
-    <string name="restore_content_full">Dữ liệu từ tệp sao lưu sẽ được khôi phục.
-\n
-\nBạn sẽ cần cài đặt bất kỳ tiện ích mở rộng nào bị thiếu và sau đó đăng nhập vào các dịch vụ theo dõi để sử dụng chúng.</string>
+    <string name="restore_content_full">Dữ liệu từ tệp sao lưu sẽ được khôi phục. \n \nBạn sẽ cần cài đặt bất kỳ tiện ích mở rộng nào bị thiếu và sau đó đăng nhập vào các dịch vụ theo dõi để sử dụng chúng.</string>
     <string name="restore_missing_sources">Thiếu các nguồn:</string>
     <string name="restore_error">Khôi phục sao lưu thất bại</string>
     <string name="backup_failed">Sao lưu thất bại</string>
