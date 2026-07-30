@@ -316,7 +316,6 @@
         <item name="rippleColor">?colorControlHighlight</item>
         <item name="android:stateListAnimator">@animator/icon_btn_state_list_anim</item>
         <item name="android:textColor">?attr/colorOnBackground</item>
-        <item name="cornerRadius">20dp</item>
     </style>
 
     <style name="Widget.Tachiyomi.Button.OutlinedButton" parent="Widget.Material3.Button.OutlinedButton">
