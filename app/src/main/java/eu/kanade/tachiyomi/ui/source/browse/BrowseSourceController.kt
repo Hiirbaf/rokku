@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView
 import co.touchlab.kermit.Logger
 import com.bluelinelabs.conductor.ControllerChangeHandler
 import com.bluelinelabs.conductor.ControllerChangeType
+import com.google.android.material.behavior.HideViewOnScrollBehavior
 import com.google.android.material.snackbar.Snackbar
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.items.IFlexible
@@ -604,6 +605,20 @@ open class BrowseSourceController(bundle: Bundle) :
                 lastPosition = -1
             }
         }
+        if (type.isEnter) {
+            showFloatingBrowseBar()
+        }
+    }
+
+    /**
+     * Un-hides the floating browse bar if scrolled out of view - otherwise it can get lost
+     * forever if the user can't scroll (e.g. an empty or short results list).
+     */
+    private fun showFloatingBrowseBar() {
+        val behavior = HideViewOnScrollBehavior.from(binding.floatingBrowseBar)
+        if (behavior.isScrolledOut) {
+            behavior.slideIn(binding.floatingBrowseBar)
+        }
     }
 
     private fun refreshFavoriteStatuses() {
@@ -852,6 +867,7 @@ open class BrowseSourceController(bundle: Bundle) :
         binding.progress.isVisible = true
         snack?.dismiss()
         snack = null
+        showFloatingBrowseBar()
     }
 
     /**
