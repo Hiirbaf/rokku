@@ -471,9 +471,7 @@
     <string name="backup_has_no_manga">Sigurnosna kopija ne sadrži nijedan unos.</string>
     <string name="restore_missing_sources">Nedostaju izvori:</string>
     <string name="restore_missing_trackers">Usluge praćenja bez prijave:</string>
-    <string name="restore_content_full">Podaci datoteke sigurnosne kopije će se obnoviti.
-\n
-\nZa upotrebu podataka, morat ćeš instalirati nedostajuća proširenja i nakon toga se prijaviti na usluge praćenja.</string>
+    <string name="restore_content_full">Podaci datoteke sigurnosne kopije će se obnoviti. \n \nZa upotrebu podataka, morat ćeš instalirati nedostajuća proširenja i nakon toga se prijaviti na usluge praćenja.</string>
     <string name="restoring_backup_canceled">Obnavljanje prekinuto</string>
     <string name="restore_duration">%02d min, %02d s</string>
     <string name="source_migration_guide">Vodič za migraciju izvora</string>
