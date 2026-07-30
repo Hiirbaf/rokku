@@ -10,6 +10,14 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 
 ## [Unreleased]
 
+## [1.3.0]
+
+### Additions
+- Add a persistent "Library update errors" screen listing manga that failed to update, with select-all/individual selection and bulk migration to another source (ported from Komikku)
+
+### Fixes
+- Fix a "ghost" download group summary notification surviving if the app process was killed while downloads were still queued (e.g. swiping the app away from recents)
+
 ## [1.2.5]
 
 ### Fixes
