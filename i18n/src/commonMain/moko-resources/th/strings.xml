@@ -367,9 +367,7 @@
     <string name="backup_has_no_manga">แฟ้มข้อมูลสํารองไม่มีรายการใด ๆ</string>
     <string name="restore_missing_sources">แหล่งที่มาที่หายไป:</string>
     <string name="restore_missing_trackers">ตัวติดตามไม่ได้เข้าสู่ระบบ:</string>
-    <string name="restore_content_full">ข้อมูลจากแฟ้มข้อมูลสำรองจะถูกคืนค่า
-\n
-\nคุณจะต้องติดตั้งส่วนขยายที่ขาดหายไปและลงชื่อเข้าใช้บริการติดตามจึงจะสามารถใช้งานได้</string>
+    <string name="restore_content_full">ข้อมูลจากแฟ้มข้อมูลสำรองจะถูกคืนค่า \n \nคุณจะต้องติดตั้งส่วนขยายที่ขาดหายไปและลงชื่อเข้าใช้บริการติดตามจึงจะสามารถใช้งานได้</string>
     <string name="complete">เสร็จสมบูรณ์</string>
     <string name="crash_logs">บันทึกข้อขัดข้อง</string>
     <string name="dump_crash_logs">ดัมพ์บันทึกข้อขัดข้อง</string>
