@@ -32,7 +32,7 @@ import coil3.PlatformContext
 import coil3.SingletonImageLoader
 import coil3.memory.MemoryCache
 import coil3.network.okhttp.OkHttpNetworkFetcherFactory
-// import coil3.request.allowHardware
+import coil3.request.allowHardware
 import coil3.request.allowRgb565
 import coil3.request.crossfade
 import coil3.util.DebugLogger
@@ -313,7 +313,9 @@ open class App : Application(), DefaultLifecycleObserver, SingletonImageLoader.F
 
             crossfade(true)
             allowRgb565(this@App.getSystemService<ActivityManager>()!!.isLowRamDevice)
-            // allowHardware(true)
+            // Android 8.0/8.1 can crash when a hardware bitmap is drawn to a software canvas.
+            // https://github.com/coil-kt/coil/issues/159
+            allowHardware(Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
             if (networkPreferences.verboseLogging().get()) {
                 logger(DebugLogger())
             }
