@@ -1,7 +1,7 @@
 <div align="center">
 
 <a href="https://github.com/rokku-app/rokku">
-    <img src="./.github/readme-images/app-icon.webp" alt="Rokku logo" height="200px" width="200px" />
+    <img src="./.github/readme-images/app-icon-round.png" alt="Rokku logo" height="200px" width="200px" />
 </a>
 
 # Rokku
@@ -42,16 +42,20 @@ The name is a play on the developer's surname (Rocha, "rock" in Portuguese): 岩
 <details open="">
     <summary><h3>From Rokku</h3></summary>
 
-This fork focuses on maintenance: dependency updates and keeping up with upstream extension/API changes. It's not meant to add new features, though small quality-of-life fixes (including community contributions) do land from time to time.
-
-* Fixed Keiyoushi extension repository/protocol compatibility (extension lib version support, the `Source` interface, and support for the newer protobuf-based extension index), which had been broken since before the fork.
-* Updated OkHttp and other core dependencies (Kotlin, Compose, AndroidX, coroutines/serialization) to versions closer to current Mihon.
+* Fixed Keiyoushi extension repository/protocol compatibility, broken since before the fork, and updated core dependencies (OkHttp, Kotlin, Compose, AndroidX) closer to current Mihon.
+* Rewrote the Shizuku-based extension installer to use the PackageInstaller session APIs directly, fixing broken extension installs.
+* Raised `minSdk` to 26 to fix extensions crashing on modern devices, matching current Mihon (drops Android 6.0/7.0/7.1 support).
 * Fixed the Shikimori tracker (moved to their current domain).
-* Downloads now resume interrupted pages instead of restarting them, and download notifications respect the Android 13+ notification permission.
-* Rewrote the Shizuku-based extension installer to use the actual PackageInstaller session APIs instead of shelling out to `pm`, and hardened the extension install broadcast receiver.
-* Fixed extensions crashing (`AbstractMethodError`/native aborts) on modern devices due to a `minSdk` too low for current extension bytecode and R8 stripping natively-referenced decoder classes; now matches Mihon's `minSdk` (26), which drops support for Android 6.0/7.0/7.1.
-* Completed pt-BR translations.
-* Manga details FAB now shrinks/extends on scroll, and the chapter list no longer sits behind it (contributed by [@Hiirbaf](https://github.com/Hiirbaf)).
+* Downloads now resume interrupted pages instead of restarting them.
+* Manga details FAB now shrinks/extends on scroll instead of overlapping the chapter list.
+
+</details>
+
+<details open="">
+    <summary><h3>From Komikku</h3></summary>
+
+* `Library update errors` screen: keeps a persistent, selectable list of manga that failed to update instead of a one-off log file.
+* Bulk-migrate selected failed manga to another source directly from that list.
 
 </details>
 
