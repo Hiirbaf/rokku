@@ -1,0 +1,10 @@
+CREATE TABLE library_update_errors(
+    _id INTEGER NOT NULL PRIMARY KEY,
+    manga_id INTEGER NOT NULL UNIQUE,
+    message TEXT,
+    date INTEGER NOT NULL,
+    FOREIGN KEY(manga_id) REFERENCES mangas (_id)
+    ON DELETE CASCADE
+);
+
+CREATE INDEX library_update_errors_manga_id_index ON library_update_errors(manga_id);

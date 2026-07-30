@@ -60,6 +60,7 @@ import yokai.domain.base.BasePreferences
 import yokai.domain.simple
 import yokai.i18n.MR
 import yokai.presentation.component.preference.Preference
+import yokai.presentation.libraryUpdateError.LibraryUpdateErrorController
 import yokai.presentation.settings.ComposableSettings
 import yokai.presentation.settings.screen.advanced.StoryBookScreen
 
@@ -84,6 +85,7 @@ object SettingsAdvancedScreen : ComposableSettings() {
                 subtitle = stringResource(MR.strings.helps_fix_bugs),
             ))
             add(getDumpCrashLog())
+            add(getLibraryUpdateErrors())
             add(Preference.PreferenceItem.SwitchPreference(
                 pref = networkPreferences.verboseLogging(),
                 title = stringResource(MR.strings.pref_verbose_logging),
@@ -114,6 +116,18 @@ object SettingsAdvancedScreen : ComposableSettings() {
                 scope.launchIO {
                     CrashLogUtil(context.localeContext).dumpLogs()
                 }
+            }
+        )
+    }
+
+    @Composable
+    private fun getLibraryUpdateErrors(): Preference.PreferenceItem.TextPreference {
+        val router = LocalRouter.currentOrThrow
+
+        return Preference.PreferenceItem.TextPreference(
+            title = stringResource(MR.strings.view_errors),
+            onClick = {
+                router.pushController(LibraryUpdateErrorController().withFadeTransaction())
             }
         )
     }

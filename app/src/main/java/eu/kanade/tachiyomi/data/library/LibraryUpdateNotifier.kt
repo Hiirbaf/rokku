@@ -124,6 +124,11 @@ class LibraryUpdateNotifier(private val context: Context) {
                     context.getString(MR.strings.open_log),
                     pendingIntent,
                 )
+                addAction(
+                    R.drawable.ic_file_open_24dp,
+                    context.getString(MR.strings.view_errors),
+                    NotificationReceiver.openLibraryUpdateErrorsPendingActivity(context),
+                )
             }
                 .build(),
         )

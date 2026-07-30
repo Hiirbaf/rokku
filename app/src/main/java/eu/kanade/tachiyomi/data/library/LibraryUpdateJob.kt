@@ -85,6 +85,7 @@ import uy.kohesive.injekt.api.get
 import uy.kohesive.injekt.injectLazy
 import yokai.domain.category.interactor.GetCategories
 import yokai.domain.chapter.interactor.GetChapter
+import yokai.domain.libraryUpdateError.LibraryUpdateErrorRepository
 import yokai.domain.manga.interactor.GetLibraryManga
 import yokai.domain.manga.interactor.UpdateManga
 import yokai.domain.manga.models.cover
@@ -105,6 +106,7 @@ class LibraryUpdateJob(private val context: Context, workerParams: WorkerParamet
     private val downloadManager: DownloadManager = Injekt.get()
     private val trackManager: TrackManager = Injekt.get()
     private val mangaShortcutManager: MangaShortcutManager = Injekt.get()
+    private val libraryUpdateErrorRepository: LibraryUpdateErrorRepository = Injekt.get()
     private val getLibraryManga: GetLibraryManga = Injekt.get()
     private val updateManga: UpdateManga = Injekt.get()
     private val getTrack: GetTrack = Injekt.get()
@@ -374,9 +376,12 @@ class LibraryUpdateJob(private val context: Context, workerParams: WorkerParamet
             ).getUriCompat(context)
             notifier.showUpdateSkippedNotification(skippedUpdates.map { it.key.title }, skippedFile)
         }
-        if (failedUpdates.isNotEmpty() && Notifications.isNotificationChannelEnabled(context, Notifications.CHANNEL_LIBRARY_ERROR)) {
-            val errorFile = writeErrorFile(failedUpdates).getUriCompat(context)
-            notifier.showUpdateErrorNotification(failedUpdates.map { it.key.title }, errorFile)
+        if (failedUpdates.isNotEmpty()) {
+            libraryUpdateErrorRepository.insertErrors(failedUpdates)
+            if (Notifications.isNotificationChannelEnabled(context, Notifications.CHANNEL_LIBRARY_ERROR)) {
+                val errorFile = writeErrorFile(failedUpdates).getUriCompat(context)
+                notifier.showUpdateErrorNotification(failedUpdates.map { it.key.title }, errorFile)
+            }
         }
         mangaShortcutManager.updateShortcuts(context)
         failedUpdates.clear()

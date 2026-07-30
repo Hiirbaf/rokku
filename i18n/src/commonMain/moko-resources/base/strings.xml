@@ -1148,6 +1148,7 @@
     <string name="open_in_app">Open in app</string>
     <string name="open_in_browser">Open in browser</string>
     <string name="open_log">Open log</string>
+    <string name="view_errors">View errors</string>
     <string name="open_in_webview">Open in WebView</string>
     <string name="options">Options</string>
     <string name="pause">Pause</string>
@@ -1177,6 +1178,8 @@
     <string name="search">Search</string>
     <string name="search_">Search %1$s</string>
     <string name="select_all">Select all</string>
+    <string name="clear_selection">Clear selection</string>
+    <string name="information_no_library_update_errors">No library update errors</string>
     <string name="select_none">Select none</string>
     <string name="select_inverse">Select inverse</string>
     <string name="selection">Selection</string>

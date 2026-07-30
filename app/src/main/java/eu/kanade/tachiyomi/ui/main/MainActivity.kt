@@ -149,6 +149,7 @@ import yokai.domain.recents.interactor.GetRecents
 import yokai.i18n.MR
 import yokai.presentation.core.Constants
 import yokai.presentation.extension.repo.ExtensionRepoController
+import yokai.presentation.libraryUpdateError.LibraryUpdateErrorController
 import yokai.presentation.onboarding.OnboardingController
 import yokai.util.lang.getString
 import android.R as AR
@@ -1086,6 +1087,10 @@ open class MainActivity : BaseActivity<MainActivityBinding>() {
                     controller?.showSheet()
                 }
             }
+            SHORTCUT_LIBRARY_UPDATE_ERRORS -> {
+                if (router.backstack.isEmpty()) nav.selectedItemId = R.id.nav_library
+                router.pushController(LibraryUpdateErrorController().withFadeTransaction())
+            }
             Constants.SHORTCUT_MANGA -> {
                 val extras = intent.extras ?: return false
                 if (router.backstack.isEmpty()) nav.selectedItemId = R.id.nav_library
@@ -1617,6 +1622,7 @@ open class MainActivity : BaseActivity<MainActivityBinding>() {
         // Shortcut actions
         const val SHORTCUT_LIBRARY = "eu.kanade.tachiyomi.SHOW_LIBRARY"
         const val SHORTCUT_RECENTLY_UPDATED = "eu.kanade.tachiyomi.SHOW_RECENTLY_UPDATED"
+        const val SHORTCUT_LIBRARY_UPDATE_ERRORS = "eu.kanade.tachiyomi.SHOW_LIBRARY_UPDATE_ERRORS"
         const val SHORTCUT_RECENTLY_READ = "eu.kanade.tachiyomi.SHOW_RECENTLY_READ"
         const val SHORTCUT_BROWSE = "eu.kanade.tachiyomi.SHOW_BROWSE"
         const val SHORTCUT_DOWNLOADS = "eu.kanade.tachiyomi.SHOW_DOWNLOADS"

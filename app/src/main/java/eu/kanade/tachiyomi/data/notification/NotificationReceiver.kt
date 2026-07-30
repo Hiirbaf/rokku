@@ -535,6 +535,23 @@ class NotificationReceiver : BroadcastReceiver() {
         }
 
         /**
+         * Returns [PendingIntent] that opens the library update errors screen.
+         *
+         * @param context context of application
+         */
+        internal fun openLibraryUpdateErrorsPendingActivity(context: Context): PendingIntent {
+            val newIntent =
+                Intent(context, MainActivity::class.java).setAction(MainActivity.SHORTCUT_LIBRARY_UPDATE_ERRORS)
+                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            return PendingIntent.getActivity(
+                context,
+                0,
+                newIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+            )
+        }
+
+        /**
          * Returns [PendingIntent] that marks a chapter as read and deletes it if preferred
          *
          * @param context context of application

@@ -1,0 +1,41 @@
+CREATE TABLE library_update_errors(
+    _id INTEGER NOT NULL PRIMARY KEY,
+    manga_id INTEGER NOT NULL UNIQUE,
+    message TEXT,
+    date INTEGER NOT NULL,
+    FOREIGN KEY(manga_id) REFERENCES mangas (_id)
+    ON DELETE CASCADE
+);
+
+CREATE INDEX library_update_errors_manga_id_index ON library_update_errors(manga_id);
+
+upsert:
+INSERT INTO library_update_errors(manga_id, message, date)
+VALUES(:mangaId, :message, :date)
+ON CONFLICT(manga_id)
+DO UPDATE
+SET
+    message = :message,
+    date = :date
+WHERE manga_id = :mangaId;
+
+selectAll:
+SELECT
+    library_update_errors._id AS error_id,
+    library_update_errors.manga_id AS manga_id,
+    library_update_errors.message AS message,
+    library_update_errors.date AS date,
+    mangas.title AS manga_title,
+    mangas.thumbnail_url AS manga_thumbnail_url,
+    mangas.source AS manga_source
+FROM library_update_errors
+JOIN mangas
+ON library_update_errors.manga_id = mangas._id
+ORDER BY library_update_errors.date DESC;
+
+deleteByIds:
+DELETE FROM library_update_errors
+WHERE _id IN :errorIds;
+
+deleteAll:
+DELETE FROM library_update_errors;
