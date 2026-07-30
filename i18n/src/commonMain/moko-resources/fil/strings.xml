@@ -345,9 +345,7 @@
     <string name="backup_has_no_manga">Walang manga ang backup.</string>
     <string name="restore_missing_sources">Nawawalang source:</string>
     <string name="restore_missing_trackers">Di naka-login sa mga tracker:</string>
-    <string name="restore_content_full">Ire-restore ang data mula sa file ng backup.
-\n
-\nKakailanganin mo na ma-install ang mga nawawalang mga extension at mag-login sa mga tracking service pagkatapos para magamit muli.</string>
+    <string name="restore_content_full">Ire-restore ang data mula sa file ng backup. \n \nKakailanganin mo na ma-install ang mga nawawalang mga extension at mag-login sa mga tracking service pagkatapos para magamit muli.</string>
     <string name="restoring_backup_canceled">Kinansela ang pag-restore</string>
     <string name="restore_duration">%02d (na) min, %02d (na) seg</string>
     <string name="file_picker_error">Walang nakitang app para makapili</string>
