@@ -43,6 +43,7 @@ class AboutLicenseScreen : Screen() {
                             it.licenses.firstOrNull()?.htmlReadyLicenseContent.orEmpty(),
                         ),
                     )
+                    true
                 }
             )
         }

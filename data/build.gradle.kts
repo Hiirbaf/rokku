@@ -1,12 +1,20 @@
 plugins {
-    id("yokai.android.library")
+    id("com.android.kotlin.multiplatform.library")
     kotlin("multiplatform")
     alias(kotlinx.plugins.serialization)
     alias(libs.plugins.sqldelight)
 }
 
 kotlin {
-    androidTarget()
+    android {
+        namespace = "yokai.data"
+        minSdk = AndroidConfig.MIN_SDK
+        compileSdk = AndroidConfig.COMPILE_SDK
+        enableCoreLibraryDesugaring = true
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+        }
+    }
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -23,10 +31,6 @@ kotlin {
     }
 }
 
-android {
-    namespace = "yokai.data"
-}
-
 sqldelight {
     databases {
         create("Database") {
@@ -35,4 +39,8 @@ sqldelight {
             schemaOutputDirectory.set(project.file("./src/commonMain/sqldelight"))
         }
     }
+}
+
+dependencies {
+    "coreLibraryDesugaring"(libs.desugar)
 }

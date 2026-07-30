@@ -1,13 +1,24 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("yokai.android.library")
+    id("com.android.kotlin.multiplatform.library")
     kotlin("multiplatform")
     alias(kotlinx.plugins.serialization)
 }
 
 kotlin {
-    androidTarget()
+    android {
+        namespace = "eu.kanade.tachiyomi.source"
+        minSdk = AndroidConfig.MIN_SDK
+        compileSdk = AndroidConfig.COMPILE_SDK
+        enableCoreLibraryDesugaring = true
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+        }
+        optimization {
+            consumerKeepRules.files.add(project.file("consumer-proguard.pro"))
+        }
+    }
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -31,16 +42,14 @@ kotlin {
         }
     }
 }
-android {
-    namespace = "eu.kanade.tachiyomi.source"
-    defaultConfig {
-        consumerProguardFile("consumer-proguard.pro")
-    }
-}
 tasks {
     withType<KotlinCompile> {
         compilerOptions.freeCompilerArgs.addAll(
             "-Xexpect-actual-classes",
         )
     }
+}
+
+dependencies {
+    "coreLibraryDesugaring"(libs.desugar)
 }

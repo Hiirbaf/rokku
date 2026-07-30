@@ -1,6 +1,11 @@
 package yokai.build
 
+import com.android.build.api.dsl.BuildFeatures
 import com.android.build.api.dsl.CommonExtension
+import com.android.build.api.dsl.CompileOptions
+import com.android.build.api.dsl.DefaultConfig
+import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.gradle.accessors.dm.LibrariesForAndroidx
 import org.gradle.accessors.dm.LibrariesForCompose
 import org.gradle.accessors.dm.LibrariesForKotlinx
@@ -26,14 +31,12 @@ val Project.libs get() = the<LibrariesForLibs>()
 
 val Project.generatedBuildDir: File get() = project.layout.buildDirectory.asFile.get().resolve("generated/yokai")
 
-internal fun Project.configureAndroid(commonExtension: CommonExtension<*, *, *, *, *, *>) {
+internal fun Project.configureAndroid(commonExtension: CommonExtension) {
     commonExtension.apply {
         compileSdk = AndroidConfig.COMPILE_SDK
         defaultConfig {
             minSdk = AndroidConfig.MIN_SDK
-            ndk {
-                version = AndroidConfig.NDK
-            }
+            ndkVersion = AndroidConfig.NDK
         }
         compileOptions {
             sourceCompatibility = AndroidConfig.JavaVersion
@@ -57,12 +60,12 @@ internal fun Project.configureAndroid(commonExtension: CommonExtension<*, *, *, 
     }
 }
 
-internal fun Project.configureCompose(commonExtension: CommonExtension<*, *, *, *, *, *>) {
+internal fun Project.configureCompose(commonExtension: CommonExtension) {
     pluginManager.apply(kotlinx.plugins.compose.compiler.get().pluginId)
 
     commonExtension.apply {
         buildFeatures {
-            compose = true
+            this.compose = true
         }
 
         dependencies {
@@ -96,4 +99,26 @@ internal fun Project.configureTest() {
             events(TestLogEvent.PASSED, TestLogEvent.SKIPPED, TestLogEvent.FAILED)
         }
     }
+}
+
+// AGP 9's CommonExtension is no longer generic and dropped the Kotlin-DSL-style lambda
+// overloads for these - only the plain Java-bean getter/setter remains. Bridge them back
+// to the lambda style used above, matching how Mihon's build-logic adapted to AGP 9.
+private fun CommonExtension.defaultConfig(block: DefaultConfig.() -> Unit) {
+    defaultConfig.apply(block)
+}
+
+private fun CommonExtension.compileOptions(block: CompileOptions.() -> Unit) {
+    compileOptions.apply(block)
+}
+
+private fun CommonExtension.buildFeatures(block: BuildFeatures.() -> Unit) {
+    buildFeatures.apply(block)
+}
+
+// AGP 9's com.android.kotlin.multiplatform.library plugin folds Android target config into the
+// `kotlin {}` block instead of a separate top-level `android {}` extension, but doesn't provide
+// this `android { }` DSL function itself - matching how Mihon's build-logic bridges it.
+internal fun KotlinMultiplatformExtension.android(block: KotlinMultiplatformAndroidLibraryTarget.() -> Unit) {
+    targets.withType<KotlinMultiplatformAndroidLibraryTarget>().configureEach(block)
 }

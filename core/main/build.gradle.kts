@@ -1,13 +1,21 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("yokai.android.library")
+    id("com.android.kotlin.multiplatform.library")
     kotlin("multiplatform")
     alias(kotlinx.plugins.serialization)
 }
 
 kotlin {
-    androidTarget()
+    android {
+        namespace = "yokai.core.main"
+        minSdk = AndroidConfig.MIN_SDK
+        compileSdk = AndroidConfig.COMPILE_SDK
+        enableCoreLibraryDesugaring = true
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+        }
+    }
     // iosX64()
     // iosArm64()
     // iosSimulatorArm64()
@@ -62,10 +70,6 @@ kotlin {
     }
 }
 
-android {
-    namespace = "yokai.core.main"
-}
-
 tasks {
     withType<KotlinCompile> {
         compilerOptions.freeCompilerArgs.addAll(
@@ -73,4 +77,8 @@ tasks {
             "-opt-in=kotlinx.serialization.ExperimentalSerializationApi",
         )
     }
+}
+
+dependencies {
+    "coreLibraryDesugaring"(libs.desugar)
 }

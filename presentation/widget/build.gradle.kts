@@ -3,7 +3,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("yokai.android.library")
     id("yokai.android.library.compose")
-    kotlin("android")
 }
 
 android {
