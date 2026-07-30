@@ -17,7 +17,7 @@ import eu.kanade.tachiyomi.util.system.withIOContext
 import java.time.Instant
 import java.time.ZoneId
 import java.time.ZonedDateTime
-import java.util.concurrent.TimeUnit
+import kotlin.time.Duration.Companion.minutes
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
@@ -34,7 +34,7 @@ class AnilistApi(val client: OkHttpClient, interceptor: AnilistInterceptor) {
 
     private val authClient = client.newBuilder()
         .addInterceptor(interceptor)
-        .rateLimit(permits = 85, period = 1, unit = TimeUnit.MINUTES)
+        .rateLimit(permits = 85, period = 1.minutes)
         .build()
 
     suspend fun addLibManga(track: Track): Track {
