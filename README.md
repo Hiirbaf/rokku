@@ -42,11 +42,12 @@ The name is a play on the developer's surname (Rocha, "rock" in Portuguese): 岩
 <details open="">
     <summary><h3>From Rokku</h3></summary>
 
-* Rewrote the Shizuku-based extension installer to use the PackageInstaller session APIs directly, fixing broken extension installs.
-* Raised minSdk to 26 to fix extensions crashing on modern devices, matching current Mihon (drops Android 6.0/7.0/7.1 support).
+* Fixed broken extension installs via Shizuku.
 * Fixed the Shikimori tracker.
 * Downloads now resume interrupted pages instead of restarting them.
 * Manga details FAB now shrinks/extends on scroll instead of overlapping the chapter list.
+* Added support for extension-lib 1.6.
+* Added support for Android's native "App info" settings shortcut.
 
 </details>
 
@@ -109,6 +110,10 @@ The name is a play on the developer's surname (Rocha, "rock" in Portuguese): 岩
 * View all chapters right in the reader.
 * A lot more Material Design You additions.
 * Android 12 features such as automatic extension and app updates.
+* Copy/paste manga covers via a long-press context menu.
+* Vertical page seekbar option for webtoon/vertical reading modes.
+* Manga descriptions render inline images and auto-link URLs.
+* Floating search toolbar now has a drop shadow.
 
 </details>
 
