@@ -47,6 +47,7 @@ import eu.kanade.tachiyomi.data.coil.MangaCoverFetcher
 import eu.kanade.tachiyomi.data.coil.MangaCoverKeyer
 import eu.kanade.tachiyomi.data.coil.MangaKeyer
 import eu.kanade.tachiyomi.data.coil.TachiyomiImageDecoder
+import eu.kanade.tachiyomi.data.download.DownloadJob
 import eu.kanade.tachiyomi.data.notification.Notifications
 import eu.kanade.tachiyomi.data.preference.PreferencesHelper
 import eu.kanade.tachiyomi.network.NetworkHelper
@@ -137,6 +138,14 @@ open class App : Application(), DefaultLifecycleObserver, SingletonImageLoader.F
             .launchIn(scope)
 
         setupNotificationChannels()
+
+        // If the process was killed mid-download (e.g. swiped from recents), the downloader
+        // coroutine never reaches Downloader.stop()/dismiss(), leaving the grouped download
+        // notification's summary orphaned with no children. Clear it on cold start unless a
+        // download job is actually still active (WorkManager can resume across process death).
+        if (!DownloadJob.isRunning(this)) {
+            NotificationManagerCompat.from(this).cancel(Notifications.ID_DOWNLOAD_GROUP_SUMMARY)
+        }
 
         MangaCoverMetadata.load()
         preferences.nightMode().changes()
