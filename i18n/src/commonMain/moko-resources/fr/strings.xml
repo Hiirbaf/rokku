@@ -594,9 +594,7 @@
     <string name="backup_has_no_manga">La sauvegarde ne contient aucune série.</string>
     <string name="restore_missing_sources">Sources manquantes :</string>
     <string name="restore_missing_trackers">Traceurs non connectés :</string>
-    <string name="restore_content_full">Les données du fichier de sauvegarde seront restaurées.
-\n
-\nVous devrez installer les extensions manquantes et vous connecter ensuite aux services de suivi pour les utiliser.</string>
+    <string name="restore_content_full">Les données du fichier de sauvegarde seront restaurées. \n \nVous devrez installer les extensions manquantes et vous connecter ensuite aux services de suivi pour les utiliser.</string>
     <string name="restoring_backup_canceled">Restauration de sauvegarde annulée</string>
     <string name="restore_duration">%02d min, %02d s</string>
     <string name="source_migration_guide">Guide de migration des sources</string>
@@ -843,7 +841,7 @@
     <string name="publishing_finished">Publication terminée</string>
     <string name="cancelled">Annulé</string>
     <string name="on_hiatus">En pause</string>
-    <string name="tracking_info">Permet de synchroniser automatiquement les chapitres lus avec les services externes proposés. Allez dans le bouton « Suivi » d\'une série pour activer son suivi.</string>
+    <string name="tracking_info">Permet de synchroniser automatiquement les chapitres lus avec les services externes proposés. Allez dans le bouton « Suivi » d\'une série pour activer son suivi.</string>
     <string name="enhanced_services">Services avancés</string>
     <string name="enhanced_tracking_info">Services qui fournissent des fonctionnalités améliorées pour des sources spécifiques. Les mangas sont automatiquement suivis quand ils sont ajoutés à votre bibliothèque.</string>
     <string name="update_tracking_scoring_type">Mettre à jour le type de notation de %1$s</string>
