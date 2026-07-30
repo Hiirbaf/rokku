@@ -42,10 +42,9 @@ The name is a play on the developer's surname (Rocha, "rock" in Portuguese): 岩
 <details open="">
     <summary><h3>From Rokku</h3></summary>
 
-* Fixed Keiyoushi extension repository/protocol compatibility, broken since before the fork, and updated core dependencies (OkHttp, Kotlin, Compose, AndroidX) closer to current Mihon.
 * Rewrote the Shizuku-based extension installer to use the PackageInstaller session APIs directly, fixing broken extension installs.
-* Raised `minSdk` to 26 to fix extensions crashing on modern devices, matching current Mihon (drops Android 6.0/7.0/7.1 support).
-* Fixed the Shikimori tracker (moved to their current domain).
+* Raised minSdk to 26 to fix extensions crashing on modern devices, matching current Mihon (drops Android 6.0/7.0/7.1 support).
+* Fixed the Shikimori tracker.
 * Downloads now resume interrupted pages instead of restarting them.
 * Manga details FAB now shrinks/extends on scroll instead of overlapping the chapter list.
 
@@ -54,7 +53,7 @@ The name is a play on the developer's surname (Rocha, "rock" in Portuguese): 岩
 <details open="">
     <summary><h3>From Komikku</h3></summary>
 
-* `Library update errors` screen: keeps a persistent, selectable list of manga that failed to update instead of a one-off log file.
+* Library update errors screen: keeps a persistent, selectable list of manga that failed to update instead of a one-off log file.
 * Bulk-migrate selected failed manga to another source directly from that list.
 
 </details>

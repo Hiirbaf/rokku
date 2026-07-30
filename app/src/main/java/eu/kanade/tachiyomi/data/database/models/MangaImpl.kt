@@ -1,12 +1,13 @@
 package eu.kanade.tachiyomi.data.database.models
 
-import kotlinx.serialization.json.JsonObject
 import eu.kanade.tachiyomi.data.download.DownloadManager
 import eu.kanade.tachiyomi.data.download.DownloadProvider
 import eu.kanade.tachiyomi.data.library.CustomMangaManager
 import eu.kanade.tachiyomi.domain.manga.models.Manga
 import eu.kanade.tachiyomi.source.model.SManga
 import eu.kanade.tachiyomi.source.model.UpdateStrategy
+import kotlin.jvm.Transient
+import kotlinx.serialization.json.JsonObject
 import uy.kohesive.injekt.injectLazy
 
 open class MangaImpl(
@@ -71,10 +72,11 @@ open class MangaImpl(
 
     override var update_strategy: UpdateStrategy = UpdateStrategy.ALWAYS_UPDATE
 
-    override var memo: JsonObject = JsonObject(emptyMap())
-
     // TODO: It's probably fine to set this to non-null string in the future
     override var filtered_scanlators: String? = ""
+
+    @Transient
+    override var memo: JsonObject = JsonObject(emptyMap())
 
     override lateinit var ogTitle: String
     override var ogAuthor: String? = null

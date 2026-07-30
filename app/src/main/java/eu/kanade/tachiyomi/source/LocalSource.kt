@@ -238,7 +238,7 @@ class LocalSource(private val context: Context) : CatalogueSource, UnmeteredSour
         fetchChapters: Boolean,
     ): SMangaUpdate {
         val updatedManga = if (fetchDetails) loadMangaDetails(manga) else manga
-        val updatedChapters = if (fetchChapters) loadChapterList(manga) else chapters
+        val updatedChapters = if (fetchChapters) loadChapterList(updatedManga) else chapters
         return SMangaUpdate(updatedManga, updatedChapters)
     }
 

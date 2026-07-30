@@ -6,6 +6,8 @@ import yokai.domain.extension.repo.model.ExtensionRepo
 
 @Serializable
 data class ExtensionRepoMetaDto(
+    @SerialName("index_v2")
+    val indexV2: String? = null,
     val meta: ExtensionRepoDto,
     @SerialName("index_v2") val indexV2: String? = null,
 )
@@ -13,7 +15,7 @@ data class ExtensionRepoMetaDto(
 @Serializable
 data class ExtensionRepoDto(
     val name: String,
-    val shortName: String?,
+    val shortName: String? = null,
     val website: String,
     val signingKeyFingerprint: String,
 )

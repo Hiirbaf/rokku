@@ -276,7 +276,7 @@ class LibraryUpdateJob(private val context: Context, workerParams: WorkerParamet
                         ensureActive()
                         val networkManga = try {
                             source.getMangaUpdate(
-                                manga.manga.copy(),
+                                manga = manga.manga.copy(),
                                 chapters = emptyList(),
                                 fetchDetails = true,
                                 fetchChapters = false,
@@ -431,7 +431,7 @@ class LibraryUpdateJob(private val context: Context, workerParams: WorkerParamet
             notifier.showProgressNotification(manga.manga, progress, mangaToUpdate.size)
             val fetchDetailsToo = preferences.refreshCoversToo().get()
             val mangaUpdate = source.getMangaUpdate(
-                manga.manga.copy(),
+                manga = manga.manga.copy(),
                 chapters = emptyList(),
                 fetchDetails = fetchDetailsToo,
                 fetchChapters = true,

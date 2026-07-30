@@ -342,20 +342,27 @@ abstract class DelegatedHttpSource(val delegate: HttpSource): HttpSource() {
     open fun pageNumber(uri: Uri): Int? = uri.pathSegments.lastOrNull()?.toIntOrNull()
     abstract suspend fun fetchMangaFromChapterUrl(uri: Uri): Triple<SChapter, SManga, List<SChapter>>?
 
-    open suspend fun getMangaDetailsByUrl(url: String): SManga {
+    open suspend fun getMangaUpdateByUrl(
+        url: String,
+        chapters: List<SChapter> = emptyList(),
+        fetchDetails: Boolean = true,
+        fetchChapters: Boolean = true,
+    ): SMangaUpdate {
         val manga = SManga.create().apply {
             this.url = url
             this.title = ""
         }
-        return delegate.getMangaUpdate(manga.copy(), emptyList(), fetchDetails = true, fetchChapters = false).manga
+        return delegate.getMangaUpdate(manga, chapters, fetchDetails, fetchChapters)
     }
 
+    @Deprecated("Use getMangaUpdateByUrl instead", ReplaceWith("getMangaUpdateByUrl(url)"))
+    open suspend fun getMangaDetailsByUrl(url: String): SManga {
+        return getMangaUpdateByUrl(url, fetchDetails = true, fetchChapters = false).manga
+    }
+
+    @Deprecated("Use getMangaUpdateByUrl instead", ReplaceWith("getMangaUpdateByUrl(url)"))
     open suspend fun getChapterListByUrl(url: String): List<SChapter> {
-        val manga = SManga.create().apply {
-            this.url = url
-            this.title = ""
-        }
-        return delegate.getMangaUpdate(manga, emptyList(), fetchDetails = false, fetchChapters = true).chapters
+        return getMangaUpdateByUrl(url, fetchDetails = false, fetchChapters = true).chapters
     }
 
     protected open fun ensureDelegateCompatible() {

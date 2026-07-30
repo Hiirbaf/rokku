@@ -31,6 +31,7 @@ class NetworkHelper(
             )
             .addInterceptor(UncaughtExceptionInterceptor())
             .addInterceptor(UserAgentInterceptor(::defaultUserAgent))
+            // KeiSource asserts IgnoreGzip/Brotli are absent on the host client.
 
         block(builder)
 
