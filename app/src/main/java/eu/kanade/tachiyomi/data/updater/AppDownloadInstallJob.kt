@@ -1,12 +1,8 @@
 package eu.kanade.tachiyomi.data.updater
 
-import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
-import android.content.pm.PackageInstaller
 import android.content.pm.ServiceInfo
 import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import androidx.work.Constraints
@@ -20,7 +16,6 @@ import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import co.touchlab.kermit.Logger
-import eu.kanade.tachiyomi.BuildConfig
 import eu.kanade.tachiyomi.data.notification.Notifications
 import eu.kanade.tachiyomi.data.preference.PreferencesHelper
 import eu.kanade.tachiyomi.network.GET
@@ -33,20 +28,12 @@ import eu.kanade.tachiyomi.util.storage.saveTo
 import eu.kanade.tachiyomi.util.system.connectivityManager
 import eu.kanade.tachiyomi.util.system.e
 import eu.kanade.tachiyomi.util.system.jobIsRunning
-import eu.kanade.tachiyomi.util.system.launchUI
 import eu.kanade.tachiyomi.util.system.localeContext
-import eu.kanade.tachiyomi.util.system.notificationManager
-import eu.kanade.tachiyomi.util.system.toast
 import eu.kanade.tachiyomi.util.system.tryToSetForeground
 import eu.kanade.tachiyomi.util.system.withIOContext
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.withContext
 import okhttp3.Call
 import okhttp3.internal.http2.ErrorCode
 import okhttp3.internal.http2.StreamResetException
@@ -56,7 +43,6 @@ import uy.kohesive.injekt.injectLazy
 import java.io.File
 import java.lang.ref.WeakReference
 
-@OptIn(DelicateCoroutinesApi::class)
 class AppDownloadInstallJob(private val context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
 
@@ -161,11 +147,20 @@ class AppDownloadInstallJob(private val context: Context, workerParams: WorkerPa
                 response.close()
                 throw Exception("Unsuccessful response")
             }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                startInstalling(apkFile, notifyOnInstall)
-            } else {
-                notifier.onDownloadFinished(apkFile.getUriCompat(context))
+            // Rather than committing a PackageInstaller session (which fires the confirm dialog
+            // from this background job/broadcast context and is routinely silently blocked by
+            // Background Activity Launch restrictions, leaving the update stuck "Installing"
+            // forever), always hand off to a plain ACTION_VIEW install prompt the user has to
+            // tap themselves - the same approach Mihon uses, and the same mechanism this file
+            // already fell back to on pre-S devices or once the session path got stuck. A tap
+            // on a notification action is a user-initiated foreground launch, so it's never
+            // subject to BAL restrictions in the first place.
+            if (notifyOnInstall) {
+                PreferenceManager.getDefaultSharedPreferences(context).edit {
+                    putBoolean(NOTIFY_ON_INSTALL_KEY, true)
+                }
             }
+            notifier.onDownloadFinished(apkFile.getUriCompat(context))
         } catch (error: Exception) {
             Logger.e(error)
             if (error is CancellationException || isStopped ||
@@ -178,82 +173,8 @@ class AppDownloadInstallJob(private val context: Context, workerParams: WorkerPa
         }
     }
 
-    @RequiresApi(31)
-    private suspend fun startInstalling(file: File, notifyOnInstall: Boolean) {
-        try {
-            val packageInstaller = context.packageManager.packageInstaller
-            val data = file.inputStream()
-
-            val params = PackageInstaller.SessionParams(
-                PackageInstaller.SessionParams.MODE_FULL_INSTALL,
-            )
-            params.setRequireUserAction(PackageInstaller.SessionParams.USER_ACTION_NOT_REQUIRED)
-            val sessionId = packageInstaller.createSession(params)
-            val session = packageInstaller.openSession(sessionId)
-            session.openWrite("package", 0, -1).use { packageInSession ->
-                data.copyTo(packageInSession)
-            }
-            if (notifyOnInstall) {
-                PreferenceManager.getDefaultSharedPreferences(context).edit {
-                    putBoolean(NOTIFY_ON_INSTALL_KEY, true)
-                }
-            }
-
-            val newIntent = Intent(context, AppUpdateBroadcast::class.java)
-                .setAction(PACKAGE_INSTALLED_ACTION)
-                .putExtra(EXTRA_NOTIFY_ON_INSTALL, notifyOnInstall)
-                .putExtra(EXTRA_FILE_URI, file.getUriCompat(context).toString())
-
-            val pendingIntent = PendingIntent.getBroadcast(context, -10053, newIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE)
-            val statusReceiver = pendingIntent.intentSender
-            installResolved = false
-            session.commit(statusReceiver)
-            notifier.onInstalling()
-            withContext(Dispatchers.IO) {
-                data.close()
-                GlobalScope.launchUI {
-                    delay(5000)
-                    val hasNotification = context.notificationManager
-                        .activeNotifications.any { it.id == Notifications.ID_UPDATER }
-                    // If the package manager crashes for whatever reason (china phone)
-                    // set a timeout and let the user manually install
-                    if (packageInstaller.getSessionInfo(sessionId) == null && !hasNotification) {
-                        fallBackToManualInstall(file)
-                        return@launchUI
-                    }
-                    // Some OEM skins (e.g. HyperOS/MIUI) silently block the confirm-install
-                    // activity launched from a background broadcast receiver, so the session
-                    // stays alive but stuck waiting on a confirmation the user never sees.
-                    // Give it more time, then fall back to a manual install prompt regardless.
-                    delay(15000)
-                    if (!installResolved) {
-                        fallBackToManualInstall(file)
-                    }
-                }
-            }
-        } catch (error: Exception) {
-            // Either install package can't be found (probably bots) or there's a security exception
-            // with the download manager. Nothing we can workaround.
-            context.toast(error.message)
-            fallBackToManualInstall(file)
-        }
-    }
-
-    private fun fallBackToManualInstall(file: File) {
-        notifier.cancelInstallNotification()
-        notifier.onDownloadFinished(file.getUriCompat(context))
-        PreferenceManager.getDefaultSharedPreferences(context).edit {
-            remove(NOTIFY_ON_INSTALL_KEY)
-        }
-    }
-
     companion object {
         private const val TAG = "AppDownloadInstaller"
-        @Volatile
-        internal var installResolved = false
-        const val PACKAGE_INSTALLED_ACTION =
-            "${BuildConfig.APPLICATION_ID}.SESSION_SELF_API_PACKAGE_INSTALLED"
-        internal const val EXTRA_FILE_URI = "${BuildConfig.APPLICATION_ID}.AppInstaller.FILE_URI"
         internal const val EXTRA_NOTIFY_ON_INSTALL = "ACTION_ON_INSTALL"
         internal const val EXTRA_DOWNLOAD_URL = "DOWNLOAD_URL"
         internal const val NOTIFY_ON_INSTALL_KEY = "notify_on_install_complete"
