@@ -124,9 +124,7 @@
     <string name="uninstall">Šalinti</string>
     <string name="ext_installer_shizuku_stopped">Shizuku neveikia</string>
     <string name="ext_installer_shizuku_unavailable_dialog">Instaliuoti ir paleisti Shizuku, kad galėtumėte naudoti Shizuku kaip papildinių instaliuotoją.</string>
-    <string name="restore_content_full">Atsarginės failo kopijos duomenys bus atkurti.
-\n
-\nNorėdami jais naudotis, turėsite įdiegti trūkstamus plėtinius ir po to prisijungti prie stebėjimo paslaugų.</string>
+    <string name="restore_content_full">Atsarginės failo kopijos duomenys bus atkurti. \n \nNorėdami jais naudotis, turėsite įdiegti trūkstamus plėtinius ir po to prisijungti prie stebėjimo paslaugų.</string>
     <string name="restoring_backup_canceled">Atšauktas atkūrimas</string>
     <string name="backup_restore_invalid_uri">Klaida: tuščias URI</string>
     <string name="creating_backup">Atsarginės kopijos kūrimas</string>

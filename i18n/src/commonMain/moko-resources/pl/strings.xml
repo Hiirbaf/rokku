@@ -616,9 +616,7 @@
     <string name="next">Następny</string>
     <string name="menu">menu</string>
     <string name="whats_new_this_release">Co nowego w tej wersji</string>
-    <string name="restore_content_full">Dane z kopii zapasowej zostaną przywrócone.
-\n
-\nBędziesz musiał zainstalować wszystkie brakujące rozszerzenia oraz zalogować się do usług śledzenia by móc je używać.</string>
+    <string name="restore_content_full">Dane z kopii zapasowej zostaną przywrócone. \n \nBędziesz musiał zainstalować wszystkie brakujące rozszerzenia oraz zalogować się do usług śledzenia by móc je używać.</string>
     <string name="backup_in_progress">Kopia zapasowa jest już w trakcie tworzenia</string>
     <string name="restore_in_progress">Kopia zapasowa jest już w trakcie przywracania</string>
     <string name="pressing_back_to_start">Wciskanie wstecz by wrócić na ekran startowy</string>

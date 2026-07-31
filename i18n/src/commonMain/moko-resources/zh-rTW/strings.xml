@@ -496,9 +496,7 @@
     <string name="pauses_reading_history">暫停閱讀記錄</string>
     <string name="strawberry_daiquiri">草莓黛綺莉</string>
     <string name="pure_black_dark_mode">純黑深色模式</string>
-    <string name="restore_content_full">即將還原備份中的資料。
-\n
-\n隨後請安裝所有遺失的擴充套件並重新登入各歷程平台。</string>
+    <string name="restore_content_full">即將還原備份中的資料。 \n \n隨後請安裝所有遺失的擴充套件並重新登入各歷程平台。</string>
     <string name="show_in_sources_and_extensions">在來源和擴充套件清單中顯示</string>
     <string name="exclude_">排除：%s</string>
     <string name="include_">包含：%s</string>

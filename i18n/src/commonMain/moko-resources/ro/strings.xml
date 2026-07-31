@@ -625,9 +625,7 @@
     <string name="include_">Includeți: %s</string>
     <string name="next">Următorul</string>
     <string name="channel_errors">Erori</string>
-    <string name="restore_content_full">Datele din fișierul de rezervă vor fi restaurate.
-\n
-\nVa trebui să instalați toate extensiile lipsă și să vă conectați ulterior la serviciile de urmărire pentru a le utiliza.</string>
+    <string name="restore_content_full">Datele din fișierul de rezervă vor fi restaurate. \n \nVa trebui să instalați toate extensiile lipsă și să vă conectați ulterior la serviciile de urmărire pentru a le utiliza.</string>
     <string name="cancel_all_for_series">Anulează totul pentru această serie</string>
     <string name="midnight_dusk">Amurg de Miazănoapte</string>
     <string name="strawberry_daiquiri">Daiquiri de căpșuni</string>

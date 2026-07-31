@@ -505,9 +505,7 @@
     <string name="paged">Stránkovanie</string>
     <string name="pauses_reading_history">Pozastaví históriu čítania</string>
     <string name="backup_has_no_manga">Záloha neobsahuje žiadnu mangu.</string>
-    <string name="restore_content_full">Údaje zo záložného súboru sa obnovia.
-\n
-\nBudete musieť nainštalovať všetky chýbajúce rozšírenia a potom sa prihlásiť do sledovacích služieb, aby ste ich mohli používať.</string>
+    <string name="restore_content_full">Údaje zo záložného súboru sa obnovia. \n \nBudete musieť nainštalovať všetky chýbajúce rozšírenia a potom sa prihlásiť do sledovacích služieb, aby ste ich mohli používať.</string>
     <string name="complete">Kompletný</string>
     <string name="include_">Zahrnúť: %s</string>
     <string name="open_source_licenses">Licencia Open Source</string>

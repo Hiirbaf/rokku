@@ -574,9 +574,7 @@
     <string name="crash_log_saved">تم حفظ سجلات الأخطاء</string>
     <string name="updated_to_">حُدِّث إلى الإصدار v%1$s</string>
     <string name="next">التالي</string>
-    <string name="restore_content_full">سوف تُستعاد البيانات من ملفِّ النسخ الاحتياطيِّ.
-        \n
-        \nعليك تثبيت أيِّ إضافة مفقودة وتسجيل دخولك في خدمات التتبع لتستخدمهم.</string>
+    <string name="restore_content_full">سوف تُستعاد البيانات من ملفِّ النسخ الاحتياطيِّ. \n \nعليك تثبيت أيِّ إضافة مفقودة وتسجيل دخولك في خدمات التتبع لتستخدمهم.</string>
     <string name="label_global_search">بحث شامل</string>
     <string name="disabled">معطل</string>
     <string name="landscape">عرضيٌّ</string>

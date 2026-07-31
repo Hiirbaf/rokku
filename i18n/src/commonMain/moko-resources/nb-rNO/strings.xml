@@ -367,9 +367,7 @@
     <string name="finished_reading_date">Sluttdato for lesing</string>
     <string name="backup_has_no_manga">Sikkerhetskopi inneholder ingen manga.</string>
     <string name="restore_missing_trackers">Sporingstjenester ikke logget inn i:</string>
-    <string name="restore_content_full">Data fra backup-filen will be gjenoprettet
-\n
-\nDu vil måtte installere manglende utvidelser og logge inn på sporings-tjenester etterpå for å bruke dem.</string>
+    <string name="restore_content_full">Data fra backup-filen will be gjenoprettet \n \nDu vil måtte installere manglende utvidelser og logge inn på sporings-tjenester etterpå for å bruke dem.</string>
     <string name="crash_logs">Feillogg</string>
     <string name="dump_crash_logs">Dump feillogg</string>
     <string name="saves_error_logs">Lagrer feillogger i en fil som kan sendes til utviklerne</string>

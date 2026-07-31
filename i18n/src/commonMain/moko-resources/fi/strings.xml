@@ -387,9 +387,7 @@
     <string name="backup_has_no_manga">Varmuuskopio ei sisällä mangaa.</string>
     <string name="restore_missing_sources">Puuttuvat lähteet:</string>
     <string name="restore_missing_trackers">Seurantapalvelimet joihin et ole kirjautunut sisään:</string>
-    <string name="restore_content_full">Varmuuskopiotiedoston tiedot palautetaan.
-\n
-\nSinun on asennattava puuttuvat laajennukset ja kirjauduttava seurantapalveluihin jälkeenpäin käyttääksesi niitä.</string>
+    <string name="restore_content_full">Varmuuskopiotiedoston tiedot palautetaan. \n \nSinun on asennattava puuttuvat laajennukset ja kirjauduttava seurantapalveluihin jälkeenpäin käyttääksesi niitä.</string>
     <string name="restoring_backup_canceled">Palautus peruttu</string>
     <string name="restore_duration">%02d min, %02d sek</string>
     <string name="animate_page_transitions">Animoi sivusiirtymät</string>

@@ -596,9 +596,7 @@
     <string name="backup_has_no_manga">Il backup non contiene nessuna voce.</string>
     <string name="restore_missing_sources">Fonti mancanti:</string>
     <string name="restore_missing_trackers">Trackers non collegati:</string>
-    <string name="restore_content_full">I dati dal file di backup verranno recuperati.
-\n
-\nAvrai bisogno di installare le estensioni mancanti ed effettuare il login nei trackers per utilizzarli.</string>
+    <string name="restore_content_full">I dati dal file di backup verranno recuperati. \n \nAvrai bisogno di installare le estensioni mancanti ed effettuare il login nei trackers per utilizzarli.</string>
     <string name="restoring_backup_canceled">Ripristino cancellato</string>
     <string name="open_log">Apri log</string>
     <string name="backup_and_restore">Backup e ripristino</string>

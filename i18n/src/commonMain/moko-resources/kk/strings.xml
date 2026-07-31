@@ -329,9 +329,7 @@
     <string name="backup_failed">Сақтық көшірмесі жасалынбады</string>
     <string name="backup_has_no_manga">Сақтық көшірмеде туынды жоқ</string>
     <string name="restore_missing_trackers">Бақылау сервисіне кірілмеген:</string>
-    <string name="restore_content_full">Сақтық көшірме файлынан мәлімет қалпына келеді.
-\n
-\nОны қоллану үшін сізге түгел жетпей тұрған қосымшаларды жүктеп, бақылау сервистеріне кіру керек.</string>
+    <string name="restore_content_full">Сақтық көшірме файлынан мәлімет қалпына келеді. \n \nОны қоллану үшін сізге түгел жетпей тұрған қосымшаларды жүктеп, бақылау сервистеріне кіру керек.</string>
     <string name="what_should_backup">Сақтық көшірмесіне нені қалайсыз\?</string>
     <string name="saves_error_logs">Қателер тарихын әзірлеушілерге жіберу үшін файлға сақтайды</string>
     <string name="send_crash_report">Қате туралы есептерді жіберу</string>

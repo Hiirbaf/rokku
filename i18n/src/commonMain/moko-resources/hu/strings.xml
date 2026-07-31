@@ -461,9 +461,7 @@
     <string name="log_in_to_">Jelentkezz be %1$s-ba/be</string>
     <string name="save_chapters_as_cbz">Mentés CBZ archívumkén</string>
     <string name="failed_to_load_pages_">%1$s oldalt nem lehetett betölteni</string>
-    <string name="restore_content_full">Adatok visszaállítása a biztonsági mentésből.
-\n
-\nEzek után telepíteni kell a hiányzó bővítményeket és be kell jelentkezni a tracking szolgáltatásokba, hogy újra használhassa őket.</string>
+    <string name="restore_content_full">Adatok visszaállítása a biztonsági mentésből. \n \nEzek után telepíteni kell a hiányzó bővítményeket és be kell jelentkezni a tracking szolgáltatásokba, hogy újra használhassa őket.</string>
     <string name="set_as_default">Beállítás alapértelmezettként</string>
     <string name="backup_has_no_manga">A biztonsági mentés nem tartalmaz mangát.</string>
     <string name="check_for_extension_updates">Bővítmény frissítések keresése</string>

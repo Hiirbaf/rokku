@@ -560,9 +560,7 @@
     <string name="backup_has_no_manga">Резервна копія не містить жодної манґи.</string>
     <string name="restore_missing_sources">Відсутні джерела:</string>
     <string name="restore_missing_trackers">Трекери не авторизовано:</string>
-    <string name="restore_content_full">Дані з файлу резервної копії буде відновлено.
-\n
-\nВам потрібно встановити розширення яких бракує та увійти в сервіси відстеження для їх використання.</string>
+    <string name="restore_content_full">Дані з файлу резервної копії буде відновлено. \n \nВам потрібно встановити розширення яких бракує та увійти в сервіси відстеження для їх використання.</string>
     <string name="restoring_backup_canceled">Відновлення відмінено</string>
     <string name="restore_duration">%02d хв, %02d сек</string>
     <string name="source_migration_guide">Гайд по міграції джерел</string>

@@ -403,9 +403,7 @@
     <string name="failed_to_bypass_cloudflare">Cloudflare를 통과하지 못했습니다</string>
     <string name="chapters_">%1$s화</string>
     <string name="refresh_tracking">트래커 동기화 새로고침</string>
-    <string name="restore_content_full">백업 파일에서 데이터가 복구됩니다.
-\n
-\n복구 완료 후 없어진 소스를 다시 설치하고 트래킹 서비스에 로그인 해야 합니다.</string>
+    <string name="restore_content_full">백업 파일에서 데이터가 복구됩니다. \n \n복구 완료 후 없어진 소스를 다시 설치하고 트래킹 서비스에 로그인 해야 합니다.</string>
     <string name="restore_missing_trackers">로그인 되지않은 트래커:</string>
     <string name="every_3_days">3일</string>
     <string name="check_site_in_web">WebView에서 사이트 열기</string>

@@ -239,9 +239,7 @@
     <string name="restore_backup">Ibalik ang backup</string>
     <string name="restore_from_backup_file">Ibalik ang librarya gikan sa backup file</string>
     <string name="backup_location">Backup nga lokasyon</string>
-    <string name="restore_content_full">Ang datos gikan sa backup file mapasig-uli.
-\n
-\nKinahanglan nimo nga i-install ang bisan unsang nawala nga mga extension ug mag-log in sa mga serbisyo sa pagsubay pagkahuman aron magamit kini.</string>
+    <string name="restore_content_full">Ang datos gikan sa backup file mapasig-uli. \n \nKinahanglan nimo nga i-install ang bisan unsang nawala nga mga extension ug mag-log in sa mga serbisyo sa pagsubay pagkahuman aron magamit kini.</string>
     <string name="what_should_backup">Unsa ang gusto nimo i-backup\?</string>
     <string name="clear_cookies">Tin-aw nga cookies</string>
     <string name="check_for_extension_updates">Susiha ang mga update sa extension</string>

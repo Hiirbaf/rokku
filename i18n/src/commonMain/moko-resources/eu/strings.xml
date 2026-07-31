@@ -352,9 +352,7 @@
     <string name="webview_is_required">WebView beharrezkoa da Tachiyomi-rentzat</string>
     <string name="select_backup_file">Hautatu babeskopia fitxategia</string>
     <string name="show_unread_badges">Erakutsi irakurri gabeko bereizgarriak</string>
-    <string name="restore_content_full">Babeskopia fitxategiko datuak berreskuratu egingo dira.
-\n
-\nFalta diren luzapenak instalatu eta jarraipen-zerbitzuetan saioa hasi beharko duzu ondoren horiek erabiltzeko.</string>
+    <string name="restore_content_full">Babeskopia fitxategiko datuak berreskuratu egingo dira. \n \nFalta diren luzapenak instalatu eta jarraipen-zerbitzuetan saioa hasi beharko duzu ondoren horiek erabiltzeko.</string>
     <string name="check_for_extension_updates">Egiaztatu luzapenen eguneraketak</string>
     <string name="updates_tracking_details">Jarraipen zerbitzuetatik egoera, puntuazioa eta irakurritako azken kapitulua eguneratzen ditu</string>
     <string name="about_dont_kill_my_app">Fabrikatzaile batzuek aplikazioen murrizketa gehigarriak dituzte, atzeko planoko zerbitzuak akabatzen dituztenak. Webgune honek informazio gehiago du nola konpondu jakiteko.</string>

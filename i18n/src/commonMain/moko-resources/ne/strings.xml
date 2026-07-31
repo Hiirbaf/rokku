@@ -277,9 +277,7 @@
     <string name="restore_completed">रिस्टोर सम्पन्न भयो</string>
     <string name="restore_missing_sources">छुटेको स्रोतहरू:</string>
     <string name="restore_missing_trackers">ट्र्याकरहरूमा लगइन छैनन्:</string>
-    <string name="restore_content_full">ब्याकअप फाइलबाट डेटा रिस्टोर हुनेछ।
-\n
-\nतपाईंले कुनै पनि छुटेको एक्सटेन्शनहरू स्थापना गर्न र तिनीहरूलाई प्रयोग गर्न पछि ट्र्याकिङ सेवाहरूमा लगइन गर्न आवश्यक हुनेछ।</string>
+    <string name="restore_content_full">ब्याकअप फाइलबाट डेटा रिस्टोर हुनेछ। \n \nतपाईंले कुनै पनि छुटेको एक्सटेन्शनहरू स्थापना गर्न र तिनीहरूलाई प्रयोग गर्न पछि ट्र्याकिङ सेवाहरूमा लगइन गर्न आवश्यक हुनेछ।</string>
     <string name="restoring_backup_canceled">रिस्टोर रद्द गरियो</string>
     <string name="creating_backup">ब्याकअप सिर्जना गर्दै</string>
     <string name="what_should_backup">तपाई के ब्याकअप गर्न चाहनुहुन्छ\?</string>

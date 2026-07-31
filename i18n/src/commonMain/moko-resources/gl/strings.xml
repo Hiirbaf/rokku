@@ -430,9 +430,7 @@
     <string name="dump_crash_logs">Baixar os rexistros de erros</string>
     <string name="empty_backup_error">Ningún elemento na biblioteca co que facer a copia de seguridade</string>
     <string name="restore_missing_trackers">Servizos de seguemento sen conectar:</string>
-    <string name="restore_content_full">Restauraranse os datos da copia de seguridade.
-\n
-\nTerás que instalar as extensións que falten e iniciar sesión nos servizos de seguemento para usalos.</string>
+    <string name="restore_content_full">Restauraranse os datos da copia de seguridade. \n \nTerás que instalar as extensións que falten e iniciar sesión nos servizos de seguemento para usalos.</string>
     <string name="include_">Incluír: %s</string>
     <string name="creating_backup">Creando a copia de seguridade</string>
     <string name="picture_saved">Imaxe gardada</string>

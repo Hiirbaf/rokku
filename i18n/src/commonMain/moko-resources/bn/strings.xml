@@ -550,9 +550,7 @@
     <string name="next">পরবর্তী</string>
     <string name="by_chapter_number">অধ্যায়ের নম্বর অনুসারে</string>
     <string name="by_update_date">আপলোডের তারিখ অনুসারে</string>
-    <string name="restore_content_full">ব্যাকআপ ফাইল থেকে ডেটা পুনরুদ্ধার করা হবে।
-\n
-\nআপনাকে যে কোন অনুপস্থিত এক্সটেনশন ইনস্টল করতে হবে এবং সেগুলি ব্যবহার করার জন্য পরে ট্র্যাকিং পরিষেবাগুলিতে লগ ইন করতে হবে।</string>
+    <string name="restore_content_full">ব্যাকআপ ফাইল থেকে ডেটা পুনরুদ্ধার করা হবে। \n \nআপনাকে যে কোন অনুপস্থিত এক্সটেনশন ইনস্টল করতে হবে এবং সেগুলি ব্যবহার করার জন্য পরে ট্র্যাকিং পরিষেবাগুলিতে লগ ইন করতে হবে।</string>
     <string name="nsfw_sources">প্রাপ্তবয়স্কদের জন্য (18+) উৎস</string>
     <string name="date_fetched">প্রাপ্তির তারিখ</string>
     <string name="no_match_found">পাওয়া যায়নি</string>
