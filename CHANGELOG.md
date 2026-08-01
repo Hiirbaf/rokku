@@ -10,6 +10,11 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 
 ## [Unreleased]
 
+### Other
+- Enable and fix Kotlin style checks (`kotlinter`) project-wide; it was declared but never actually wired up, so it had never run
+- Add CI workflows for Kotlin style checks and CodeQL security analysis
+- Document the commit message convention in CONTRIBUTING.md
+
 ## [1.3.2]
 
 ### Fixes
