@@ -10,6 +10,43 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 
 ## [Unreleased]
 
+### Additions
+
+- add extension-lib 1.6 support (#657)
+- support Android's native "App settings" shortcut
+- render images and auto-link URLs in manga descriptions
+- animate floating search toolbar shadow, slide it back in when hidden
+- support vertical seekbar for webtoon/continuous-vertical reading modes
+- add copy/paste manga cover via context menu
+
+### Changes
+
+- drop PackageInstaller session API for app self-updates
+
+### Fixes
+
+- remove duplicate indexV2 property left by 3-way merge
+- don't count failed extension installs as updated
+- disable hardware bitmaps on Android 8.0/8.1 to prevent reader crash
+- persist EditTextPreference changes for extension settings
+- widen X-Requested-With spoofing fallback chain
+- remove hardcoded cornerRadius breaking library/tracked toggle state
+- add missing kotlin.time.Duration overloads for rateLimit/rateLimitHost
+- source migration toolbar disappearing after manual search
+- port J2K reader/split-screen and UI bug fixes
+- enable non-final resource IDs to fix R8 minified build
+- fix unit test task under AGP9 and Gradle 9's stricter JUnit setup
+- stop extension updates getting stuck "Installing" forever
+- stop app self-update getting stuck "Installing" forever
+- wire up the monochrome/themed launcher icon
+- always install extensions through an Activity
+- redraw the monochrome launcher icon with current Rokku artwork
+
+### Other
+
+- upgrade to AGP 9.3.1 and Gradle 9.6.1, matching Mihon
+- wire up kotlinter and add a style-check CI workflow
+
 ## [1.3.2]
 
 ### Fixes
