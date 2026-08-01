@@ -140,6 +140,11 @@ class LibraryMangaItem(
             return constraint.isEmpty()
         }
         val sourceName by lazy { sourceManager.getOrStub(manga.manga.source).name }
+        if (constraint.startsWith("src:", true)) {
+            val querySource = constraint.substringAfter(':').trim()
+            return querySource.toLongOrNull()?.let { it == manga.manga.source }
+                ?: sourceName.contains(querySource, true)
+        }
         return manga.manga.title.contains(constraint, true) ||
             (manga.manga.author?.contains(constraint, true) ?: false) ||
             (manga.manga.artist?.contains(constraint, true) ?: false) ||
