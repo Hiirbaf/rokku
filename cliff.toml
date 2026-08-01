@@ -1,0 +1,44 @@
+# git-cliff config - drafts the [Unreleased] section of CHANGELOG.md from Conventional Commits.
+#
+# This only produces a starting point: CHANGELOG.md's existing sections are hand-polished
+# release notes, not raw commit logs, so the generated draft is meant to be rewritten/reworded
+# by a human (via the PR the changelog workflow opens) before a version is cut, not committed
+# to master as-is. See CONTRIBUTING.md for the commit convention this relies on.
+
+[changelog]
+header = ""
+body = """
+{% for group, commits in commits | group_by(attribute="group") %}
+### {{ group | upper_first }}
+{% for commit in commits %}
+- {{ commit.message | split(pat="\n") | first | trim }}\
+{% endfor %}
+{% endfor %}
+"""
+footer = ""
+trim = true
+
+[git]
+conventional_commits = true
+filter_unconventional = true
+split_commits = false
+protect_breaking_commits = false
+filter_commits = true
+tag_pattern = "v[0-9]*"
+topo_order = false
+sort_commits = "oldest"
+
+commit_parsers = [
+  { message = "^feat", group = "Additions" },
+  { message = "^fix", group = "Fixes" },
+  { message = "^perf", group = "Changes" },
+  { message = "^refactor", group = "Changes" },
+  { message = "^revert", group = "Other" },
+  { message = "^chore\\(l10n\\)", skip = true },
+  { message = "^chore", group = "Other" },
+  { message = "^build", group = "Other" },
+  { message = "^ci", skip = true },
+  { message = "^test", skip = true },
+  { message = "^style", skip = true },
+  { message = "^docs", skip = true },
+]

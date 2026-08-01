@@ -1,5 +1,29 @@
 # Contributing
 
+## Commit messages
+
+Commits follow [Conventional Commits](https://www.conventionalcommits.org/): `type(scope): summary`,
+written in English, imperative mood (`fix: stop X from happening`, not `fixed`/`fixes`). The scope
+is optional and usually names the area touched (`extensions`, `updater`, `reader`, `lint`, ...).
+
+Types used in this repo:
+
+- `feat` - a new user-facing feature
+- `fix` - a bug fix
+- `refactor` - a code change that doesn't fix a bug or add a feature
+- `perf` - a performance improvement
+- `docs` - documentation only (README, CHANGELOG, code comments)
+- `style` - formatting-only changes (whitespace, lint autofixes) with no logic change
+- `test` - adding or correcting tests
+- `build` - build system or dependency changes (Gradle, version catalog, ...)
+- `ci` - CI/CD workflow changes (`.github/workflows/`)
+- `chore` - everything else (repo maintenance, tooling, translation syncs)
+
+The `.github/workflows/changelog.yml` workflow drafts the `[Unreleased]` section of
+`CHANGELOG.md` from these commits (via [git-cliff](https://git-cliff.org/), configured in
+`cliff.toml`) as a starting point - it's not meant to be merged as-is. `CHANGELOG.md`'s entries are
+user-facing release notes, not raw commit messages, so reword the draft before a release goes out.
+
 ## Translations
 
 Rokku's UI strings are translated via [Weblate](https://hosted.weblate.org/projects/rokku/).
