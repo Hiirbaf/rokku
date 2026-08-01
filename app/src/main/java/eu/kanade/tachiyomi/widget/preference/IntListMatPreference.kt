@@ -17,10 +17,14 @@ class IntListMatPreference @JvmOverloads constructor(
     var entryValues: List<Int> = emptyList()
     var entryRange: IntRange
         get() = 0..0
-        set(value) { entryValues = value.toList() }
+        set(value) {
+            entryValues = value.toList()
+        }
     var entriesRes: Array<StringResource>
         get() = emptyArray()
-        set(value) { entries = value.map { context.getString(it) } }
+        set(value) {
+            entries = value.map { context.getString(it) }
+        }
     private var defValue: Int = 0
     var entries: List<String> = emptyList()
     var customSelectedValue: Int? = null

@@ -21,7 +21,7 @@ class BiometricActivity : BaseThemedActivity() {
             this,
             executor,
             object : BiometricPrompt
-            .AuthenticationCallback() {
+                .AuthenticationCallback() {
 
                 override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
                     super.onAuthenticationError(errorCode, errString)
@@ -45,7 +45,9 @@ class BiometricActivity : BaseThemedActivity() {
 
         val promptInfo = BiometricPrompt.PromptInfo.Builder()
             .setTitle(getString(MR.strings.unlock_library))
-            .setAllowedAuthenticators(BiometricManager.Authenticators.DEVICE_CREDENTIAL or BiometricManager.Authenticators.BIOMETRIC_WEAK)
+            .setAllowedAuthenticators(
+                BiometricManager.Authenticators.DEVICE_CREDENTIAL or BiometricManager.Authenticators.BIOMETRIC_WEAK,
+            )
             .build()
 
         biometricPrompt.authenticate(promptInfo)

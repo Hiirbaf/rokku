@@ -6,12 +6,9 @@ import android.os.Build
 import android.provider.Settings
 import androidx.preference.PreferenceScreen
 import androidx.preference.SwitchPreferenceCompat
+import dev.icerock.moko.resources.compose.stringResource
 import eu.kanade.tachiyomi.BuildConfig
 import eu.kanade.tachiyomi.R
-import yokai.domain.ui.UiPreferences
-import yokai.i18n.MR
-import yokai.util.lang.getString
-import dev.icerock.moko.resources.compose.stringResource
 import eu.kanade.tachiyomi.data.notification.Notifications
 import eu.kanade.tachiyomi.data.preference.PreferenceKeys
 import eu.kanade.tachiyomi.data.preference.changesIn
@@ -30,16 +27,19 @@ import eu.kanade.tachiyomi.ui.setting.onChange
 import eu.kanade.tachiyomi.ui.setting.onClick
 import eu.kanade.tachiyomi.ui.setting.preference
 import eu.kanade.tachiyomi.ui.setting.preferenceCategory
-import eu.kanade.tachiyomi.ui.setting.summaryMRes as summaryRes
 import eu.kanade.tachiyomi.ui.setting.switchPreference
-import eu.kanade.tachiyomi.ui.setting.titleMRes as titleRes
 import eu.kanade.tachiyomi.util.view.setAction
 import eu.kanade.tachiyomi.util.view.snack
 import eu.kanade.tachiyomi.util.view.withFadeTransaction
 import uy.kohesive.injekt.injectLazy
 import yokai.domain.base.BasePreferences.ExtensionInstaller
 import yokai.domain.source.SourcePreferences
+import yokai.domain.ui.UiPreferences
+import yokai.i18n.MR
 import yokai.presentation.extension.repo.ExtensionRepoController
+import yokai.util.lang.getString
+import eu.kanade.tachiyomi.ui.setting.summaryMRes as summaryRes
+import eu.kanade.tachiyomi.ui.setting.titleMRes as titleRes
 
 class SettingsBrowseController : SettingsLegacyController() {
 
@@ -144,7 +144,7 @@ class SettingsBrowseController : SettingsLegacyController() {
                 onClick { router.pushController(MigrationController().withFadeTransaction()) }
             }
             if (preferences.skipPreMigration().get() || preferences.migrationSources()
-                .isSet()
+                    .isSet()
             ) {
                 switchPreference {
                     key = PreferenceKeys.skipPreMigration
@@ -202,7 +202,7 @@ class SettingsBrowseController : SettingsLegacyController() {
 
             infoPreference(MR.strings.you_can_migrate_in_library)
         }
-        
+
         preferenceCategory {
             titleRes = MR.strings.sources
 
@@ -232,6 +232,7 @@ class SettingsBrowseController : SettingsLegacyController() {
 
     override fun onActivityResumed(activity: Activity) {
         super.onActivityResumed(activity)
-        updatedExtNotifPref?.isChecked = Notifications.isNotificationChannelEnabled(activity, Notifications.CHANNEL_EXT_UPDATED)
+        updatedExtNotifPref?.isChecked =
+            Notifications.isNotificationChannelEnabled(activity, Notifications.CHANNEL_EXT_UPDATED)
     }
 }

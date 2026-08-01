@@ -113,14 +113,16 @@ class SettingsLibraryController : SettingsLegacyController() {
                 val categories = listOf(Category.createDefault(context)) + dbCategories
                 entries =
                     listOf(context.getString(MR.strings.last_used), context.getString(MR.strings.always_ask)) +
-                        categories.map { it.name }.toTypedArray()
+                    categories.map { it.name }.toTypedArray()
                 entryValues = listOf(-2, -1) + categories.mapNotNull { it.id }.toList()
                 defaultValue = "-2"
 
                 val categoryName: (Int) -> String = { catId ->
                     when (catId) {
                         -2 -> context.getString(MR.strings.last_used)
+
                         -1 -> context.getString(MR.strings.always_ask)
+
                         else -> categories.find { it.id == preferences.defaultCategory().get() }?.name
                             ?: context.getString(MR.strings.last_used)
                     }

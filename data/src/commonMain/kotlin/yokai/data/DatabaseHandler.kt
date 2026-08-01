@@ -9,12 +9,12 @@ interface DatabaseHandler {
 
     suspend fun <T : Any> awaitList(
         inTransaction: Boolean = false,
-        block: suspend Database.() -> Query<T>
+        block: suspend Database.() -> Query<T>,
     ): List<T>
 
     suspend fun <T : Any> awaitOne(
         inTransaction: Boolean = false,
-        block: suspend Database.() -> Query<T>
+        block: suspend Database.() -> Query<T>,
     ): T
 
     suspend fun <T : Any> awaitOneExecutable(
@@ -24,12 +24,12 @@ interface DatabaseHandler {
 
     suspend fun <T : Any> awaitOneOrNull(
         inTransaction: Boolean = false,
-        block: suspend Database.() -> Query<T>
+        block: suspend Database.() -> Query<T>,
     ): T?
 
     suspend fun <T : Any> awaitFirstOrNull(
         inTransaction: Boolean = false,
-        block: suspend Database.() -> Query<T>
+        block: suspend Database.() -> Query<T>,
     ): T?
 
     suspend fun <T : Any> awaitOneOrNullExecutable(

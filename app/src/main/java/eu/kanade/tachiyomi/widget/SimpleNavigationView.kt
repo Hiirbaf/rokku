@@ -14,12 +14,12 @@ import androidx.core.view.ViewCompat
 import com.google.android.material.R
 import com.google.android.material.internal.ScrimInsetsFrameLayout
 import com.google.android.material.textfield.TextInputLayout
+import dev.icerock.moko.resources.compose.stringResource
 import eu.kanade.tachiyomi.util.view.inflate
-import kotlin.math.min
-import eu.kanade.tachiyomi.R as TR
 import yokai.i18n.MR
 import yokai.util.lang.getString
-import dev.icerock.moko.resources.compose.stringResource
+import kotlin.math.min
+import eu.kanade.tachiyomi.R as TR
 
 @Suppress("LeakingThis")
 @SuppressLint("PrivateResource", "RestrictedApi")
@@ -86,7 +86,9 @@ open class SimpleNavigationView @JvmOverloads constructor(
                 min(MeasureSpec.getSize(widthSpec), maxWidth),
                 MeasureSpec.EXACTLY,
             )
+
             MeasureSpec.UNSPECIFIED -> MeasureSpec.makeMeasureSpec(maxWidth, MeasureSpec.EXACTLY)
+
             else -> widthSpec
         }
         // Let super sort out the height

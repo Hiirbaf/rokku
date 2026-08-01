@@ -2,10 +2,10 @@ package eu.kanade.tachiyomi.data.preference
 
 import androidx.annotation.StringRes
 import dev.icerock.moko.resources.StringResource
+import dev.icerock.moko.resources.compose.stringResource
 import eu.kanade.tachiyomi.R
 import yokai.i18n.MR
 import yokai.util.lang.getString
-import dev.icerock.moko.resources.compose.stringResource
 
 // Library
 const val MANGA_NON_COMPLETED = "manga_ongoing"

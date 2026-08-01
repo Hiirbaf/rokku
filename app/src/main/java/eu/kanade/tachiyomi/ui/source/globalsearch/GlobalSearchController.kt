@@ -87,9 +87,7 @@ open class GlobalSearchController(
     private var snack: Snackbar? = null
     private var lastPosition: Int = -1
 
-    /**
-     * Called when controller is initialized.
-     */
+    // Called when controller is initialized.
     init {
         setHasOptionsMenu(true)
     }
@@ -193,7 +191,11 @@ open class GlobalSearchController(
             activityBinding?.searchToolbar?.searchView?.requestFocus()
         }
 
-        setOnQueryTextChangeListener(activityBinding?.searchToolbar?.searchView, onlyOnSubmit = true, hideKbOnSubmit = true) {
+        setOnQueryTextChangeListener(
+            activityBinding?.searchToolbar?.searchView,
+            onlyOnSubmit = true,
+            hideKbOnSubmit = true,
+        ) {
             // try to handle the query as a manga URL
             applicationContext?.extensionIntentForText(it ?: "")?.let { intent ->
                 safeStartActivity(intent)

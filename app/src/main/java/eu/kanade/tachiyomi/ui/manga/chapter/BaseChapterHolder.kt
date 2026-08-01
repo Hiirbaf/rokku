@@ -57,6 +57,7 @@ open class BaseChapterHolder(
                                 adapter.baseDelegate.downloadChapter(flexibleAdapterPosition)
                             }
                         }
+
                         R.id.action_start -> {
                             if (extraChapter != null) {
                                 (adapter.baseDelegate as? BaseChapterAdapter.GroupedDownloadInterface)

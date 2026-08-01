@@ -23,9 +23,11 @@ class ChapterFilter(val preferences: PreferencesHelper = Injekt.get(), val downl
 
         // if none of the filters are enabled skip the filtering of them
         val filteredChapters = chapters
-        return if (readEnabled || unreadEnabled || downloadEnabled || notDownloadEnabled || bookmarkEnabled || notBookmarkEnabled) {
+        return if (readEnabled || unreadEnabled || downloadEnabled || notDownloadEnabled || bookmarkEnabled ||
+            notBookmarkEnabled
+        ) {
             filteredChapters.filter {
-                if (readEnabled && it.read.not() ||
+                if ((readEnabled && it.read.not()) ||
                     (unreadEnabled && it.read) ||
                     (bookmarkEnabled && it.bookmark.not()) ||
                     (notBookmarkEnabled && it.bookmark) ||

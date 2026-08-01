@@ -12,7 +12,7 @@ import okhttp3.Request
 import okhttp3.Response
 import rx.Observable
 
-abstract class DelegatedHttpSource(val delegate: HttpSource): HttpSource() {
+abstract class DelegatedHttpSource(val delegate: HttpSource) : HttpSource() {
     /**
      * Returns the request for the popular manga given the page.
      *

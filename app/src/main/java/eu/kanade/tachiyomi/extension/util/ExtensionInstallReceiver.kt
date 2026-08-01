@@ -69,6 +69,7 @@ internal class ExtensionInstallReceiver(private val listener: Listener) :
                     }
                 }
             }
+
             Intent.ACTION_PACKAGE_REPLACED, ACTION_EXTENSION_REPLACED -> {
                 scope.launch {
                     when (val result = getExtensionFromIntent(context, intent)) {
@@ -78,6 +79,7 @@ internal class ExtensionInstallReceiver(private val listener: Listener) :
                     }
                 }
             }
+
             Intent.ACTION_PACKAGE_REMOVED, ACTION_EXTENSION_REMOVED -> {
                 if (isReplacing(intent)) return
 
@@ -108,7 +110,9 @@ internal class ExtensionInstallReceiver(private val listener: Listener) :
     private suspend fun getExtensionFromIntent(context: Context, intent: Intent?): LoadResult {
         val pkgName = getPackageNameFromIntent(intent)
             ?: return LoadResult.Error
-        return GlobalScope.async(Dispatchers.Default, CoroutineStart.DEFAULT) { ExtensionLoader.loadExtensionFromPkgName(context, pkgName) }.await()
+        return GlobalScope.async(Dispatchers.Default, CoroutineStart.DEFAULT) {
+            ExtensionLoader.loadExtensionFromPkgName(context, pkgName)
+        }.await()
     }
 
     /**

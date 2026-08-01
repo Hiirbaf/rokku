@@ -23,7 +23,9 @@ class ChapterSort(val manga: Manga, val chapterFilter: ChapterFilter = Injekt.ge
                 manga,
                 currentChapter,
             )
+
             andFiltered -> chapterFilter.filterChapters(rawChapters, manga)
+
             else -> rawChapters
         }
 
@@ -55,14 +57,22 @@ class ChapterSort(val manga: Manga, val chapterFilter: ChapterFilter = Injekt.ge
                     true -> { c1, c2 -> c1.source_order.compareTo(c2.source_order) }
                     false -> { c1, c2 -> c2.source_order.compareTo(c1.source_order) }
                 }
+
                 Manga.CHAPTER_SORTING_NUMBER -> when (sortDescending) {
-                    true -> { c1, c2 -> c2.chapter_number.toString().compareToCaseInsensitiveNaturalOrder(c1.chapter_number.toString()) }
-                    false -> { c1, c2 -> c1.chapter_number.toString().compareToCaseInsensitiveNaturalOrder(c2.chapter_number.toString()) }
+                    true -> { c1, c2 ->
+                        c2.chapter_number.toString().compareToCaseInsensitiveNaturalOrder(c1.chapter_number.toString())
+                    }
+
+                    false -> { c1, c2 ->
+                        c1.chapter_number.toString().compareToCaseInsensitiveNaturalOrder(c2.chapter_number.toString())
+                    }
                 }
+
                 Manga.CHAPTER_SORTING_UPLOAD_DATE -> when (sortDescending) {
                     true -> { c1, c2 -> c2.date_upload.compareTo(c1.date_upload) }
                     false -> { c1, c2 -> c1.date_upload.compareTo(c2.date_upload) }
                 }
+
                 else -> { c1, c2 -> c1.source_order.compareTo(c2.source_order) }
             }
         return Comparator(sortFunction)

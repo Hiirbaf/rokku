@@ -134,10 +134,6 @@ import eu.kanade.tachiyomi.util.view.setTitle
 import eu.kanade.tachiyomi.util.view.snack
 import eu.kanade.tachiyomi.util.view.withFadeInTransaction
 import eu.kanade.tachiyomi.util.view.withFadeTransaction
-import kotlin.collections.set
-import kotlin.math.abs
-import kotlin.math.min
-import kotlin.math.roundToLong
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
@@ -152,6 +148,10 @@ import yokai.presentation.extension.repo.ExtensionRepoController
 import yokai.presentation.libraryUpdateError.LibraryUpdateErrorController
 import yokai.presentation.onboarding.OnboardingController
 import yokai.util.lang.getString
+import kotlin.collections.set
+import kotlin.math.abs
+import kotlin.math.min
+import kotlin.math.roundToLong
 import android.R as AR
 
 @SuppressLint("ResourceType")
@@ -323,10 +323,10 @@ open class MainActivity : BaseActivity<MainActivityBinding>() {
                 controllerHandlesBackPress = false
                 val controller by lazy { router.backstack.lastOrNull()?.controller }
                 if (!(
-                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-                        ViewCompat.getRootWindowInsets(window.decorView)
-                        ?.isVisible(WindowInsetsCompat.Type.ime()) == true
-                    ) &&
+                        Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                            ViewCompat.getRootWindowInsets(window.decorView)
+                                ?.isVisible(WindowInsetsCompat.Type.ime()) == true
+                        ) &&
                     actionMode == null &&
                     !(
                         binding.searchToolbar.hasExpandedActionView() && binding.cardFrame.isVisible &&
@@ -338,7 +338,14 @@ open class MainActivity : BaseActivity<MainActivityBinding>() {
                 if (controllerHandlesBackPress) {
                     startTime = SystemClock.uptimeMillis()
                     velocityTracker.clear()
-                    val motionEvent = MotionEvent.obtain(startTime, startTime, MotionEvent.ACTION_DOWN, backEvent.touchX, backEvent.touchY, 0)
+                    val motionEvent = MotionEvent.obtain(
+                        startTime,
+                        startTime,
+                        MotionEvent.ACTION_DOWN,
+                        backEvent.touchX,
+                        backEvent.touchY,
+                        0,
+                    )
                     velocityTracker.addMovement(motionEvent)
                     motionEvent.recycle()
                     (controller as? BackHandlerControllerInterface)?.handleOnBackStarted(backEvent)
@@ -347,7 +354,14 @@ open class MainActivity : BaseActivity<MainActivityBinding>() {
 
             override fun handleOnBackProgressed(backEvent: BackEventCompat) {
                 if (controllerHandlesBackPress) {
-                    val motionEvent = MotionEvent.obtain(startTime, SystemClock.uptimeMillis(), MotionEvent.ACTION_MOVE, backEvent.touchX, backEvent.touchY, 0)
+                    val motionEvent = MotionEvent.obtain(
+                        startTime,
+                        SystemClock.uptimeMillis(),
+                        MotionEvent.ACTION_MOVE,
+                        backEvent.touchX,
+                        backEvent.touchY,
+                        0,
+                    )
                     lastX = backEvent.touchX
                     lastY = backEvent.touchY
                     velocityTracker.addMovement(motionEvent)
@@ -411,9 +425,12 @@ open class MainActivity : BaseActivity<MainActivityBinding>() {
                         controller?.showSheet()
                     }
                 }
+
                 BasePreferences.LongTapRecents.LAST_READ -> {
                     lifecycleScope.launchUI {
-                        val lastReadChapter = getRecents.awaitUngrouped(true, true, "", 0).maxByOrNull { it.history.last_read }
+                        val lastReadChapter = getRecents.awaitUngrouped(true, true, "", 0).maxByOrNull {
+                            it.history.last_read
+                        }
                         lastReadChapter ?: return@launchUI
 
                         val manga = lastReadChapter.manga
@@ -436,6 +453,7 @@ open class MainActivity : BaseActivity<MainActivityBinding>() {
                         controller?.showSheet()
                     }
                 }
+
                 BasePreferences.LongTapBrowse.SEARCH ->
                     router.pushController(GlobalSearchController().withFadeTransaction())
             }
@@ -529,9 +547,9 @@ open class MainActivity : BaseActivity<MainActivityBinding>() {
             val currentController = router.backstack.lastOrNull()?.controller
             if (!continueSwitchingTabs && currentController is BottomNavBarInterface) {
                 if (!currentController.canChangeTabs {
-                    continueSwitchingTabs = true
-                    this@MainActivity.nav.selectedItemId = id
-                }
+                        continueSwitchingTabs = true
+                        this@MainActivity.nav.selectedItemId = id
+                    }
                 ) {
                     return@setOnItemSelectedListener false
                 }
@@ -574,9 +592,9 @@ open class MainActivity : BaseActivity<MainActivityBinding>() {
         binding.searchToolbar.setNavigationOnClickListener {
             val rootSearchController = router.backstack.lastOrNull()?.controller
             if ((
-                rootSearchController is RootSearchInterface ||
-                    (currentToolbar != binding.searchToolbar && binding.appBar.useLargeToolbar)
-                ) &&
+                    rootSearchController is RootSearchInterface ||
+                        (currentToolbar != binding.searchToolbar && binding.appBar.useLargeToolbar)
+                    ) &&
                 rootSearchController !is SmallToolbarInterface
             ) {
                 binding.searchToolbar.menu.findItem(R.id.action_search)?.expandActionView()
@@ -744,8 +762,10 @@ open class MainActivity : BaseActivity<MainActivityBinding>() {
                     .collect { newLayoutInfo ->
                         hingeGapSize = 0
                         for (displayFeature: DisplayFeature in newLayoutInfo.displayFeatures) {
-                            if (displayFeature is FoldingFeature && displayFeature.occlusionType == FoldingFeature.OcclusionType.FULL &&
-                                displayFeature.isSeparating && displayFeature.orientation == FoldingFeature.Orientation.VERTICAL
+                            if (displayFeature is FoldingFeature &&
+                                displayFeature.occlusionType == FoldingFeature.OcclusionType.FULL &&
+                                displayFeature.isSeparating &&
+                                displayFeature.orientation == FoldingFeature.Orientation.VERTICAL
                             ) {
                                 hingeGapSize = displayFeature.bounds.width()
                             }
@@ -874,22 +894,27 @@ open class MainActivity : BaseActivity<MainActivityBinding>() {
                 // otherwise translucent dark theme or black if light theme
                 when {
                     insets.hasSideNavBar() -> Color.BLACK
+
                     isInNightMode() -> ColorUtils.setAlphaComponent(
                         getResourceColor(R.attr.colorPrimaryVariant),
                         179,
                     )
+
                     else -> Color.argb(179, 0, 0, 0)
                 }
             }
+
             // if the android q+ device has gesture nav, transparent nav bar
             // this is here in case some crazy with a notch uses landscape
             insets.isBottomTappable() -> {
                 getColor(AR.color.transparent)
             }
+
             // if in landscape with 2/3 button mode, fully opaque nav bar
             insets.hasSideNavBar() -> {
                 getResourceColor(R.attr.colorPrimaryVariant)
             }
+
             // if in portrait with 2/3 button mode, translucent nav bar
             else -> {
                 ColorUtils.setAlphaComponent(
@@ -1057,6 +1082,7 @@ open class MainActivity : BaseActivity<MainActivityBinding>() {
         }
         when (intent.action) {
             SHORTCUT_LIBRARY -> nav.selectedItemId = R.id.nav_library
+
             SHORTCUT_RECENTLY_UPDATED, SHORTCUT_RECENTLY_READ, Constants.SHORTCUT_RECENTS -> {
                 if (nav.selectedItemId != R.id.nav_recents) {
                     nav.selectedItemId = R.id.nav_recents
@@ -1075,7 +1101,9 @@ open class MainActivity : BaseActivity<MainActivityBinding>() {
                     )
                 }
             }
+
             SHORTCUT_BROWSE -> nav.selectedItemId = R.id.nav_browse
+
             SHORTCUT_EXTENSIONS -> {
                 if (nav.selectedItemId != R.id.nav_browse) {
                     nav.selectedItemId = R.id.nav_browse
@@ -1088,15 +1116,18 @@ open class MainActivity : BaseActivity<MainActivityBinding>() {
                     controller?.showSheet()
                 }
             }
+
             SHORTCUT_LIBRARY_UPDATE_ERRORS -> {
                 if (router.backstack.isEmpty()) nav.selectedItemId = R.id.nav_library
                 router.pushController(LibraryUpdateErrorController().withFadeTransaction())
             }
+
             Constants.SHORTCUT_MANGA -> {
                 val extras = intent.extras ?: return false
                 if (router.backstack.isEmpty()) nav.selectedItemId = R.id.nav_library
                 router.pushController(MangaDetailsController(extras).withFadeTransaction())
             }
+
             SHORTCUT_UPDATE_NOTES -> {
                 val extras = intent.extras ?: return false
                 if (router.backstack.isEmpty()) nav.selectedItemId = R.id.nav_library
@@ -1108,11 +1139,13 @@ open class MainActivity : BaseActivity<MainActivityBinding>() {
                     AboutController.NewUpdateDialogController(extras).showDialog(router)
                 }
             }
+
             SHORTCUT_SOURCE -> {
                 val extras = intent.extras ?: return false
                 if (router.backstack.isEmpty()) nav.selectedItemId = R.id.nav_library
                 router.pushController(BrowseSourceController(extras).withFadeTransaction())
             }
+
             SHORTCUT_DOWNLOADS -> {
                 nav.selectedItemId = R.id.nav_recents
                 router.popToRoot()
@@ -1122,6 +1155,7 @@ open class MainActivity : BaseActivity<MainActivityBinding>() {
                     controller?.showSheet()
                 }
             }
+
             Intent.ACTION_VIEW -> {
                 if (router.backstack.isEmpty()) nav.selectedItemId = R.id.nav_library
                 if (intent.isAddExtensionStoreIntent()) {
@@ -1131,6 +1165,7 @@ open class MainActivity : BaseActivity<MainActivityBinding>() {
                     }
                 }
             }
+
             else -> return false
         }
 
@@ -1154,6 +1189,7 @@ open class MainActivity : BaseActivity<MainActivityBinding>() {
                 }
                 outContent.webUri = Uri.parse(url)
             }
+
             is BrowseSourceController -> {
                 val source = controller.presenter.source as? HttpSource ?: return
                 outContent.webUri = Uri.parse(source.baseUrl)
@@ -1377,6 +1413,7 @@ open class MainActivity : BaseActivity<MainActivityBinding>() {
                 )
                 overflowDialog.show()
             }
+
             else -> return super.onOptionsItemSelected(item)
         }
         return super.onOptionsItemSelected(item)

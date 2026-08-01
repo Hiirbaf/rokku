@@ -146,7 +146,9 @@ class ChapterHolder(
         }
     }
 
-    fun notifyStatus(status: Download.State, locked: Boolean, progress: Int, animated: Boolean = false) = with(binding.downloadButton.downloadButton) {
+    fun notifyStatus(status: Download.State, locked: Boolean, progress: Int, animated: Boolean = false) = with(
+        binding.downloadButton.downloadButton,
+    ) {
         adapter.delegate.accentColor()?.let {
             binding.startView.backgroundTintList = ColorStateList.valueOf(it)
             binding.bookmark.imageTintList = ColorStateList.valueOf(

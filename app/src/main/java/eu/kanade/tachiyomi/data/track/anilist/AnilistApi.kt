@@ -14,10 +14,6 @@ import eu.kanade.tachiyomi.network.interceptor.rateLimit
 import eu.kanade.tachiyomi.network.jsonMime
 import eu.kanade.tachiyomi.network.parseAs
 import eu.kanade.tachiyomi.util.system.withIOContext
-import java.time.Instant
-import java.time.ZoneId
-import java.time.ZonedDateTime
-import kotlin.time.Duration.Companion.minutes
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
@@ -27,6 +23,10 @@ import kotlinx.serialization.json.putJsonObject
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody.Companion.toRequestBody
 import uy.kohesive.injekt.injectLazy
+import java.time.Instant
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import kotlin.time.Duration.Companion.minutes
 
 class AnilistApi(val client: OkHttpClient, interceptor: AnilistInterceptor) {
 

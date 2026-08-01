@@ -10,12 +10,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.unit.sp
 import dev.icerock.moko.resources.StringResource
 import dev.icerock.moko.resources.compose.stringResource
-import kotlin.coroutines.resume
 import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import yokai.i18n.MR
+import kotlin.coroutines.resume
 
 typealias ComposableDialog = (@Composable () -> Unit)?
 typealias ComposableDialogState = MutableState<ComposableDialog>
@@ -50,7 +50,9 @@ class AlertDialogBuilder {
                     fontSize = 24.sp,
                 )
             },
-            text = if (textRes == null && text == null) null else {
+            text = if (textRes == null && text == null) {
+                null
+            } else {
                 {
                     Text(
                         text = textRes?.let { stringResource(it) } ?: text ?: "",
@@ -69,10 +71,12 @@ class AlertDialogBuilder {
                     onClick = {
                         onConfirm()
                         if (shouldContinue) cont.resume(Unit) else cont.cancel()
-                    }
+                    },
                 ) {
                     Text(
-                        text = confirmText ?: confirmTextRes?.let { stringResource(it) } ?: androidx.compose.ui.res.stringResource(android.R.string.ok),
+                        text =
+                        confirmText ?: confirmTextRes?.let { stringResource(it) }
+                            ?: androidx.compose.ui.res.stringResource(android.R.string.ok),
                         color = MaterialTheme.colorScheme.primary,
                         fontSize = 14.sp,
                     )
@@ -94,7 +98,9 @@ class AlertDialogBuilder {
     }
 }
 
-suspend fun DialogHostState.simple(builder: AlertDialogBuilder.() -> Unit) = AlertDialogBuilder().apply { builder() }.build(this)
+suspend fun DialogHostState.simple(builder: AlertDialogBuilder.() -> Unit) = AlertDialogBuilder().apply {
+    builder()
+}.build(this)
 
 class DialogHostState(initial: ComposableDialog = null) : ComposableDialogState by mutableStateOf(initial) {
     val mutex = Mutex()

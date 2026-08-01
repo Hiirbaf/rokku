@@ -78,7 +78,9 @@ class ChapterLoader(
         val isDownloaded = downloadManager.isChapterDownloaded(dbChapter, manga, skipCache = true)
         return when {
             isDownloaded -> DownloadPageLoader(chapter, manga, source, downloadManager, downloadProvider)
+
             source is HttpSource -> HttpPageLoader(chapter, source)
+
             source is LocalSource -> source.getFormat(chapter.chapter).let { format ->
                 when (format) {
                     is LocalSource.Format.Directory -> DirectoryPageLoader(format.file)
@@ -86,6 +88,7 @@ class ChapterLoader(
                     is LocalSource.Format.Epub -> EpubPageLoader(format.file.epubReader(context))
                 }
             }
+
             else -> error(context.getString(MR.strings.source_not_installed))
         }
     }

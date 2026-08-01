@@ -2,8 +2,8 @@ package eu.kanade.tachiyomi.domain.manga.models
 
 import eu.kanade.tachiyomi.source.model.SManga
 import eu.kanade.tachiyomi.source.model.safeMemo
-import java.util.Locale
 import yokai.domain.manga.models.MangaUpdate
+import java.util.Locale
 
 // TODO: Transform into data class
 @Deprecated("Use data class version", ReplaceWith("yokai.domain.manga.models.Manga"))
@@ -47,12 +47,14 @@ interface Manga : SManga {
         get() = ogDesc ?: description
     val originalGenre: String?
         get() = ogGenre ?: genre
+
     @Deprecated("Use ogStatus directly instead", ReplaceWith("ogStatus"))
     val originalStatus: Int
         get() = ogStatus
 
     val hasSameAuthorAndArtist: Boolean
-        get() = author == artist || artist.isNullOrBlank() ||
+        get() = author == artist ||
+            artist.isNullOrBlank() ||
             author?.contains(artist ?: "", true) == true
 
     fun copyFrom(other: SManga) {
@@ -116,7 +118,8 @@ interface Manga : SManga {
     val usesLocalFilter: Boolean
         get() = chapter_flags and CHAPTER_FILTER_LOCAL_MASK == CHAPTER_FILTER_LOCAL
 
-    fun showChapterTitle(defaultShow: Boolean): Boolean = chapter_flags and CHAPTER_DISPLAY_MASK == CHAPTER_DISPLAY_NUMBER
+    fun showChapterTitle(defaultShow: Boolean): Boolean =
+        chapter_flags and CHAPTER_DISPLAY_MASK == CHAPTER_DISPLAY_NUMBER
 
     fun getOriginalGenres(): List<String>? {
         return (originalGenre ?: genre)?.split(",")
@@ -125,8 +128,11 @@ interface Manga : SManga {
 
     fun isSeriesTag(tag: String): Boolean {
         val tagLower = tag.lowercase(Locale.ROOT)
-        return isMangaTag(tagLower) || isManhuaTag(tagLower) ||
-            isManhwaTag(tagLower) || isComicTag(tagLower) || isWebtoonTag(tagLower)
+        return isMangaTag(tagLower) ||
+            isManhuaTag(tagLower) ||
+            isManhwaTag(tagLower) ||
+            isComicTag(tagLower) ||
+            isWebtoonTag(tagLower)
     }
 
     fun isMangaTag(tag: String): Boolean {

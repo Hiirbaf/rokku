@@ -127,7 +127,9 @@ class ExpandedFilterSheet(
                             context.getString(MR.strings.read_progress), context.getString(MR.strings.unread) -> {
                                 if (index != 0) {
                                     val otherName =
-                                        if (filters[position].headerName == context.getString(MR.strings.read_progress)) {
+                                        if (filters[position].headerName ==
+                                            context.getString(MR.strings.read_progress)
+                                        ) {
                                             context.getString(MR.strings.unread)
                                         } else {
                                             context.getString(MR.strings.read_progress)

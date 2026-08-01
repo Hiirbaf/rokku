@@ -2,10 +2,10 @@ package yokai.util
 
 import eu.kanade.tachiyomi.source.model.SChapter
 import eu.kanade.tachiyomi.source.model.SManga
+import yokai.core.archive.EpubReader
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Locale
-import yokai.core.archive.EpubReader
 
 /**
  * Fills manga and chapter metadata using this epub file's metadata.
@@ -24,7 +24,7 @@ fun EpubReader.fillMetadata(chapter: SChapter, manga: SManga) {
     }
 
     creator?.text()?.let { manga.author = it }
-    description?.text()?.let { manga.description = it}
+    description?.text()?.let { manga.description = it }
 
     title?.text()?.let { chapter.name = it }
 

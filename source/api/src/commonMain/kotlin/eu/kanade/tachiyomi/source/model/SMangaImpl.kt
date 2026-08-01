@@ -1,7 +1,7 @@
 package eu.kanade.tachiyomi.source.model
 
-import kotlin.jvm.Transient
 import kotlinx.serialization.json.JsonObject
+import kotlin.jvm.Transient
 
 class SMangaImpl : SManga {
 

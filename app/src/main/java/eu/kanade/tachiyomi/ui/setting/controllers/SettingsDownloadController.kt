@@ -3,8 +3,6 @@ package eu.kanade.tachiyomi.ui.setting.controllers
 import android.content.Intent
 import androidx.preference.PreferenceScreen
 import com.bluelinelabs.conductor.Controller
-import yokai.i18n.MR
-import yokai.util.lang.getString
 import eu.kanade.tachiyomi.data.database.models.Category
 import eu.kanade.tachiyomi.data.preference.changesIn
 import eu.kanade.tachiyomi.ui.setting.SettingsLegacyController
@@ -14,16 +12,18 @@ import eu.kanade.tachiyomi.ui.setting.infoPreference
 import eu.kanade.tachiyomi.ui.setting.intListPreference
 import eu.kanade.tachiyomi.ui.setting.multiSelectListPreferenceMat
 import eu.kanade.tachiyomi.ui.setting.preferenceCategory
-import eu.kanade.tachiyomi.ui.setting.summaryMRes as summaryRes
 import eu.kanade.tachiyomi.ui.setting.switchPreference
-import eu.kanade.tachiyomi.ui.setting.titleMRes as titleRes
 import eu.kanade.tachiyomi.ui.setting.triStateListPreference
 import eu.kanade.tachiyomi.util.view.withFadeTransaction
 import kotlinx.coroutines.runBlocking
 import uy.kohesive.injekt.injectLazy
 import yokai.domain.category.interactor.GetCategories
 import yokai.domain.download.DownloadPreferences
+import yokai.i18n.MR
+import yokai.util.lang.getString
 import eu.kanade.tachiyomi.data.preference.PreferenceKeys as Keys
+import eu.kanade.tachiyomi.ui.setting.summaryMRes as summaryRes
+import eu.kanade.tachiyomi.ui.setting.titleMRes as titleRes
 
 class SettingsDownloadController : SettingsLegacyController() {
 

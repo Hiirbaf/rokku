@@ -130,7 +130,7 @@ class DownloadProvider(private val context: Context) {
             }
         }
     }
-    */
+     */
 
     fun renameMangaFolder(from: String, to: String, sourceId: Long) {
         val sourceManager by injectLazy<SourceManager>()
@@ -179,7 +179,8 @@ class DownloadProvider(private val context: Context) {
 
                 val afterScanlatorCheck = fileName.substringAfter("_")
                 // check both these don't exist because who knows how a chapter name is and it might not trim scanlator correctly
-                return@filter !chapterNameHashSet.contains(fileName) && !chapterNameHashSet.contains(afterScanlatorCheck)
+                return@filter !chapterNameHashSet.contains(fileName) &&
+                    !chapterNameHashSet.contains(afterScanlatorCheck)
             }
             // everything else is considered true
             return@filter true

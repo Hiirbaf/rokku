@@ -27,7 +27,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import android.R as AR
 
-
 @Composable
 fun <T> ListPreferenceWidget(
     value: T,

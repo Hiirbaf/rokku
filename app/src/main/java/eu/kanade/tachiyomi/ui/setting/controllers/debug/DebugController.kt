@@ -10,9 +10,9 @@ import eu.kanade.tachiyomi.ui.setting.preference
 import eu.kanade.tachiyomi.ui.setting.preferenceCategory
 import eu.kanade.tachiyomi.util.system.DeviceUtil
 import eu.kanade.tachiyomi.util.view.withFadeTransaction
-import java.text.DateFormat
 import yokai.i18n.MR
 import yokai.presentation.settings.screen.about.getFormattedBuildTime
+import java.text.DateFormat
 
 class DebugController : SettingsLegacyController() {
 

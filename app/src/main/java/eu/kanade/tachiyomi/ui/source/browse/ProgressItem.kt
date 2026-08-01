@@ -4,6 +4,7 @@ import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.loadingindicator.LoadingIndicator
+import dev.icerock.moko.resources.compose.stringResource
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
 import eu.davidea.flexibleadapter.items.IFlexible
@@ -11,7 +12,6 @@ import eu.davidea.viewholders.FlexibleViewHolder
 import eu.kanade.tachiyomi.R
 import yokai.i18n.MR
 import yokai.util.lang.getString
-import dev.icerock.moko.resources.compose.stringResource
 
 class ProgressItem : AbstractFlexibleItem<ProgressItem.Holder>() {
 
@@ -48,7 +48,10 @@ class ProgressItem : AbstractFlexibleItem<ProgressItem.Holder>() {
         return -1
     }
 
-    class Holder(view: View, adapter: FlexibleAdapter<IFlexible<RecyclerView.ViewHolder>>) : FlexibleViewHolder(view, adapter) {
+    class Holder(view: View, adapter: FlexibleAdapter<IFlexible<RecyclerView.ViewHolder>>) : FlexibleViewHolder(
+        view,
+        adapter,
+    ) {
 
         val progressBar: LoadingIndicator = view.findViewById(R.id.progress_bar)
         val progressMessage: TextView = view.findViewById(R.id.progress_message)

@@ -138,16 +138,17 @@ fun ExtensionRepoInput(
             onClick = { onAddClick(inputText) },
             enabled = inputText.isNotEmpty(),
         ) {
-            if (!isLoading)
+            if (!isLoading) {
                 Icon(
                     imageVector = Icons.Filled.Check,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.secondary,
                 )
-            else
+            } else {
                 CircularProgressIndicator(
                     color = MaterialTheme.colorScheme.primary,
                 )
+            }
         }
     }
 }

@@ -2,10 +2,10 @@ package eu.kanade.tachiyomi.ui.recents
 
 import androidx.annotation.StringRes
 import dev.icerock.moko.resources.StringResource
+import dev.icerock.moko.resources.compose.stringResource
 import eu.kanade.tachiyomi.R
 import yokai.i18n.MR
 import yokai.util.lang.getString
-import dev.icerock.moko.resources.compose.stringResource
 
 enum class RecentsViewType(val mainValue: Int, val stringRes: StringResource) {
     GroupedAll(0, MR.strings.grouped),

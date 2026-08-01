@@ -74,7 +74,9 @@ abstract class BaseController(bundle: Bundle? = null) :
         super.onChangeStarted(handler, type)
     }
 
-    open fun canStillGoBack(): Boolean { return false }
+    open fun canStillGoBack(): Boolean {
+        return false
+    }
 
     open val mainRecycler: RecyclerView?
         get() = null

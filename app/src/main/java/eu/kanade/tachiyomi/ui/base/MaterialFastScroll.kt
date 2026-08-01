@@ -7,15 +7,15 @@ import androidx.core.view.marginTop
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import dev.icerock.moko.resources.compose.stringResource
 import eu.davidea.fastscroller.FastScroller
 import eu.kanade.tachiyomi.R
-import yokai.i18n.MR
-import yokai.util.lang.getString
-import dev.icerock.moko.resources.compose.stringResource
 import eu.kanade.tachiyomi.ui.base.controller.BaseLegacyController
 import eu.kanade.tachiyomi.util.system.dpToPx
 import eu.kanade.tachiyomi.util.system.dpToPxEnd
 import eu.kanade.tachiyomi.util.system.isLTR
+import yokai.i18n.MR
+import yokai.util.lang.getString
 import kotlin.math.abs
 
 @Suppress("LeakingThis")
@@ -78,6 +78,7 @@ open class MaterialFastScroll @JvmOverloads constructor(context: Context, attrs:
                 dispatchTouchToRecycler(event)
                 return true
             }
+
             MotionEvent.ACTION_MOVE -> {
                 val y = event.y
                 if (!canScroll && abs(y - startY) > 15.dpToPx) {
@@ -94,6 +95,7 @@ open class MaterialFastScroll @JvmOverloads constructor(context: Context, attrs:
                 }
                 return true
             }
+
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 startY = -1f
                 if (!canScroll) {
@@ -149,7 +151,9 @@ open class MaterialFastScroll @JvmOverloads constructor(context: Context, attrs:
                     verticalScrollOffset.toFloat() / (verticalScrollRange - height).toFloat()
                 setBubbleAndHandlePosition(height * proportion)
                 // If scroll amount is small, don't show it
-                if (minimumScrollThreshold == 0 || dy == 0 || abs(dy) > minimumScrollThreshold || scrollbarAnimator.isAnimating) {
+                if (minimumScrollThreshold == 0 || dy == 0 || abs(dy) > minimumScrollThreshold ||
+                    scrollbarAnimator.isAnimating
+                ) {
                     showScrollbar()
                     if (autoHideEnabled) hideScrollbar()
                 }

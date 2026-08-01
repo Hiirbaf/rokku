@@ -3,9 +3,9 @@ package yokai.core.archive
 import android.os.ParcelFileDescriptor
 import android.system.Os
 import android.system.OsConstants
+import me.zhanghai.android.libarchive.ArchiveException
 import java.io.Closeable
 import java.io.InputStream
-import me.zhanghai.android.libarchive.ArchiveException
 
 class ArchiveReader(pfd: ParcelFileDescriptor) : Closeable {
     private val size = pfd.statSize

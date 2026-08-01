@@ -45,9 +45,9 @@ class SearchActivity : MainActivity() {
         binding.searchToolbar.setNavigationOnClickListener {
             val rootSearchController = router.backstack.lastOrNull()?.controller
             if ((
-                rootSearchController is RootSearchInterface ||
-                    (currentToolbar != binding.searchToolbar && binding.appBar.useLargeToolbar)
-                ) && rootSearchController !is SmallToolbarInterface
+                    rootSearchController is RootSearchInterface ||
+                        (currentToolbar != binding.searchToolbar && binding.appBar.useLargeToolbar)
+                    ) && rootSearchController !is SmallToolbarInterface
             ) {
                 binding.searchToolbar.menu.findItem(R.id.action_search)?.expandActionView()
             } else {
@@ -98,7 +98,13 @@ class SearchActivity : MainActivity() {
     }
 
     private fun intentShouldGoBack() =
-        intent.action in listOf(Constants.SHORTCUT_MANGA, SHORTCUT_READER_SETTINGS, SHORTCUT_BROWSE, Intent.ACTION_APPLICATION_PREFERENCES)
+        intent.action in
+            listOf(
+                Constants.SHORTCUT_MANGA,
+                SHORTCUT_READER_SETTINGS,
+                SHORTCUT_BROWSE,
+                Intent.ACTION_APPLICATION_PREFERENCES,
+            )
 
     override fun syncActivityViewWithController(
         to: Controller?,
@@ -141,6 +147,7 @@ class SearchActivity : MainActivity() {
                     finish()
                 }
             }
+
             INTENT_SEARCH -> {
                 val query = intent.getStringExtra(INTENT_SEARCH_QUERY)
                 val filter = intent.getStringExtra(INTENT_SEARCH_FILTER)
@@ -151,6 +158,7 @@ class SearchActivity : MainActivity() {
                     router.replaceTopController(GlobalSearchController(query, filter).withFadeTransaction())
                 }
             }
+
             Constants.SHORTCUT_MANGA, Constants.SHORTCUT_MANGA_BACK -> {
                 val extras = intent.extras ?: return false
                 if (intent.action == Constants.SHORTCUT_MANGA_BACK && preferences.openChapterInShortcuts().get()) {
@@ -178,6 +186,7 @@ class SearchActivity : MainActivity() {
                         .popChangeHandler(FadeChangeHandler()),
                 )
             }
+
             SHORTCUT_SOURCE -> {
                 val extras = intent.extras ?: return false
                 SecureActivityDelegate.promptLockIfNeeded(this, true)
@@ -187,6 +196,7 @@ class SearchActivity : MainActivity() {
                         .popChangeHandler(FadeChangeHandler()),
                 )
             }
+
             SHORTCUT_READER_SETTINGS -> {
                 router.replaceTopController(
                     RouterTransaction.with(SettingsReaderController())
@@ -194,6 +204,7 @@ class SearchActivity : MainActivity() {
                         .popChangeHandler(FadeChangeHandler()),
                 )
             }
+
             Intent.ACTION_APPLICATION_PREFERENCES -> {
                 router.replaceTopController(
                     RouterTransaction.with(SettingsMainController())
@@ -201,6 +212,7 @@ class SearchActivity : MainActivity() {
                         .popChangeHandler(FadeChangeHandler()),
                 )
             }
+
             else -> return false
         }
         return true

@@ -2,14 +2,14 @@ package eu.kanade.tachiyomi.ui.migration
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
+import dev.icerock.moko.resources.compose.stringResource
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.items.AbstractSectionableItem
 import eu.davidea.flexibleadapter.items.IFlexible
 import eu.kanade.tachiyomi.R
+import eu.kanade.tachiyomi.source.Source
 import yokai.i18n.MR
 import yokai.util.lang.getString
-import dev.icerock.moko.resources.compose.stringResource
-import eu.kanade.tachiyomi.source.Source
 
 /**
  * Item that contains source information.
@@ -36,7 +36,10 @@ data class SourceItem(
     /**
      * Creates a new view holder for this item.
      */
-    override fun createViewHolder(view: View, adapter: FlexibleAdapter<IFlexible<RecyclerView.ViewHolder>>): SourceHolder {
+    override fun createViewHolder(
+        view: View,
+        adapter: FlexibleAdapter<IFlexible<RecyclerView.ViewHolder>>,
+    ): SourceHolder {
         return SourceHolder(view, adapter as SourceAdapter)
     }
 

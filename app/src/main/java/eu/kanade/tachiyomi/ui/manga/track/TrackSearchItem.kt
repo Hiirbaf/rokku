@@ -8,13 +8,13 @@ import coil3.request.allowHardware
 import com.google.android.material.shape.CornerFamily
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.items.AbstractItem
-import eu.kanade.tachiyomi.R
-import yokai.i18n.MR
-import yokai.util.lang.getString
 import dev.icerock.moko.resources.compose.stringResource
+import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.data.track.model.TrackSearch
 import eu.kanade.tachiyomi.databinding.TrackSearchItemBinding
 import eu.kanade.tachiyomi.util.system.dpToPx
+import yokai.i18n.MR
+import yokai.util.lang.getString
 import java.util.Locale
 
 class TrackSearchItem(val trackSearch: TrackSearch) : AbstractItem<TrackSearchItem.ViewHolder>() {

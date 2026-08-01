@@ -10,7 +10,6 @@ import eu.kanade.tachiyomi.source.model.SManga
 import eu.kanade.tachiyomi.source.model.SMangaUpdate
 import eu.kanade.tachiyomi.source.online.DelegatedHttpSource
 import eu.kanade.tachiyomi.source.online.HttpSource
-import java.util.concurrent.ConcurrentHashMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -22,6 +21,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import yokai.i18n.MR
 import yokai.util.lang.getString
+import java.util.concurrent.ConcurrentHashMap
 
 class SourceManager(
     private val context: Context,
@@ -34,7 +34,9 @@ class SourceManager(
 
     private val stubSourcesMap = ConcurrentHashMap<Long, StubSource>()
 
-    val catalogueSources: Flow<List<CatalogueSource>> = sourcesMapFlow.map { it.values.filterIsInstance<CatalogueSource>() }
+    val catalogueSources: Flow<List<CatalogueSource>> = sourcesMapFlow.map {
+        it.values.filterIsInstance<CatalogueSource>()
+    }
     val onlineSources: Flow<List<HttpSource>> = catalogueSources.map { it.filterIsInstance<HttpSource>() }
 
     // FIXME: Delegated source, unused at the moment, J2K only delegate deep links
@@ -48,8 +50,8 @@ class SourceManager(
                     extensions.forEach { extension ->
                         extension.sources.forEach {
                             mutableMap[it.id] = it
-                            //delegatedSources[it.id]?.delegatedHttpSource?.delegate = it as? HttpSource
-                            //registerStubSource(it)
+                            // delegatedSources[it.id]?.delegatedHttpSource?.delegate = it as? HttpSource
+                            // registerStubSource(it)
                         }
                     }
                     sourcesMapFlow.value = mutableMap

@@ -151,14 +151,6 @@ import eu.kanade.tachiyomi.util.view.setMessage
 import eu.kanade.tachiyomi.util.view.snack
 import eu.kanade.tachiyomi.widget.doOnEnd
 import eu.kanade.tachiyomi.widget.doOnStart
-import java.io.ByteArrayOutputStream
-import java.text.DecimalFormat
-import java.text.DecimalFormatSymbols
-import java.util.Collections
-import java.util.Locale
-import kotlin.math.abs
-import kotlin.math.max
-import kotlin.math.roundToInt
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -178,6 +170,14 @@ import yokai.domain.ui.settings.ReaderPreferences
 import yokai.domain.ui.settings.ReaderPreferences.LandscapeCutoutBehaviour
 import yokai.i18n.MR
 import yokai.util.lang.getString
+import java.io.ByteArrayOutputStream
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
+import java.util.Collections
+import java.util.Locale
+import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.roundToInt
 import android.R as AR
 
 /**
@@ -432,21 +432,27 @@ class ReaderActivity : BaseActivity<ReaderActivityBinding>() {
                         viewModel.manga?.let(::setManga)
                         viewModel.state.value.viewerChapters?.let(::setChapters)
                     }
+
                     ReaderViewModel.Event.ReloadViewerChapters -> {
                         viewModel.state.value.viewerChapters?.let(::setChapters)
                     }
+
                     is ReaderViewModel.Event.SetOrientation -> {
                         setOrientation(event.orientation)
                     }
+
                     is ReaderViewModel.Event.SavedImage -> {
                         onSaveImageResult(event.result)
                     }
+
                     is ReaderViewModel.Event.ShareImage -> {
                         onShareImageResult(event.file, event.page)
                     }
+
                     is ReaderViewModel.Event.SetCoverResult -> {
                         onSetAsCoverResult(event.result)
                     }
+
                     is ReaderViewModel.Event.ShareTrackingError -> {
                         showTrackingError(event.errors)
                     }
@@ -460,8 +466,10 @@ class ReaderActivity : BaseActivity<ReaderActivityBinding>() {
                     .collect { newLayoutInfo ->
                         hingeGapSize = 0
                         for (displayFeature: DisplayFeature in newLayoutInfo.displayFeatures) {
-                            if (displayFeature is FoldingFeature && displayFeature.occlusionType == FoldingFeature.OcclusionType.FULL &&
-                                displayFeature.isSeparating && displayFeature.orientation == FoldingFeature.Orientation.VERTICAL
+                            if (displayFeature is FoldingFeature &&
+                                displayFeature.occlusionType == FoldingFeature.OcclusionType.FULL &&
+                                displayFeature.isSeparating &&
+                                displayFeature.orientation == FoldingFeature.Orientation.VERTICAL
                             ) {
                                 hingeGapSize = displayFeature.bounds.width()
                             }
@@ -532,11 +540,19 @@ class ReaderActivity : BaseActivity<ReaderActivityBinding>() {
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         val splitItem = menu.findItem(R.id.action_shift_double_page)
         splitItem?.isVisible = ((viewer as? PagerViewer)?.config?.doublePages ?: false) && !canShowSplitAtBottom()
-        binding.chaptersSheet.shiftPageButton.isVisible = ((viewer as? PagerViewer)?.config?.doublePages ?: false) && canShowSplitAtBottom()
+        binding.chaptersSheet.shiftPageButton.isVisible =
+            ((viewer as? PagerViewer)?.config?.doublePages ?: false) && canShowSplitAtBottom()
         (viewer as? PagerViewer)?.config?.let { config ->
             val icon = ContextCompat.getDrawable(
                 this,
-                if ((!config.shiftDoublePage).xor(viewer is R2LPagerViewer)) R.drawable.ic_page_previous_outline_24dp else R.drawable.ic_page_next_outline_24dp,
+                if ((!config.shiftDoublePage).xor(
+                        viewer is R2LPagerViewer,
+                    )
+                ) {
+                    R.drawable.ic_page_previous_outline_24dp
+                } else {
+                    R.drawable.ic_page_next_outline_24dp
+                },
             )
             splitItem?.icon = icon
             binding.chaptersSheet.shiftPageButton.setImageDrawable(icon)
@@ -575,7 +591,9 @@ class ReaderActivity : BaseActivity<ReaderActivityBinding>() {
         with(binding.readerNav) {
             listOf(leftPageText, rightPageText).forEach {
                 it.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-                    val isCurrent = (viewer is R2LPagerViewer && !binding.readerNav.pageSeekbar.isVertical).xor(it === leftPageText)
+                    val isCurrent = (viewer is R2LPagerViewer && !binding.readerNav.pageSeekbar.isVertical).xor(
+                        it === leftPageText,
+                    )
                     width = if (isDoublePage && isCurrent) 48.spToPx else 32.spToPx
                 }
             }
@@ -687,7 +705,7 @@ class ReaderActivity : BaseActivity<ReaderActivityBinding>() {
                 rootHeight - binding.appBar.height - (
                     binding.chaptersSheet.root.sheetBehavior
                         ?.peekHeight ?: 0
-                ) - 12.dpToPx
+                    ) - 12.dpToPx
             val newHeight = (availableHeight * heightPercent / 100).coerceAtLeast(0)
             binding.readerNav.root.updateLayoutParams<FrameLayout.LayoutParams> {
                 if (height != newHeight) height = newHeight
@@ -766,6 +784,7 @@ class ReaderActivity : BaseActivity<ReaderActivityBinding>() {
                 shiftDoublePages()
                 manuallyShiftedPages = true
             }
+
             else -> return super.onOptionsItemSelected(item)
         }
         return true
@@ -801,7 +820,9 @@ class ReaderActivity : BaseActivity<ReaderActivityBinding>() {
     }
 
     override fun finishAfterTransition() {
-        if (didTransitionFromChapter && visibleChapterRange.isNotEmpty() && MainActivity.chapterIdToExitTo !in visibleChapterRange) {
+        if (didTransitionFromChapter && visibleChapterRange.isNotEmpty() &&
+            MainActivity.chapterIdToExitTo !in visibleChapterRange
+        ) {
             finish()
         } else {
             viewModel.onBackPressed()
@@ -832,6 +853,7 @@ class ReaderActivity : BaseActivity<ReaderActivityBinding>() {
                 }
                 return true
             }
+
             KeyEvent.KEYCODE_P -> {
                 if (viewer !is R2LPagerViewer && !binding.readerNav.pageSeekbar.isVertical) {
                     binding.readerNav.leftChapter.performClick()
@@ -840,22 +862,27 @@ class ReaderActivity : BaseActivity<ReaderActivityBinding>() {
                 }
                 return true
             }
+
             KeyEvent.KEYCODE_L -> {
                 binding.readerNav.leftChapter.performClick()
                 return true
             }
+
             KeyEvent.KEYCODE_R -> {
                 binding.readerNav.rightChapter.performClick()
                 return true
             }
+
             KeyEvent.KEYCODE_E -> {
                 viewer?.moveToNext()
                 return true
             }
+
             KeyEvent.KEYCODE_Q -> {
                 viewer?.moveToPrevious()
                 return true
             }
+
             else -> return super.onKeyUp(keyCode, event)
         }
     }
@@ -1040,14 +1067,18 @@ class ReaderActivity : BaseActivity<ReaderActivityBinding>() {
                     if (event?.action == MotionEvent.ACTION_UP) {
                         if (!result) {
                             val sheetBehavior = binding.chaptersSheet.root.sheetBehavior
-                            if (sheetBehavior?.state != BottomSheetBehavior.STATE_SETTLING && !sheetBehavior.isCollapsed()) {
+                            if (sheetBehavior?.state != BottomSheetBehavior.STATE_SETTLING &&
+                                !sheetBehavior.isCollapsed()
+                            ) {
                                 sheetBehavior?.collapse()
                             }
                         }
                         if (readerNavGestureDetector.lockVertical) {
                             return@setOnTouchListener true
                         }
-                    } else if ((event?.action != MotionEvent.ACTION_UP || event.action != MotionEvent.ACTION_DOWN) && result) {
+                    } else if ((event?.action != MotionEvent.ACTION_UP || event.action != MotionEvent.ACTION_DOWN) &&
+                        result
+                    ) {
                         event.action = MotionEvent.ACTION_CANCEL
                         return@setOnTouchListener false
                     }
@@ -1106,7 +1137,9 @@ class ReaderActivity : BaseActivity<ReaderActivityBinding>() {
             setNavColor(insets)
             val systemInsets = insets.ignoredSystemInsets
             val currentOrientation = resources.configuration.orientation
-            val isLandscapeFully = currentOrientation == Configuration.ORIENTATION_LANDSCAPE && readerPreferences.landscapeCutoutBehavior().get() == LandscapeCutoutBehaviour.DEFAULT
+            val isLandscapeFully =
+                currentOrientation == Configuration.ORIENTATION_LANDSCAPE &&
+                    readerPreferences.landscapeCutoutBehavior().get() == LandscapeCutoutBehaviour.DEFAULT
             val cutOutInsets = if (isLandscapeFully) insets.displayCutout else null
             val vis = insets.isVisible(statusBars())
             val fullscreen = preferences.fullscreen().get()
@@ -1181,7 +1214,9 @@ class ReaderActivity : BaseActivity<ReaderActivityBinding>() {
         }
         isScrollingThroughPagesOrChapters = true
         lifecycleScope.launch {
-            val getNextChapter = (viewer is R2LPagerViewer && !binding.readerNav.pageSeekbar.isVertical).xor(rightButton)
+            val getNextChapter = (viewer is R2LPagerViewer && !binding.readerNav.pageSeekbar.isVertical).xor(
+                rightButton,
+            )
             val adjChapter = viewModel.adjacentChapter(getNextChapter)
             if (adjChapter != null) {
                 if (rightButton) {
@@ -1223,29 +1258,35 @@ class ReaderActivity : BaseActivity<ReaderActivityBinding>() {
                 window.navigationBarColor = getResourceColor(R.attr.colorPrimaryVariant)
                 false
             }
+
             Build.VERSION.SDK_INT < Build.VERSION_CODES.O_MR1 -> {
                 // basically if in landscape on a phone
                 // For lollipop, draw opaque nav bar
                 window.navigationBarColor = when {
                     insets.hasSideNavBar() -> Color.BLACK
+
                     isInNightMode() -> {
                         ColorUtils.setAlphaComponent(
                             getResourceColor(R.attr.colorPrimaryVariant),
                             179,
                         )
                     }
+
                     else -> Color.argb(179, 0, 0, 0)
                 }
                 !insets.hasSideNavBar()
             }
+
             insets.isBottomTappable() -> {
                 window.navigationBarColor = Color.TRANSPARENT
                 false
             }
+
             insets.hasSideNavBar() -> {
                 window.navigationBarColor = getResourceColor(R.attr.colorSurface)
                 false
             }
+
             // if in portrait with 2/3 button mode, translucent nav bar
             else -> {
                 true
@@ -1512,7 +1553,10 @@ class ReaderActivity : BaseActivity<ReaderActivityBinding>() {
         binding.pleaseWait.clearAnimation()
         binding.pleaseWait.isVisible = false
         if (indexChapterToShift != null && indexPageToShift != null) {
-            viewerChapters.currChapter.pages?.find { it.index == indexPageToShift && it.chapter.chapter.id == indexChapterToShift }?.let {
+            viewerChapters.currChapter.pages?.find {
+                it.index == indexPageToShift &&
+                    it.chapter.chapter.id == indexChapterToShift
+            }?.let {
                 (viewer as? PagerViewer)?.updateShifting(it)
             }
             indexChapterToShift = null
@@ -1757,11 +1801,17 @@ class ReaderActivity : BaseActivity<ReaderActivityBinding>() {
         MaterialMenuSheet(this, items) { _, item ->
             when (item) {
                 0 -> shareImage(page)
+
                 1 -> saveImage(page)
+
                 2 -> showSetCoverPrompt(page)
+
                 3 -> extraPage?.let { shareImage(it) }
+
                 4 -> extraPage?.let { saveImage(it) }
+
                 5 -> extraPage?.let { showSetCoverPrompt(it) }
+
                 6, 7 -> extraPage?.let { secondPage ->
                     (viewer as? PagerViewer)?.let { viewer ->
                         val isLTR = (viewer !is R2LPagerViewer).xor(viewer.config.invertDoublePages)
@@ -1840,7 +1890,10 @@ class ReaderActivity : BaseActivity<ReaderActivityBinding>() {
             DecimalFormat("#.###", DecimalFormatSymbols().apply { decimalSeparator = '.' })
 
         val pageNumber = if (secondPage != null) {
-            getString(MR.strings.pages_, if (resources.isLTR) "${page.number}-${page.number + 1}" else "${page.number + 1}-${page.number}")
+            getString(
+                MR.strings.pages_,
+                if (resources.isLTR) "${page.number}-${page.number + 1}" else "${page.number + 1}-${page.number}",
+            )
         } else {
             getString(MR.strings.page_, page.number)
         }
@@ -1885,6 +1938,7 @@ class ReaderActivity : BaseActivity<ReaderActivityBinding>() {
             is ReaderViewModel.SaveImageResult.Success -> {
                 toast(MR.strings.picture_saved)
             }
+
             is ReaderViewModel.SaveImageResult.Error -> {
                 Logger.e(result.error)
             }
@@ -1944,7 +1998,13 @@ class ReaderActivity : BaseActivity<ReaderActivityBinding>() {
                             setBounds(0, 0, (size * dRatio).roundToInt(), size.roundToInt())
                         } ?: return
                     val alignment =
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) DynamicDrawableSpan.ALIGN_CENTER else DynamicDrawableSpan.ALIGN_BASELINE
+                        if (Build.VERSION.SDK_INT >=
+                            Build.VERSION_CODES.Q
+                        ) {
+                            DynamicDrawableSpan.ALIGN_CENTER
+                        } else {
+                            DynamicDrawableSpan.ALIGN_BASELINE
+                        }
                     inSpans(ImageSpan(icon, alignment)) { append("image") }
                     append(" - $errorMessage")
                 }
@@ -2026,16 +2086,19 @@ class ReaderActivity : BaseActivity<ReaderActivityBinding>() {
                 window,
                 when (currentOrientation) {
                     Configuration.ORIENTATION_LANDSCAPE -> {
-                        if (readerPreferences.landscapeCutoutBehavior().get() == LandscapeCutoutBehaviour.HIDE)
+                        if (readerPreferences.landscapeCutoutBehavior().get() == LandscapeCutoutBehaviour.HIDE) {
                             LegacyCutoutMode.NEVER
-                        else
+                        } else {
                             LegacyCutoutMode.SHORT_EDGES
+                        }
                     }
+
                     else -> {
-                        if (readerPreferences.cutoutShort().get())
+                        if (readerPreferences.cutoutShort().get()) {
                             LegacyCutoutMode.SHORT_EDGES
-                        else
+                        } else {
                             LegacyCutoutMode.NEVER
+                        }
                     }
                 },
             )
@@ -2101,18 +2164,16 @@ class ReaderActivity : BaseActivity<ReaderActivityBinding>() {
 
         var showNewChapter = false
 
-        /**
-         * Initializes the reader subscriptions.
-         */
+        // Initializes the reader subscriptions.
         init {
             preferences.readerTheme().changesIn(scope) { theme ->
-                    binding.viewerContainer.setBackgroundColor(
-                        ThemeUtil.readerBackgroundColor(
-                            theme,
-                            getResourceColor(R.attr.background),
-                        )
-                    )
-                }
+                binding.viewerContainer.setBackgroundColor(
+                    ThemeUtil.readerBackgroundColor(
+                        theme,
+                        getResourceColor(R.attr.background),
+                    ),
+                )
+            }
 
             preferences.defaultOrientationType().changes()
                 .drop(1)
@@ -2281,9 +2342,11 @@ class ReaderActivity : BaseActivity<ReaderActivityBinding>() {
                 value > 0 -> {
                     value / 100f
                 }
+
                 value < 0 -> {
                     0.01f
                 }
+
                 else -> WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
             }
 

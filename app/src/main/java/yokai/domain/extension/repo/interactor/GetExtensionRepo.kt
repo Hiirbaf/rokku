@@ -5,7 +5,7 @@ import yokai.domain.extension.repo.ExtensionRepoRepository
 import yokai.domain.extension.repo.model.ExtensionRepo
 
 class GetExtensionRepo(
-    private val extensionRepoRepository: ExtensionRepoRepository
+    private val extensionRepoRepository: ExtensionRepoRepository,
 ) {
     fun subscribeAll(): Flow<List<ExtensionRepo>> = extensionRepoRepository.subscribeAll()
 

@@ -16,9 +16,9 @@ class ReaderPreferences(private val preferenceStore: PreferenceStore) {
     fun landscapeCutoutBehavior() = preferenceStore.getEnum("landscape_cutout_behavior", LandscapeCutoutBehaviour.HIDE)
 
     enum class CutoutBehaviour(val titleResId: StringResource) {
-        HIDE(MR.strings.pad_cutout_areas),  // Similar to CUTOUT_MODE_NEVER / J2K's pad
+        HIDE(MR.strings.pad_cutout_areas), // Similar to CUTOUT_MODE_NEVER / J2K's pad
         SHOW(MR.strings.start_past_cutout), // Similar to CUTOUT_MODE_SHORT_EDGES / J2K's start past
-        IGNORE(MR.strings.cutout_ignore),   // Similar to CUTOUT_MODE_DEFAULT / J2K's ignore
+        IGNORE(MR.strings.cutout_ignore), // Similar to CUTOUT_MODE_DEFAULT / J2K's ignore
         ;
 
         companion object {
@@ -32,8 +32,8 @@ class ReaderPreferences(private val preferenceStore: PreferenceStore) {
     }
 
     enum class LandscapeCutoutBehaviour(val titleResId: StringResource) {
-        HIDE(MR.strings.pad_cutout_areas),  // Similar to CUTOUT_MODE_NEVER / J2K's pad
-        DEFAULT(MR.strings.cutout_ignore),  // Similar to CUTOUT_MODE_SHORT_EDGES / J2K's ignore
+        HIDE(MR.strings.pad_cutout_areas), // Similar to CUTOUT_MODE_NEVER / J2K's pad
+        DEFAULT(MR.strings.cutout_ignore), // Similar to CUTOUT_MODE_SHORT_EDGES / J2K's ignore
         ;
 
         companion object {

@@ -13,11 +13,12 @@ class VertPaddingDecoration(private val padding: Int) : RecyclerView.ItemDecorat
 
         val itemPosition = parent.getChildAdapterPosition(view)
 
-        if (itemPosition == RecyclerView.NO_POSITION) return;
+        if (itemPosition == RecyclerView.NO_POSITION) return
 
         when {
             itemPosition == 0 ->
                 outRect.top = padding
+
             itemPosition > 0 && itemPosition == state.itemCount - 1 ->
                 outRect.bottom = padding
         }

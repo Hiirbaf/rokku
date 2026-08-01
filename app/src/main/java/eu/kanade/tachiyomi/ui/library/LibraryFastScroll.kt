@@ -43,7 +43,9 @@ class LibraryFastScroll @JvmOverloads constructor(context: Context, attrs: Attri
                     targetPos = adapter.currentItems.indexOf(item.header)
                     item.header.category
                 }
+
                 is LibraryHeaderItem -> item.category
+
                 else -> return super.setRecyclerViewPosition(y)
             }
             adapter.controller?.scrollToCategory(category)
@@ -56,10 +58,10 @@ class LibraryFastScroll @JvmOverloads constructor(context: Context, attrs: Attri
         if (bubbleEnabled && !isSingleCategory) {
             bubble.translationX =
                 if (categoryFastScroll) {
-                250f * (if (resources.isLTR) -1 else 1)
-            } else {
-                currentX - handle.x
-            } + (-45f).dpToPxEnd(resources)
+                    250f * (if (resources.isLTR) -1 else 1)
+                } else {
+                    currentX - handle.x
+                } + (-45f).dpToPxEnd(resources)
         }
     }
 }

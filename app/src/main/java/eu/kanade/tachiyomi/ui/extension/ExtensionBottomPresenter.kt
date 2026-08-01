@@ -74,6 +74,7 @@ class ExtensionBottomPresenter : BaseMigrationPresenter<ExtensionBottomSheet>() 
                         InstallStep.Installed, InstallStep.Error, InstallStep.Done -> {
                             currentDownloads.remove(extension.extension.pkgName)
                         }
+
                         else -> {
                             currentDownloads[extension.extension.pkgName] = it.second
                         }
@@ -152,8 +153,15 @@ class ExtensionBottomPresenter : BaseMigrationPresenter<ExtensionBottomSheet>() 
                     {
                         when (sortOrder) {
                             InstalledExtensionsOrder.Name -> it.name
-                            InstalledExtensionsOrder.RecentlyUpdated -> Long.MAX_VALUE - ExtensionLoader.extensionUpdateDate(context, it)
-                            InstalledExtensionsOrder.RecentlyInstalled -> Long.MAX_VALUE - ExtensionLoader.extensionInstallDate(context, it)
+
+                            InstalledExtensionsOrder.RecentlyUpdated ->
+                                Long.MAX_VALUE -
+                                    ExtensionLoader.extensionUpdateDate(context, it)
+
+                            InstalledExtensionsOrder.RecentlyInstalled ->
+                                Long.MAX_VALUE -
+                                    ExtensionLoader.extensionInstallDate(context, it)
+
                             InstalledExtensionsOrder.Language -> it.lang
                         }
                     },
@@ -186,7 +194,11 @@ class ExtensionBottomPresenter : BaseMigrationPresenter<ExtensionBottomSheet>() 
             }
         }
         if (installedSorted.isNotEmpty() || untrustedSorted.isNotEmpty()) {
-            val header = ExtensionGroupItem(context.getString(MR.strings.installed), installedSorted.size + untrustedSorted.size, installedSorting = preferences.installedExtensionsOrder().get())
+            val header = ExtensionGroupItem(
+                context.getString(MR.strings.installed),
+                installedSorted.size + untrustedSorted.size,
+                installedSorting = preferences.installedExtensionsOrder().get(),
+            )
             items += installedSorted.map { extension ->
                 ExtensionItem(extension, header, currentDownloads[extension.pkgName])
             }
@@ -253,6 +265,7 @@ class ExtensionBottomPresenter : BaseMigrationPresenter<ExtensionBottomSheet>() 
                         InstallStep.Installed, InstallStep.Error, InstallStep.Done -> {
                             currentDownloads.remove(extension.pkgName)
                         }
+
                         else -> {
                             currentDownloads[extension.pkgName] = it
                         }

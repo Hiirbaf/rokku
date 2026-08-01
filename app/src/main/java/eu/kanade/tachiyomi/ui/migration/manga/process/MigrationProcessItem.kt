@@ -2,13 +2,13 @@ package eu.kanade.tachiyomi.ui.migration.manga.process
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
+import dev.icerock.moko.resources.compose.stringResource
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
 import eu.davidea.flexibleadapter.items.IFlexible
 import eu.kanade.tachiyomi.R
 import yokai.i18n.MR
 import yokai.util.lang.getString
-import dev.icerock.moko.resources.compose.stringResource
 
 class MigrationProcessItem(val manga: MigratingManga) :
     AbstractFlexibleItem<MigrationProcessHolder>() {

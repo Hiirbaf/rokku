@@ -13,7 +13,7 @@ indent_size = 4
 # noinspection EditorConfigKeyCorrectness
 [*.{kt,kts}]
 indent_size = 4
-max_line_length = 120
+max_line_length = 160
 
 ij_kotlin_allow_trailing_comma = true
 ij_kotlin_allow_trailing_comma_on_call_site = true
@@ -26,3 +26,12 @@ ktlint_standard_class-signature = disabled
 ktlint_standard_discouraged-comment-location = disabled
 ktlint_standard_function-expression-body = disabled
 ktlint_standard_function-signature = disabled
+# SManga/SChapter/Manga's snake_case fields are a binary-compatible extension API surface;
+# GET/POST/etc. in Requests.kt intentionally mirror HTTP method names.
+ktlint_standard_property-naming = disabled
+ktlint_standard_function-naming = disabled
+# Deliberately used for java.util.concurrent.*/.atomic.* and similar broad utility imports.
+ktlint_standard_no-wildcard-imports = disabled
+# False positive on the standard private-backing-field-plus-public-exposed-flow pattern
+# (e.g. _downloadsSharedFlow: MutableSharedFlow / downloadSharedFlow: SharedFlow).
+ktlint_standard_backing-property-naming = disabled

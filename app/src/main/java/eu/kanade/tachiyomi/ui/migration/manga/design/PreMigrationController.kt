@@ -16,11 +16,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bluelinelabs.conductor.Router
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import dev.icerock.moko.resources.compose.stringResource
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.kanade.tachiyomi.R
-import yokai.i18n.MR
-import yokai.util.lang.getString
-import dev.icerock.moko.resources.compose.stringResource
 import eu.kanade.tachiyomi.data.preference.PreferencesHelper
 import eu.kanade.tachiyomi.databinding.PreMigrationControllerBinding
 import eu.kanade.tachiyomi.source.SourceManager
@@ -34,6 +32,8 @@ import eu.kanade.tachiyomi.util.view.expand
 import eu.kanade.tachiyomi.util.view.liftAppbarWith
 import eu.kanade.tachiyomi.util.view.withFadeTransaction
 import uy.kohesive.injekt.injectLazy
+import yokai.i18n.MR
+import yokai.util.lang.getString
 
 class PreMigrationController(bundle: Bundle? = null) :
     BaseLegacyController<PreMigrationControllerBinding>(bundle),
@@ -149,11 +149,11 @@ class PreMigrationController(bundle: Bundle? = null) :
             .sortedBy { "(${it.lang}) ${it.name}" }
         sources =
             sources.filter { isEnabled(it.id.toString()) }.sortedBy {
-            sourcesSaved.indexOf(
-                it.id
-                    .toString(),
-            )
-        } +
+                sourcesSaved.indexOf(
+                    it.id
+                        .toString(),
+                )
+            } +
             sources.filterNot { isEnabled(it.id.toString()) }
 
         return sources
@@ -181,6 +181,7 @@ class PreMigrationController(bundle: Bundle? = null) :
                 }
                 adapter?.notifyDataSetChanged()
             }
+
             R.id.action_match_enabled, R.id.action_match_pinned -> {
                 val enabledSources = if (item.itemId == R.id.action_match_enabled) {
                     prefs.hiddenSources().get().mapNotNull { it.toLongOrNull() }
@@ -198,6 +199,7 @@ class PreMigrationController(bundle: Bundle? = null) :
                 val sortedItems = items.sortedBy { it.source.name }.sortedBy { !it.sourceEnabled }
                 adapter?.updateDataSet(sortedItems)
             }
+
             else -> return super.onOptionsItemSelected(item)
         }
         return true

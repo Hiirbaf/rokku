@@ -7,11 +7,11 @@ import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 import androidx.core.app.NotificationManagerCompat
+import dev.icerock.moko.resources.compose.stringResource
 import eu.kanade.tachiyomi.R
+import eu.kanade.tachiyomi.util.system.notificationManager
 import yokai.i18n.MR
 import yokai.util.lang.getString
-import dev.icerock.moko.resources.compose.stringResource
-import eu.kanade.tachiyomi.util.system.notificationManager
 
 /**
  * Class to manage the basic information of all the notifications used in the app.

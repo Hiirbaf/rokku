@@ -142,7 +142,7 @@ class PagerConfig(
                     doublePages = it == PageLayout.DOUBLE_PAGES.value
                     splitPages = it == PageLayout.SPLIT_PAGES.value
                 }
-            },)
+            })
 
         preferences.automaticSplitsPage()
             .register({ autoSplitPages = it })
@@ -160,10 +160,13 @@ class PagerConfig(
                 is R2LPagerViewer -> ZoomType.Right
                 else -> ZoomType.Center
             }
+
             // Left
             2 -> ZoomType.Left
+
             // Right
             3 -> ZoomType.Right
+
             // Center
             else -> ZoomType.Center
         }
@@ -187,6 +190,7 @@ class PagerConfig(
             SubsamplingScaleImageView.SCALE_TYPE_SMART_FIT,
             SubsamplingScaleImageView.SCALE_TYPE_CENTER_CROP,
             -> true
+
             else -> false
         }
     }
@@ -205,7 +209,9 @@ class PagerConfig(
     }
 
     enum class ZoomType {
-        Left, Center, Right
+        Left,
+        Center,
+        Right,
     }
 
     companion object {

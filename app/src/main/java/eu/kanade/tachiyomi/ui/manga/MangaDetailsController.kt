@@ -34,6 +34,7 @@ import androidx.appcompat.view.ActionMode
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.graphics.ColorUtils
 import androidx.core.net.toFile
 import androidx.core.view.ViewCompat
@@ -42,7 +43,6 @@ import androidx.core.view.WindowInsetsCompat.Type.systemBars
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePaddingRelative
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -110,8 +110,8 @@ import eu.kanade.tachiyomi.util.system.clipboardHasImage
 import eu.kanade.tachiyomi.util.system.clipboardManager
 import eu.kanade.tachiyomi.util.system.contextCompatColor
 import eu.kanade.tachiyomi.util.system.dpToPx
-import eu.kanade.tachiyomi.util.system.getClipboardImageUri
 import eu.kanade.tachiyomi.util.system.e
+import eu.kanade.tachiyomi.util.system.getClipboardImageUri
 import eu.kanade.tachiyomi.util.system.getResourceColor
 import eu.kanade.tachiyomi.util.system.ignoredSystemInsets
 import eu.kanade.tachiyomi.util.system.isInNightMode
@@ -145,17 +145,17 @@ import eu.kanade.tachiyomi.util.view.snack
 import eu.kanade.tachiyomi.util.view.toolbarHeight
 import eu.kanade.tachiyomi.util.view.withFadeTransaction
 import eu.kanade.tachiyomi.widget.LinearLayoutManagerAccurateOffset
-import java.io.File
-import java.io.IOException
-import java.util.Locale
-import kotlin.math.max
-import kotlin.math.roundToInt
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeoutOrNull
 import yokai.domain.manga.models.cover
 import yokai.i18n.MR
 import yokai.presentation.core.Constants
 import yokai.util.lang.getString
+import java.io.File
+import java.io.IOException
+import java.util.Locale
+import kotlin.math.max
+import kotlin.math.roundToInt
 import android.R as AR
 
 class MangaDetailsController :
@@ -491,7 +491,10 @@ class MangaDetailsController :
                     (activity!!.window.decorView.width / 2 + hingeGapSize) /
                     2f
             } else {
-                binding.tabletRecycler.updateLayoutParams<ConstraintLayout.LayoutParams> { matchConstraintPercentWidth = 0.4f }
+                binding.tabletRecycler.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                    matchConstraintPercentWidth =
+                        0.4f
+                }
             }
         }
     }
@@ -665,10 +668,11 @@ class MangaDetailsController :
                     val copy = (drawable as? BitmapDrawable)?.let {
                         BitmapDrawable(
                             view.context.resources,
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                 it.bitmap.copy(Bitmap.Config.HARDWARE, false)
-                            else
-                                it.bitmap.copy(it.bitmap.config!!, false),
+                            } else {
+                                it.bitmap.copy(it.bitmap.config!!, false)
+                            },
                         )
                     } ?: drawable
 
@@ -838,7 +842,9 @@ class MangaDetailsController :
                 presenter.deleteChapters(deletedChapters, false)
                 return
             }
+
             1 -> return
+
             else -> {
                 val chapterNames = deletedChapters.map { it.name }
                 context.materialAlertDialog()
@@ -936,6 +942,7 @@ class MangaDetailsController :
         colorToolbar(binding.recycler.canScrollVertically(-1))
         updateMenuVisibility(activityBinding?.toolbar?.menu)
     }
+
     // Lightweight update for single chapter read/bookmark toggles.
     // Skips full adapter dataset replacement which caused ~1s freeze when at top of chapter selection screen.
     // Also part of a fix for manual chapter marking read/unread/bookmarks skipping entries usuallyy 6/20 times.
@@ -1004,16 +1011,20 @@ class MangaDetailsController :
                 when {
                     startingPosition > position ->
                         chapterList = presenter.chapters.subList(position - 1, startingPosition)
+
                     startingPosition <= position ->
                         chapterList = presenter.chapters.subList(startingPosition - 1, position)
                 }
                 when (rangeMode) {
                     RangeMode.Download -> downloadChapters(chapterList)
+
                     RangeMode.RemoveDownload -> massDeleteChapters(
                         chapterList.filter { it.status != Download.State.NOT_DOWNLOADED },
                         false,
                     )
+
                     RangeMode.Read -> markAsRead(chapterList)
+
                     RangeMode.Unread -> markAsUnread(chapterList)
                 }
                 presenter.fetchChapters(false)
@@ -1280,8 +1291,11 @@ class MangaDetailsController :
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_edit -> openEditMangaDialog()
+
             R.id.action_open_in_web_view -> openInWebView()
+
             R.id.action_refresh_tracking -> presenter.refreshTracking(true)
+
             R.id.action_migrate ->
                 if (!isNotOnline()) {
                     PreMigrationController.navigateToMigration(
@@ -1290,6 +1304,7 @@ class MangaDetailsController :
                         listOf(manga!!.id!!),
                     )
                 }
+
             R.id.action_mark_all_as_read -> {
                 activity!!.materialAlertDialog()
                     .setMessage(MR.strings.mark_all_chapters_as_read)
@@ -1299,7 +1314,11 @@ class MangaDetailsController :
                     .setNegativeButton(AR.string.cancel, null)
                     .show()
             }
-            R.id.remove_all, R.id.remove_read, R.id.remove_non_bookmarked, R.id.remove_custom -> massDeleteChapters(item.itemId)
+
+            R.id.remove_all, R.id.remove_read, R.id.remove_non_bookmarked, R.id.remove_custom -> massDeleteChapters(
+                item.itemId,
+            )
+
             R.id.action_mark_all_as_unread -> {
                 activity!!.materialAlertDialog()
                     .setMessage(MR.strings.mark_all_chapters_as_unread)
@@ -1309,9 +1328,11 @@ class MangaDetailsController :
                     .setNegativeButton(AR.string.cancel, null)
                     .show()
             }
+
             R.id.download_next, R.id.download_next_5, R.id.download_custom, R.id.download_unread, R.id.download_all -> downloadChapters(
                 item.itemId,
             )
+
             else -> return super.onOptionsItemSelected(item)
         }
         return true
@@ -1434,13 +1455,17 @@ class MangaDetailsController :
     private fun massDeleteChapters(choice: Int) {
         val chaptersToDelete = when (choice) {
             R.id.remove_all -> presenter.allChapters
+
             R.id.remove_non_bookmarked -> presenter.allChapters.filter { !it.bookmark }
+
             R.id.remove_read -> presenter.allChapters.filter { it.read }
+
             R.id.remove_custom -> {
                 createActionModeIfNeeded()
                 rangeMode = RangeMode.RemoveDownload
                 return
             }
+
             else -> emptyList()
         }.filter { it.isDownloaded }
         if (chaptersToDelete.isNotEmpty() || choice == R.id.remove_all) {
@@ -1472,17 +1497,25 @@ class MangaDetailsController :
             .show()
     }
 
-    private fun updateToolbarTitleAlpha(@FloatRange(from = 0.0, to = 1.0) alpha: Float? = null, isScrollingDown: Boolean = false) {
+    private fun updateToolbarTitleAlpha(
+        @FloatRange(
+            from = 0.0,
+            to = 1.0,
+        ) alpha: Float? = null,
+        isScrollingDown: Boolean = false,
+    ) {
         if ((!isControllerVisible && alpha == null) || isScrollingDown) return
         val scrolledList = binding.recycler
         val toolbarTextView = activityBinding?.toolbar?.toolbarTitle ?: return
         val tbAlpha = when {
             isTablet -> 0f
+
             // Specific alpha provided
             alpha != null -> alpha
 
             // First item isn't in view, full opacity
             ((scrolledList.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition() > 0) -> 1f
+
             ((scrolledList.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition() == 0) -> 0f
 
             // Based on scroll amount when first item is in view
@@ -1495,14 +1528,19 @@ class MangaDetailsController :
     private fun downloadChapters(choice: Int) {
         val chaptersToDownload = when (choice) {
             R.id.download_next -> presenter.getUnreadChaptersSorted().take(1)
+
             R.id.download_next_5 -> presenter.getUnreadChaptersSorted().take(5)
+
             R.id.download_custom -> {
                 createActionModeIfNeeded()
                 rangeMode = RangeMode.Download
                 return
             }
+
             R.id.download_unread -> presenter.chapters.filter { !it.read }
+
             R.id.download_all -> presenter.allChapters
+
             else -> emptyList()
         }
         if (chaptersToDownload.isNotEmpty()) {
@@ -1553,9 +1591,9 @@ class MangaDetailsController :
             presenter.manga.seriesType(view.context).lowercase(Locale.ROOT),
         )
         if (!presenter.manga.favorite && (
-            snack == null ||
-                snack?.getText() != text
-            )
+                snack == null ||
+                    snack?.getText() != text
+                )
         ) {
             snack = view.snack(text, Snackbar.LENGTH_INDEFINITE) {
                 setAction(MR.strings.add) {
@@ -1656,6 +1694,7 @@ class MangaDetailsController :
                     previousController.searchWithGenre(text)
                 }
             }
+
             else -> {
                 if (presenter.source is CatalogueSource) {
                     val controller = BrowseSourceController(presenter.source as CatalogueSource)
@@ -1948,7 +1987,11 @@ class MangaDetailsController :
         setStatusBarAndToolbar()
         if (startingRangeChapterPos != null && rangeMode in setOf(RangeMode.Download, RangeMode.RemoveDownload)) {
             val item = adapter?.getItem(startingRangeChapterPos!!) as? ChapterItem
-            (binding.recycler.findViewHolderForAdapterPosition(startingRangeChapterPos!!) as? ChapterHolder)?.notifyStatus(
+            (
+                binding.recycler.findViewHolderForAdapterPosition(
+                    startingRangeChapterPos!!,
+                ) as? ChapterHolder
+                )?.notifyStatus(
                 item?.status ?: Download.State.NOT_DOWNLOADED,
                 false,
                 0,
@@ -2175,7 +2218,9 @@ class MangaDetailsController :
         ): Boolean {
             when (item?.itemId) {
                 R.id.action_copy -> copyContentToClipboard(text, null)
+
                 R.id.action_source_search -> sourceSearch(text)
+
                 R.id.action_global_search, R.id.action_local_search -> {
                     if (authorText != null) {
                         mode?.menu?.findItem(R.id.action_copy)?.isVisible = false
@@ -2193,6 +2238,7 @@ class MangaDetailsController :
                         localSearch(text, isTag)
                     }
                 }
+
                 R.id.action_search_artist, R.id.action_search_author -> {
                     val subText =
                         (if (item.itemId == R.id.action_search_author) authorText else artistText)
@@ -2203,6 +2249,7 @@ class MangaDetailsController :
                         localSearch(subText, isTag)
                     }
                 }
+
                 else -> return false
             }
             if (closeMode) {

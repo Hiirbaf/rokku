@@ -8,9 +8,9 @@ import androidx.annotation.CallSuper
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import eu.kanade.tachiyomi.extension.ExtensionManager
 import eu.kanade.tachiyomi.extension.util.ExtensionInstaller.Companion.EXTRA_DOWNLOAD_ID
+import uy.kohesive.injekt.injectLazy
 import java.util.Collections
 import java.util.concurrent.atomic.AtomicReference
-import uy.kohesive.injekt.injectLazy
 
 abstract class Installer(
     internal val context: Context,

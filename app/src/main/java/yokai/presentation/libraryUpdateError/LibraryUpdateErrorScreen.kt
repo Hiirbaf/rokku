@@ -59,7 +59,13 @@ class LibraryUpdateErrorScreen : Screen() {
                     ) {
                         Text(
                             text = stringResource(
-                                if (selectedCount == state.items.size) MR.strings.clear_selection else MR.strings.select_all,
+                                if (selectedCount ==
+                                    state.items.size
+                                ) {
+                                    MR.strings.clear_selection
+                                } else {
+                                    MR.strings.select_all
+                                },
                             ),
                         )
                     }

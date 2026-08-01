@@ -10,7 +10,7 @@ import yokai.domain.extension.repo.model.ExtensionRepo
 import yokai.domain.extension.repo.service.ExtensionRepoService
 
 class CreateExtensionRepo(
-    private val extensionRepoRepository: ExtensionRepoRepository
+    private val extensionRepoRepository: ExtensionRepoRepository,
 ) {
     private val networkService: NetworkHelper by injectLazy()
 

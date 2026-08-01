@@ -4,17 +4,17 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import dev.icerock.moko.resources.compose.stringResource
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.items.AbstractExpandableHeaderItem
 import eu.davidea.flexibleadapter.items.IFlexible
 import eu.davidea.flexibleadapter.items.ISectionable
 import eu.davidea.viewholders.ExpandableViewHolder
 import eu.kanade.tachiyomi.R
-import yokai.i18n.MR
-import yokai.util.lang.getString
-import dev.icerock.moko.resources.compose.stringResource
 import eu.kanade.tachiyomi.source.model.Filter
 import eu.kanade.tachiyomi.util.view.setAnimVectorCompat
+import yokai.i18n.MR
+import yokai.util.lang.getString
 
 class GroupItem(val filter: Filter.Group<*>) : AbstractExpandableHeaderItem<GroupItem.Holder, ISectionable<*, *>>() {
 
@@ -58,7 +58,11 @@ class GroupItem(val filter: Filter.Group<*>) : AbstractExpandableHeaderItem<Grou
         return filter.hashCode()
     }
 
-    open class Holder(view: View, adapter: FlexibleAdapter<IFlexible<RecyclerView.ViewHolder>>) : ExpandableViewHolder(view, adapter, true) {
+    open class Holder(view: View, adapter: FlexibleAdapter<IFlexible<RecyclerView.ViewHolder>>) : ExpandableViewHolder(
+        view,
+        adapter,
+        true,
+    ) {
 
         val title: TextView = itemView.findViewById(R.id.title)
         val icon: ImageView = itemView.findViewById(R.id.expand_icon)

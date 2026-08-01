@@ -13,6 +13,7 @@ val <T> ProvidableCompositionLocal<T?>.currentOrThrow
 
 val LocalBackPress: ProvidableCompositionLocal<(() -> Unit)?> = staticCompositionLocalOf { null }
 val LocalDialogHostState: ProvidableCompositionLocal<DialogHostState?> = compositionLocalOf { null }
+
 @Deprecated(
     message = "Scheduled for removal once Conductor is fully replaced by Voyager",
     replaceWith = ReplaceWith("LocalNavigator", "cafe.adriel.voyager.navigator.LocalNavigator"),

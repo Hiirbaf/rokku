@@ -2,10 +2,10 @@ package eu.kanade.tachiyomi.ui.reader.settings
 
 import androidx.annotation.StringRes
 import dev.icerock.moko.resources.StringResource
+import dev.icerock.moko.resources.compose.stringResource
 import eu.kanade.tachiyomi.R
 import yokai.i18n.MR
 import yokai.util.lang.getString
-import dev.icerock.moko.resources.compose.stringResource
 
 enum class ReaderBottomButton(val value: String, val stringRes: StringResource) {
     ViewChapters("vc", MR.strings.view_chapters),

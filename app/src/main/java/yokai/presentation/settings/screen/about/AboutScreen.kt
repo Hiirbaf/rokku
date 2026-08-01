@@ -50,11 +50,6 @@ import eu.kanade.tachiyomi.util.system.localeContext
 import eu.kanade.tachiyomi.util.system.openInBrowser
 import eu.kanade.tachiyomi.util.system.toast
 import eu.kanade.tachiyomi.util.system.withUIContext
-import java.text.DateFormat
-import java.text.ParseException
-import java.text.SimpleDateFormat
-import java.util.Locale
-import java.util.TimeZone
 import kotlinx.coroutines.launch
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
@@ -70,6 +65,11 @@ import yokai.presentation.core.icons.GitHub
 import yokai.presentation.settings.SettingsScaffold
 import yokai.util.Screen
 import yokai.util.lang.getString
+import java.text.DateFormat
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.util.Locale
+import java.util.TimeZone
 
 class AboutScreen : Screen() {
 
@@ -85,11 +85,12 @@ class AboutScreen : Screen() {
         val scope = rememberCoroutineScope()
         val listState = rememberLazyListState()
 
-        val requestNotificationPermission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-            if (!isGranted) {
-                scope.launch { dialogHostState.awaitNotificationPermissionDeniedDialog() }
+        val requestNotificationPermission =
+            rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+                if (!isGranted) {
+                    scope.launch { dialogHostState.awaitNotificationPermissionDeniedDialog() }
+                }
             }
-        }
         LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
             // FIXME: Move this to MainActivity once the app is fully migrated to Compose
             scope.launchIO {
@@ -102,7 +103,7 @@ class AboutScreen : Screen() {
                             false,
                             preferences,
                         )
-                    }
+                    },
                 )
             }
         }
@@ -116,10 +117,14 @@ class AboutScreen : Screen() {
             snackbarHost = {
                 SnackbarHost(hostState = snackbarHostState)
             },
-            appBarScrollBehavior = if (useLargeAppBar) enterAlwaysCollapsedAppBarScrollBehavior(
-                canScroll = { listState.canScrollForward || listState.canScrollBackward },
-                isAtTop = { listState.firstVisibleItemIndex == 0 && listState.firstVisibleItemScrollOffset == 0 },
-            ) else null,
+            appBarScrollBehavior = if (useLargeAppBar) {
+                enterAlwaysCollapsedAppBarScrollBehavior(
+                    canScroll = { listState.canScrollForward || listState.canScrollBackward },
+                    isAtTop = { listState.firstVisibleItemIndex == 0 && listState.firstVisibleItemScrollOffset == 0 },
+                )
+            } else {
+                null
+            },
             content = { contentPadding ->
                 LazyColumn(
                     contentPadding = contentPadding,
@@ -184,7 +189,9 @@ class AboutScreen : Screen() {
 
                             TextPreferenceWidget(
                                 title = stringResource(MR.strings.help_translate),
-                                onPreferenceClick = { context.openInBrowser("https://hosted.weblate.org/engage/rokku/") },
+                                onPreferenceClick = {
+                                    context.openInBrowser("https://hosted.weblate.org/engage/rokku/")
+                                },
                             )
                         }
                     }
@@ -199,9 +206,9 @@ class AboutScreen : Screen() {
                     item {
                         FlowRow(
                             modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 8.dp),
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp),
                             horizontalArrangement = Arrangement.Center,
                         ) {
                             LinkIcon(
@@ -231,7 +238,12 @@ class AboutScreen : Screen() {
         toast(message)
     }
 
-    private suspend fun Context.checkVersion(dialogState: DialogHostState, isUserPrompt: Boolean, notificationPrompt: () -> Unit = {}) {
+    private suspend fun Context.checkVersion(
+        dialogState: DialogHostState,
+        isUserPrompt: Boolean,
+        notificationPrompt: () -> Unit = {
+        },
+    ) {
         val updateChecker = AppUpdateChecker()
 
         withUIContext { toastIfNotUserPrompt(MR.strings.searching_for_updates, isUserPrompt) }
@@ -249,16 +261,19 @@ class AboutScreen : Screen() {
                 val data = NewUpdateData(
                     result.release.info,
                     result.release.downloadLink,
-                    result.release.preRelease == true
+                    result.release.preRelease == true,
                 )
 
                 // Create confirmation window
                 withUIContext {
-                    if (!isUserPrompt) { notificationPrompt() }
+                    if (!isUserPrompt) {
+                        notificationPrompt()
+                    }
                     AppUpdateNotifier.releasePageUrl = result.release.releaseLink
                     dialogState.awaitNewUpdateDialog(data)
                 }
             }
+
             is AppUpdateResult.NoNewUpdate -> {
                 withUIContext { toastIfNotUserPrompt(MR.strings.no_new_updates_available, isUserPrompt) }
             }

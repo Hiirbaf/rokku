@@ -11,12 +11,12 @@ import eu.kanade.tachiyomi.network.await
 import eu.kanade.tachiyomi.network.parseAs
 import eu.kanade.tachiyomi.util.system.localeContext
 import eu.kanade.tachiyomi.util.system.withIOContext
-import java.util.Date
-import java.util.concurrent.TimeUnit
 import kotlinx.serialization.json.Json
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 import yokai.domain.base.models.Version
+import java.util.Date
+import java.util.concurrent.TimeUnit
 
 class AppUpdateChecker(
     private val json: Json = Injekt.get(),

@@ -7,9 +7,11 @@ fun limitAndOffset(isEndless: Boolean, isResuming: Boolean, offset: Long): Pair<
         isResuming && isEndless && offset > 0 -> {
             offset to 0L
         }
+
         isEndless -> {
             RecentsPresenter.ENDLESS_LIMIT.toLong() to offset
         }
+
         else -> {
             RecentsPresenter.SHORT_LIMIT.toLong() to 0L
         }

@@ -3,10 +3,8 @@ package eu.kanade.tachiyomi.ui.setting.controllers
 import android.app.Activity
 import androidx.preference.PreferenceGroup
 import androidx.preference.PreferenceScreen
-import eu.kanade.tachiyomi.R
-import yokai.i18n.MR
-import yokai.util.lang.getString
 import dev.icerock.moko.resources.compose.stringResource
+import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.data.preference.changesIn
 import eu.kanade.tachiyomi.data.track.EnhancedTrackService
 import eu.kanade.tachiyomi.data.track.TrackManager
@@ -26,7 +24,6 @@ import eu.kanade.tachiyomi.ui.setting.onClick
 import eu.kanade.tachiyomi.ui.setting.preference
 import eu.kanade.tachiyomi.ui.setting.preferenceCategory
 import eu.kanade.tachiyomi.ui.setting.switchPreference
-import eu.kanade.tachiyomi.ui.setting.titleMRes as titleRes
 import eu.kanade.tachiyomi.util.system.launchIO
 import eu.kanade.tachiyomi.util.system.openInBrowser
 import eu.kanade.tachiyomi.util.view.snack
@@ -36,7 +33,10 @@ import eu.kanade.tachiyomi.widget.preference.TrackerPreference
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 import uy.kohesive.injekt.injectLazy
+import yokai.i18n.MR
+import yokai.util.lang.getString
 import eu.kanade.tachiyomi.data.preference.PreferenceKeys as Keys
+import eu.kanade.tachiyomi.ui.setting.titleMRes as titleRes
 
 class SettingsTrackingController :
     SettingsLegacyController(),
@@ -72,7 +72,8 @@ class SettingsTrackingController :
                 key = "update_anilist_scoring"
                 isPersistent = false
                 isIconSpaceReserved = true
-                title = context.getString(MR.strings.update_tracking_scoring_type, context.getString(MR.strings.anilist))
+                title =
+                    context.getString(MR.strings.update_tracking_scoring_type, context.getString(MR.strings.anilist))
 
                 preferences.getStringPref(trackManager.aniList.getUsername())
                     .changesIn(viewScope) {

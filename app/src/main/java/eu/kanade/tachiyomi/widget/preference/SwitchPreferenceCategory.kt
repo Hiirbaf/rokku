@@ -10,11 +10,11 @@ import android.widget.TextView
 import androidx.appcompat.widget.SwitchCompat
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceViewHolder
+import dev.icerock.moko.resources.compose.stringResource
 import eu.kanade.tachiyomi.R
+import eu.kanade.tachiyomi.util.system.getResourceColor
 import yokai.i18n.MR
 import yokai.util.lang.getString
-import dev.icerock.moko.resources.compose.stringResource
-import eu.kanade.tachiyomi.util.system.getResourceColor
 import android.R as AR
 
 class SwitchPreferenceCategory @JvmOverloads constructor(

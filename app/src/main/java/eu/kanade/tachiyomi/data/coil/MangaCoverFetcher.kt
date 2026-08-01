@@ -18,9 +18,6 @@ import eu.kanade.tachiyomi.network.await
 import eu.kanade.tachiyomi.source.SourceManager
 import eu.kanade.tachiyomi.source.online.HttpSource
 import eu.kanade.tachiyomi.util.manga.MangaCoverMetadata
-import java.io.File
-import java.net.HttpURLConnection
-import java.util.Date
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -38,6 +35,9 @@ import okio.sink
 import okio.source
 import uy.kohesive.injekt.injectLazy
 import yokai.domain.manga.models.MangaCover
+import java.io.File
+import java.net.HttpURLConnection
+import java.util.Date
 
 class MangaCoverFetcher(
     private val mangaId: Long?,
@@ -69,15 +69,18 @@ class MangaCoverFetcher(
         if (url == null) error("No cover specified")
         return when (getResourceType(url)) {
             Type.URL -> httpLoader()
+
             Type.File -> {
                 val file = File(url.substringAfter("file://"))
                 setRatioAndColorsInScope(mangaId, url, isInLibrary, UniFile.fromFile(file))
                 fileLoader(file)
             }
+
             Type.URI -> {
                 setRatioAndColorsInScope(mangaId, url, isInLibrary, UniFile.fromUri(options.context, url.toUri()))
                 fileUriLoader(url)
             }
+
             null -> error("Invalid image")
         }
     }
@@ -188,8 +191,9 @@ class MangaCoverFetcher(
             url(url!!)
 
             val sourceHeaders = sourceLazy.value?.headers
-            if (sourceHeaders != null)
+            if (sourceHeaders != null) {
                 headers(sourceHeaders)
+            }
         }
 
         val diskRead = options.diskCachePolicy.readEnabled
@@ -201,11 +205,13 @@ class MangaCoverFetcher(
             onlyCache -> {
                 request.cacheControl(CacheControl.FORCE_CACHE)
             }
+
             forceNetwork -> if (options.diskCachePolicy.writeEnabled) {
                 request.cacheControl(CacheControl.FORCE_NETWORK)
             } else {
                 request.cacheControl(CACHE_CONTROL_FORCE_NETWORK_NO_CACHE)
             }
+
             none -> {
                 // This causes the request to fail with a 504 Unsatisfiable Request.
                 request.cacheControl(CACHE_CONTROL_NO_NETWORK_NO_CACHE)
@@ -371,7 +377,9 @@ class MangaCoverFetcher(
     }
 
     private enum class Type {
-        File, URL, URI;
+        File,
+        URL,
+        URI,
     }
 
     companion object {

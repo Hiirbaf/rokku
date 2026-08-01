@@ -16,7 +16,7 @@ class BasePreferences(private val preferenceStore: PreferenceStore) {
         PACKAGEINSTALLER(MR.strings.ext_installer_packageinstaller, true),
         SHIZUKU(MR.strings.ext_installer_shizuku, false),
         PRIVATE(MR.strings.ext_installer_private, false),
-        LEGACY(MR.strings.ext_installer_legacy, true),  // Technically useless, but just in case it being missing crashes the app
+        LEGACY(MR.strings.ext_installer_legacy, true), // Technically useless, but just in case it being missing crashes the app
         ;
 
         companion object {

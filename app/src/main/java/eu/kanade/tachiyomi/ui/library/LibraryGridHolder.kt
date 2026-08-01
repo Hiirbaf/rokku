@@ -72,11 +72,14 @@ class LibraryGridHolder(
         binding.title.text = item.manga.manga.title.highlightText(item.filter, color)
         binding.behindTitle.text = item.manga.manga.title
         val mangaColor = item.manga.manga.dominantCoverColors
-        binding.coverConstraint.backgroundColor = mangaColor?.first ?: itemView.context.getResourceColor(R.attr.background)
+        binding.coverConstraint.backgroundColor =
+            mangaColor?.first ?: itemView.context.getResourceColor(R.attr.background)
         binding.behindTitle.setTextColor(
             mangaColor?.second ?: itemView.context.getResourceColor(R.attr.colorOnBackground),
         )
-        val authorArtist = if (item.manga.manga.author == item.manga.manga.artist || item.manga.manga.artist.isNullOrBlank()) {
+        val authorArtist = if (item.manga.manga.author == item.manga.manga.artist ||
+            item.manga.manga.artist.isNullOrBlank()
+        ) {
             item.manga.manga.author?.trim() ?: ""
         } else {
             listOfNotNull(
@@ -103,7 +106,9 @@ class LibraryGridHolder(
         // library flow re-emissions (e.g. when tabbing back into the app).
         val mangaId = item.manga.manga.id
         val coverModified = item.manga.manga.cover_last_modified
-        if (binding.coverThumbnail.tag != mangaId || coverModified != (binding.coverThumbnail.getTag(R.id.manga_cover_modified) as? Long)) {
+        if (binding.coverThumbnail.tag != mangaId ||
+            coverModified != (binding.coverThumbnail.getTag(R.id.manga_cover_modified) as? Long)
+        ) {
             binding.coverThumbnail.tag = mangaId
             binding.coverThumbnail.setTag(R.id.manga_cover_modified, coverModified)
             binding.coverThumbnail.dispose()

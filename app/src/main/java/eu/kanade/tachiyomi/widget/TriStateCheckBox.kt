@@ -8,14 +8,14 @@ import android.view.LayoutInflater
 import android.widget.FrameLayout
 import androidx.core.graphics.ColorUtils
 import androidx.core.view.updateLayoutParams
-import eu.kanade.tachiyomi.R
-import yokai.i18n.MR
-import yokai.util.lang.getString
 import dev.icerock.moko.resources.compose.stringResource
+import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.databinding.TriStateCheckBoxBinding
 import eu.kanade.tachiyomi.util.system.getResourceColor
 import eu.kanade.tachiyomi.util.view.setAnimVectorCompat
 import eu.kanade.tachiyomi.util.view.setVectorCompat
+import yokai.i18n.MR
+import yokai.util.lang.getString
 import kotlin.math.roundToInt
 import android.R as AR
 
@@ -84,7 +84,10 @@ class TriStateCheckBox constructor(context: Context, attrs: AttributeSet?) :
     private val ignoreColor get() = if (useIndeterminateForIgnore) indeterColor else inverseColor
 
     private val disabledColor = ColorStateList.valueOf(
-        ColorUtils.setAlphaComponent(context.getResourceColor(R.attr.colorControlNormal), (disabledAlpha * 255).roundToInt()),
+        ColorUtils.setAlphaComponent(
+            context.getResourceColor(R.attr.colorControlNormal),
+            (disabledAlpha * 255).roundToInt(),
+        ),
     )
 
     init {
@@ -179,15 +182,18 @@ class TriStateCheckBox constructor(context: Context, attrs: AttributeSet?) :
                             } else {
                                 R.drawable.anim_check_box_x_to_blank_24dp
                             }
+
                             else -> R.drawable.anim_check_box_checked_to_blank_24dp
                         },
                     )
                     backgroundTintList = uncheckedColor
                 }
+
                 State.CHECKED -> {
                     setAnimVectorCompat(R.drawable.anim_check_box_blank_to_checked_24dp)
                     backgroundTintList = checkedColor
                 }
+
                 State.IGNORE -> {
                     setAnimVectorCompat(
                         when {
@@ -214,10 +220,12 @@ class TriStateCheckBox constructor(context: Context, attrs: AttributeSet?) :
                     setVectorCompat(R.drawable.ic_check_box_outline_blank_24dp)
                     uncheckedColor
                 }
+
                 State.CHECKED -> {
                     setVectorCompat(R.drawable.ic_check_box_24dp)
                     checkedColor
                 }
+
                 State.IGNORE -> {
                     setVectorCompat(
                         if (useIndeterminateForIgnore) {

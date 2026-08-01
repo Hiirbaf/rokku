@@ -23,14 +23,14 @@ class AppUpdateCheckerTest {
 
     @Test
     fun `Check new nightly version (Tachi format)`() {
-        assertTrue(isNewVersion("1.2.3-r2", "1.2.3-r1"))  // tachi format
-        assertFalse(isNewVersion("1.2.4-r1", "1.2.3"))  // Unlikely to happened, but we should try anyway
+        assertTrue(isNewVersion("1.2.3-r2", "1.2.3-r1")) // tachi format
+        assertFalse(isNewVersion("1.2.4-r1", "1.2.3")) // Unlikely to happened, but we should try anyway
     }
 
     @Test
     fun `Check new nightly version (Yokai format)`() {
-        assertTrue(isNewVersion("r2", "1.2.3-r1"))  // yokai format
-        assertFalse(isNewVersion("r1", "1.2.3"))  // Unlikely to happened, but we should try anyway
+        assertTrue(isNewVersion("r2", "1.2.3-r1")) // yokai format
+        assertFalse(isNewVersion("r1", "1.2.3")) // Unlikely to happened, but we should try anyway
     }
 
     @Test

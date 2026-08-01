@@ -48,8 +48,8 @@ fun MangaCover(
                     )
                 } else {
                     Modifier
-                }
-            )
+                },
+            ),
     )
 }
 

@@ -63,12 +63,12 @@ import eu.kanade.tachiyomi.util.view.setOnQueryTextChangeListener
 import eu.kanade.tachiyomi.util.view.setTitle
 import eu.kanade.tachiyomi.util.view.setTitleText
 import eu.kanade.tachiyomi.util.view.withFadeTransaction
-import java.util.Calendar
-import java.util.Locale
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import yokai.i18n.MR
 import yokai.util.lang.getString
+import java.util.Calendar
+import java.util.Locale
 import android.R as AR
 
 class StatsDetailsController :
@@ -307,7 +307,12 @@ class StatsDetailsController :
 
     private val headerBinding: StatsDetailsChartBinding?
         get() =
-            binding.chartLinearLayout ?: (binding.statsRecyclerView.findViewHolderForAdapterPosition(0) as? HeaderStatsDetailsAdapter.HeaderStatsDetailsHolder)?.binding
+            binding.chartLinearLayout
+                ?: (
+                    binding.statsRecyclerView.findViewHolderForAdapterPosition(
+                        0,
+                    ) as? HeaderStatsDetailsAdapter.HeaderStatsDetailsHolder
+                    )?.binding
 
     private val statsSortTextView: TextView?
         get() = binding.statSort ?: headerBinding?.statSort
@@ -342,7 +347,11 @@ class StatsDetailsController :
         inflater.inflate(R.menu.stats_bar, menu)
         searchItem = menu.findItem(R.id.action_search)
         searchView = searchItem.actionView as SearchView
-        searchView.queryHint = activity?.getString(MR.strings.search_, activity?.getString(MR.strings.statistics)?.lowercase(Locale.ROOT) ?: "")
+        searchView.queryHint =
+            activity?.getString(
+                MR.strings.search_,
+                activity?.getString(MR.strings.statistics)?.lowercase(Locale.ROOT) ?: "",
+            )
         if (query.isNotBlank() && (!searchItem.isActionViewExpanded || searchView.query != query)) {
             searchItem.expandActionView()
             setSearchViewListener(searchView)
@@ -383,10 +392,12 @@ class StatsDetailsController :
         val items = statsList.map {
             when (it) {
                 is Category -> it.name
+
                 is Source -> it.nameBasedOnEnabledLanguages(
                     presenter.enabledLanguages,
                     presenter.extensionManager,
                 )
+
                 else -> it.toString()
             }
         }.toTypedArray()
@@ -485,7 +496,13 @@ class StatsDetailsController :
             this@StatsDetailsController.binding.progress.isVisible = false
             if (this == null) return
             totalDurationStatsText.text = statsAdapter?.list?.sumOf { it.readDuration }?.getReadDuration()
-            if (highlightedDay != null) updateHighlightedValue(statsBarChart) else statsDateText.text = presenter.getPeriodString()
+            if (highlightedDay !=
+                null
+            ) {
+                updateHighlightedValue(statsBarChart)
+            } else {
+                statsDateText.text = presenter.getPeriodString()
+            }
         }
     }
 
@@ -524,16 +541,20 @@ class StatsDetailsController :
         this.setColors(selectedValues.size)
         this.text = when (selectedValues.size) {
             0 -> activity?.getString(resourceId)
+
             1 -> {
                 when (val firstValue = selectedValues.first()) {
                     is Category -> firstValue.name
+
                     is Source -> firstValue.nameBasedOnEnabledLanguages(
                         presenter.enabledLanguages,
                         presenter.extensionManager,
                     )
+
                     else -> firstValue.toString()
                 }
             }
+
             else -> activity?.getString(resourceIdPlural, selectedValues.size, selectedValues.size)
         }
     }
@@ -671,6 +692,7 @@ class StatsDetailsController :
                                 }
                                 listOfNotNull(language).toTypedArray()
                             }
+
                             else -> languages
                         },
                         filterCategories = when (selectedStat) {
@@ -683,6 +705,7 @@ class StatsDetailsController :
                     ).withFadeTransaction(),
                 )
             }
+
             Stats.TRACKER -> {
                 val serviceName: String? = id?.let {
                     val loggedServices = presenter.trackManager.services.filter { it.isLogged }
@@ -706,6 +729,7 @@ class StatsDetailsController :
                     ).withFadeTransaction(),
                 )
             }
+
             Stats.LENGTH -> {
                 val range: IntRange = if (name.contains("-")) {
                     val values = name.split("-").map { it.toInt() }
@@ -728,11 +752,13 @@ class StatsDetailsController :
                     ).withFadeTransaction(),
                 )
             }
+
             Stats.READ_DURATION -> {
                 id?.let {
                     router.pushController(MangaDetailsController(id).withFadeTransaction())
                 }
             }
+
             else -> {
                 return
             }
@@ -826,7 +852,10 @@ class StatsDetailsController :
                 presenter.getStatisticData()
             }
         }
-        dialog.show((activity as AppCompatActivity).supportFragmentManager, activity?.getString(MR.strings.read_duration))
+        dialog.show(
+            (activity as AppCompatActivity).supportFragmentManager,
+            activity?.getString(MR.strings.read_duration),
+        )
     }
 
     /**

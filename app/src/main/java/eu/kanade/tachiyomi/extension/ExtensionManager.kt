@@ -18,9 +18,6 @@ import eu.kanade.tachiyomi.source.Source
 import eu.kanade.tachiyomi.ui.extension.ExtensionIntallInfo
 import eu.kanade.tachiyomi.util.system.launchNow
 import eu.kanade.tachiyomi.util.system.withIOContext
-import java.util.Date
-import java.util.Locale
-import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
@@ -31,6 +28,9 @@ import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 import yokai.domain.base.BasePreferences
 import yokai.domain.extension.interactor.TrustExtension
+import java.util.Date
+import java.util.Locale
+import java.util.concurrent.TimeUnit
 
 /**
  * The manager of extensions installed as another apk which extend the available sources. It handles
@@ -310,12 +310,15 @@ class ExtensionManager(
         val installStep = when {
             installer.downloadInstallerMap[pkgName] != null &&
                 context.packageManager.packageInstaller
-                .getSessionInfo(installer.downloadInstallerMap[pkgName] ?: 0) != null -> {
+                    .getSessionInfo(installer.downloadInstallerMap[pkgName] ?: 0) != null -> {
                 InstallStep.Installing
             }
+
             installer.activeDownloads[pkgName] != null -> InstallStep.Downloading
+
             ExtensionInstallerJob.activeInstalls()
                 ?.contains(pkgName) == true -> InstallStep.Pending
+
             else -> return null
         }
         val sessionInfo = run {

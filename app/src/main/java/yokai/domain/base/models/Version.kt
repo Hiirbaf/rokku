@@ -7,7 +7,7 @@ data class Version(
     val minor: Int = 0,
     val patch: Int = 0,
     val hotfix: Int = 0,
-    val build: Int = 0
+    val build: Int = 0,
 ) {
     operator fun compareTo(other: Version): Int {
         if (type == Type.DEBUG) {
@@ -39,7 +39,8 @@ data class Version(
     }
 
     override fun toString(): String {
-        return "$major.$minor.$patch" + (if (hotfix > 0) ".$hotfix" else "") + (if (build > 0) "-${type.prefix}$build" else "")
+        return "$major.$minor.$patch" + (if (hotfix > 0) ".$hotfix" else "") +
+            (if (build > 0) "-${type.prefix}$build" else "")
     }
 
     companion object {
@@ -59,21 +60,22 @@ data class Version(
                     stageCandidate.startsWith("d", true) -> type = Type.DEBUG
                 }
 
-                if (type == Type.STABLE)
+                if (type == Type.STABLE) {
                     stage = when {
                         stageCandidate.startsWith("b", true) -> Stage.BETA
                         stageCandidate.startsWith("a", true) -> Stage.ALPHA
                         else -> Stage.RELEASE
                     }
+                }
             }
             val cleanBuild = stageCandidate
-                ?.replace("[^\\d.-]".toRegex(), "")  // remove the prefix
+                ?.replace("[^\\d.-]".toRegex(), "") // remove the prefix
                 ?.toInt()
             val candidate = split.first()
-                .replace("[^\\d.-]".toRegex(), "")  // remove the prefix
+                .replace("[^\\d.-]".toRegex(), "") // remove the prefix
                 .split(".").map { it.toInt() }
 
-            if (candidate.size == 1 && type == Type.NIGHTLY)
+            if (candidate.size == 1 && type == Type.NIGHTLY) {
                 return Version(
                     type,
                     stage,
@@ -83,6 +85,7 @@ data class Version(
                     0,
                     candidate[0],
                 )
+            }
 
             return Version(
                 type,

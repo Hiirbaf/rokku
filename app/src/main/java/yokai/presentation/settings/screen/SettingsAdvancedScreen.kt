@@ -49,7 +49,6 @@ import eu.kanade.tachiyomi.util.system.openInBrowser
 import eu.kanade.tachiyomi.util.system.setDefaultSettings
 import eu.kanade.tachiyomi.util.system.toast
 import eu.kanade.tachiyomi.util.view.withFadeTransaction
-import java.io.File
 import kotlinx.collections.immutable.toImmutableMap
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.launch
@@ -63,6 +62,7 @@ import yokai.presentation.component.preference.Preference
 import yokai.presentation.libraryUpdateError.LibraryUpdateErrorController
 import yokai.presentation.settings.ComposableSettings
 import yokai.presentation.settings.screen.advanced.StoryBookScreen
+import java.io.File
 
 object SettingsAdvancedScreen : ComposableSettings() {
 
@@ -79,18 +79,22 @@ object SettingsAdvancedScreen : ComposableSettings() {
         val isUpdaterEnabled = BuildConfig.INCLUDE_UPDATER
 
         return buildList {
-            add(Preference.PreferenceItem.SwitchPreference(
-                pref = basePreferences.crashReport(),
-                title = stringResource(MR.strings.send_crash_report),
-                subtitle = stringResource(MR.strings.helps_fix_bugs),
-            ))
+            add(
+                Preference.PreferenceItem.SwitchPreference(
+                    pref = basePreferences.crashReport(),
+                    title = stringResource(MR.strings.send_crash_report),
+                    subtitle = stringResource(MR.strings.helps_fix_bugs),
+                ),
+            )
             add(getDumpCrashLog())
             add(getLibraryUpdateErrors())
-            add(Preference.PreferenceItem.SwitchPreference(
-                pref = networkPreferences.verboseLogging(),
-                title = stringResource(MR.strings.pref_verbose_logging),
-                subtitle = stringResource(MR.strings.pref_verbose_logging_summary),
-            ))
+            add(
+                Preference.PreferenceItem.SwitchPreference(
+                    pref = networkPreferences.verboseLogging(),
+                    title = stringResource(MR.strings.pref_verbose_logging),
+                    subtitle = stringResource(MR.strings.pref_verbose_logging_summary),
+                ),
+            )
             add(getDebugInfo())
             add(getBackgroundActivityGroup())
             if (isUpdaterEnabled || BuildConfig.DEBUG) {
@@ -116,7 +120,7 @@ object SettingsAdvancedScreen : ComposableSettings() {
                 scope.launchIO {
                     CrashLogUtil(context.localeContext).dumpLogs()
                 }
-            }
+            },
         )
     }
 
@@ -128,7 +132,7 @@ object SettingsAdvancedScreen : ComposableSettings() {
             title = stringResource(MR.strings.view_errors),
             onClick = {
                 router.pushController(LibraryUpdateErrorController().withFadeTransaction())
-            }
+            },
         )
     }
 
@@ -140,7 +144,7 @@ object SettingsAdvancedScreen : ComposableSettings() {
             title = stringResource(MR.strings.pref_debug_info),
             onClick = {
                 router.pushController(DebugController().withFadeTransaction())
-            }
+            },
         )
     }
 
@@ -151,30 +155,34 @@ object SettingsAdvancedScreen : ComposableSettings() {
         val children = buildList {
             val pm = context.getSystemService(Context.POWER_SERVICE) as? PowerManager?
             if (pm != null) {
-                add(Preference.PreferenceItem.TextPreference(
-                    title = stringResource(MR.strings.disable_battery_optimization),
-                    subtitle = stringResource(MR.strings.disable_if_issues_with_updating),
-                    onClick = {
-                        val packageName: String = context.packageName
-                        if (!pm.isIgnoringBatteryOptimizations(packageName)) {
-                            val intent = Intent().apply {
-                                action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
-                                data = "package:$packageName".toUri()
+                add(
+                    Preference.PreferenceItem.TextPreference(
+                        title = stringResource(MR.strings.disable_battery_optimization),
+                        subtitle = stringResource(MR.strings.disable_if_issues_with_updating),
+                        onClick = {
+                            val packageName: String = context.packageName
+                            if (!pm.isIgnoringBatteryOptimizations(packageName)) {
+                                val intent = Intent().apply {
+                                    action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+                                    data = "package:$packageName".toUri()
+                                }
+                                context.startActivity(intent)
+                            } else {
+                                context.toast(MR.strings.battery_optimization_disabled)
                             }
-                            context.startActivity(intent)
-                        } else {
-                            context.toast(MR.strings.battery_optimization_disabled)
-                        }
-                    },
-                ))
+                        },
+                    ),
+                )
             }
-            add(Preference.PreferenceItem.TextPreference(
-                title = "Don't kill my app!",
-                subtitle = stringResource(MR.strings.about_dont_kill_my_app),
-                onClick = {
-                    context.openInBrowser("https://dontkillmyapp.com/")
-                },
-            ))
+            add(
+                Preference.PreferenceItem.TextPreference(
+                    title = "Don't kill my app!",
+                    subtitle = stringResource(MR.strings.about_dont_kill_my_app),
+                    onClick = {
+                        context.openInBrowser("https://dontkillmyapp.com/")
+                    },
+                ),
+            )
         }.toPersistentList()
 
         return Preference.PreferenceGroup(
@@ -198,7 +206,8 @@ object SettingsAdvancedScreen : ComposableSettings() {
                     scope.launch {
                         alertDialog.simple {
                             titleRes = MR.strings.warning
-                            textRes = if (it) MR.strings.warning_enroll_into_beta else MR.strings.warning_unenroll_from_beta
+                            textRes =
+                                if (it) MR.strings.warning_enroll_into_beta else MR.strings.warning_unenroll_from_beta
                             onConfirm = {
                                 pref.set(it)
                             }
@@ -208,7 +217,7 @@ object SettingsAdvancedScreen : ComposableSettings() {
                 } else {
                     true
                 }
-            }
+            },
         )
     }
 
@@ -221,27 +230,35 @@ object SettingsAdvancedScreen : ComposableSettings() {
         val downloadManager: DownloadManager by injectLazy()
 
         val children = buildList {
-            add(Preference.PreferenceItem.TextPreference(
-                title = stringResource(MR.strings.force_download_cache_refresh),
-                subtitle = stringResource(MR.strings.force_download_cache_refresh_summary),
-                onClick = { downloadManager.refreshCache() },
-            ))
-            add(Preference.PreferenceItem.TextPreference(
-                title = stringResource(MR.strings.clean_up_downloaded_chapters),
-                subtitle = stringResource(MR.strings.delete_unused_chapters),
-                onClick = {
-                    // TODO:
-                },
-            ))
-            add(Preference.PreferenceItem.TextPreference(
-                title = stringResource(MR.strings.pref_clear_webview_data),
-                onClick = { context.clearWebViewData() },
-            ))
-            add(Preference.PreferenceItem.TextPreference(
-                title = stringResource(MR.strings.clear_database),
-                subtitle = stringResource(MR.strings.clear_database_summary),
-                onClick = { router.pushController(ClearDatabaseController().withFadeTransaction()) },
-            ))
+            add(
+                Preference.PreferenceItem.TextPreference(
+                    title = stringResource(MR.strings.force_download_cache_refresh),
+                    subtitle = stringResource(MR.strings.force_download_cache_refresh_summary),
+                    onClick = { downloadManager.refreshCache() },
+                ),
+            )
+            add(
+                Preference.PreferenceItem.TextPreference(
+                    title = stringResource(MR.strings.clean_up_downloaded_chapters),
+                    subtitle = stringResource(MR.strings.delete_unused_chapters),
+                    onClick = {
+                        // TODO:
+                    },
+                ),
+            )
+            add(
+                Preference.PreferenceItem.TextPreference(
+                    title = stringResource(MR.strings.pref_clear_webview_data),
+                    onClick = { context.clearWebViewData() },
+                ),
+            )
+            add(
+                Preference.PreferenceItem.TextPreference(
+                    title = stringResource(MR.strings.clear_database),
+                    subtitle = stringResource(MR.strings.clear_database_summary),
+                    onClick = { router.pushController(ClearDatabaseController().withFadeTransaction()) },
+                ),
+            )
         }.toPersistentList()
 
         return Preference.PreferenceGroup(
@@ -273,51 +290,57 @@ object SettingsAdvancedScreen : ComposableSettings() {
         val context = LocalContext.current
 
         val children = buildList {
-            add(Preference.PreferenceItem.TextPreference(
-                title = stringResource(MR.strings.clear_cookies),
-                onClick = {
-                    network.cookieJar.removeAll()
-                    context.toast(MR.strings.cookies_cleared)
-                },
-            ))
-            add(Preference.PreferenceItem.ListPreference(
-                pref = networkPreferences.dohProvider(),
-                title = stringResource(MR.strings.doh),
-                entries = mapOf(
-                    -1 to stringResource(MR.strings.disabled),
-                    PREF_DOH_CLOUDFLARE to "Cloudflare",
-                    PREF_DOH_GOOGLE to "Google",
-                    PREF_DOH_ADGUARD to "AdGuard",
-                    PREF_DOH_QUAD9 to "Quad9",
-                    PREF_DOH_ALIDNS to "AliDNS",
-                    PREF_DOH_DNSPOD to "DNSPod",
-                    PREF_DOH_360 to "360",
-                    PREF_DOH_QUAD101 to "Quad 101",
-                    PREF_DOH_MULLVAD to "Mullvad",
-                    PREF_DOH_CONTROLD to "Control D",
-                    PREF_DOH_NJALLA to "Njalla",
-                    PREF_DOH_SHECAN to "Shecan",
-                ).toImmutableMap(),
-                onValueChanged = {
-                    context.toast(MR.strings.requires_app_restart)
-                    true
-                },
-            ))
-            add(Preference.PreferenceItem.EditTextPreference(
-                pref = networkPreferences.defaultUserAgent(),
-                title = stringResource(MR.strings.user_agent_string),
-                onValueChanged = onChange@{
-                    try {
-                        // OkHttp checks for valid values internally
-                        Headers.Builder().add("User-Agent", it)
-                    } catch (_: IllegalArgumentException) {
-                        context.toast(MR.strings.error_user_agent_string_invalid)
-                        return@onChange false
-                    }
-                    context.toast(MR.strings.requires_app_restart)
-                    true
-                },
-            ))
+            add(
+                Preference.PreferenceItem.TextPreference(
+                    title = stringResource(MR.strings.clear_cookies),
+                    onClick = {
+                        network.cookieJar.removeAll()
+                        context.toast(MR.strings.cookies_cleared)
+                    },
+                ),
+            )
+            add(
+                Preference.PreferenceItem.ListPreference(
+                    pref = networkPreferences.dohProvider(),
+                    title = stringResource(MR.strings.doh),
+                    entries = mapOf(
+                        -1 to stringResource(MR.strings.disabled),
+                        PREF_DOH_CLOUDFLARE to "Cloudflare",
+                        PREF_DOH_GOOGLE to "Google",
+                        PREF_DOH_ADGUARD to "AdGuard",
+                        PREF_DOH_QUAD9 to "Quad9",
+                        PREF_DOH_ALIDNS to "AliDNS",
+                        PREF_DOH_DNSPOD to "DNSPod",
+                        PREF_DOH_360 to "360",
+                        PREF_DOH_QUAD101 to "Quad 101",
+                        PREF_DOH_MULLVAD to "Mullvad",
+                        PREF_DOH_CONTROLD to "Control D",
+                        PREF_DOH_NJALLA to "Njalla",
+                        PREF_DOH_SHECAN to "Shecan",
+                    ).toImmutableMap(),
+                    onValueChanged = {
+                        context.toast(MR.strings.requires_app_restart)
+                        true
+                    },
+                ),
+            )
+            add(
+                Preference.PreferenceItem.EditTextPreference(
+                    pref = networkPreferences.defaultUserAgent(),
+                    title = stringResource(MR.strings.user_agent_string),
+                    onValueChanged = onChange@{
+                        try {
+                            // OkHttp checks for valid values internally
+                            Headers.Builder().add("User-Agent", it)
+                        } catch (_: IllegalArgumentException) {
+                            context.toast(MR.strings.error_user_agent_string_invalid)
+                            return@onChange false
+                        }
+                        context.toast(MR.strings.requires_app_restart)
+                        true
+                    },
+                ),
+            )
         }.toPersistentList()
 
         return Preference.PreferenceGroup(
@@ -333,57 +356,72 @@ object SettingsAdvancedScreen : ComposableSettings() {
         val alertDialog = LocalDialogHostState.currentOrThrow
         val installerPref by basePreferences.extensionInstaller().collectAsState()
 
-
         val children = buildList {
-            add(Preference.PreferenceItem.ListPreference(
-                pref = basePreferences.extensionInstaller(),
-                title = stringResource(MR.strings.ext_installer_pref),
-                entries = BasePreferences.ExtensionInstaller.entries
-                    .associateWith { stringResource(it.titleResId) }
-                    .toImmutableMap(),
-                onValueChanged = onChange@{
-                    if (it == BasePreferences.ExtensionInstaller.SHIZUKU) {
-                        return@onChange if (!context.isPackageInstalled(ShizukuInstaller.shizukuPkgName) && !Sui.isSui()) {
-                            scope.launch {
-                                alertDialog.simple {
-                                    titleRes = MR.strings.ext_installer_shizuku
-                                    textRes = MR.strings.ext_installer_shizuku_unavailable_dialog
-                                    confirmTextRes = MR.strings.download
-                                    onConfirm = {
-                                        context.openInBrowser(ShizukuInstaller.downloadLink)
+            add(
+                Preference.PreferenceItem.ListPreference(
+                    pref = basePreferences.extensionInstaller(),
+                    title = stringResource(MR.strings.ext_installer_pref),
+                    entries = BasePreferences.ExtensionInstaller.entries
+                        .associateWith { stringResource(it.titleResId) }
+                        .toImmutableMap(),
+                    onValueChanged = onChange@{
+                        if (it == BasePreferences.ExtensionInstaller.SHIZUKU) {
+                            return@onChange if (!context.isPackageInstalled(ShizukuInstaller.shizukuPkgName) &&
+                                !Sui.isSui()
+                            ) {
+                                scope.launch {
+                                    alertDialog.simple {
+                                        titleRes = MR.strings.ext_installer_shizuku
+                                        textRes = MR.strings.ext_installer_shizuku_unavailable_dialog
+                                        confirmTextRes = MR.strings.download
+                                        onConfirm = {
+                                            context.openInBrowser(ShizukuInstaller.downloadLink)
+                                        }
                                     }
                                 }
+                                false
+                            } else {
+                                true
                             }
-                            false
-                        } else {
-                            true
                         }
-                    }
-                    true
-                }
-            ))
-            if ((installerPref == BasePreferences.ExtensionInstaller.SHIZUKU && Build.VERSION.SDK_INT < Build.VERSION_CODES.S)
-                || installerPref == BasePreferences.ExtensionInstaller.LEGACY) {
-                add(Preference.PreferenceItem.InfoPreference(
-                    title = stringResource(when (installerPref) {
-                        BasePreferences.ExtensionInstaller.SHIZUKU -> {
-                            MR.strings.ext_installer_summary
-                        }
-                        BasePreferences.ExtensionInstaller.LEGACY -> {
-                            MR.strings.ext_installer_summary_legacy
-                        }
-                        else -> {
-                            throw IllegalStateException("How?")
-                        }
-                    }),
-                ))
+                        true
+                    },
+                ),
+            )
+            if ((
+                    installerPref == BasePreferences.ExtensionInstaller.SHIZUKU &&
+                        Build.VERSION.SDK_INT < Build.VERSION_CODES.S
+                    ) ||
+                installerPref == BasePreferences.ExtensionInstaller.LEGACY
+            ) {
+                add(
+                    Preference.PreferenceItem.InfoPreference(
+                        title = stringResource(
+                            when (installerPref) {
+                                BasePreferences.ExtensionInstaller.SHIZUKU -> {
+                                    MR.strings.ext_installer_summary
+                                }
+
+                                BasePreferences.ExtensionInstaller.LEGACY -> {
+                                    MR.strings.ext_installer_summary_legacy
+                                }
+
+                                else -> {
+                                    throw IllegalStateException("How?")
+                                }
+                            },
+                        ),
+                    ),
+                )
             }
-            add(Preference.PreferenceItem.TextPreference(
-                title = stringResource(MR.strings.action_revoke_all_extensions),
-                onClick = {
-                    // TODO:
-                },
-            ))
+            add(
+                Preference.PreferenceItem.TextPreference(
+                    title = stringResource(MR.strings.action_revoke_all_extensions),
+                    onClick = {
+                        // TODO:
+                    },
+                ),
+            )
         }.toPersistentList()
 
         return Preference.PreferenceGroup(
@@ -397,22 +435,28 @@ object SettingsAdvancedScreen : ComposableSettings() {
         val context = LocalContext.current
 
         val children = buildList {
-            add(Preference.PreferenceItem.TextPreference(
-                title = stringResource(MR.strings.refresh_library_metadata),
-                subtitle = stringResource(MR.strings.updates_covers_genres_desc),
-                onClick = { LibraryUpdateJob.startNow(context, target = LibraryUpdateJob.Target.DETAILS) },
-            ))
-            add(Preference.PreferenceItem.TextPreference(
-                title = stringResource(MR.strings.refresh_tracking_metadata),
-                subtitle = stringResource(MR.strings.updates_tracking_details),
-                onClick = { LibraryUpdateJob.startNow(context, target = LibraryUpdateJob.Target.TRACKING) },
-            ))
+            add(
+                Preference.PreferenceItem.TextPreference(
+                    title = stringResource(MR.strings.refresh_library_metadata),
+                    subtitle = stringResource(MR.strings.updates_covers_genres_desc),
+                    onClick = { LibraryUpdateJob.startNow(context, target = LibraryUpdateJob.Target.DETAILS) },
+                ),
+            )
+            add(
+                Preference.PreferenceItem.TextPreference(
+                    title = stringResource(MR.strings.refresh_tracking_metadata),
+                    subtitle = stringResource(MR.strings.updates_tracking_details),
+                    onClick = { LibraryUpdateJob.startNow(context, target = LibraryUpdateJob.Target.TRACKING) },
+                ),
+            )
             if (BuildConfig.FLAVOR == "dev" || BuildConfig.DEBUG) {
-                add(Preference.PreferenceItem.SwitchPreference(
-                    pref = basePreferences.composeLibrary(),
-                    title = stringResource(MR.strings.pref_use_compose_library),
-                    // FIXME: Add beta tag support to preference item
-                ))
+                add(
+                    Preference.PreferenceItem.SwitchPreference(
+                        pref = basePreferences.composeLibrary(),
+                        title = stringResource(MR.strings.pref_use_compose_library),
+                        // FIXME: Add beta tag support to preference item
+                    ),
+                )
             }
         }.toPersistentList()
 
@@ -427,10 +471,12 @@ object SettingsAdvancedScreen : ComposableSettings() {
         val navigator = LocalNavigator.currentOrThrow
 
         val children = buildList {
-            add(Preference.PreferenceItem.TextPreference(
-                title = "Storybook",
-                onClick = { navigator.push(StoryBookScreen()) },
-            ))
+            add(
+                Preference.PreferenceItem.TextPreference(
+                    title = "Storybook",
+                    onClick = { navigator.push(StoryBookScreen()) },
+                ),
+            )
         }.toPersistentList()
 
         return Preference.PreferenceGroup(

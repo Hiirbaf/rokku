@@ -10,7 +10,7 @@ import eu.kanade.tachiyomi.R
 /**
  * Placeholder item to indicate if the category is hidden or empty/filtered out.
  */
-class LibraryPlaceholderItem (
+class LibraryPlaceholderItem(
     val category: Int,
     val type: Type,
     header: LibraryHeaderItem,
@@ -48,7 +48,13 @@ class LibraryPlaceholderItem (
     }
 
     companion object {
-        fun hidden(category: Int, header: LibraryHeaderItem, context: Context?, title: String, hiddenItems: List<LibraryMangaItem>) =
+        fun hidden(
+            category: Int,
+            header: LibraryHeaderItem,
+            context: Context?,
+            title: String,
+            hiddenItems: List<LibraryMangaItem>,
+        ) =
             LibraryPlaceholderItem(category, Type.Hidden(title, hiddenItems), header, context)
 
         fun blank(category: Int, header: LibraryHeaderItem, context: Context?, mangaCount: Int = 0) =

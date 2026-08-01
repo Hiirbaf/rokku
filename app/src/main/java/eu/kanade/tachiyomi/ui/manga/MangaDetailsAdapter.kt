@@ -5,17 +5,17 @@ import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.ItemTouchHelper
 import dev.icerock.moko.resources.StringResource
+import dev.icerock.moko.resources.compose.stringResource
 import eu.davidea.flexibleadapter.items.IFlexible
 import eu.kanade.tachiyomi.R
-import yokai.i18n.MR
-import yokai.util.lang.getString
-import dev.icerock.moko.resources.compose.stringResource
 import eu.kanade.tachiyomi.data.preference.PreferencesHelper
 import eu.kanade.tachiyomi.ui.manga.chapter.BaseChapterAdapter
 import eu.kanade.tachiyomi.ui.manga.chapter.ChapterItem
 import eu.kanade.tachiyomi.util.chapter.ChapterUtil
 import eu.kanade.tachiyomi.util.system.isLTR
 import uy.kohesive.injekt.injectLazy
+import yokai.i18n.MR
+import yokai.util.lang.getString
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 
@@ -72,6 +72,7 @@ class MangaDetailsAdapter(
             } else {
                 controller.toggleReadChapter(position)
             }
+
             ItemTouchHelper.LEFT -> if (recyclerView.resources.isLTR) {
                 controller.toggleReadChapter(position)
             } else {
@@ -99,10 +100,12 @@ class MangaDetailsAdapter(
                     getChapterName(chapter)
                 }
             }
+
             MangaDetailsPresenter.TENS_OF_CHAPTERS -> recyclerView.context.getString(
                 MR.strings.chapters_,
                 get10sRange(chapter.chapter_number),
             )
+
             else -> getChapterName(chapter)
         }
     }

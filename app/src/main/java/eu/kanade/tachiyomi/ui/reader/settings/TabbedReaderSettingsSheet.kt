@@ -8,10 +8,8 @@ import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import com.google.android.material.tabs.TabLayout
 import dev.icerock.moko.resources.StringResource
-import eu.kanade.tachiyomi.R
-import yokai.i18n.MR
-import yokai.util.lang.getString
 import dev.icerock.moko.resources.compose.stringResource
+import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.databinding.ReaderColorFilterBinding
 import eu.kanade.tachiyomi.ui.main.SearchActivity
 import eu.kanade.tachiyomi.ui.reader.ReaderActivity
@@ -20,6 +18,8 @@ import eu.kanade.tachiyomi.util.view.collapse
 import eu.kanade.tachiyomi.util.view.expand
 import eu.kanade.tachiyomi.util.view.isCollapsed
 import eu.kanade.tachiyomi.widget.TabbedBottomSheetDialog
+import yokai.i18n.MR
+import yokai.util.lang.getString
 
 class TabbedReaderSettingsSheet(
     val readerActivity: ReaderActivity,
@@ -127,7 +127,11 @@ class TabbedReaderSettingsSheet(
                     } else {
                         sheetBehavior.expand()
                         sheetBehavior.skipCollapsed = true
-                        window?.attributes = window?.attributes?.apply { screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE }
+                        window?.attributes =
+                            window?.attributes?.apply {
+                                screenBrightness =
+                                    WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
+                            }
                     }
                 }
 

@@ -22,6 +22,7 @@ object EstimatedItemHeight {
             val type = childTypeMap.getOrPut(pos) { itemViewType ?: 0 }
             when {
                 childTypeEstimateMap[type] != null -> childTypeEstimateMap[type] ?: 0
+
                 childAvgHeightMap[type] == null && !childTypeHeightMap[type]?.values.isNullOrEmpty() -> {
                     val array = (childTypeHeightMap[type]?.values ?: mutableListOf(0)).toIntArray()
                     childAvgHeightMap[type] = array
@@ -33,6 +34,7 @@ object EstimatedItemHeight {
                     }
                     childAvgHeightMap[type] ?: 0
                 }
+
                 else -> childAvgHeightMap[type] ?: estimatedHeight(type)
             }
         }

@@ -32,12 +32,12 @@ import eu.kanade.tachiyomi.util.system.getResourceColor
 import eu.kanade.tachiyomi.util.view.compatToolTipText
 import eu.kanade.tachiyomi.util.view.setText
 import eu.kanade.tachiyomi.util.view.text
-import kotlin.random.Random
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 import yokai.domain.library.LibraryPreferences
 import yokai.i18n.MR
 import yokai.util.lang.getString
+import kotlin.random.Random
 
 class LibraryHeaderHolder(val view: View, val adapter: LibraryCategoryAdapter) :
     BaseFlexibleViewHolder(view, adapter, true) {
@@ -129,6 +129,7 @@ class LibraryHeaderHolder(val view: View, val adapter: LibraryCategoryAdapter) :
                         }
                         result
                     }
+
                     else -> {
                         gestureDetector.onTouchEvent(event)
                     }
@@ -197,7 +198,9 @@ class LibraryHeaderHolder(val view: View, val adapter: LibraryCategoryAdapter) :
                     " ($filteredCount/$totalCount)"
                 }
                 countText
-            } else { "" }
+            } else {
+                ""
+            }
         if (category.sourceId != null) {
             val icon = adapter.sourceManager.get(category.sourceId!!)?.icon()
             icon?.setBounds(0, 0, 32.dpToPx, 32.dpToPx)
@@ -318,7 +321,7 @@ class LibraryHeaderHolder(val view: View, val adapter: LibraryCategoryAdapter) :
         }
 
         if (onSelection) {
-            return when(sortMode) {
+            return when (sortMode) {
                 LibrarySort.DragAndDrop -> R.drawable.ic_check_24dp
                 LibrarySort.Random -> R.drawable.ic_refresh_24dp
                 else -> defaultSelectedDrawableRes
@@ -385,18 +388,21 @@ class LibraryHeaderHolder(val view: View, val adapter: LibraryCategoryAdapter) :
                 binding.updateButton.isVisible = false
                 setSelection()
             }
+
             (category.id ?: -1) < 0 || adapter.libraryListener is FilteredLibraryController -> {
                 binding.collapseArrow.isVisible = false
                 binding.checkbox.isVisible = false
                 setRefreshing(false)
                 binding.updateButton.isVisible = false
             }
+
             isReloading -> {
                 binding.collapseArrow.isVisible = !adapter.isSingleCategory
                 binding.checkbox.isVisible = false
                 binding.updateButton.isVisible = true
                 setRefreshing(true)
             }
+
             else -> {
                 binding.collapseArrow.isVisible = !adapter.isSingleCategory
                 binding.checkbox.isVisible = false

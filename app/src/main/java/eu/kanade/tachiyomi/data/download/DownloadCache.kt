@@ -13,8 +13,6 @@ import eu.kanade.tachiyomi.util.system.extension
 import eu.kanade.tachiyomi.util.system.launchIO
 import eu.kanade.tachiyomi.util.system.launchNonCancellableIO
 import eu.kanade.tachiyomi.util.system.nameWithoutExtension
-import java.io.File
-import java.util.concurrent.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -48,6 +46,8 @@ import kotlinx.serialization.protobuf.ProtoBuf
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 import yokai.domain.storage.StorageManager
+import java.io.File
+import java.util.concurrent.*
 
 /**
  * Cache where we dump the downloads directory from the filesystem. This class is needed because
@@ -230,10 +230,13 @@ class DownloadCache(
                                         when {
                                             // Ignore incomplete downloads
                                             it.name?.endsWith(Downloader.TMP_DIR_SUFFIX) == true -> null
+
                                             // Folder of images
                                             it.isDirectory -> it.name
+
                                             // CBZ files
                                             it.isFile && it.extension == "cbz" -> it.nameWithoutExtension
+
                                             // Anything else is irrelevant
                                             else -> null
                                         }

@@ -18,7 +18,7 @@ class MangaKeyer : Keyer<Manga> {
             else -> data.thumbnail_url
         }
 
-        return "${key};${data.cover_last_modified}"
+        return "$key;${data.cover_last_modified}"
     }
 }
 
@@ -30,6 +30,6 @@ class MangaCoverKeyer(private val coverCache: CoverCache = Injekt.get()) : Keyer
             else -> data.url
         }
 
-        return "${key};${data.lastModified}"
+        return "$key;${data.lastModified}"
     }
 }

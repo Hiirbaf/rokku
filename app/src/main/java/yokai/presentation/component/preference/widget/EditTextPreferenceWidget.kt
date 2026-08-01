@@ -25,7 +25,6 @@ import androidx.compose.ui.window.DialogProperties
 import kotlinx.coroutines.launch
 import android.R as AR
 
-
 @Composable
 fun EditTextPreferenceWidget(
     title: String,

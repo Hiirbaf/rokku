@@ -11,8 +11,6 @@ import eu.kanade.tachiyomi.network.PUT
 import eu.kanade.tachiyomi.network.awaitSuccess
 import eu.kanade.tachiyomi.network.parseAs
 import eu.kanade.tachiyomi.util.system.withIOContext
-import java.nio.charset.Charset
-import java.security.MessageDigest
 import kotlinx.serialization.json.Json
 import okhttp3.Credentials
 import okhttp3.Dns
@@ -22,6 +20,8 @@ import okhttp3.OkHttpClient
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 import uy.kohesive.injekt.injectLazy
+import java.nio.charset.Charset
+import java.security.MessageDigest
 
 class TachideskApi {
     private val json: Json by injectLazy()

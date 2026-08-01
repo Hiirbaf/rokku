@@ -116,10 +116,10 @@ fun InfoScreen(
                     OutlinedButton(
                         modifier = Modifier.fillMaxWidth(),
                         border =
-                            BorderStroke(
-                                width = Size.extraExtraTiny,
-                                color = tint,
-                            ),
+                        BorderStroke(
+                            width = Size.extraExtraTiny,
+                            color = tint,
+                        ),
                         onClick = onRejectClick,
                     ) {
                         Text(text = rejectText)

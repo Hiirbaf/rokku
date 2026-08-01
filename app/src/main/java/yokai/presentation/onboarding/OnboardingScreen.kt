@@ -18,20 +18,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
-import eu.kanade.tachiyomi.R
-import yokai.i18n.MR
-import yokai.util.lang.getString
 import dev.icerock.moko.resources.compose.stringResource
+import eu.kanade.tachiyomi.R
 import soup.compose.material.motion.animation.materialSharedAxisX
 import soup.compose.material.motion.animation.rememberSlideDistance
+import yokai.i18n.MR
 import yokai.presentation.onboarding.steps.PermissionStep
 import yokai.presentation.onboarding.steps.StorageStep
 import yokai.presentation.onboarding.steps.ThemeStep
 import yokai.presentation.theme.Size
+import yokai.util.lang.getString
 
 @Composable
 fun OnboardingScreen(
-    onComplete: () -> Unit = {}
+    onComplete: () -> Unit = {},
 ) {
     val slideDistance = rememberSlideDistance()
 
@@ -53,11 +53,11 @@ fun OnboardingScreen(
         subtitleText = stringResource(MR.strings.onboarding_description),
         tint = MaterialTheme.colorScheme.primary,
         acceptText = stringResource(
-            if (isLastStep)
+            if (isLastStep) {
                 MR.strings.onboarding_finish
-            else {
+            } else {
                 MR.strings.next
-            }
+            },
         ),
         canAccept = steps[currentStep].isComplete,
         onAcceptClick = {

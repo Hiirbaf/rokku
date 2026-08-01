@@ -51,7 +51,10 @@ class EditTextResetPreference @JvmOverloads constructor(
     override fun dialog(): MaterialAlertDialogBuilder {
         return super.dialog().apply {
             val attrs = intArrayOf(AR.attr.dialogLayout)
-            val a = context.obtainStyledAttributes(R.style.Preference_DialogPreference_EditTextPreference_Material, attrs)
+            val a = context.obtainStyledAttributes(
+                R.style.Preference_DialogPreference_EditTextPreference_Material,
+                attrs,
+            )
             val resourceId = a.getResourceId(0, 0)
             val view = LayoutInflater.from(context).inflate(resourceId, null)
             val textView = view.findViewById<EditText>(AR.id.edit)

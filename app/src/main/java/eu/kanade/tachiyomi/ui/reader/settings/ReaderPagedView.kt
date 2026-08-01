@@ -37,7 +37,8 @@ class ReaderPagedView @JvmOverloads constructor(context: Context, attrs: Attribu
             pagerNav.bindToPreference(preferences.navigationModePager())
             pagerInvert.bindToPreference(preferences.pagerNavInverted())
             extendPastCutout.bindToPreference(readerPreferences.pagerCutoutBehavior())
-            extendPastCutoutLandscape.title = binding.extendPastCutoutLandscape.title.toString() + "(${context.getString(MR.strings.landscape)})"
+            extendPastCutoutLandscape.title =
+                binding.extendPastCutoutLandscape.title.toString() + "(${context.getString(MR.strings.landscape)})"
             extendPastCutoutLandscape.bindToPreference(readerPreferences.landscapeCutoutBehavior()) {
                 needsActivityRecreate = true
             }
@@ -54,7 +55,9 @@ class ReaderPagedView @JvmOverloads constructor(context: Context, attrs: Attribu
             val mangaViewer = (context as? ReaderActivity)?.viewModel?.getMangaReadingMode() ?: 0
             val isWebtoonView = ReadingModeType.isWebtoonType(mangaViewer)
             val hasMargins = mangaViewer == ReadingModeType.CONTINUOUS_VERTICAL.flagValue
-            cropBordersWebtoon.bindToPreference(if (hasMargins) preferences.cropBorders() else preferences.cropBordersWebtoon())
+            cropBordersWebtoon.bindToPreference(
+                if (hasMargins) preferences.cropBorders() else preferences.cropBordersWebtoon(),
+            )
             webtoonSidePadding.bindToIntPreference(
                 preferences.webtoonSidePadding(),
                 R.array.webtoon_side_padding_values,
@@ -74,7 +77,9 @@ class ReaderPagedView @JvmOverloads constructor(context: Context, attrs: Attribu
         val mangaViewer = activity.viewModel.getMangaReadingMode()
         val isWebtoonView = ReadingModeType.isWebtoonType(mangaViewer)
         val hasMargins = mangaViewer == ReadingModeType.CONTINUOUS_VERTICAL.flagValue
-        binding.cropBordersWebtoon.bindToPreference(if (hasMargins) preferences.cropBorders() else preferences.cropBordersWebtoon())
+        binding.cropBordersWebtoon.bindToPreference(
+            if (hasMargins) preferences.cropBorders() else preferences.cropBordersWebtoon(),
+        )
         updatePagedGroup(!isWebtoonView)
     }
 
@@ -105,23 +110,28 @@ class ReaderPagedView @JvmOverloads constructor(context: Context, attrs: Attribu
             SubsamplingScaleImageView.SCALE_TYPE_SMART_FIT,
             SubsamplingScaleImageView.SCALE_TYPE_CENTER_CROP,
             -> true
+
             else -> false
         }
         val ogView = (context as? Activity)?.window?.decorView
-        binding.landscapeZoom.isVisible = show && preferences.imageScaleType().get() == SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE
+        binding.landscapeZoom.isVisible =
+            show && preferences.imageScaleType().get() == SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE
         binding.extendPastCutout.isVisible =
-            show && isFullFit
-                && DeviceUtil.hasCutout(context as? Activity).ordinal >= DeviceUtil.CutoutSupport.LEGACY.ordinal
-                && preferences.fullscreen().get()
+            show && isFullFit &&
+            DeviceUtil.hasCutout(context as? Activity).ordinal >= DeviceUtil.CutoutSupport.LEGACY.ordinal &&
+            preferences.fullscreen().get()
         binding.extendPastCutoutLandscape.isVisible =
-            DeviceUtil.hasCutout(context as? Activity).ordinal >= DeviceUtil.CutoutSupport.MODERN.ordinal
-                && preferences.fullscreen().get()
-                && ogView?.resources?.configuration?.orientation == Configuration.ORIENTATION_LANDSCAPE
+            DeviceUtil.hasCutout(context as? Activity).ordinal >= DeviceUtil.CutoutSupport.MODERN.ordinal &&
+            preferences.fullscreen().get() &&
+            ogView?.resources?.configuration?.orientation == Configuration.ORIENTATION_LANDSCAPE
         if (binding.extendPastCutoutLandscape.isVisible) {
             binding.filterLinearLayout.removeView(binding.extendPastCutoutLandscape)
             binding.filterLinearLayout.addView(
                 binding.extendPastCutoutLandscape,
-                binding.filterLinearLayout.indexOfChild(if (show) binding.extendPastCutout else binding.webtoonPageLayout) + 1,
+                binding.filterLinearLayout.indexOfChild(
+                    if (show) binding.extendPastCutout else binding.webtoonPageLayout,
+                ) +
+                    1,
             )
         }
         binding.invertDoublePages.isVisible = show && preferences.pageLayout().get() != PageLayout.SINGLE_PAGE.value

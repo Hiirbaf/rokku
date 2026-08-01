@@ -3,10 +3,10 @@ package eu.kanade.tachiyomi.data.track.kitsu.dto
 import eu.kanade.tachiyomi.data.track.TrackManager
 import eu.kanade.tachiyomi.data.track.kitsu.KitsuApi
 import eu.kanade.tachiyomi.data.track.model.TrackSearch
+import kotlinx.serialization.Serializable
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import kotlinx.serialization.Serializable
 
 @Serializable
 data class KitsuSearchResult(

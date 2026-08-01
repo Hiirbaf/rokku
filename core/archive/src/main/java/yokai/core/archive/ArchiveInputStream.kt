@@ -1,11 +1,11 @@
 package yokai.core.archive
 
-import java.io.InputStream
-import java.nio.ByteBuffer
-import kotlin.concurrent.Volatile
 import me.zhanghai.android.libarchive.Archive
 import me.zhanghai.android.libarchive.ArchiveEntry
 import me.zhanghai.android.libarchive.ArchiveException
+import java.io.InputStream
+import java.nio.ByteBuffer
+import kotlin.concurrent.Volatile
 
 internal class ArchiveInputStream(buffer: Long, size: Long) : InputStream() {
     private val lock = Any()
@@ -55,7 +55,9 @@ internal class ArchiveInputStream(buffer: Long, size: Long) : InputStream() {
         Archive.readFree(archive)
     }
 
-    fun getNextEntry(): yokai.core.archive.ArchiveEntry? = Archive.readNextHeader(archive).takeUnless { it == 0L }?.let { entry ->
+    fun getNextEntry(): yokai.core.archive.ArchiveEntry? = Archive.readNextHeader(archive).takeUnless {
+        it == 0L
+    }?.let { entry ->
         val name = ArchiveEntry.pathnameUtf8(entry) ?: ArchiveEntry.pathname(entry)?.decodeToString() ?: return null
         val isFile = ArchiveEntry.filetype(entry) == ArchiveEntry.AE_IFREG
         ArchiveEntry(name, isFile)

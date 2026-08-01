@@ -52,7 +52,9 @@ class CategoryHolder(view: View, val adapter: CategoryAdapter) : BaseFlexibleVie
         }
         createCategory = category.order == CREATE_CATEGORY_ORDER
         if (createCategory) {
-            binding.title.setTextColor(ContextCompat.getColor(itemView.context, R.color.material_on_background_disabled))
+            binding.title.setTextColor(
+                ContextCompat.getColor(itemView.context, R.color.material_on_background_disabled),
+            )
             regularDrawable = ContextCompat.getDrawable(
                 itemView.context,
                 R.drawable
@@ -99,7 +101,9 @@ class CategoryHolder(view: View, val adapter: CategoryAdapter) : BaseFlexibleVie
         } else {
             if (!createCategory) {
                 setDragHandleView(binding.reorder)
-                binding.editButton.setImageDrawable(ContextCompat.getDrawable(itemView.context, R.drawable.ic_edit_24dp))
+                binding.editButton.setImageDrawable(
+                    ContextCompat.getDrawable(itemView.context, R.drawable.ic_edit_24dp),
+                )
             } else {
                 binding.editButton.setImageDrawable(null)
                 binding.reorder.setOnTouchListener { _, _ -> true }
@@ -119,7 +123,7 @@ class CategoryHolder(view: View, val adapter: CategoryAdapter) : BaseFlexibleVie
     private fun submitChanges() {
         if (binding.editText.visibility == View.VISIBLE) {
             if (adapter.categoryItemListener
-                .onCategoryRename(flexibleAdapterPosition, binding.editText.text.toString())
+                    .onCategoryRename(flexibleAdapterPosition, binding.editText.text.toString())
             ) {
                 isEditing(false)
                 if (!createCategory) {

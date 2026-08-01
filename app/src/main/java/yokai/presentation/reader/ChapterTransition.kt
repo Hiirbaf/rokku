@@ -70,6 +70,7 @@ fun ChapterTransition(
                     chapterGap = chapterGap,
                 )
             }
+
             is ChapterTransition.Next -> {
                 TransitionText(
                     manga = manga,
@@ -99,7 +100,7 @@ private fun TransitionText(
     fallbackLabel: String,
     chapterGap: Int,
 ) {
-    Column (
+    Column(
         modifier = Modifier
             .widthIn(max = 460.dp)
             .fillMaxWidth(),
@@ -152,11 +153,11 @@ private fun NoChapterNotification(
     text: String,
     modifier: Modifier = Modifier,
 ) {
-    OutlinedCard (
+    OutlinedCard(
         modifier = modifier,
         colors = CardColor,
     ) {
-        Row (
+        Row(
             modifier = Modifier
                 .padding(horizontal = 16.dp, vertical = 12.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),

@@ -71,7 +71,12 @@ class ExtensionInstallBroadcast : BroadcastReceiver() {
             } else {
                 0
             }
-            val pendingIntent = PendingIntent.getBroadcast(context, downloadId.hashCode(), newIntent, PendingIntent.FLAG_UPDATE_CURRENT or mutableFlag)
+            val pendingIntent = PendingIntent.getBroadcast(
+                context,
+                downloadId.hashCode(),
+                newIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT or mutableFlag,
+            )
             val statusReceiver = pendingIntent.intentSender
             session.commit(statusReceiver)
             val extensionManager: ExtensionManager by injectLazy()
@@ -121,11 +126,20 @@ class ExtensionInstallBroadcast : BroadcastReceiver() {
                             awaitConfirmationOrFail(context, downloadId)
                         }
                     }
+
                     PackageInstaller.STATUS_SUCCESS -> {
                         awaitingConfirmation -= downloadId
                         extensionManager.setInstallationResult(downloadId, true)
                     }
-                    PackageInstaller.STATUS_FAILURE, PackageInstaller.STATUS_FAILURE_ABORTED, PackageInstaller.STATUS_FAILURE_BLOCKED, PackageInstaller.STATUS_FAILURE_CONFLICT, PackageInstaller.STATUS_FAILURE_INCOMPATIBLE, PackageInstaller.STATUS_FAILURE_INVALID, PackageInstaller.STATUS_FAILURE_STORAGE -> {
+
+                    PackageInstaller.STATUS_FAILURE,
+                    PackageInstaller.STATUS_FAILURE_ABORTED,
+                    PackageInstaller.STATUS_FAILURE_BLOCKED,
+                    PackageInstaller.STATUS_FAILURE_CONFLICT,
+                    PackageInstaller.STATUS_FAILURE_INCOMPATIBLE,
+                    PackageInstaller.STATUS_FAILURE_INVALID,
+                    PackageInstaller.STATUS_FAILURE_STORAGE,
+                    -> {
                         awaitingConfirmation -= downloadId
                         extensionManager.setInstallationResult(downloadId, false)
                         if (status != PackageInstaller.STATUS_FAILURE_ABORTED) {
@@ -136,6 +150,7 @@ class ExtensionInstallBroadcast : BroadcastReceiver() {
                             }
                         }
                     }
+
                     else -> {
                         awaitingConfirmation -= downloadId
                         extensionManager.setInstallationResult(downloadId, false)
@@ -222,7 +237,12 @@ class ExtensionInstallActivity : Activity() {
             } else {
                 0
             }
-            val pendingIntent = PendingIntent.getActivity(this, downloadId.hashCode(), newIntent, PendingIntent.FLAG_UPDATE_CURRENT or mutableFlag)
+            val pendingIntent = PendingIntent.getActivity(
+                this,
+                downloadId.hashCode(),
+                newIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT or mutableFlag,
+            )
             val statusReceiver = pendingIntent.intentSender
             session.commit(statusReceiver)
             val extensionManager: ExtensionManager by injectLazy()

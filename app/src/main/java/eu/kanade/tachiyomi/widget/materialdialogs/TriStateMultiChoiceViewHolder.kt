@@ -2,11 +2,11 @@ package eu.kanade.tachiyomi.widget.materialdialogs
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
+import dev.icerock.moko.resources.compose.stringResource
 import eu.kanade.tachiyomi.R
+import eu.kanade.tachiyomi.widget.TriStateCheckBox
 import yokai.i18n.MR
 import yokai.util.lang.getString
-import dev.icerock.moko.resources.compose.stringResource
-import eu.kanade.tachiyomi.widget.TriStateCheckBox
 
 internal class TriStateMultiChoiceViewHolder(
     itemView: View,

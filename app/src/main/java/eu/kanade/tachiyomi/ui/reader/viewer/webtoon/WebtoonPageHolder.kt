@@ -129,7 +129,9 @@ class WebtoonPageHolder(
             page.statusFlow.collectLatest { status ->
                 when (status) {
                     is Page.State.Queue -> setQueued()
+
                     is Page.State.LoadPage -> setLoading()
+
                     is Page.State.DownloadImage -> {
                         setDownloading()
                         scope.launch {
@@ -138,7 +140,9 @@ class WebtoonPageHolder(
                             }
                         }
                     }
+
                     is Page.State.Ready -> setImage()
+
                     is Page.State.Error -> setError()
                 }
             }
@@ -199,7 +203,11 @@ class WebtoonPageHolder(
                         zoomDuration = viewer.config.doubleTapAnimDuration,
                         minimumScaleType = SubsamplingScaleImageView.SCALE_TYPE_FIT_WIDTH,
                         cropBorders = viewer.config.run {
-                            if (viewer.hasMargins) { verticalCropBorders } else { webtoonCropBorders }
+                            if (viewer.hasMargins) {
+                                verticalCropBorders
+                            } else {
+                                webtoonCropBorders
+                            }
                         },
                         debugMode = viewer.config.debugMode,
                     ),
@@ -208,10 +216,11 @@ class WebtoonPageHolder(
             }
         } catch (e: Throwable) {
             val logMsg = "Failed to set reader page image"
-            if (e is CancellationException)
-                Logger.w(e) { logMsg }  // probably user exiting the reader page before the image loads
-            else
+            if (e is CancellationException) {
+                Logger.w(e) { logMsg } // probably user exiting the reader page before the image loads
+            } else {
                 Logger.e(e) { logMsg }
+            }
             withUIContext {
                 setError()
             }

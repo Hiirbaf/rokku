@@ -15,7 +15,7 @@ import eu.kanade.tachiyomi.util.system.getResourceColor
 import yokai.util.lang.getString
 
 class FilterTagGroup@JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) : LinearLayout
-(context, attrs) {
+    (context, attrs) {
 
     private var listener: FilterTagGroupListener? = null
 

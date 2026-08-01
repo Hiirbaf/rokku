@@ -19,12 +19,12 @@ import eu.kanade.tachiyomi.util.system.dpToPx
 import eu.kanade.tachiyomi.util.system.dpToPxEnd
 import eu.kanade.tachiyomi.util.system.getResourceColor
 import eu.kanade.tachiyomi.util.system.timeSpanFromNow
-import java.text.DecimalFormat
-import java.text.DecimalFormatSymbols
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 import yokai.i18n.MR
 import yokai.util.lang.getString
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
 
 class ChapterUtil {
     companion object {

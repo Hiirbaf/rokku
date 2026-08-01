@@ -16,7 +16,6 @@ import eu.kanade.tachiyomi.ui.reader.settings.ReadingModeType
 import eu.kanade.tachiyomi.util.isLocal
 import eu.kanade.tachiyomi.util.manga.MangaCoverMetadata
 import eu.kanade.tachiyomi.util.system.withIOContext
-import java.util.Locale
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 import uy.kohesive.injekt.injectLazy
@@ -28,6 +27,7 @@ import yokai.domain.manga.models.MangaCover
 import yokai.domain.manga.models.MangaUpdate
 import yokai.i18n.MR
 import yokai.util.lang.getString
+import java.util.Locale
 
 fun Manga.sortDescending(preferences: PreferencesHelper): Boolean =
     if (usesLocalSort) sortDescending else preferences.chaptersDescAsDefault().get()
@@ -57,7 +57,11 @@ fun Manga.seriesType(context: Context, sourceManager: SourceManager? = null): St
 /**
  * The type of comic the manga is (ie. manga, manhwa, manhua)
  */
-fun Manga.seriesType(useOriginalTags: Boolean = false, customTags: String? = null, sourceManager: SourceManager? = null): Int {
+fun Manga.seriesType(
+    useOriginalTags: Boolean = false,
+    customTags: String? = null,
+    sourceManager: SourceManager? = null,
+): Int {
     val sourceName by lazy { (sourceManager ?: Injekt.get()).getOrStub(source).name }
     val tags = customTags ?: if (useOriginalTags) originalGenre else genre
     val currentTags = tags?.split(",")?.map { it.trim().lowercase(Locale.US) } ?: emptyList()
@@ -95,8 +99,8 @@ fun Manga.seriesType(useOriginalTags: Boolean = false, customTags: String? = nul
 fun Manga.defaultReaderType(): Int {
     val sourceName = Injekt.get<SourceManager>().getOrStub(source).name
     val currentTags = genre?.split(",")?.map { it.trim().lowercase(Locale.US) } ?: emptyList()
-    return if (currentTags.any {
-                tag -> isManhwaTag(tag) || tag.contains("webtoon")
+    return if (currentTags.any { tag ->
+            isManhwaTag(tag) || tag.contains("webtoon")
         } || (
             isWebtoonSource(sourceName) &&
                 currentTags.none { tag -> isManhuaTag(tag) } &&
@@ -104,8 +108,8 @@ fun Manga.defaultReaderType(): Int {
             )
     ) {
         ReadingModeType.LONG_STRIP.flagValue
-    } else if (currentTags.any {
-                tag -> tag == "comic"
+    } else if (currentTags.any { tag ->
+            tag == "comic"
         } || (
             isComicSource(sourceName) &&
                 !sourceName.contains("tapas", true) &&
@@ -254,9 +258,11 @@ fun Manga.prepareCoverUpdate(coverCache: CoverCache, remoteManga: SManga, refres
         isLocal() -> {
             cover_last_modified = System.currentTimeMillis()
         }
+
         hasCustomCover(coverCache) -> {
             coverCache.deleteFromCache(this, false)
         }
+
         else -> {
             cover_last_modified = System.currentTimeMillis()
             coverCache.deleteFromCache(this, false)

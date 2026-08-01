@@ -23,10 +23,8 @@ import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.github.mikephil.charting.utils.MPPointF
-import eu.kanade.tachiyomi.R
-import yokai.i18n.MR
-import yokai.util.lang.getString
 import dev.icerock.moko.resources.compose.stringResource
+import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.databinding.StatsDetailsChartBinding
 import eu.kanade.tachiyomi.ui.more.stats.StatsHelper
 import eu.kanade.tachiyomi.ui.more.stats.StatsHelper.getReadDuration
@@ -34,6 +32,8 @@ import eu.kanade.tachiyomi.ui.more.stats.details.StatsDetailsPresenter.Stats
 import eu.kanade.tachiyomi.ui.more.stats.details.StatsDetailsPresenter.StatsSort
 import eu.kanade.tachiyomi.util.system.getResourceColor
 import eu.kanade.tachiyomi.util.system.isLandscape
+import yokai.i18n.MR
+import yokai.util.lang.getString
 import java.util.*
 import java.util.concurrent.*
 import kotlin.math.ceil
@@ -111,6 +111,7 @@ class StatsDetailsChartLayout @JvmOverloads constructor(
                     binding.totalDurationStatsText.isVisible = true
                     binding.statsChartLayout.isVisible = false
                 }
+
                 else -> {
                     isVisible = false
                 }
@@ -343,8 +344,12 @@ class StatsDetailsChartLayout @JvmOverloads constructor(
         val minutes = TimeUnit.MILLISECONDS.toMinutes(longValue) % 60
 
         val multiple = when {
-            hours > 1L -> 3600 / 2 // 30min
-            minutes >= 15L || hours == 1L -> 300 * 3 // 15min
+            hours > 1L -> 3600 / 2
+
+            // 30min
+            minutes >= 15L || hours == 1L -> 300 * 3
+
+            // 15min
             else -> 60 * 3 // 3min
         } * 1000
         return ceil(this / multiple) * multiple

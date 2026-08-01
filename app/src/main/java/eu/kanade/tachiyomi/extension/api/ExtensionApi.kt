@@ -82,14 +82,18 @@ internal class ExtensionApi {
         return try {
             val store = networkService.client.newCall(GET(indexUrl)).awaitSuccess().body.source()
                 .decompressIfGzipped().use { source ->
-                when (source.peek().readByte()) {
-                    // "[..." - somehow still the legacy array despite index_v2 being set
-                    0x5B.toByte() -> return fetchLegacyExtensions(repoBaseUrl)
-                    // "{..."
-                    0x7B.toByte() -> Injekt.get<Json>().decodeFromBufferedSource<NetworkExtensionStore>(source)
-                    else -> Injekt.get<ProtoBuf>().decodeFromByteArray<NetworkExtensionStore>(source.readByteArray())
+                    when (source.peek().readByte()) {
+                        // "[..." - somehow still the legacy array despite index_v2 being set
+                        0x5B.toByte() -> return fetchLegacyExtensions(repoBaseUrl)
+
+                        // "{..."
+                        0x7B.toByte() -> Injekt.get<Json>().decodeFromBufferedSource<NetworkExtensionStore>(source)
+
+                        else -> Injekt.get<ProtoBuf>().decodeFromByteArray<NetworkExtensionStore>(
+                            source.readByteArray(),
+                        )
+                    }
                 }
-            }
 
             val extensionList = store.extensionList
                 ?: store.extensionListUrl?.let { fetchExtensionList(it) }
@@ -106,14 +110,17 @@ internal class ExtensionApi {
     private suspend fun fetchExtensionList(listUrl: String): NetworkExtensionStore.ExtensionList {
         return networkService.client.newCall(GET(listUrl)).awaitSuccess().body.source()
             .decompressIfGzipped().use { source: BufferedSource ->
-            when (source.peek().readByte()) {
-                0x7B.toByte() -> Injekt.get<Json>().decodeFromBufferedSource<NetworkExtensionStoreList>(source)
-                    .let { NetworkExtensionStore.ExtensionList(it.extensions) }
-                else -> NetworkExtensionStore.ExtensionList(
-                    Injekt.get<ProtoBuf>().decodeFromByteArray<NetworkExtensionStoreList>(source.readByteArray()).extensions,
-                )
+                when (source.peek().readByte()) {
+                    0x7B.toByte() -> Injekt.get<Json>().decodeFromBufferedSource<NetworkExtensionStoreList>(source)
+                        .let { NetworkExtensionStore.ExtensionList(it.extensions) }
+
+                    else -> NetworkExtensionStore.ExtensionList(
+                        Injekt.get<ProtoBuf>().decodeFromByteArray<NetworkExtensionStoreList>(
+                            source.readByteArray(),
+                        ).extensions,
+                    )
+                }
             }
-        }
     }
 
     private fun BufferedSource.decompressIfGzipped(): BufferedSource {

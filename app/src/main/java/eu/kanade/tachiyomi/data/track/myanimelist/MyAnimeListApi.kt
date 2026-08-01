@@ -20,8 +20,6 @@ import eu.kanade.tachiyomi.network.parseAs
 import eu.kanade.tachiyomi.util.PkceUtil
 import eu.kanade.tachiyomi.util.system.w
 import eu.kanade.tachiyomi.util.system.withIOContext
-import java.text.SimpleDateFormat
-import java.util.Locale
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.serialization.json.Json
@@ -31,6 +29,8 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
 import uy.kohesive.injekt.injectLazy
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class MyAnimeListApi(private val client: OkHttpClient, interceptor: MyAnimeListInterceptor) {
 
@@ -85,7 +85,10 @@ class MyAnimeListApi(private val client: OkHttpClient, interceptor: MyAnimeListI
         return withIOContext {
             val url = "$BASE_API_URL/manga".toUri().buildUpon()
                 .appendPath(id.toString())
-                .appendQueryParameter("fields", "id,title,synopsis,num_chapters,main_picture,status,media_type,start_date")
+                .appendQueryParameter(
+                    "fields",
+                    "id,title,synopsis,num_chapters,main_picture,status,media_type,start_date",
+                )
                 .build()
             authClient.newCall(GET(url.toString()))
                 .awaitSuccess()

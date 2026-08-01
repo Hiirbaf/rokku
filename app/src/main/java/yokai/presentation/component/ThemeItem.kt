@@ -1,6 +1,5 @@
 package yokai.presentation.component
 
-import android.R as AR
 import android.content.Context
 import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
@@ -38,15 +37,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.themeadapter.material3.createMdc3Theme
-import eu.kanade.tachiyomi.R
-import yokai.i18n.MR
-import yokai.util.lang.getString
 import dev.icerock.moko.resources.compose.stringResource
+import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.util.system.Themes
 import eu.kanade.tachiyomi.util.system.isInNightMode
+import yokai.i18n.MR
 import yokai.presentation.theme.HalfAlpha
 import yokai.presentation.theme.SecondaryItemAlpha
 import yokai.presentation.theme.Size
+import yokai.util.lang.getString
+import android.R as AR
 
 private data class ContextTheme(
     val colorScheme: ColorScheme,
@@ -62,7 +62,8 @@ private fun Context.colorSchemeFromAdapter(theme: Themes, isDarkTheme: Boolean):
     val themeContext = this.createConfigurationContext(configuration)
     themeContext.setTheme(theme.styleRes)
 
-    @Suppress("DEPRECATION") val colorScheme =
+    @Suppress("DEPRECATION")
+    val colorScheme =
         createMdc3Theme(
             context = themeContext,
             layoutDirection = LayoutDirection.Ltr,
@@ -97,13 +98,15 @@ private fun ThemeItemNaive(contextTheme: ContextTheme, selected: Boolean, onClic
             selected,
             selectedColor = MaterialTheme.colorScheme.primary,
             contextTheme.isThemeMatchesApp,
-            onClick
+            onClick,
         )
 
         Text(
-            text = stringResource(if (contextTheme.isDarkTheme) contextTheme.theme.darkNameRes else contextTheme.theme.nameRes),
+            text = stringResource(
+                if (contextTheme.isDarkTheme) contextTheme.theme.darkNameRes else contextTheme.theme.nameRes,
+            ),
             textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.bodySmall
+            style = MaterialTheme.typography.bodySmall,
         )
     }
 }
@@ -168,7 +171,7 @@ fun ThemePreviewItem(
                         Icon(
                             imageVector = Icons.Filled.CheckCircle,
                             contentDescription = stringResource(MR.strings.selected),
-                            tint = selectedColor
+                            tint = selectedColor,
                         )
                     }
                 }

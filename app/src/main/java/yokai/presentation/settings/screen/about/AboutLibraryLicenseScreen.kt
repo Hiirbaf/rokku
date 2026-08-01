@@ -53,7 +53,7 @@ class AboutLibraryLicenseScreen(
                         buttonClicked = { uriHandler.openUri(website) },
                     )
                 }
-            }
+            },
         ) { innerPadding ->
             Column(
                 modifier = Modifier

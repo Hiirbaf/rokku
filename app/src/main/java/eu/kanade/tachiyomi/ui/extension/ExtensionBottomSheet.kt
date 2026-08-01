@@ -186,7 +186,8 @@ class ExtensionBottomSheet @JvmOverloads constructor(context: Context, attrs: At
 
     fun updatedNestedRecyclers() {
         listOf(extensionFrameLayout, migrationFrameLayout).forEachIndexed { index, recyclerWithScrollerBinding ->
-            recyclerWithScrollerBinding?.binding?.recycler?.isNestedScrollingEnabled = binding.pager.currentItem == index
+            recyclerWithScrollerBinding?.binding?.recycler?.isNestedScrollingEnabled =
+                binding.pager.currentItem == index
         }
     }
 
@@ -216,9 +217,11 @@ class ExtensionBottomSheet @JvmOverloads constructor(context: Context, attrs: At
                     presenter.updateExtension(extension)
                 }
             }
+
             is Extension.Available -> {
                 presenter.installExtension(extension)
             }
+
             is Extension.Untrusted -> {
                 openTrustDialog(extension)
             }
@@ -288,6 +291,7 @@ class ExtensionBottomSheet @JvmOverloads constructor(context: Context, attrs: At
                     openTrustDialog(extension)
                 }
             }
+
             else -> {
                 val item = migAdapter?.getItem(position) ?: return false
 

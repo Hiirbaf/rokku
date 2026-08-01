@@ -23,7 +23,12 @@ object MigrationFlags {
     private val customMangaManager: CustomMangaManager by injectLazy()
     private val getTrack: GetTrack by injectLazy()
 
-    val titles get() = arrayOf(MR.strings.chapters, MR.strings.categories, MR.strings.tracking, MR.strings.custom_manga_info)
+    val titles get() = arrayOf(
+        MR.strings.chapters,
+        MR.strings.categories,
+        MR.strings.tracking,
+        MR.strings.custom_manga_info,
+    )
     val flags get() = arrayOf(CHAPTERS, CATEGORIES, TRACK, CUSTOM_MANGA_INFO)
 
     fun hasChapters(value: Int): Boolean {

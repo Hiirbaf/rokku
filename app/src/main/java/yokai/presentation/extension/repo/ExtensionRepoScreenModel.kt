@@ -51,11 +51,14 @@ class ExtensionRepoScreenModel : StateScreenModel<ExtensionRepoScreenModel.State
                     eventChannel.send(ExtensionRepoEvent.Success)
                     extensionManager.findAvailableExtensions()
                 }
+
                 is CreateExtensionRepo.Result.InvalidUrl,
                 is CreateExtensionRepo.Result.Error,
                 -> eventChannel.send(ExtensionRepoEvent.InvalidUrl)
+
                 is CreateExtensionRepo.Result.RepoAlreadyExists ->
                     eventChannel.send(ExtensionRepoEvent.RepoAlreadyExists)
+
                 is CreateExtensionRepo.Result.DuplicateFingerprint -> {
                     eventChannel.send(
                         ExtensionRepoEvent.ShowDialog(RepoDialog.Conflict(result.oldRepo, result.newRepo)),

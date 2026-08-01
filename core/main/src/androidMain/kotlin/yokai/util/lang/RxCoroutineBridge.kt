@@ -1,8 +1,5 @@
 package yokai.util.lang
 
-import kotlin.coroutines.cancellation.CancellationException
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -15,6 +12,9 @@ import rx.Emitter
 import rx.Observable
 import rx.Subscriber
 import rx.Subscription
+import kotlin.coroutines.cancellation.CancellationException
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 /*
  * Util functions for bridging RxJava and coroutines. Taken from TachiyomiEH/SY.

@@ -7,7 +7,10 @@ import android.view.MotionEvent
 import androidx.core.widget.NestedScrollView
 
 @SuppressLint("ClickableViewAccessibility")
-class StatefulNestedScrollView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) : NestedScrollView(context, attrs) {
+class StatefulNestedScrollView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+) : NestedScrollView(context, attrs) {
     private var scrollerTask: Runnable? = null
     private var initialPosition = 0
     var hasStopped = true

@@ -3,7 +3,7 @@ package yokai.domain.manga.interactor
 import yokai.domain.manga.MangaRepository
 import yokai.domain.manga.models.MangaUpdate
 
-class UpdateManga (
+class UpdateManga(
     private val mangaRepository: MangaRepository,
 ) {
     suspend fun await(update: MangaUpdate) = mangaRepository.update(update)

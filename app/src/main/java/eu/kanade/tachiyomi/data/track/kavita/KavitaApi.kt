@@ -8,14 +8,14 @@ import eu.kanade.tachiyomi.network.POST
 import eu.kanade.tachiyomi.network.awaitSuccess
 import eu.kanade.tachiyomi.network.parseAs
 import eu.kanade.tachiyomi.util.system.withIOContext
-import java.io.IOException
-import java.net.SocketTimeoutException
 import kotlinx.serialization.json.Json
 import okhttp3.Dns
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody.Companion.toRequestBody
 import uy.kohesive.injekt.injectLazy
+import java.io.IOException
+import java.net.SocketTimeoutException
 
 class KavitaApi(private val client: OkHttpClient, interceptor: KavitaInterceptor) {
 
@@ -45,14 +45,21 @@ class KavitaApi(private val client: OkHttpClient, interceptor: KavitaInterceptor
             client.newCall(request).execute().use {
                 when (it.code) {
                     200 -> return it.parseAs<AuthenticationDto>().token
+
                     401 -> {
-                        Logger.w { "Unauthorized / api key not valid: Cleaned api URL: $apiUrl, Api key is empty: ${apiKey.isEmpty()}" }
+                        Logger.w {
+                            "Unauthorized / api key not valid: Cleaned api URL: $apiUrl, Api key is empty: ${apiKey.isEmpty()}"
+                        }
                         throw IOException("Unauthorized / api key not valid")
                     }
+
                     500 -> {
-                        Logger.w { "Error fetching JWT token. Cleaned api URL: $apiUrl, Api key is empty: ${apiKey.isEmpty()}" }
+                        Logger.w {
+                            "Error fetching JWT token. Cleaned api URL: $apiUrl, Api key is empty: ${apiKey.isEmpty()}"
+                        }
                         throw IOException("Error fetching JWT token")
                     }
+
                     else -> {}
                 }
             }
@@ -157,8 +164,14 @@ class KavitaApi(private val client: OkHttpClient, interceptor: KavitaInterceptor
     }
 
     suspend fun updateProgress(track: Track): Track {
-        val requestUrl = "${getApiFromUrl(track.tracking_url)}/Tachiyomi/mark-chapter-until-as-read?seriesId=${getIdFromUrl(track.tracking_url)}&chapterNumber=${track.last_chapter_read}"
-        authClient.newCall(POST(requestUrl, body = "{}".toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())))
+        val requestUrl = "${getApiFromUrl(
+            track.tracking_url,
+        )}/Tachiyomi/mark-chapter-until-as-read?seriesId=${getIdFromUrl(
+            track.tracking_url,
+        )}&chapterNumber=${track.last_chapter_read}"
+        authClient.newCall(
+            POST(requestUrl, body = "{}".toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())),
+        )
             .awaitSuccess()
         return getTrackSearch(track.tracking_url)
     }

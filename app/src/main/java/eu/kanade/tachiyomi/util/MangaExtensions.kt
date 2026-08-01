@@ -39,8 +39,6 @@ import eu.kanade.tachiyomi.util.view.setTitle
 import eu.kanade.tachiyomi.util.view.snack
 import eu.kanade.tachiyomi.util.view.withFadeTransaction
 import eu.kanade.tachiyomi.widget.TriStateCheckBox
-import java.util.Date
-import java.util.Locale
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
@@ -55,6 +53,8 @@ import yokai.domain.manga.models.MangaUpdate
 import yokai.domain.track.interactor.InsertTrack
 import yokai.i18n.MR
 import yokai.util.lang.getString
+import java.util.Date
+import java.util.Locale
 import android.R as AR
 
 fun Manga.isLocal() = source == LocalSource.ID
@@ -213,7 +213,7 @@ suspend fun Manga.addOrRemoveToFavorites(
                         id = this@addOrRemoveToFavorites.id!!,
                         favorite = true,
                         dateAdded = this@addOrRemoveToFavorites.date_added,
-                    )
+                    ),
                 )
                 setMangaCategories.await(this@addOrRemoveToFavorites.id!!, listOf(defaultCategory.id!!.toLong()))
                 return withUIContext {
@@ -228,6 +228,7 @@ suspend fun Manga.addOrRemoveToFavorites(
                     }
                 }
             }
+
             defaultCategoryId == -2 && (
                 lastUsedCategories.isNotEmpty() ||
                     Category.lastCategoriesAddedTo.firstOrNull() == 0
@@ -240,7 +241,7 @@ suspend fun Manga.addOrRemoveToFavorites(
                         id = this@addOrRemoveToFavorites.id!!,
                         favorite = true,
                         dateAdded = this@addOrRemoveToFavorites.date_added,
-                    )
+                    ),
                 )
                 setMangaCategories.await(this@addOrRemoveToFavorites.id!!, lastUsedCategories.map { it.id!!.toLong() })
                 return withUIContext {
@@ -251,7 +252,9 @@ suspend fun Manga.addOrRemoveToFavorites(
                             MR.strings.added_to_,
                             when (lastUsedCategories.size) {
                                 0 -> activity.getString(MR.strings.default_category).lowercase(Locale.ROOT)
+
                                 1 -> lastUsedCategories.firstOrNull()?.name ?: ""
+
                                 else -> activity.getString(
                                     MR.plurals.category_plural,
                                     lastUsedCategories.size,
@@ -268,6 +271,7 @@ suspend fun Manga.addOrRemoveToFavorites(
                     }
                 }
             }
+
             defaultCategoryId == 0 || categories.isEmpty() -> { // 'Default' or no category
                 favorite = true
                 date_added = Date().time
@@ -277,14 +281,16 @@ suspend fun Manga.addOrRemoveToFavorites(
                         id = this@addOrRemoveToFavorites.id!!,
                         favorite = true,
                         dateAdded = this@addOrRemoveToFavorites.date_added,
-                    )
+                    ),
                 )
                 setMangaCategories.await(this@addOrRemoveToFavorites.id!!, emptyList())
                 return withUIContext {
                     onMangaMoved()
                     (activity as? MainActivity)?.showNotificationPermissionPrompt()
                     if (categories.isNotEmpty()) {
-                        view.snack(activity.getString(MR.strings.added_to_, activity.getString(MR.strings.default_value))) {
+                        view.snack(
+                            activity.getString(MR.strings.added_to_, activity.getString(MR.strings.default_value)),
+                        ) {
                             setAction(MR.strings.change) {
                                 scope.launchIO {
                                     moveCategories(activity, onMangaMoved)
@@ -296,6 +302,7 @@ suspend fun Manga.addOrRemoveToFavorites(
                     }
                 }
             }
+
             else -> { // Always ask
                 showSetCategoriesSheet(activity, categories, onMangaAdded, onMangaMoved)
             }
@@ -309,7 +316,7 @@ suspend fun Manga.addOrRemoveToFavorites(
                 id = this@addOrRemoveToFavorites.id!!,
                 favorite = false,
                 dateAdded = 0,
-            )
+            ),
         )
         return withUIContext {
             onMangaMoved()
@@ -323,7 +330,7 @@ suspend fun Manga.addOrRemoveToFavorites(
                                 id = this@addOrRemoveToFavorites.id!!,
                                 favorite = true,
                                 dateAdded = lastAddedDate,
-                            )
+                            ),
                         )
                     }
                     onMangaMoved()
@@ -408,7 +415,10 @@ private suspend fun showAddDuplicateDialog(
         setCustomTitleAndMessage(0, activity.getString(MR.strings.confirm_manga_add_duplicate, source.name))
         setItems(
             arrayOf(
-                activity.getString(MR.strings.show_, libraryManga.seriesType(activity, sourceManager)).asButton(activity),
+                activity.getString(
+                    MR.strings.show_,
+                    libraryManga.seriesType(activity, sourceManager),
+                ).asButton(activity),
                 activity.getString(MR.strings.add_to_library).asButton(activity),
                 activity.getString(MR.strings.migrate).asButton(activity, !newManga.initialized),
             ),
@@ -418,7 +428,9 @@ private suspend fun showAddDuplicateDialog(
                     MangaDetailsController(libraryManga)
                         .withFadeTransaction(),
                 )
+
                 1 -> scope.launchIO { addManga() }
+
                 2 -> {
                     if (!newManga.initialized) {
                         activity.toast(MR.strings.must_view_details_before_migration, Toast.LENGTH_LONG)
@@ -441,6 +453,7 @@ private suspend fun showAddDuplicateDialog(
                         setCancelable(true)
                     }.show()
                 }
+
                 else -> {}
             }
             dialog.dismiss()
@@ -485,7 +498,7 @@ fun Manga.autoAddTrack(onMangaMoved: () -> Unit) {
                         syncChaptersWithTrackServiceTwoWay(
                             getChapter.awaitAll(mangaId, false),
                             track,
-                            service as TrackService
+                            service as TrackService,
                         )
                         withUIContext {
                             onMangaMoved()

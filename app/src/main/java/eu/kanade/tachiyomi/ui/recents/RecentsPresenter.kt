@@ -20,14 +20,6 @@ import eu.kanade.tachiyomi.util.system.launchNonCancellableIO
 import eu.kanade.tachiyomi.util.system.launchUI
 import eu.kanade.tachiyomi.util.system.toast
 import eu.kanade.tachiyomi.util.system.withUIContext
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Date
-import java.util.Locale
-import java.util.TreeMap
-import java.util.concurrent.TimeUnit
-import kotlin.math.abs
-import kotlin.math.roundToInt
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
@@ -48,6 +40,14 @@ import yokai.domain.recents.RecentsPreferences
 import yokai.domain.recents.interactor.GetRecents
 import yokai.domain.ui.UiPreferences
 import yokai.i18n.MR
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
+import java.util.TreeMap
+import java.util.concurrent.TimeUnit
+import kotlin.math.abs
+import kotlin.math.roundToInt
 
 class RecentsPresenter(
     val uiPreferences: UiPreferences = Injekt.get(),
@@ -185,7 +185,8 @@ class RecentsPresenter(
         }
         val viewType = customViewType ?: viewType
 
-        val showRead = ((recentsPreferences.showReadInAllRecents().get() || query.isNotEmpty()) && limit != 0) || includeReadAnyway
+        val showRead =
+            ((recentsPreferences.showReadInAllRecents().get() || query.isNotEmpty()) && limit != 0) || includeReadAnyway
         val isUngrouped = viewType != RecentsViewType.GroupedAll || query.isNotEmpty()
         val groupChaptersHistory = preferences.groupChaptersHistory().get()
         groupHistory = groupChaptersHistory
@@ -204,6 +205,7 @@ class RecentsPresenter(
                     (if (isCustom) ENDLESS_LIMIT else pageOffset).toLong(),
                 )
             }
+
             RecentsViewType.History -> {
                 val items = if (groupChaptersHistory == GroupType.BySeries) {
                     getRecents.awaitBySeries(
@@ -264,6 +266,7 @@ class RecentsPresenter(
                     items
                 }
             }
+
             RecentsViewType.Updates -> {
                 dateFormat.applyPattern("yyyy-MM-dd")
                 dateFormat.calendar.firstDayOfWeek =
@@ -349,11 +352,13 @@ class RecentsPresenter(
                         nextChapter
                     }
                 }
+
                 // if in all view type and mch is a newly updated item
                 it.history.id == null && !viewType.isUpdates -> {
                     getFirstUpdatedChapter(it.manga, it.chapter)
                         ?: if ((showRead && it.chapter.id != null)) it.chapter else null
                 }
+
                 else -> it.chapter
             }
             if (chapter == null) {
@@ -504,7 +509,10 @@ class RecentsPresenter(
      *
      * @param chapters the list of chapter from the database.
      */
-    private fun setDownloadedChapters(chapters: List<RecentMangaItem>, queue: List<Download> = downloadManager.queueState.value) {
+    private fun setDownloadedChapters(
+        chapters: List<RecentMangaItem>,
+        queue: List<Download> = downloadManager.queueState.value,
+    ) {
         for (item in chapters.filter { it.chapter.id != null }) {
             if (downloadManager.isChapterDownloaded(item.chapter, item.mch.manga)) {
                 item.status = Download.State.DOWNLOADED
@@ -538,9 +546,11 @@ class RecentsPresenter(
             null -> {
                 presenterScope.launchUI { view?.setRefreshing(false) }
             }
+
             LibraryUpdateJob.STARTING_UPDATE_SOURCE -> {
                 presenterScope.launchUI { view?.setRefreshing(true) }
             }
+
             else -> {
                 getRecents()
             }
@@ -635,6 +645,7 @@ class RecentsPresenter(
     }
 
     // History
+
     /**
      * Reset last read of chapter to 0L
      * @param history history belonging to chapter

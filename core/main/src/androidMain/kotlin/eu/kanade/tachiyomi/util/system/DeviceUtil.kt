@@ -10,7 +10,6 @@ import androidx.core.content.getSystemService
 import androidx.core.view.WindowInsetsCompat
 import co.touchlab.kermit.Logger
 
-
 object DeviceUtil {
 
     val isMiui by lazy {
@@ -104,6 +103,7 @@ object DeviceUtil {
                 }
                  */
             }
+
             LegacyCutoutMode.NEVER -> {
                 // Vivo doesn't support this, user had to set it from Settings
                 /*
@@ -117,12 +117,15 @@ object DeviceUtil {
     fun hasCutout(context: Activity?): CutoutSupport {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             if (context?.getSystemService<DisplayManager>()
-                    ?.getDisplay(Display.DEFAULT_DISPLAY)?.cutout != null)
+                    ?.getDisplay(Display.DEFAULT_DISPLAY)?.cutout != null
+            ) {
                 return CutoutSupport.EXTENDED
+            }
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             val displayCutout = context?.window?.decorView?.rootWindowInsets?.displayCutout
-            if (displayCutout?.safeInsetTop != null || displayCutout?.safeInsetBottom != null)
+            if (displayCutout?.safeInsetTop != null || displayCutout?.safeInsetBottom != null) {
                 return CutoutSupport.MODERN
+            }
         } else if (isVivo) {
             // https://swsdl.vivo.com.cn/appstore/developer/uploadfile/20180328/20180328152252602.pdf
             try {
@@ -154,15 +157,19 @@ object DeviceUtil {
     fun getCutoutHeight(context: Activity?, cutoutSupport: CutoutSupport): Number {
         return when (cutoutSupport) {
             CutoutSupport.MODERN -> {
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P)
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
                     throw IllegalStateException("Modern cutout only available on Android P or higher")
+                }
                 context?.window?.decorView?.rootWindowInsets?.displayCutout?.safeInsetTop ?: 0
             }
+
             CutoutSupport.EXTENDED -> {
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q)
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
                     throw IllegalStateException("Extended cutout only available on Android Q or higher")
+                }
                 context?.window?.decorView?.rootWindowInsets?.displayCutout?.boundingRectTop?.height()?.toFloat() ?: 0f
             }
+
             CutoutSupport.LEGACY -> {
                 if (isVivo) {
                     /*
@@ -179,21 +186,24 @@ object DeviceUtil {
                     } catch (_: Exception) {
                         // fallback
                     }
-                    */
+                     */
 
                     val insetCompat = context?.window?.decorView?.rootWindowInsets?.let {
                         WindowInsetsCompat.toWindowInsetsCompat(it)
                     }
                     val statusBarHeight = insetCompat?.getInsets(WindowInsetsCompat.Type.statusBars())?.top
-                        ?: 24.dpToPx  // 24dp is "standard" height for Android since Marshmallow
+                        ?: 24.dpToPx // 24dp is "standard" height for Android since Marshmallow
                     var notchHeight = 32.dpToPx
                     if (notchHeight < statusBarHeight) {
                         notchHeight = statusBarHeight
                     }
                     notchHeight
                 } else if (isMiui) {
-                    val resourceId = context?.resources?.getIdentifier("notch_height",
-                        "dimen", "android") ?: 0
+                    val resourceId = context?.resources?.getIdentifier(
+                        "notch_height",
+                        "dimen",
+                        "android",
+                    ) ?: 0
                     if (resourceId > 0) {
                         context?.resources?.getDimensionPixelSize(resourceId) ?: 0
                     } else {
@@ -203,15 +213,16 @@ object DeviceUtil {
                     0
                 }
             }
+
             else -> 0
         }
     }
 
     enum class CutoutSupport {
         NONE,
-        LEGACY,  // Pre-Android P, the start of this hell
-        MODERN,  // Android P
-        EXTENDED,  // Android Q
+        LEGACY, // Pre-Android P, the start of this hell
+        MODERN, // Android P
+        EXTENDED, // Android Q
     }
 
     enum class LegacyCutoutMode {

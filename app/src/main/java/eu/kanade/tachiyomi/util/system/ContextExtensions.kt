@@ -41,9 +41,6 @@ import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.data.preference.PreferencesHelper
 import eu.kanade.tachiyomi.extension.util.ExtensionLoader
 import eu.kanade.tachiyomi.ui.main.MainActivity
-import java.io.File
-import java.util.Locale
-import kotlin.math.max
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.delay
@@ -52,6 +49,9 @@ import rikka.sui.Sui
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 import yokai.i18n.MR
+import java.io.File
+import java.util.Locale
+import kotlin.math.max
 
 private const val TABLET_UI_MIN_SCREEN_WIDTH_DP = 720
 

@@ -26,15 +26,17 @@ fun LibraryContent(
         ) {
             items(
                 items = items,
-                contentType = { "library_grid_item" }
+                contentType = { "library_grid_item" },
             ) { item ->
                 when (item) {
                     is LibraryItem.Blank -> {
                         Text("Blank: ${item.mangaCount}")
                     }
+
                     is LibraryItem.Hidden -> {
                         Text("Hidden: ${item.title} - ${item.hiddenItems.size}")
                     }
+
                     is LibraryItem.Manga -> {
                         Text("Manga: ${item.libraryManga.manga.title}")
                     }

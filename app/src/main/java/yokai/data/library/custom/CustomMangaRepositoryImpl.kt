@@ -23,10 +23,12 @@ class CustomMangaRepositoryImpl(private val handler: DatabaseHandler) : CustomMa
         artist: String?,
         description: String?,
         genre: String?,
-        status: Int?
+        status: Int?,
     ) {
         try {
-            handler.await { custom_manga_infoQueries.insert(mangaId, title, author, artist, description, genre, status?.toLong()) }
+            handler.await {
+                custom_manga_infoQueries.insert(mangaId, title, author, artist, description, genre, status?.toLong())
+            }
         } catch (exc: SQLiteException) {
             Logger.e(exc)
             throw SaveCustomMangaException(exc)
@@ -77,6 +79,6 @@ class CustomMangaRepositoryImpl(private val handler: DatabaseHandler) : CustomMa
         artist: String?,
         description: String?,
         genre: String?,
-        status: Long?
+        status: Long?,
     ): CustomMangaInfo = CustomMangaInfo(mangaId, title, author, artist, description, genre, status?.toInt())
 }

@@ -2,8 +2,8 @@ package eu.kanade.tachiyomi.data.database.models
 
 import eu.kanade.tachiyomi.source.model.SChapter
 import eu.kanade.tachiyomi.source.model.safeMemo
-import kotlin.jvm.Transient
 import kotlinx.serialization.json.JsonObject
+import kotlin.jvm.Transient
 
 fun SChapter.toChapter(): ChapterImpl {
     return ChapterImpl().apply {
@@ -15,7 +15,6 @@ fun SChapter.toChapter(): ChapterImpl {
         memo = this@toChapter.safeMemo()
     }
 }
-
 
 class ChapterImpl : Chapter {
 

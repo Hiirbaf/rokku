@@ -130,12 +130,6 @@ import eu.kanade.tachiyomi.util.view.snack
 import eu.kanade.tachiyomi.util.view.text
 import eu.kanade.tachiyomi.util.view.withFadeTransaction
 import eu.kanade.tachiyomi.widget.EmptyView
-import java.util.Locale
-import kotlin.math.abs
-import kotlin.math.max
-import kotlin.math.roundToInt
-import kotlin.random.Random
-import kotlin.random.nextInt
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.launchIn
@@ -146,6 +140,12 @@ import uy.kohesive.injekt.api.get
 import yokai.domain.ui.UiPreferences
 import yokai.i18n.MR
 import yokai.util.lang.getString
+import java.util.Locale
+import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.roundToInt
+import kotlin.random.Random
+import kotlin.random.nextInt
 import android.R as AR
 
 open class LibraryController(
@@ -209,7 +209,8 @@ open class LibraryController(
     private val pendingManualCategoryUpdates = mutableSetOf<Int>()
 
     override fun isCategoryUpdating(categoryId: Int?): Boolean {
-        return LibraryUpdateJob.categoryInQueue(categoryId) || (categoryId != null && categoryId in pendingManualCategoryUpdates)
+        return LibraryUpdateJob.categoryInQueue(categoryId) ||
+            (categoryId != null && categoryId in pendingManualCategoryUpdates)
     }
 
     private var mAdapter: LibraryCategoryAdapter? = null
@@ -351,7 +352,9 @@ open class LibraryController(
             val currentCategory = getHeader()?.category ?: return
             if (currentCategory.order != activeCategory) {
                 saveActiveCategory(currentCategory)
-                if (!showCategoryInTitle && presenter.categories.size > 1 && dy != 0 && recyclerView.translationY == 0f) {
+                if (!showCategoryInTitle && presenter.categories.size > 1 && dy != 0 &&
+                    recyclerView.translationY == 0f
+                ) {
                     showCategoryText(currentCategory.name)
                 }
             }
@@ -370,6 +373,7 @@ open class LibraryController(
                 RecyclerView.SCROLL_STATE_DRAGGING -> {
                     binding.fastScroller.showScrollbar()
                 }
+
                 RecyclerView.SCROLL_STATE_IDLE -> {
                     updateHopperPosition()
                 }
@@ -534,7 +538,11 @@ open class LibraryController(
 
     private fun openRandomManga(global: Boolean) {
         val items =
-            if (global) { presenter.currentLibraryItems } else { adapter.currentItems }
+            if (global) {
+                presenter.currentLibraryItems
+            } else {
+                adapter.currentItems
+            }
                 .filterIsInstance<LibraryMangaItem>()
                 .filter { !it.manga.manga.initialized || it.manga.unread > 0 }
         if (items.isNotEmpty()) {
@@ -631,7 +639,13 @@ open class LibraryController(
             LibraryUpdateJob.isRunningFlow(view.context).collect { isRunning ->
                 if (!isRunning) pendingManualCategoryUpdates.clear()
                 adapter.getHeaderPositions().forEach {
-                    val holder = (binding.libraryGridRecycler.recycler.findViewHolderForAdapterPosition(it) as? LibraryHeaderHolder) ?: return@forEach
+                    val holder =
+                        (
+                            binding.libraryGridRecycler.recycler.findViewHolderForAdapterPosition(
+                                it,
+                            ) as? LibraryHeaderHolder
+                            )
+                            ?: return@forEach
                     val category = holder.category ?: return@forEach
                     holder.notifyStatus(isCategoryUpdating(category.id), category)
                 }
@@ -722,7 +736,9 @@ open class LibraryController(
                             updateLibrary(it)
                         }
                     }
+
                     !presenter.showAllCategories -> updateCategory(0)
+
                     else -> updateLibrary()
                 }
             }
@@ -790,10 +806,15 @@ open class LibraryController(
         binding.roundedCategoryHopper.categoryButton.setOnLongClickListener {
             when (preferences.hopperLongPressAction().get()) {
                 5 -> openRandomManga(true)
+
                 4 -> openRandomManga(false)
+
                 3 -> showGroupOptions()
+
                 2 -> showDisplayOptions()
+
                 1 -> if (canCollapseOrExpandCategory() != null) presenter.toggleAllCategoryVisibility()
+
                 else -> if (!isSubClass) {
                     activityBinding?.searchToolbar?.menu?.performIdentifierAction(
                         R.id.action_search,
@@ -919,8 +940,8 @@ open class LibraryController(
                 presenter.categories.indexOfFirst { presenter.currentCategoryId == it.id } +
                     (if (next) 1 else -1)
             if (if (!next) {
-                newOffset > -1
-            } else {
+                    newOffset > -1
+                } else {
                     newOffset < presenter.categories.size
                 }
             ) {
@@ -990,7 +1011,9 @@ open class LibraryController(
             presenter.categories.mapNotNull { it.id }.forEach { pendingManualCategoryUpdates.add(it) }
         }
         adapter.getHeaderPositions().forEach {
-            val holder = (binding.libraryGridRecycler.recycler.findViewHolderForAdapterPosition(it) as? LibraryHeaderHolder) ?: return@forEach
+            val holder =
+                (binding.libraryGridRecycler.recycler.findViewHolderForAdapterPosition(it) as? LibraryHeaderHolder)
+                    ?: return@forEach
             val cat = holder.category ?: return@forEach
             holder.notifyStatus(isCategoryUpdating(cat.id), cat)
         }
@@ -1035,7 +1058,9 @@ open class LibraryController(
                 override fun getSpanSize(position: Int): Int {
                     if (libraryLayout == LibraryItem.LAYOUT_LIST) return managerSpanCount
                     val item = this@LibraryController.mAdapter?.getItem(position)
-                    return if (item is LibraryHeaderItem || item is SearchGlobalItem || item is LibraryPlaceholderItem) {
+                    return if (item is LibraryHeaderItem || item is SearchGlobalItem ||
+                        item is LibraryPlaceholderItem
+                    ) {
                         managerSpanCount
                     } else {
                         1
@@ -1157,7 +1182,8 @@ open class LibraryController(
         // download completion when the library flow re-emitted.
         if (selectedMangas.isEmpty() || selectedMangas.none { selected ->
                 mangaMap.filterIsInstance<LibraryMangaItem>().any { it.manga.manga.id == selected.id }
-            }) {
+            }
+        ) {
             destroyActionModeIfNeeded()
         }
         if (mangaMap.isNotEmpty()) {
@@ -1176,7 +1202,9 @@ open class LibraryController(
                 if (!hasActiveFilters) {
                     listOf(
                         EmptyView.Action(MR.strings.getting_started_guide) {
-                            activity?.openInBrowser("https://rokku-app.github.io/docs/guides/getting-started#adding-sources")
+                            activity?.openInBrowser(
+                                "https://rokku-app.github.io/docs/guides/getting-started#adding-sources",
+                            )
                         },
                     )
                 } else {
@@ -1478,7 +1506,8 @@ open class LibraryController(
             binding.libraryGridRecycler.recycler.scrollToPosition(0)
         }
         this.query = query ?: ""
-        showAllCategoriesView?.isGone = isShowAllCategoriesSet || presenter.groupType != BY_DEFAULT || this.query.isBlank()
+        showAllCategoriesView?.isGone =
+            isShowAllCategoriesSet || presenter.groupType != BY_DEFAULT || this.query.isBlank()
         showAllCategoriesView?.isSelected = presenter.forceShowAllCategories
         if (this.query.isNotBlank()) {
             searchItem.string = this.query
@@ -1521,7 +1550,11 @@ open class LibraryController(
                 }
                 positions.forEach { position ->
                     adapter.addSelection(position)
-                    (binding.libraryGridRecycler.recycler.findViewHolderForAdapterPosition(position) as? LibraryHolder)?.toggleActivation()
+                    (
+                        binding.libraryGridRecycler.recycler.findViewHolderForAdapterPosition(
+                            position,
+                        ) as? LibraryHolder
+                        )?.toggleActivation()
                 }
             }
         } else {
@@ -1534,7 +1567,11 @@ open class LibraryController(
                 }
                 positions.forEach { position ->
                     adapter.removeSelection(position)
-                    (binding.libraryGridRecycler.recycler.findViewHolderForAdapterPosition(position) as? LibraryHolder)?.toggleActivation()
+                    (
+                        binding.libraryGridRecycler.recycler.findViewHolderForAdapterPosition(
+                            position,
+                        ) as? LibraryHolder
+                        )?.toggleActivation()
                 }
             }
         }
@@ -1547,7 +1584,11 @@ open class LibraryController(
             if (changedMode) {
                 adapter.notifyItemChanged(it)
             } else {
-                (binding.libraryGridRecycler.recycler.findViewHolderForAdapterPosition(it) as? LibraryHeaderHolder)?.setSelection()
+                (
+                    binding.libraryGridRecycler.recycler.findViewHolderForAdapterPosition(
+                        it,
+                    ) as? LibraryHeaderHolder
+                    )?.setSelection()
             }
         }
     }
@@ -1630,12 +1671,19 @@ open class LibraryController(
         createActionModeIfNeeded()
         when {
             lastClickPosition == -1 -> setSelection(position)
-            lastClickPosition > position -> for (i in position until lastClickPosition) setSelection(
-                i,
-            )
-            lastClickPosition < position -> for (i in lastClickPosition + 1..position) setSelection(
-                i,
-            )
+
+            lastClickPosition > position -> for (i in position until lastClickPosition) {
+                setSelection(
+                    i,
+                )
+            }
+
+            lastClickPosition < position -> for (i in lastClickPosition + 1..position) {
+                setSelection(
+                    i,
+                )
+            }
+
             else -> setSelection(position)
         }
         lastClickPosition = position
@@ -1655,7 +1703,11 @@ open class LibraryController(
             ) {
                 // because for whatever reason you can repeatedly tap on a currently dragging manga
                 adapter.removeSelection(position)
-                (binding.libraryGridRecycler.recycler.findViewHolderForAdapterPosition(position) as? LibraryHolder)?.toggleActivation()
+                (
+                    binding.libraryGridRecycler.recycler.findViewHolderForAdapterPosition(
+                        position,
+                    ) as? LibraryHolder
+                    )?.toggleActivation()
                 adapter.moveItem(position, lastItemPosition!!)
             } else {
                 isDragging = true
@@ -1687,8 +1739,8 @@ open class LibraryController(
         val fromItem = adapter.getItem(fromPosition)
         val toItem = adapter.getItem(toPosition)
         if (binding.libraryGridRecycler.recycler.layoutManager !is StaggeredGridLayoutManager && (
-            (fromItem is LibraryItem && toItem is LibraryItem) || fromItem == null
-            )
+                (fromItem is LibraryItem && toItem is LibraryItem) || fromItem == null
+                )
         ) {
             binding.libraryGridRecycler.recycler.scrollBy(
                 0,
@@ -1697,7 +1749,9 @@ open class LibraryController(
         }
         if (lastItemPosition == toPosition) {
             lastItemPosition = null
-        } else if (lastItemPosition == null) lastItemPosition = fromPosition
+        } else if (lastItemPosition == null) {
+            lastItemPosition = fromPosition
+        }
     }
 
     override fun shouldMoveItem(fromPosition: Int, toPosition: Int): Boolean {
@@ -1936,25 +1990,29 @@ open class LibraryController(
 
         val searchItem = activityBinding?.searchToolbar?.searchItem
         val searchView = activityBinding?.searchToolbar?.searchView
-        activityBinding?.searchToolbar?.setQueryHint(view?.context?.getString(MR.strings.library_search_hint), query.isEmpty())
+        activityBinding?.searchToolbar?.setQueryHint(
+            view?.context?.getString(MR.strings.library_search_hint),
+            query.isEmpty(),
+        )
 
-        showAllCategoriesView = showAllCategoriesView ?: (searchView as? MiniSearchView)?.addSearchModifierIcon { context ->
-            ImageView(context).apply {
-                isSelected = presenter.forceShowAllCategories
-                isGone = true
-                setOnClickListener {
-                    presenter.forceShowAllCategories = !presenter.forceShowAllCategories
-                    presenter.updateLibrary()
+        showAllCategoriesView =
+            showAllCategoriesView ?: (searchView as? MiniSearchView)?.addSearchModifierIcon { context ->
+                ImageView(context).apply {
                     isSelected = presenter.forceShowAllCategories
+                    isGone = true
+                    setOnClickListener {
+                        presenter.forceShowAllCategories = !presenter.forceShowAllCategories
+                        presenter.updateLibrary()
+                        isSelected = presenter.forceShowAllCategories
+                    }
+                    val pad = 12.dpToPx
+                    setPadding(pad, 0, pad, 0)
+                    setImageResource(R.drawable.ic_show_all_categories_24dp)
+                    background = context.getResourceDrawable(R.attr.selectableItemBackgroundBorderless)
+                    imageTintList = ColorStateList.valueOf(context.getResourceColor(R.attr.actionBarTintColor))
+                    compatToolTipText = view?.context?.getString(MR.strings.show_all_categories)
                 }
-                val pad = 12.dpToPx
-                setPadding(pad, 0, pad, 0)
-                setImageResource(R.drawable.ic_show_all_categories_24dp)
-                background = context.getResourceDrawable(R.attr.selectableItemBackgroundBorderless)
-                imageTintList = ColorStateList.valueOf(context.getResourceColor(R.attr.actionBarTintColor))
-                compatToolTipText = view?.context?.getString(MR.strings.show_all_categories)
-            }
-        }!!
+            }!!
 
         if (query.isNotEmpty()) {
             if (activityBinding?.searchToolbar?.isSearchExpanded != true) {
@@ -2002,6 +2060,7 @@ open class LibraryController(
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_search -> expandActionViewFromInteraction = true
+
             R.id.action_filter -> {
                 hasExpanded = true
                 val sheetBehavior = binding.filterBottomSheet.filterBottomSheet.sheetBehavior
@@ -2011,6 +2070,7 @@ open class LibraryController(
                     showDisplayOptions()
                 }
             }
+
             else -> return super.onOptionsItemSelected(item)
         }
         return true
@@ -2018,6 +2078,7 @@ open class LibraryController(
     //endregion
 
     //region Action Mode Methods
+
     /**
      * Creates the action mode if it's not created already.
      */
@@ -2077,7 +2138,9 @@ open class LibraryController(
     override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_move_to_category -> showChangeMangaCategoriesSheet()
+
             R.id.action_share -> shareManga()
+
             R.id.action_delete -> {
                 val options = arrayOf(
                     MR.strings.remove_downloads,
@@ -2109,9 +2172,11 @@ open class LibraryController(
                         disableItems(arrayOf(options.first()))
                     }
             }
+
             R.id.action_download_unread -> {
                 presenter.downloadUnread(selectedMangas.toList())
             }
+
             R.id.action_mark_as_read -> {
                 activity!!.materialAlertDialog()
                     .setMessage(MR.strings.mark_all_chapters_as_read)
@@ -2121,6 +2186,7 @@ open class LibraryController(
                     .setNegativeButton(AR.string.cancel, null)
                     .show()
             }
+
             R.id.action_mark_as_unread -> {
                 activity!!.materialAlertDialog()
                     .setMessage(MR.strings.mark_all_chapters_as_unread)
@@ -2130,6 +2196,7 @@ open class LibraryController(
                     .setNegativeButton(AR.string.cancel, null)
                     .show()
             }
+
             R.id.action_migrate -> {
                 val skipPre = preferences.skipPreMigration().get()
                 PreMigrationController.navigateToMigration(
@@ -2139,6 +2206,7 @@ open class LibraryController(
                 )
                 destroyActionModeIfNeeded()
             }
+
             else -> return false
         }
         return true

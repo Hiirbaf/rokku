@@ -93,11 +93,11 @@ import eu.kanade.tachiyomi.util.view.snack
 import eu.kanade.tachiyomi.util.view.updateGradiantBGRadius
 import eu.kanade.tachiyomi.util.view.withFadeTransaction
 import eu.kanade.tachiyomi.widget.LinearLayoutManagerAccurateOffset
-import java.util.Locale
-import kotlin.math.max
 import kotlinx.coroutines.launch
 import yokai.i18n.MR
 import yokai.util.lang.getString
+import java.util.Locale
+import kotlin.math.max
 import android.R as AR
 
 /**
@@ -335,10 +335,10 @@ class RecentsController(bundle: Bundle? = null) :
                     }
                     binding.downloadBottomSheet.dlBottomSheet.apply {
                         if ((
-                            state == BottomSheetBehavior.STATE_COLLAPSED ||
-                                state == BottomSheetBehavior.STATE_EXPANDED ||
-                                state == BottomSheetBehavior.STATE_HIDDEN
-                            ) &&
+                                state == BottomSheetBehavior.STATE_COLLAPSED ||
+                                    state == BottomSheetBehavior.STATE_EXPANDED ||
+                                    state == BottomSheetBehavior.STATE_HIDDEN
+                                ) &&
                             scaleY != 1f
                         ) {
                             scaleX = 1f
@@ -432,7 +432,9 @@ class RecentsController(bundle: Bundle? = null) :
 
     private fun setSheetToolbar() {
         binding.downloadBottomSheet.sheetToolbar.title = view?.context?.getString(MR.strings.download_queue)
-        binding.downloadBottomSheet.sheetToolbar.overflowIcon?.setTint(view?.context?.getResourceColor(R.attr.actionBarTintColor) ?: Color.BLACK)
+        binding.downloadBottomSheet.sheetToolbar.overflowIcon?.setTint(
+            view?.context?.getResourceColor(R.attr.actionBarTintColor) ?: Color.BLACK,
+        )
         binding.downloadBottomSheet.sheetToolbar.setOnMenuItemClickListener { item ->
             return@setOnMenuItemClickListener binding.downloadBottomSheet.dlBottomSheet.onOptionsItemSelected(item)
         }
@@ -767,7 +769,9 @@ class RecentsController(bundle: Bundle? = null) :
                 if (activity == null) return false
                 openChapter(view?.findViewById(R.id.main_view), item.mch.manga, item.chapter)
             }
-        } else if (item is RecentMangaHeaderItem) return false
+        } else if (item is RecentMangaHeaderItem) {
+            return false
+        }
         return true
     }
 
@@ -896,7 +900,10 @@ class RecentsController(bundle: Bundle? = null) :
 
         val searchItem = activityBinding?.searchToolbar?.searchItem
         val searchView = activityBinding?.searchToolbar?.searchView
-        activityBinding?.searchToolbar?.setQueryHint(view?.context?.getString(MR.strings.search_recents), !isSearching())
+        activityBinding?.searchToolbar?.setQueryHint(
+            view?.context?.getString(MR.strings.search_recents),
+            !isSearching(),
+        )
         if (isSearching()) {
             searchItem?.expandActionView()
             searchView?.setQuery(query, true)
@@ -948,7 +955,10 @@ class RecentsController(bundle: Bundle? = null) :
         } else {
             val lastController = router.backstack.lastOrNull()?.controller
             if (lastController !is DialogController) {
-                (activity as? MainActivity)?.showTabBar(show = false, animate = lastController !is SmallToolbarInterface)
+                (activity as? MainActivity)?.showTabBar(
+                    show = false,
+                    animate = lastController !is SmallToolbarInterface,
+                )
             }
             snack?.dismiss()
         }

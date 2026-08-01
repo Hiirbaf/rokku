@@ -48,7 +48,7 @@ import android.R as AR
 class ExtensionRepoScreen(
     private val title: String,
     private var repoUrl: String? = null,
-): Screen() {
+) : Screen() {
     @Composable
     override fun Content() {
         val onBackPress = LocalBackPress.currentOrThrow
@@ -74,7 +74,7 @@ class ExtensionRepoScreen(
                     toolTipLabel = stringResource(MR.strings.refresh),
                     icon = Icons.Outlined.Refresh,
                     buttonClicked = {
-                        context.toast("Refreshing...")  // TODO: Should be loading animation instead
+                        context.toast("Refreshing...") // TODO: Should be loading animation instead
                         screenModel.refreshRepos()
                     },
                 )
@@ -137,9 +137,11 @@ class ExtensionRepoScreen(
             screenModel.event.collectLatest { event ->
                 when (event) {
                     is ExtensionRepoEvent.LocalizedMessage -> context.toast(event.stringRes)
+
                     is ExtensionRepoEvent.Success -> inputText = ""
+
                     is ExtensionRepoEvent.ShowDialog -> {
-                        when(event.dialog) {
+                        when (event.dialog) {
                             is RepoDialog.Conflict -> {
                                 alertDialog.awaitExtensionRepoReplacePrompt(
                                     oldRepo = event.dialog.oldRepo,
@@ -213,7 +215,7 @@ class ExtensionRepoScreen(
                     onClick = {
                         screenModel.deleteRepo(repoToDelete)
                         cont.cancel()
-                    }
+                    },
                 ) {
                     Text(
                         text = stringResource(MR.strings.delete),

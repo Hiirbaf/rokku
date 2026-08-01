@@ -28,10 +28,6 @@ import eu.kanade.tachiyomi.util.system.LocaleHelper
 import eu.kanade.tachiyomi.util.system.launchIO
 import eu.kanade.tachiyomi.util.system.roundToTwoDecimal
 import eu.kanade.tachiyomi.util.system.withUIContext
-import java.util.Calendar
-import java.util.Locale
-import java.util.concurrent.TimeUnit
-import kotlin.math.roundToInt
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import uy.kohesive.injekt.Injekt
@@ -45,6 +41,10 @@ import yokai.domain.manga.interactor.GetLibraryManga
 import yokai.domain.track.interactor.GetTrack
 import yokai.i18n.MR
 import yokai.util.lang.getString
+import java.util.Calendar
+import java.util.Locale
+import java.util.concurrent.TimeUnit
+import kotlin.math.roundToInt
 
 class StatsDetailsPresenter(
     private val prefs: PreferencesHelper = Injekt.get(),
@@ -424,7 +424,9 @@ class StatsDetailsPresenter(
         return this.filterByCategory(selectedStat == Stats.CATEGORY)
             .filterBySeriesType(selectedStat == Stats.SERIES_TYPE)
             .filterByStatus(selectedStat == Stats.STATUS)
-            .filterByLanguage(selectedStat == Stats.LANGUAGE || (selectedStat != Stats.SOURCE && selectedSource.isNotEmpty()))
+            .filterByLanguage(
+                selectedStat == Stats.LANGUAGE || (selectedStat != Stats.SOURCE && selectedSource.isNotEmpty()),
+            )
             .filterBySource(selectedStat in listOf(Stats.SOURCE, Stats.LANGUAGE) || selectedLanguage.isNotEmpty())
     }
 
@@ -484,14 +486,17 @@ class StatsDetailsPresenter(
                 compareByDescending<StatsData> { it.count }.thenByDescending { it.chaptersRead }
                     .thenByDescending { it.meanScore },
             )
+
             StatsSort.MEAN_SCORE_DESC -> currentStats?.sortWith(
                 compareByDescending<StatsData> { it.meanScore }.thenByDescending { it.count }
                     .thenByDescending { it.chaptersRead },
             )
+
             StatsSort.PROGRESS_DESC -> currentStats?.sortWith(
                 compareByDescending<StatsData> { it.chaptersRead }.thenByDescending { it.count }
                     .thenByDescending { it.meanScore },
             )
+
             else -> {}
         }
     }

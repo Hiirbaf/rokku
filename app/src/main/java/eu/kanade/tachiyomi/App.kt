@@ -1,7 +1,5 @@
 package eu.kanade.tachiyomi
 
-import coil3.gif.AnimatedImageDecoder
-import coil3.gif.GifDecoder
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.ActivityManager
@@ -30,6 +28,8 @@ import co.touchlab.kermit.Logger
 import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.SingletonImageLoader
+import coil3.gif.AnimatedImageDecoder
+import coil3.gif.GifDecoder
 import coil3.memory.MemoryCache
 import coil3.network.okhttp.OkHttpNetworkFetcherFactory
 import coil3.request.allowHardware
@@ -60,12 +60,11 @@ import eu.kanade.tachiyomi.util.manga.MangaCoverMetadata
 import eu.kanade.tachiyomi.util.system.AuthenticatorUtil
 import eu.kanade.tachiyomi.util.system.GLUtil
 import eu.kanade.tachiyomi.util.system.ImageUtil
+import eu.kanade.tachiyomi.util.system.WebViewUtil
 import eu.kanade.tachiyomi.util.system.launchIO
 import eu.kanade.tachiyomi.util.system.localeContext
 import eu.kanade.tachiyomi.util.system.notification
 import eu.kanade.tachiyomi.util.system.setToDefault
-import eu.kanade.tachiyomi.util.system.WebViewUtil
-import java.security.Security
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -86,6 +85,7 @@ import yokai.domain.base.BasePreferences
 import yokai.domain.storage.StorageManager
 import yokai.i18n.MR
 import yokai.util.lang.getString
+import java.security.Security
 
 open class App : Application(), DefaultLifecycleObserver, SingletonImageLoader.Factory {
 
@@ -338,7 +338,7 @@ fun buildLogWritersToAdd(
 ) = buildList {
     if (!BuildConfig.DEBUG) add(CrashlyticsLogWriter())
 
- //   if (logPath != null && !BuildConfig.DEBUG) add(RollingUniFileLogWriter(logPath = logPath, isVerbose = isVerbose))
+    //   if (logPath != null && !BuildConfig.DEBUG) add(RollingUniFileLogWriter(logPath = logPath, isVerbose = isVerbose))
 }
 
 private const val ACTION_DISABLE_INCOGNITO_MODE = "tachi.action.DISABLE_INCOGNITO_MODE"

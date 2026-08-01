@@ -13,13 +13,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import eu.kanade.tachiyomi.R
-import yokai.i18n.MR
-import yokai.util.lang.getString
 import dev.icerock.moko.resources.compose.stringResource
+import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.util.storage.DiskUtil
+import yokai.i18n.MR
 import yokai.presentation.theme.Size
 import yokai.presentation.theme.header
+import yokai.util.lang.getString
 import yokai.util.secondaryItemAlpha
 import java.io.File
 

@@ -4,13 +4,18 @@ import androidx.annotation.StringRes
 import androidx.annotation.StyleRes
 import androidx.appcompat.app.AppCompatDelegate
 import dev.icerock.moko.resources.StringResource
+import dev.icerock.moko.resources.compose.stringResource
 import eu.kanade.tachiyomi.R
 import yokai.i18n.MR
 import yokai.util.lang.getString
-import dev.icerock.moko.resources.compose.stringResource
 
 @Suppress("unused")
-enum class Themes(@StyleRes val styleRes: Int, val nightMode: Int, val nameRes: StringResource, altNameRes: StringResource? = null) {
+enum class Themes(
+    @StyleRes val styleRes: Int,
+    val nightMode: Int,
+    val nameRes: StringResource,
+    altNameRes: StringResource? = null,
+) {
     MONET(
         R.style.Theme_Tachiyomi_Monet,
         AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM,
@@ -73,7 +78,7 @@ enum class Themes(@StyleRes val styleRes: Int, val nightMode: Int, val nameRes: 
         R.style.Theme_Tachiyomi_Doki,
         AppCompatDelegate.MODE_NIGHT_YES,
         MR.strings.doki,
-    )
+    ),
     ;
 
     val isDarkTheme = nightMode == AppCompatDelegate.MODE_NIGHT_YES

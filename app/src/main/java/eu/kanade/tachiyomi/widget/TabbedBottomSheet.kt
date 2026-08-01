@@ -86,7 +86,10 @@ abstract class TabbedBottomSheetDialog(private val activity: Activity) :
     }
 }
 
-class MeasuredViewPager @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) : ViewPager(context, attrs) {
+class MeasuredViewPager @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) : ViewPager(
+    context,
+    attrs,
+) {
 
     var maxHeight = 0
         set(value) {

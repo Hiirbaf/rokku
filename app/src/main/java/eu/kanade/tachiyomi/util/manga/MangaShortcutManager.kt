@@ -95,7 +95,11 @@ class MangaShortcutManager(
                                         ?: context.getString(MR.strings.manga),
                                 )
                                 .setIcon(
-                                    if (bitmap != null) if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                                    if (bitmap !=
+                                        null
+                                    ) if (android.os.Build.VERSION.SDK_INT >=
+                                        android.os.Build.VERSION_CODES.O
+                                    ) {
                                         Icon.createWithAdaptiveBitmap(bitmap.toSquare())
                                     } else {
                                         Icon.createWithBitmap(bitmap)
@@ -110,6 +114,7 @@ class MangaShortcutManager(
                                 )
                                 .build()
                         }
+
                         is Source -> {
                             val bitmap = (item.icon() as? BitmapDrawable)?.bitmap
 
@@ -117,7 +122,11 @@ class MangaShortcutManager(
                                 .setShortLabel(item.name)
                                 .setLongLabel(item.name)
                                 .setIcon(
-                                    if (bitmap != null) if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                                    if (bitmap !=
+                                        null
+                                    ) if (android.os.Build.VERSION.SDK_INT >=
+                                        android.os.Build.VERSION_CODES.O
+                                    ) {
                                         Icon.createWithAdaptiveBitmap(bitmap.toSquare())
                                     } else {
                                         Icon.createWithBitmap(bitmap)
@@ -139,6 +148,7 @@ class MangaShortcutManager(
                                 )
                                 .build()
                         }
+
                         else -> {
                             null
                         }

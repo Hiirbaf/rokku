@@ -18,10 +18,6 @@ import eu.kanade.tachiyomi.util.system.extension
 import eu.kanade.tachiyomi.util.system.nameWithoutExtension
 import eu.kanade.tachiyomi.util.system.withIOContext
 import eu.kanade.tachiyomi.util.system.writeText
-import java.io.FileInputStream
-import java.io.InputStream
-import java.nio.charset.StandardCharsets
-import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.serialization.Serializable
@@ -44,6 +40,10 @@ import yokai.domain.storage.StorageManager
 import yokai.i18n.MR
 import yokai.util.fillMetadata
 import yokai.util.lang.getString
+import java.io.FileInputStream
+import java.io.InputStream
+import java.nio.charset.StandardCharsets
+import java.util.concurrent.TimeUnit
 
 class LocalSource(private val context: Context) : CatalogueSource, UnmeteredSource {
     companion object {
@@ -70,7 +70,7 @@ class LocalSource(private val context: Context) : CatalogueSource, UnmeteredSour
                 // Modified: check all directories for language info
                 val localDetails = getMangaDirs(context, manga.url)
                     .mapNotNull { dir ->
-                         dir.listFiles().orEmpty()
+                        dir.listFiles().orEmpty()
                             .filter { !it.isDirectory }
                             .firstOrNull { it.name == COMIC_INFO_FILE }
                     }
@@ -185,12 +185,13 @@ class LocalSource(private val context: Context) : CatalogueSource, UnmeteredSour
             .filter { it.isDirectory && !it.name.orEmpty().startsWith('.') }
             .distinctBy { it.name }
             .filter {
-                if (time == 0L && query.isBlank())
+                if (time == 0L && query.isBlank()) {
                     true
-                else if (time == 0L)
+                } else if (time == 0L) {
                     it.name.orEmpty().contains(query, ignoreCase = true)
-                else
+                } else {
                     it.lastModified() >= time
+                }
             }
 
         val state = ((if (filters.isEmpty()) popularFilters else filters)[0] as OrderBy).state
@@ -199,9 +200,10 @@ class LocalSource(private val context: Context) : CatalogueSource, UnmeteredSour
                 mangaDirs = if (state.ascending) {
                     mangaDirs.sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.name.orEmpty() })
                 } else {
-                    mangaDirs.sortedWith(compareByDescending(String.CASE_INSENSITIVE_ORDER) { it.name.orEmpty()})
+                    mangaDirs.sortedWith(compareByDescending(String.CASE_INSENSITIVE_ORDER) { it.name.orEmpty() })
                 }
             }
+
             1 -> {
                 mangaDirs = if (state.ascending) {
                     mangaDirs.sortedBy(UniFile::lastModified)
@@ -262,10 +264,11 @@ class LocalSource(private val context: Context) : CatalogueSource, UnmeteredSour
             val comicInfoFile = metadataFiles.mapNotNull { it.first }.firstOrNull()
             val legacyJsonFile = metadataFiles.mapNotNull { it.second }.firstOrNull()
 
-            if (comicInfoFile != null)
+            if (comicInfoFile != null) {
                 return@withIOContext manga.copy().apply {
                     setMangaDetailsFromComicInfoFile(comicInfoFile.openInputStream(), this)
                 }
+            }
 
             // TODO: Remove after awhile
             if (legacyJsonFile != null) {
@@ -353,7 +356,9 @@ class LocalSource(private val context: Context) : CatalogueSource, UnmeteredSour
         // 2. Distinct by name to merge duplicates (prioritizing based on directory order in base dirs)
         val validFiles = dirs.asSequence()
             .flatMap { it.listFiles().orEmpty().asSequence() }
-            .filter { it.isDirectory || isSupportedArchive(it.extension.orEmpty()) || it.extension.equals("epub", true) }
+            .filter {
+                it.isDirectory || isSupportedArchive(it.extension.orEmpty()) || it.extension.equals("epub", true)
+            }
             .distinctBy { it.name }
             .toList()
 
@@ -410,8 +415,9 @@ class LocalSource(private val context: Context) : CatalogueSource, UnmeteredSour
             .mapNotNull { it.findFile(chapterName) }
             .firstOrNull()
 
-        if (chapFile == null || !chapFile.exists())
+        if (chapFile == null || !chapFile.exists()) {
             throw Exception(context.getString(MR.strings.chapter_not_found))
+        }
 
         return getFormat(chapFile)
     }
@@ -430,11 +436,14 @@ class LocalSource(private val context: Context) : CatalogueSource, UnmeteredSour
             when (val format = getFormat(chapter)) {
                 is Format.Directory -> {
                     val entry = format.file.listFiles()
-                        ?.sortedWith { f1, f2 -> f1.name.orEmpty().compareToCaseInsensitiveNaturalOrder(f2.name.orEmpty()) }
+                        ?.sortedWith { f1, f2 ->
+                            f1.name.orEmpty().compareToCaseInsensitiveNaturalOrder(f2.name.orEmpty())
+                        }
                         ?.find { !it.isDirectory && ImageUtil.isImage(it.name) { FileInputStream(it.uri.toFile()) } }
 
                     entry?.let { updateCover(manga, it.openInputStream(), context) }
                 }
+
                 is Format.Archive -> {
                     format.file.archiveReader(context).use { reader ->
                         val entry = reader.useEntries { entries ->
@@ -446,6 +455,7 @@ class LocalSource(private val context: Context) : CatalogueSource, UnmeteredSour
                         entry?.let { updateCover(manga, reader.getInputStream(it.name)!!, context) }
                     }
                 }
+
                 is Format.Epub -> {
                     format.file.epubReader(context).use { epub ->
                         val entry = epub.getImagesFromPages().firstOrNull()
@@ -469,12 +479,14 @@ class LocalSource(private val context: Context) : CatalogueSource, UnmeteredSour
                     updateMetadata(chapter, manga, entry.openInputStream())
                     true
                 }
+
                 is Format.Epub -> {
                     format.file.epubReader(context).use { epub ->
                         epub.fillMetadata(chapter, manga)
                     }
                     true
                 }
+
                 is Format.Archive -> format.file.archiveReader(context).use { reader ->
                     reader.getInputStream(COMIC_INFO_FILE)?.use {
                         updateMetadata(chapter, manga, it)

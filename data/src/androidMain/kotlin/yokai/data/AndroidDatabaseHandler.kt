@@ -18,7 +18,7 @@ class AndroidDatabaseHandler(
     val db: Database,
     private val driver: SqlDriver,
     val queryDispatcher: CoroutineDispatcher = Dispatchers.IO,
-    val transactionDispatcher: CoroutineDispatcher = queryDispatcher
+    val transactionDispatcher: CoroutineDispatcher = queryDispatcher,
 ) : DatabaseHandler {
 
     val suspendingTransactionId = ThreadLocal<Int>()
@@ -29,14 +29,14 @@ class AndroidDatabaseHandler(
 
     override suspend fun <T : Any> awaitList(
         inTransaction: Boolean,
-        block: suspend Database.() -> Query<T>
+        block: suspend Database.() -> Query<T>,
     ): List<T> {
         return dispatch(inTransaction) { block(db).executeAsList() }
     }
 
     override suspend fun <T : Any> awaitOne(
         inTransaction: Boolean,
-        block: suspend Database.() -> Query<T>
+        block: suspend Database.() -> Query<T>,
     ): T {
         return dispatch(inTransaction) { block(db).executeAsOne() }
     }
@@ -50,14 +50,14 @@ class AndroidDatabaseHandler(
 
     override suspend fun <T : Any> awaitOneOrNull(
         inTransaction: Boolean,
-        block: suspend Database.() -> Query<T>
+        block: suspend Database.() -> Query<T>,
     ): T? {
         return dispatch(inTransaction) { block(db).executeAsOneOrNull() }
     }
 
     override suspend fun <T : Any> awaitFirstOrNull(
         inTransaction: Boolean,
-        block: suspend Database.() -> Query<T>
+        block: suspend Database.() -> Query<T>,
     ): T? {
         return dispatch(inTransaction) { block(db).executeAsFirstOrNull() }
     }

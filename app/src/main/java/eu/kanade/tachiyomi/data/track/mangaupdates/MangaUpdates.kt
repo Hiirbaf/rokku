@@ -77,7 +77,9 @@ class MangaUpdates(private val context: Context, id: Long) : TrackService(id) {
         .flatMap { decimal ->
             when (decimal) {
                 0 -> listOf("-")
+
                 10 -> listOf("10.0")
+
                 else -> (0..9).map { fraction ->
                     "$decimal.$fraction"
                 }

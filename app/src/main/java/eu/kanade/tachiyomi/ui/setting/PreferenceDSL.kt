@@ -167,11 +167,17 @@ inline fun <P : Preference> PreferenceGroup.addThenInit(p: P, block: P.() -> Uni
 }
 
 inline fun LongClickablePreference.onLongClick(crossinline block: () -> Unit) {
-    onPreferenceLongClickListener = { block(); true }
+    onPreferenceLongClickListener = {
+        block()
+        true
+    }
 }
 
 inline fun Preference.onClick(crossinline block: () -> Unit) {
-    setOnPreferenceClickListener { block(); true }
+    setOnPreferenceClickListener {
+        block()
+        true
+    }
 }
 
 inline fun Preference.onChange(crossinline block: (Any?) -> Boolean) {
@@ -205,7 +211,10 @@ fun <T> ListMatPreference.bindTo(preference: eu.kanade.tachiyomi.core.preference
     ReplaceWith("bindTo(preference, excludePreference = )"),
     DeprecationLevel.ERROR,
 )
-fun <T> TriStateListPreference.bindTo(preference: eu.kanade.tachiyomi.core.preference.Preference<T>) { key = preference.key() }
+fun <T> TriStateListPreference.bindTo(preference: eu.kanade.tachiyomi.core.preference.Preference<T>) {
+    key =
+        preference.key()
+}
 
 fun TriStateListPreference.bindTo(
     includePreference: eu.kanade.tachiyomi.core.preference.Preference<Set<String>>,
@@ -255,7 +264,9 @@ fun SwitchPreferenceCompat.requireAuthentication(
 
 var Preference.defaultValue: Any?
     get() = null // set only
-    set(value) { setDefaultValue(value) }
+    set(value) {
+        setDefaultValue(value)
+    }
 
 var Preference.titleMRes: StringResource
     get() = throw UnsupportedOperationException("Set only!")
@@ -266,11 +277,15 @@ var Preference.titleMRes: StringResource
 @Deprecated("Use moko-resources instead!")
 var Preference.titleRes: Int
     get() = throw UnsupportedOperationException("Set only!")
-    set(value) { setTitle(value) }
+    set(value) {
+        setTitle(value)
+    }
 
 var Preference.iconRes: Int
     get() = 0 // set only
-    set(value) { icon = AppCompatResources.getDrawable(context, value) }
+    set(value) {
+        icon = AppCompatResources.getDrawable(context, value)
+    }
 
 var Preference.summaryMRes: StringResource
     get() = throw UnsupportedOperationException("Set only!")
@@ -281,9 +296,12 @@ var Preference.summaryMRes: StringResource
 @Deprecated("Use moko-resources instead!")
 var Preference.summaryRes: Int
     get() = throw UnsupportedOperationException("Set only!")
-    set(value) { setSummary(value) }
+    set(value) {
+        setSummary(value)
+    }
 
 var Preference.iconTint: Int
     get() = 0 // set only
-    set(value) { icon?.setTint(value) }
-
+    set(value) {
+        icon?.setTint(value)
+    }

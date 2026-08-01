@@ -17,9 +17,10 @@ class SavedSearchRepositoryImpl(private val handler: DatabaseHandler) : SavedSea
         saved_searchQueries.findBySourceId(sourceId, RawSavedSearch::mapper)
     }
 
-    override suspend fun findOneBySourceIdAndName(sourceId: Long, name: String): RawSavedSearch? = handler.awaitFirstOrNull {
-        saved_searchQueries.findBySourceIdAndName(sourceId, name, RawSavedSearch::mapper)
-    }
+    override suspend fun findOneBySourceIdAndName(sourceId: Long, name: String): RawSavedSearch? =
+        handler.awaitFirstOrNull {
+            saved_searchQueries.findBySourceIdAndName(sourceId, name, RawSavedSearch::mapper)
+        }
 
     override suspend fun findById(id: Long): RawSavedSearch? = handler.awaitFirstOrNull {
         saved_searchQueries.findById(id, RawSavedSearch::mapper)

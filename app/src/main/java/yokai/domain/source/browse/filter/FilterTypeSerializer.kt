@@ -1,8 +1,6 @@
 package yokai.domain.source.browse.filter
 
 import eu.kanade.tachiyomi.source.model.Filter
-import kotlin.reflect.KClass
-import kotlin.reflect.KProperty1
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonObjectBuilder
@@ -17,6 +15,8 @@ import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.put
 import kotlinx.serialization.json.putJsonArray
 import kotlinx.serialization.json.putJsonObject
+import kotlin.reflect.KClass
+import kotlin.reflect.KProperty1
 
 interface Serializer<in T : Filter<out Any?>> {
     fun JsonObjectBuilder.serialize(filter: T) {}

@@ -31,10 +31,15 @@ class GlobalSearchHolder(view: View, val adapter: GlobalSearchAdapter) :
     init {
         // Set layout horizontal.
         binding.recycler.layoutManager =
-            androidx.recyclerview.widget.LinearLayoutManager(view.context, androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL, false)
+            androidx.recyclerview.widget.LinearLayoutManager(
+                view.context,
+                androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL,
+                false,
+            )
         binding.recycler.adapter = mangaAdapter
 
-        binding.titleMoreIcon.isVisible = adapter.controller !is SearchController && adapter.controller.extensionFilter == null
+        binding.titleMoreIcon.isVisible =
+            adapter.controller !is SearchController && adapter.controller.extensionFilter == null
         if (binding.titleMoreIcon.isVisible) {
             binding.titleWrapper.setOnClickListener {
                 adapter.titleClickListener.onTitleClick(bindingAdapterPosition)
@@ -64,11 +69,13 @@ class GlobalSearchHolder(view: View, val adapter: GlobalSearchAdapter) :
                 binding.progress.isVisible = true
                 showHolder()
             }
+
             results.isEmpty() -> {
                 binding.progress.isVisible = false
                 binding.noResults.isVisible = true
                 binding.sourceCard.isVisible = false
             }
+
             else -> {
                 binding.progress.isVisible = false
                 showHolder()

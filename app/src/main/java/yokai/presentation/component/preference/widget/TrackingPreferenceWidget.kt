@@ -16,13 +16,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import eu.kanade.tachiyomi.R
-import yokai.i18n.MR
-import yokai.util.lang.getString
 import dev.icerock.moko.resources.compose.stringResource
+import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.data.track.TrackService
+import yokai.i18n.MR
 import yokai.presentation.component.TrackLogoIcon
 import yokai.presentation.component.preference.LocalPreferenceHighlighted
+import yokai.util.lang.getString
 
 @Composable
 fun TrackingPreferenceWidget(

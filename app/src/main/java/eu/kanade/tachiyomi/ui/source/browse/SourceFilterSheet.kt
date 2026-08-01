@@ -65,7 +65,8 @@ class SourceFilterSheet(
         binding.cardView.doOnApplyWindowInsetsCompat { _, insets, _ ->
             binding.cardView.updateLayoutParams<ConstraintLayout.LayoutParams> {
                 val fullHeight = activity.window.decorView.height
-                matchConstraintMaxHeight = fullHeight - insets.getInsets(systemBars()).top - binding.titleLayout.height - 75.dpToPx
+                matchConstraintMaxHeight =
+                    fullHeight - insets.getInsets(systemBars()).top - binding.titleLayout.height - 75.dpToPx
             }
         }
 
@@ -137,10 +138,10 @@ class SourceFilterSheet(
     override fun onStart() {
         super.onStart()
         sheetBehavior.collapse()
-        scrollToTop()  // Force the sheet to scroll to the very top when it shows up
+        scrollToTop() // Force the sheet to scroll to the very top when it shows up
         updateBottomButtons()
         binding.root.post {
-            scrollToTop()  // Force the sheet to scroll to the very top when it shows up
+            scrollToTop() // Force the sheet to scroll to the very top when it shows up
             updateBottomButtons()
         }
     }

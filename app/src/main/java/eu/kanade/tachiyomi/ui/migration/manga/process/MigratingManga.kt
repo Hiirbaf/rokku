@@ -4,7 +4,6 @@ import eu.kanade.tachiyomi.domain.manga.models.Manga
 import eu.kanade.tachiyomi.source.Source
 import eu.kanade.tachiyomi.source.SourceManager
 import eu.kanade.tachiyomi.util.view.DeferredField
-import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -12,6 +11,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import uy.kohesive.injekt.injectLazy
 import yokai.domain.manga.interactor.GetManga
+import kotlin.coroutines.CoroutineContext
 
 class MigratingManga(
     private val sourceManager: SourceManager,

@@ -44,7 +44,10 @@ data class ExtensionItem(
     /**
      * Creates a new view holder for this item.
      */
-    override fun createViewHolder(view: View, adapter: FlexibleAdapter<IFlexible<RecyclerView.ViewHolder>>): ExtensionHolder {
+    override fun createViewHolder(
+        view: View,
+        adapter: FlexibleAdapter<IFlexible<RecyclerView.ViewHolder>>,
+    ): ExtensionHolder {
         return ExtensionHolder(view, adapter as ExtensionAdapter)
     }
 

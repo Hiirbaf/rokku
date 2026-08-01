@@ -4,6 +4,7 @@ import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.content.BroadcastReceiver
+import android.content.ClipData
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
@@ -11,7 +12,6 @@ import android.graphics.Color
 import android.graphics.Rect
 import android.graphics.RenderEffect
 import android.graphics.Shader
-import android.content.ClipData
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.PowerManager
@@ -42,10 +42,8 @@ import androidx.transition.ChangeImageTransform
 import androidx.transition.TransitionManager
 import androidx.transition.TransitionSet
 import com.google.android.material.shape.CornerFamily
-import eu.kanade.tachiyomi.R
-import yokai.i18n.MR
-import yokai.util.lang.getString
 import dev.icerock.moko.resources.compose.stringResource
+import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.data.preference.PreferencesHelper
 import eu.kanade.tachiyomi.databinding.FullCoverDialogBinding
 import eu.kanade.tachiyomi.util.system.clipboardHasImage
@@ -56,6 +54,8 @@ import eu.kanade.tachiyomi.util.system.powerManager
 import eu.kanade.tachiyomi.util.system.rootWindowInsetsCompat
 import eu.kanade.tachiyomi.util.view.animateBlur
 import uy.kohesive.injekt.injectLazy
+import yokai.i18n.MR
+import yokai.util.lang.getString
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -102,7 +102,12 @@ class FullCoverDialog(val controller: MangaDetailsController, drawable: Drawable
         val filter = IntentFilter()
         filter.addAction(PowerManager.ACTION_POWER_SAVE_MODE_CHANGED)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            ContextCompat.registerReceiver(context, powerSaverChangeReceiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED)
+            ContextCompat.registerReceiver(
+                context,
+                powerSaverChangeReceiver,
+                filter,
+                ContextCompat.RECEIVER_NOT_EXPORTED,
+            )
         }
 
         val backPressedCallback = object : OnBackPressedCallback(enabled = true) {
@@ -111,7 +116,14 @@ class FullCoverDialog(val controller: MangaDetailsController, drawable: Drawable
             var lastY: Float = 0f
             override fun handleOnBackPressed() {
                 if (binding.mangaCoverFull.isClickable) {
-                    val motionEvent = MotionEvent.obtain(startTime, SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, lastX, lastY, 0)
+                    val motionEvent = MotionEvent.obtain(
+                        startTime,
+                        SystemClock.uptimeMillis(),
+                        MotionEvent.ACTION_UP,
+                        lastX,
+                        lastY,
+                        0,
+                    )
                     velocityTracker.addMovement(motionEvent)
                     motionEvent.recycle()
                     animateBack()
@@ -122,14 +134,28 @@ class FullCoverDialog(val controller: MangaDetailsController, drawable: Drawable
                 super.handleOnBackStarted(backEvent)
                 startTime = SystemClock.uptimeMillis()
                 velocityTracker.clear()
-                val motionEvent = MotionEvent.obtain(startTime, startTime, MotionEvent.ACTION_DOWN, backEvent.touchX, backEvent.touchY, 0)
+                val motionEvent = MotionEvent.obtain(
+                    startTime,
+                    startTime,
+                    MotionEvent.ACTION_DOWN,
+                    backEvent.touchX,
+                    backEvent.touchY,
+                    0,
+                )
                 velocityTracker.addMovement(motionEvent)
                 motionEvent.recycle()
             }
 
             override fun handleOnBackProgressed(backEvent: BackEventCompat) {
                 val maxProgress = min(backEvent.progress, 0.4f)
-                val motionEvent = MotionEvent.obtain(startTime, SystemClock.uptimeMillis(), MotionEvent.ACTION_MOVE, backEvent.touchX, backEvent.touchY, 0)
+                val motionEvent = MotionEvent.obtain(
+                    startTime,
+                    SystemClock.uptimeMillis(),
+                    MotionEvent.ACTION_MOVE,
+                    backEvent.touchX,
+                    backEvent.touchY,
+                    0,
+                )
                 lastX = backEvent.touchX
                 lastY = backEvent.touchY
                 velocityTracker.addMovement(motionEvent)

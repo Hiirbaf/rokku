@@ -37,16 +37,16 @@ import eu.kanade.tachiyomi.domain.manga.models.Manga
 import eu.kanade.tachiyomi.ui.recents.RecentsPresenter
 import eu.kanade.tachiyomi.util.system.dpToPx
 import eu.kanade.tachiyomi.util.system.launchIO
-import java.util.Calendar
-import java.util.Date
-import kotlin.math.min
-import kotlin.math.roundToLong
 import kotlinx.coroutines.MainScope
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 import uy.kohesive.injekt.injectLazy
 import yokai.domain.manga.models.cover
 import yokai.domain.recents.interactor.GetRecents
+import java.util.Calendar
+import java.util.Date
+import kotlin.math.min
+import kotlin.math.roundToLong
 
 class UpdatesGridGlanceWidget : GlanceAppWidget() {
     private val app: Application by injectLazy()
@@ -69,13 +69,16 @@ class UpdatesGridGlanceWidget : GlanceAppWidget() {
     }
 
     // FIXME: Don't depends on RecentsPresenter
-    private suspend fun getUpdates(customAmount: Int = 0, getRecents: GetRecents = Injekt.get()): List<Pair<Manga, Long>> {
+    private suspend fun getUpdates(
+        customAmount: Int = 0,
+        getRecents: GetRecents = Injekt.get(),
+    ): List<Pair<Manga, Long>> {
         return getRecents
             .awaitUpdates(
                 limit = when {
                     customAmount > 0 -> (customAmount * 1.5).roundToLong()
                     else -> 25L
-                }
+                },
             )
             .mapNotNull {
                 when {
@@ -143,7 +146,10 @@ class UpdatesGridGlanceWidget : GlanceAppWidget() {
                         }
                     }
                     .build()
-                Pair(updatesView.id!!, app.imageLoader.executeBlocking(request).image?.asDrawable(app.resources)?.toBitmap())
+                Pair(
+                    updatesView.id!!,
+                    app.imageLoader.executeBlocking(request).image?.asDrawable(app.resources)?.toBitmap(),
+                )
             }
     }
 

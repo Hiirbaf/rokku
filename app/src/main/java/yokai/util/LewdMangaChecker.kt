@@ -26,19 +26,19 @@ private fun isLewd(sourceName: String?, genre: String?): Boolean {
 
 private fun String.isNonHentai() =
     contains("non-h", true) ||
-    contains("non-erotic", true) ||
-    contains("sfw", true)
+        contains("non-erotic", true) ||
+        contains("sfw", true)
 
 private fun String.isFromHentaiSource() =
     contains("hentai", true) ||
-    contains("adult", true)
+        contains("adult", true)
 
 private fun String.isHentai() =
     contains("hentai", true) ||
-    contains("adult", true) ||
-    contains("smut", true) ||
-    contains("lewd", true) ||
-    contains("nsfw", true) ||
-    contains("erotic", true) ||
-    contains("pornographic", true) ||
-    contains("18+", true)
+        contains("adult", true) ||
+        contains("smut", true) ||
+        contains("lewd", true) ||
+        contains("nsfw", true) ||
+        contains("erotic", true) ||
+        contains("pornographic", true) ||
+        contains("18+", true)

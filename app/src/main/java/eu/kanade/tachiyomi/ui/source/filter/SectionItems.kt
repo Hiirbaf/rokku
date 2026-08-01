@@ -3,7 +3,11 @@ package eu.kanade.tachiyomi.ui.source.filter
 import eu.davidea.flexibleadapter.items.ISectionable
 import eu.kanade.tachiyomi.source.model.Filter
 
-class TriStateSectionItem(filter: Filter.TriState) : TriStateItem(filter), ISectionable<TriStateItem.Holder, GroupItem> {
+class TriStateSectionItem(filter: Filter.TriState) :
+    TriStateItem(
+        filter,
+    ),
+    ISectionable<TriStateItem.Holder, GroupItem> {
 
     private var head: GroupItem? = null
 
@@ -45,7 +49,11 @@ class TextSectionItem(filter: Filter.Text) : TextItem(filter), ISectionable<Text
     }
 }
 
-class CheckboxSectionItem(filter: Filter.CheckBox) : CheckboxItem(filter), ISectionable<CheckboxItem.Holder, GroupItem> {
+class CheckboxSectionItem(filter: Filter.CheckBox) :
+    CheckboxItem(
+        filter,
+    ),
+    ISectionable<CheckboxItem.Holder, GroupItem> {
 
     private var head: GroupItem? = null
 

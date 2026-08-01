@@ -9,12 +9,12 @@ import androidx.core.text.buildSpannedString
 import androidx.preference.Preference.SummaryProvider
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dev.icerock.moko.resources.StringResource
-import eu.kanade.tachiyomi.R
-import yokai.i18n.MR
-import yokai.util.lang.getString
 import dev.icerock.moko.resources.compose.stringResource
+import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.util.system.setTriStateItems
 import eu.kanade.tachiyomi.widget.TriStateCheckBox
+import yokai.i18n.MR
+import yokai.util.lang.getString
 import android.R as AR
 
 class TriStateListPreference @JvmOverloads constructor(
@@ -54,6 +54,7 @@ class TriStateListPreference @JvmOverloads constructor(
                 exlDefValue = secondCollection.mapNotNull { it as? String }.toSet()
                 firstCollection.mapNotNull { it as? String }.toSet()
             }
+
             else -> (defaultValue as? Collection<*>).orEmpty().mapNotNull { it as? String }.toSet()
         }
     }
@@ -65,8 +66,10 @@ class TriStateListPreference @JvmOverloads constructor(
         allSelectionRes?.let { allRes ->
             when {
                 includedStrings.isEmpty() -> includedStrings = listOf(context.getString(allRes))
+
                 allIsAlwaysSelected && !showAllLast ->
                     includedStrings = listOf(context.getString(allRes)) + includedStrings
+
                 allIsAlwaysSelected -> includedStrings = includedStrings + context.getString(allRes)
             }
         }
@@ -107,7 +110,11 @@ class TriStateListPreference @JvmOverloads constructor(
             },
         )
         val preselected =
-            if (allSelectionRes != null && !showAllLast) { allValue } else { intArrayOf() } + entryValues
+            if (allSelectionRes != null && !showAllLast) {
+                allValue
+            } else {
+                intArrayOf()
+            } + entryValues
                 .map {
                     when (it) {
                         in set -> TriStateCheckBox.State.CHECKED.ordinal
@@ -116,7 +123,11 @@ class TriStateListPreference @JvmOverloads constructor(
                     }
                 }
                 .toIntArray() +
-                if (allSelectionRes != null && showAllLast) { allValue } else { intArrayOf() }
+                if (allSelectionRes != null && showAllLast) {
+                    allValue
+                } else {
+                    intArrayOf()
+                }
         var includedItems = set
         var excludedItems = excludedSet
         setPositiveButton(AR.string.ok) { _, _ ->

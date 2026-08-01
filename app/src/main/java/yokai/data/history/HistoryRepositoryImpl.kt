@@ -36,7 +36,15 @@ class HistoryRepositoryImpl(private val handler: DatabaseHandler) : HistoryRepos
         limit: Long,
         offset: Long,
     ): List<MangaChapterHistory> =
-        handler.awaitList { historyQueries.getRecentsUngrouped(search, filterScanlators.toInt().toLong(), limit, offset, MangaChapterHistory::mapper) }
+        handler.awaitList {
+            historyQueries.getRecentsUngrouped(
+                search,
+                filterScanlators.toInt().toLong(),
+                limit,
+                offset,
+                MangaChapterHistory::mapper,
+            )
+        }
 
     override suspend fun getRecentsBySeries(
         filterScanlators: Boolean,
@@ -44,14 +52,31 @@ class HistoryRepositoryImpl(private val handler: DatabaseHandler) : HistoryRepos
         limit: Long,
         offset: Long,
     ): List<MangaChapterHistory> =
-        handler.awaitList { historyQueries.getRecentsBySeries(search, filterScanlators.toInt().toLong(), limit, offset, MangaChapterHistory::mapper) }
+        handler.awaitList {
+            historyQueries.getRecentsBySeries(
+                search,
+                filterScanlators.toInt().toLong(),
+                limit,
+                offset,
+                MangaChapterHistory::mapper,
+            )
+        }
 
     override suspend fun getRecentsAll(
         includeRead: Boolean,
         filterScanlators: Boolean,
         search: String,
         limit: Long,
-        offset: Long
+        offset: Long,
     ): List<MangaChapterHistory> =
-        handler.awaitList { historyQueries.getRecentsAll(includeRead.toInt().toLong(), search, filterScanlators.toInt().toLong(), limit, offset, MangaChapterHistory::mapper) }
+        handler.awaitList {
+            historyQueries.getRecentsAll(
+                includeRead.toInt().toLong(),
+                search,
+                filterScanlators.toInt().toLong(),
+                limit,
+                offset,
+                MangaChapterHistory::mapper,
+            )
+        }
 }

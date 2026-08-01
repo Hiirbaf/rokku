@@ -62,10 +62,10 @@ import eu.kanade.tachiyomi.util.view.setPositiveButton
 import eu.kanade.tachiyomi.util.view.setTitle
 import eu.kanade.tachiyomi.util.view.setTitleText
 import eu.kanade.tachiyomi.widget.E2EBottomSheetDialog
-import java.text.DateFormat
-import java.util.Calendar
 import yokai.i18n.MR
 import yokai.util.lang.getString
+import java.text.DateFormat
+import java.util.Calendar
 import android.R as AR
 
 class TrackingBottomSheet(private val controller: MangaDetailsController) :
@@ -118,7 +118,9 @@ class TrackingBottomSheet(private val controller: MangaDetailsController) :
         }
         onBackPressedDispatcher.addCallback(backCallback)
 
-        searchAdapter.addClickListener<TrackSearchItem.ViewHolder, TrackSearchItem>({ it.binding.linkButton }) { _, _, _, item ->
+        searchAdapter.addClickListener<TrackSearchItem.ViewHolder, TrackSearchItem>({
+            it.binding.linkButton
+        }) { _, _, _, item ->
             activity.openInBrowser(item.trackSearch.tracking_url)
         }
 
@@ -365,10 +367,20 @@ class TrackingBottomSheet(private val controller: MangaDetailsController) :
 
                 val wordToSpan: Spannable = SpannableString(text)
                 text.indexesOf(ogTitle).forEach {
-                    wordToSpan.setSpan(StyleSpan(Typeface.ITALIC), it, it + ogTitle.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    wordToSpan.setSpan(
+                        StyleSpan(Typeface.ITALIC),
+                        it,
+                        it + ogTitle.length,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
+                    )
                 }
                 text.indexesOf(newTitle).forEach {
-                    wordToSpan.setSpan(StyleSpan(Typeface.ITALIC), it, it + newTitle.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    wordToSpan.setSpan(
+                        StyleSpan(Typeface.ITALIC),
+                        it,
+                        it + newTitle.length,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
+                    )
                 }
 
                 val text2 = activity.getString(

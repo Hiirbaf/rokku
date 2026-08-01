@@ -25,7 +25,7 @@ fun SliderPreferenceWidget(
             Slider(
                 value = value.toFloat(),
                 onValueChange = onValueChange,
-                valueRange = min.toFloat()..max.toFloat()
+                valueRange = min.toFloat()..max.toFloat(),
             )
         },
     )

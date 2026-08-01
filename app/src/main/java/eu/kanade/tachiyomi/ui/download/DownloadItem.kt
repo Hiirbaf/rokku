@@ -33,8 +33,12 @@ class DownloadItem(
      */
     override fun createViewHolder(
         view: View,
-        adapter: FlexibleAdapter<IFlexible<RecyclerView
-                .ViewHolder,>,>,
+        adapter: FlexibleAdapter<
+            IFlexible<
+                RecyclerView
+                    .ViewHolder,
+                >,
+            >,
     ): DownloadHolder {
         return DownloadHolder(view, adapter as DownloadAdapter)
     }

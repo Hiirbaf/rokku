@@ -4,10 +4,8 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import com.google.android.material.slider.Slider
-import eu.kanade.tachiyomi.R
-import yokai.i18n.MR
-import yokai.util.lang.getString
 import dev.icerock.moko.resources.compose.stringResource
+import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.databinding.LibraryDisplayLayoutBinding
 import eu.kanade.tachiyomi.util.bindToPreference
 import eu.kanade.tachiyomi.util.lang.withSubtitle
@@ -19,6 +17,8 @@ import eu.kanade.tachiyomi.util.view.checkHeightThen
 import eu.kanade.tachiyomi.util.view.numberOfRowsForValue
 import eu.kanade.tachiyomi.util.view.rowsForValue
 import eu.kanade.tachiyomi.widget.BaseLibraryDisplayView
+import yokai.i18n.MR
+import yokai.util.lang.getString
 import kotlin.math.roundToInt
 
 class LibraryDisplayView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) :

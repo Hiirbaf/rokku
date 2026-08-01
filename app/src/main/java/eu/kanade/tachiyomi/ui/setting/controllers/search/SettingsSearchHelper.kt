@@ -66,6 +66,7 @@ object SettingsSearchHelper {
                             getLegacySettingSearchResult(ctrl, rootPref, "${settingsPrefScreen.title}")
                         }
                     }
+
                     is SettingsComposeController -> {
                         // TODO: Impossible to achieve, require search to be composable
                         // ctrl.getComposableSettings().getPreferences()
@@ -104,6 +105,7 @@ object SettingsSearchHelper {
                     getLegacySettingSearchResult(ctrl, subPref, breadcrumbsStr) // recursion
                 }
             }
+
             pref is PreferenceCategory -> {
                 val breadcrumbsStr = addLocalizedBreadcrumb(breadcrumbs, "${pref.title}", resources)
 
@@ -112,11 +114,16 @@ object SettingsSearchHelper {
                     getLegacySettingSearchResult(ctrl, subPref, breadcrumbsStr) // recursion
                 }
             }
+
             (pref.title != null && pref.isVisible) -> {
                 // Is an actual preference
                 val title = pref.title.toString()
                 // ListPreferences occasionally run into ArrayIndexOutOfBoundsException issues
-                val summary = try { pref.summary?.toString() ?: "" } catch (e: Throwable) { "" }
+                val summary = try {
+                    pref.summary?.toString() ?: ""
+                } catch (e: Throwable) {
+                    ""
+                }
 
                 prefSearchResultList.add(
                     SettingsSearchResult(

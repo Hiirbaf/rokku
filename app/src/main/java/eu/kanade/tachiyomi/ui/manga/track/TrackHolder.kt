@@ -15,10 +15,10 @@ import eu.kanade.tachiyomi.databinding.TrackItemBinding
 import eu.kanade.tachiyomi.ui.base.holder.BaseViewHolder
 import eu.kanade.tachiyomi.util.system.getResourceColor
 import eu.kanade.tachiyomi.util.view.setText
-import java.text.DateFormat
 import uy.kohesive.injekt.injectLazy
 import yokai.i18n.MR
 import yokai.util.lang.getString
+import java.text.DateFormat
 import android.R as AR
 
 class TrackHolder(view: View, adapter: TrackAdapter) : BaseViewHolder(view) {
@@ -66,15 +66,18 @@ class TrackHolder(view: View, adapter: TrackAdapter) : BaseViewHolder(view) {
                     track.total_chapters > 0L && track.last_chapter_read.toLong() == track.total_chapters -> context.getString(
                         MR.strings.all_chapters_read,
                     )
+
                     track.total_chapters > 0L -> context.getString(
                         MR.strings.chapter_x_of_y,
                         track.last_chapter_read.toInt(),
                         track.total_chapters,
                     )
+
                     track.last_chapter_read > 0 -> context.getString(
                         MR.strings.chapter_,
                         track.last_chapter_read.toInt().toString(),
                     )
+
                     else -> context.getString(MR.strings.not_started)
                 }
                 setTextColor(enabledTextColor(true))
@@ -104,7 +107,10 @@ class TrackHolder(view: View, adapter: TrackAdapter) : BaseViewHolder(view) {
                         0,
                     )
                     setTextColor(enabledTextColor(track.score != 0f))
-                    TextViewCompat.setCompoundDrawableTintList(this, ColorStateList.valueOf(enabledTextColor(track.score != 0f)))
+                    TextViewCompat.setCompoundDrawableTintList(
+                        this,
+                        ColorStateList.valueOf(enabledTextColor(track.score != 0f)),
+                    )
                 }
             }
             binding.scoreContainer.isVisible = supportsScoring

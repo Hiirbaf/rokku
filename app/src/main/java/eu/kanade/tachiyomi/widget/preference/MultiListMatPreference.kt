@@ -54,9 +54,11 @@ class MultiListMatPreference @JvmOverloads constructor(
         allSelectionRes?.let { allRes ->
             when {
                 values.isEmpty() -> values = listOf(context.getString(allRes))
+
                 allIsAlwaysSelected && !showAllLast ->
                     values =
                         listOf(context.getString(allRes)) + values
+
                 allIsAlwaysSelected -> values = values + context.getString(allRes)
             }
         }
@@ -83,13 +85,22 @@ class MultiListMatPreference @JvmOverloads constructor(
 
         val allValue = booleanArrayOf(set.isEmpty() || allIsAlwaysSelected)
         val selected =
-            if (allSelectionRes != null && !showAllLast) { allValue } else { booleanArrayOf() } +
+            if (allSelectionRes != null && !showAllLast) {
+                allValue
+            } else {
+                booleanArrayOf()
+            } +
                 entryValues.map { it in set }.toBooleanArray() +
-                if (allSelectionRes != null && showAllLast) { allValue } else { booleanArrayOf() }
+                if (allSelectionRes != null && showAllLast) {
+                    allValue
+                } else {
+                    booleanArrayOf()
+                }
         setPositiveButton(AR.string.ok) { _, _ ->
             val pos = mutableListOf<Int>()
-            for (i in items.indices)
+            for (i in items.indices) {
                 if (!(allSelectionRes != null && i == allPos) && selected[i]) pos.add(i)
+            }
             var value = pos.mapNotNull {
                 entryValues.getOrNull(it - if (allSelectionRes != null && !showAllLast) 1 else 0)
             }.toSet()
@@ -125,7 +136,9 @@ class MultiListMatPreference @JvmOverloads constructor(
             if (allSelectionRes != null && !allIsAlwaysSelected) {
                 if (checked) {
                     selected[allPos] = false
-                } else if (selected.none { it }) selected[allPos] = true
+                } else if (selected.none { it }) {
+                    selected[allPos] = true
+                }
                 (dialog as? AlertDialog)?.listView?.setItemChecked(pos, selected[allPos])
             }
         }

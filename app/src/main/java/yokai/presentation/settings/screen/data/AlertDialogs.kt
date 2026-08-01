@@ -101,7 +101,7 @@ suspend fun DialogHostState.awaitRestoreBackup(
                 }
             },
             title = { Text(text = stringResource(MR.strings.invalid_backup_file)) },
-            text = { e?.message?.let { Text(text = it) } }
+            text = { e?.message?.let { Text(text = it) } },
         )
     }
 }

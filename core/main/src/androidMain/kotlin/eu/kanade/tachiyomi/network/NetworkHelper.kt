@@ -4,10 +4,10 @@ import android.content.Context
 import eu.kanade.tachiyomi.network.interceptor.CloudflareInterceptor
 import eu.kanade.tachiyomi.network.interceptor.UncaughtExceptionInterceptor
 import eu.kanade.tachiyomi.network.interceptor.UserAgentInterceptor
-import java.io.File
-import java.util.concurrent.TimeUnit
 import okhttp3.Cache
 import okhttp3.OkHttpClient
+import java.io.File
+import java.util.concurrent.TimeUnit
 
 class NetworkHelper(
     val context: Context,
@@ -27,11 +27,11 @@ class NetworkHelper(
                 Cache(
                     directory = File(context.cacheDir, "network_cache"),
                     maxSize = 5L * 1024 * 1024, // 5 MiB
-                )
+                ),
             )
             .addInterceptor(UncaughtExceptionInterceptor())
             .addInterceptor(UserAgentInterceptor(::defaultUserAgent))
-            // KeiSource asserts IgnoreGzip/Brotli are absent on the host client.
+        // KeiSource asserts IgnoreGzip/Brotli are absent on the host client.
 
         block(builder)
 

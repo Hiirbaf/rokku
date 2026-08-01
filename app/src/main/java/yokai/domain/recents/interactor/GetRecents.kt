@@ -62,6 +62,6 @@ class GetRecents(
             filterScanlators = true,
             search = "",
             limit = limit,
-            offset = 0L
+            offset = 0L,
         )
 }

@@ -91,7 +91,7 @@ fun Controller.setOnQueryTextChangeListener(
         object : SearchView.OnQueryTextListener {
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (!onlyOnSubmit && router.backstack.lastOrNull()
-                    ?.controller == this@setOnQueryTextChangeListener
+                        ?.controller == this@setOnQueryTextChangeListener
                 ) {
                     return f(newText)
                 }
@@ -233,7 +233,7 @@ fun <T> Controller.liftAppbarWith(
     setAppBarBG(0f)
     (recycler as? NestedScrollView)?.setOnScrollChangeListener { _, _, _, _, _ ->
         if (router?.backstack?.lastOrNull()
-            ?.controller == this@liftAppbarWith && activity != null
+                ?.controller == this@liftAppbarWith && activity != null
         ) {
             val notAtTop = recycler.canScrollVertically(-1)
             if (notAtTop != isToolbarColored) colorToolbar(notAtTop)
@@ -244,7 +244,7 @@ fun <T> Controller.liftAppbarWith(
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 if (router?.backstack?.lastOrNull()
-                    ?.controller == this@liftAppbarWith && activity != null
+                        ?.controller == this@liftAppbarWith && activity != null
                 ) {
                     val notAtTop = recycler.canScrollVertically(-1)
                     if (notAtTop != isToolbarColored) colorToolbar(notAtTop)
@@ -443,11 +443,11 @@ fun Controller.scrollViewWith(
                     }
                 } else {
                     if (!customPadding && lastY == 0f && (
-                        (
-                            this@scrollViewWith !is FloatingSearchInterface && router.backstack.lastOrNull()
-                                ?.controller is MangaDetailsController
-                            ) || includeTabView
-                        )
+                            (
+                                this@scrollViewWith !is FloatingSearchInterface && router.backstack.lastOrNull()
+                                    ?.controller is MangaDetailsController
+                                ) || includeTabView
+                            )
                     ) {
                         val parent = recycler.parent as? ViewGroup ?: return
                         val v = View(activity)
@@ -538,9 +538,9 @@ fun Controller.scrollViewWith(
                 }
 
                 if (!isToolbarColor && (
-                    dy == 0 ||
-                        activityBinding?.appBar?.let { it.y <= -it.height.toFloat() } == true
-                    )
+                        dy == 0 ||
+                            activityBinding?.appBar?.let { it.y <= -it.height.toFloat() } == true
+                        )
                 ) {
                     colorToolbar(true)
                 }
@@ -736,7 +736,9 @@ fun Controller.setAppBarBG(value: Float, includeTabView: Boolean = false) {
         (this as? FloatingSearchInterface)?.showFloatingBar() == true && !includeTabView
     if (!isControllerVisible) return
     if (floatingBar) {
-        (activityBinding?.cardView as? CardView)?.setCardBackgroundColor(context.getResourceColor(R.attr.colorPrimaryVariant))
+        (activityBinding?.cardView as? CardView)?.setCardBackgroundColor(
+            context.getResourceColor(R.attr.colorPrimaryVariant),
+        )
         if (this !is SmallToolbarInterface && activityBinding?.appBar?.useLargeToolbar == true &&
             activityBinding?.appBar?.compactSearchMode != true
         ) {

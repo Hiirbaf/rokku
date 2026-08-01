@@ -91,11 +91,11 @@ import eu.kanade.tachiyomi.util.system.pxToDp
 import eu.kanade.tachiyomi.util.system.rootWindowInsetsCompat
 import eu.kanade.tachiyomi.widget.AutofitRecyclerView
 import eu.kanade.tachiyomi.widget.StaggeredGridLayoutManagerAccurateOffset
+import yokai.presentation.theme.YokaiTheme
+import yokai.util.lang.getString
 import kotlin.math.max
 import kotlin.math.pow
 import kotlin.math.roundToInt
-import yokai.presentation.theme.YokaiTheme
-import yokai.util.lang.getString
 
 inline fun ComponentActivity.setComposeContent(
     parent: CompositionContext? = null,
@@ -422,6 +422,7 @@ inline fun View.popupMenu(
                 selectedItemId -> ContextCompat.getDrawable(context, R.drawable.ic_check_24dp)?.mutate()?.apply {
                     setTint(blendedAccent)
                 }
+
                 else -> emptyIcon
             }
             if (item.itemId == selectedItemId) {
@@ -519,7 +520,9 @@ fun Dialog.blurBehindWindow(
     var registered = true
     val powerSaverChangeReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && window?.windowManager?.isCrossWindowBlurEnabled == true) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+                window?.windowManager?.isCrossWindowBlurEnabled == true
+            ) {
                 return
             }
             val canBlur = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
@@ -643,7 +646,8 @@ fun View?.isVisibleOnScreen(): Boolean {
     }
     val actualPosition = Rect()
     this.getGlobalVisibleRect(actualPosition)
-    val screen = Rect(0, 0, Resources.getSystem().displayMetrics.widthPixels, Resources.getSystem().displayMetrics.heightPixels)
+    val screen =
+        Rect(0, 0, Resources.getSystem().displayMetrics.widthPixels, Resources.getSystem().displayMetrics.heightPixels)
     return actualPosition.intersect(screen)
 }
 
@@ -661,7 +665,7 @@ fun RecyclerView.onAnimationsFinished(callback: (RecyclerView) -> Unit) = post(
                 callback(this@onAnimationsFinished)
             }
         }
-    }
+    },
 )
 
 // FIXME: Replace ViewTooltip with KMM compatible one, compose hopefully

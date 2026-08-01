@@ -4,7 +4,7 @@ import eu.kanade.tachiyomi.data.database.models.History
 import yokai.domain.history.HistoryRepository
 
 class UpsertHistory(
-    private val historyRepository: HistoryRepository
+    private val historyRepository: HistoryRepository,
 ) {
     suspend fun await(chapterId: Long, lastRead: Long, timeRead: Long) =
         historyRepository.upsert(chapterId, lastRead, timeRead)

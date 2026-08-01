@@ -7,7 +7,9 @@ import androidx.core.view.isVisible
 import coil3.Image
 import coil3.target.ImageViewTarget
 
-class GifViewTarget(view: ImageView, private val progressBar: View?, private val decodeErrorLayout: ViewGroup?) : ImageViewTarget(view) {
+class GifViewTarget(view: ImageView, private val progressBar: View?, private val decodeErrorLayout: ViewGroup?) : ImageViewTarget(
+    view,
+) {
 
     override fun onError(error: Image?) {
         progressBar?.isVisible = false

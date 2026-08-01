@@ -21,7 +21,6 @@ import eu.kanade.tachiyomi.data.preference.PreferencesHelper
 import eu.kanade.tachiyomi.util.compose.LocalBackPress
 import eu.kanade.tachiyomi.util.compose.LocalDialogHostState
 import eu.kanade.tachiyomi.util.compose.currentOrThrow
-import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.delay
 import uy.kohesive.injekt.injectLazy
 import yokai.presentation.AppBarType
@@ -33,6 +32,7 @@ import yokai.presentation.component.preference.widget.PreferenceGroupHeader
 import yokai.presentation.core.JayAppBarScrollBehavior
 import yokai.presentation.core.drawVerticalScrollbar
 import yokai.presentation.core.enterAlwaysCollapsedAppBarScrollBehavior
+import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun SettingsScaffold(
@@ -85,10 +85,14 @@ fun SettingsScaffold(
         title = title,
         appBarType = appBarType ?: if (useLargeAppBar) AppBarType.LARGE else AppBarType.SMALL,
         appBarActions = appBarActions,
-        appBarScrollBehavior = if (useLargeAppBar) enterAlwaysCollapsedAppBarScrollBehavior(
-            canScroll = canScroll,
-            isAtTop = isAtTop,
-        ) else null,
+        appBarScrollBehavior = if (useLargeAppBar) {
+            enterAlwaysCollapsedAppBarScrollBehavior(
+                canScroll = canScroll,
+                isAtTop = isAtTop,
+            )
+        } else {
+            null
+        },
         textFieldState = textFieldState,
         searchResult = searchResult,
     ) { innerPadding ->
@@ -122,7 +126,7 @@ fun PreferenceScreen(
     LazyColumn(
         modifier = modifier.drawVerticalScrollbar(listState),
         contentPadding = contentPadding,
-        state = listState
+        state = listState,
     ) {
         items.fastForEachIndexed { i, preference ->
             when (preference) {
@@ -143,6 +147,7 @@ fun PreferenceScreen(
                         }
                     }
                 }
+
                 is Preference.PreferenceItem<*> -> item {
                     PreferenceItem(item = preference, highlightKey = highlightKey)
                 }

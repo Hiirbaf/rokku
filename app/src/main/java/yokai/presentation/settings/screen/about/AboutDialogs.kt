@@ -16,10 +16,10 @@ import com.google.android.material.textview.MaterialTextView
 import dev.icerock.moko.resources.compose.stringResource
 import eu.kanade.tachiyomi.data.updater.AppDownloadInstallJob
 import eu.kanade.tachiyomi.ui.more.parseReleaseNotes
-import java.io.Serializable
-import kotlin.coroutines.resume
 import yokai.domain.DialogHostState
 import yokai.i18n.MR
+import java.io.Serializable
+import kotlin.coroutines.resume
 import android.R as AR
 
 data class NewUpdateData(
@@ -49,8 +49,8 @@ suspend fun DialogHostState.awaitNewUpdateDialog(
                         MR.strings.new_beta_version_available
                     } else {
                         MR.strings.new_version_available
-                    }
-                )
+                    },
+                ),
             )
         },
         confirmButton = {
@@ -67,7 +67,7 @@ suspend fun DialogHostState.awaitNewUpdateDialog(
                 onClick = {
                     onDismiss()
                     cont.cancel()
-                }
+                },
             ) {
                 Text(text = stringResource(MR.strings.ignore))
             }
@@ -76,7 +76,7 @@ suspend fun DialogHostState.awaitNewUpdateDialog(
             Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
                 MarkdownText(data.body)
             }
-        }
+        },
     )
 }
 

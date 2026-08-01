@@ -3,9 +3,9 @@ package eu.kanade.tachiyomi.data.database.models
 import android.content.Context
 import dev.icerock.moko.resources.StringResource
 import eu.kanade.tachiyomi.ui.library.LibrarySort
-import java.io.Serializable
 import yokai.i18n.MR
 import yokai.util.lang.getString
+import java.io.Serializable
 
 interface Category : Serializable {
 
@@ -60,8 +60,8 @@ interface Category : Serializable {
         if (!isDynamic) throw IllegalStateException("This category is not a dynamic category")
 
         return when {
-            sourceId != null -> "${name}$sourceSplitter${sourceId}"
-            langId != null -> "${langId}$langSplitter${name}"
+            sourceId != null -> "${name}$sourceSplitter$sourceId"
+            langId != null -> "${langId}$langSplitter$name"
             else -> name
         }
     }
@@ -105,9 +105,11 @@ interface Category : Serializable {
                 orderString.isNullOrBlank() -> {
                     Pair('a', emptyList())
                 }
+
                 orderString.firstOrNull()?.isLetter() == true -> {
                     Pair(orderString.first(), emptyList())
                 }
+
                 else -> Pair(null, orderString.split("/").mapNotNull { it.toLongOrNull() })
             }
         }

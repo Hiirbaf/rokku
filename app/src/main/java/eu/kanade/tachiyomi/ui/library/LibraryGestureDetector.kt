@@ -12,7 +12,7 @@ import kotlin.math.pow
 import kotlin.math.sign
 
 class LibraryGestureDetector(private val controller: LibraryController) : GestureDetector
-.SimpleOnGestureListener() {
+    .SimpleOnGestureListener() {
 
     private var startingX = 0f
     private var startingY = 0f
@@ -76,14 +76,14 @@ class LibraryGestureDetector(private val controller: LibraryController) : Gestur
                     hopperFrame.updateLayoutParams<CoordinatorLayout.LayoutParams> {
                         gravity =
                             Gravity.TOP or (
-                            if (gravity == Gravity.TOP or Gravity.RIGHT) {
-                                controller.preferences.hopperGravity().set(1)
-                                Gravity.CENTER
-                            } else {
-                                controller.preferences.hopperGravity().set(0)
-                                Gravity.LEFT
-                            }
-                            )
+                                if (gravity == Gravity.TOP or Gravity.RIGHT) {
+                                    controller.preferences.hopperGravity().set(1)
+                                    Gravity.CENTER
+                                } else {
+                                    controller.preferences.hopperGravity().set(0)
+                                    Gravity.LEFT
+                                }
+                                )
                     }
                     savePrefs()
                 }
@@ -98,14 +98,14 @@ class LibraryGestureDetector(private val controller: LibraryController) : Gestur
                     hopperFrame.updateLayoutParams<CoordinatorLayout.LayoutParams> {
                         gravity =
                             Gravity.TOP or (
-                            if (gravity == Gravity.TOP or Gravity.LEFT) {
-                                controller.preferences.hopperGravity().set(1)
-                                Gravity.CENTER
-                            } else {
-                                controller.preferences.hopperGravity().set(2)
-                                Gravity.RIGHT
-                            }
-                            )
+                                if (gravity == Gravity.TOP or Gravity.LEFT) {
+                                    controller.preferences.hopperGravity().set(1)
+                                    Gravity.CENTER
+                                } else {
+                                    controller.preferences.hopperGravity().set(2)
+                                    Gravity.RIGHT
+                                }
+                                )
                     }
                     savePrefs()
                 }

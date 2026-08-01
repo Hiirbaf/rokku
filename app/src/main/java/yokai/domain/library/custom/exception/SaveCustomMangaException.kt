@@ -7,4 +7,6 @@ import java.io.IOException
  *
  * @param throwable the source throwable to include for tracing.
  */
-class SaveCustomMangaException(throwable: Throwable) : IOException("Error Saving Custom Manga Info to Database", throwable)
+class SaveCustomMangaException(
+    throwable: Throwable,
+) : IOException("Error Saving Custom Manga Info to Database", throwable)

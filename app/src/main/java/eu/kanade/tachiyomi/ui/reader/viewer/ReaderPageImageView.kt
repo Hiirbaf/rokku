@@ -165,10 +165,12 @@ open class ReaderPageImageView @JvmOverloads constructor(
             PagerConfig.ZoomType.Left -> {
                 setScaleAndCenter(scale, PointF(0f, 0f))
             }
+
             PagerConfig.ZoomType.Right -> {
                 setScaleAndCenter(scale, PointF(sWidth.toFloat(), 0f))
                 centerV = sWidth.toFloat()
             }
+
             PagerConfig.ZoomType.Center -> {
                 setScaleAndCenter(scale, center.also { it?.y = 0f })
                 centerV = center?.x ?: 0f
@@ -212,9 +214,11 @@ open class ReaderPageImageView @JvmOverloads constructor(
                     0f,
                     DeviceUtil.getCutoutHeight(context as? Activity, config.insetInfo.cutoutSupport).toFloat(),
                     0f,
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q)
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
                         insets?.displayCutout?.boundingRectBottom?.height()?.toFloat() ?: 0f
-                    else 0f,
+                    } else {
+                        0f
+                    },
                 )
             }
         }
@@ -238,6 +242,7 @@ open class ReaderPageImageView @JvmOverloads constructor(
                 setImage(ImageSource.bitmap(data.bitmap))
                 isVisible = true
             }
+
             is BufferedSource -> {
                 // SSIV doesn't tile bitmaps, so if the image exceeded max texture size it won't load regardless.
                 if (!isWebtoon || alwaysDecodeLongStripWithSSIV || ImageUtil.isMaxTextureSizeExceeded(data)) {
@@ -269,6 +274,7 @@ open class ReaderPageImageView @JvmOverloads constructor(
                     .build()
                     .let(context.imageLoader::enqueue)
             }
+
             else -> {
                 throw IllegalArgumentException("Not implemented for class ${data::class.simpleName}")
             }

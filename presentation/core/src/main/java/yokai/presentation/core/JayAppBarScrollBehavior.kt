@@ -82,13 +82,19 @@ interface JayAppBarScrollBehavior {
     // Bunch of workarounds to make scroll behavior to work properly with LargeTopAppBar
     var topHeightPx: Float
         get() = 0f
-        set(value) { throw NotImplementedError() }
+        set(value) {
+            throw NotImplementedError()
+        }
     var bottomHeightPx: Float
         get() = 0f
-        set(value) { throw NotImplementedError() }
+        set(value) {
+            throw NotImplementedError()
+        }
     var searchHeightPx: Float
         get() = 0f
-        set(value) { throw NotImplementedError() }
+        set(value) {
+            throw NotImplementedError()
+        }
     val totalHeightPx: Float
         get() = topHeightPx + bottomHeightPx + searchHeightPx
     var insetPaddingForSearchPx: Float
@@ -140,43 +146,60 @@ interface JayAppBarScrollBehavior {
 internal val JayAppBarScrollBehavior.rawTopScrollOffset: Float
     get() = scrollOffset + bottomHeightPx
 
-internal fun JayAppBarScrollBehavior.overallTopScrollOffset(): Float
-    = rawTopScrollOffset.fastCoerceIn(-(topHeightPx + searchHeightPx), 0f)
+internal fun JayAppBarScrollBehavior.overallTopScrollOffset(): Float = rawTopScrollOffset.fastCoerceIn(
+    -(topHeightPx + searchHeightPx),
+    0f,
+)
 
-internal fun JayAppBarScrollBehavior.searchScrollOffset(): Float
-    = (rawTopScrollOffset + topHeightPx).fastCoerceIn(-(searchHeightPx + insetPaddingForSearchPx), 0f)
+internal fun JayAppBarScrollBehavior.searchScrollOffset(): Float = (rawTopScrollOffset + topHeightPx).fastCoerceIn(
+    -(searchHeightPx + insetPaddingForSearchPx),
+    0f,
+)
 
-internal fun JayAppBarScrollBehavior.settlingSearchScrollOffset(): Float
-    = (rawTopScrollOffset + topHeightPx - insetPaddingForSearchPx).fastCoerceIn(-(searchHeightPx + insetPaddingForSearchPx), 0f)
+internal fun JayAppBarScrollBehavior.settlingSearchScrollOffset(): Float = (
+    rawTopScrollOffset + topHeightPx -
+        insetPaddingForSearchPx
+    ).fastCoerceIn(
+    -(
+        searchHeightPx +
+            insetPaddingForSearchPx
+        ),
+    0f,
+)
 
-internal fun JayAppBarScrollBehavior.insetPaddingScrollOffset(): Float
-    = (rawTopScrollOffset + topHeightPx - insetPaddingForSearchPx).fastCoerceIn(-insetPaddingForSearchPx, 0f)
+internal fun JayAppBarScrollBehavior.insetPaddingScrollOffset(): Float = (
+    rawTopScrollOffset + topHeightPx -
+        insetPaddingForSearchPx
+    ).fastCoerceIn(
+    -insetPaddingForSearchPx,
+    0f,
+)
 
-internal fun JayAppBarScrollBehavior.topScrollOffset(): Float
-    = rawTopScrollOffset.fastCoerceIn(-topHeightPx, 0f)
+internal fun JayAppBarScrollBehavior.topScrollOffset(): Float = rawTopScrollOffset.fastCoerceIn(-topHeightPx, 0f)
 
-internal fun JayAppBarScrollBehavior.bottomScrollOffset(): Float
-    = scrollOffset.fastCoerceIn(-bottomHeightPx, 0f)
+internal fun JayAppBarScrollBehavior.bottomScrollOffset(): Float = scrollOffset.fastCoerceIn(-bottomHeightPx, 0f)
 
-internal fun JayAppBarScrollBehavior.searchCollapsedFraction(): Float
-    = settlingSearchScrollOffset() / -(searchHeightPx + insetPaddingForSearchPx)
+internal fun JayAppBarScrollBehavior.searchCollapsedFraction(): Float =
+    settlingSearchScrollOffset() / -(searchHeightPx + insetPaddingForSearchPx)
 
-internal fun JayAppBarScrollBehavior.insetPaddingCollapsedFraction(): Float
-    = insetPaddingScrollOffset() / -insetPaddingForSearchPx
+internal fun JayAppBarScrollBehavior.insetPaddingCollapsedFraction(): Float =
+    insetPaddingScrollOffset() / -insetPaddingForSearchPx
 
-internal fun JayAppBarScrollBehavior.topCollapsedFraction(offset: Float = 0f): Float
-    = topScrollOffset() / (-topHeightPx + offset)
+internal fun JayAppBarScrollBehavior.topCollapsedFraction(offset: Float = 0f): Float =
+    topScrollOffset() / (-topHeightPx + offset)
 
-internal fun JayAppBarScrollBehavior.bottomCollapsedFraction(offset: Float = 0f): Float
-    = bottomScrollOffset() / (-bottomHeightPx + offset)
+internal fun JayAppBarScrollBehavior.bottomCollapsedFraction(offset: Float = 0f): Float =
+    bottomScrollOffset() / (-bottomHeightPx + offset)
 
 internal fun JayAppBarScrollBehavior.overlappedFraction(): Float =
     if (scrollOffsetLimit != 0f) {
         1 -
-            ((scrollOffsetLimit - contentOffset).coerceIn(
-                minimumValue = scrollOffsetLimit,
-                maximumValue = 0f,
-            ) / scrollOffsetLimit)
+            (
+                (scrollOffsetLimit - contentOffset).coerceIn(
+                    minimumValue = scrollOffsetLimit,
+                    maximumValue = 0f,
+                ) / scrollOffsetLimit
+                )
     } else {
         0f
     }
@@ -255,7 +278,10 @@ interface SettlingAppBarScrollBehavior : JayAppBarScrollBehavior {
         val actualScrollOffset by lazy {
             when {
                 !isTopAndTotalPxValid -> scrollOffset
-                searchHeightPx > 0f -> searchScrollOffset() + if (insetPaddingForSearchPx > 0f) insetPaddingScrollOffset() else 0f
+
+                searchHeightPx > 0f -> searchScrollOffset() +
+                    if (insetPaddingForSearchPx > 0f) insetPaddingScrollOffset() else 0f
+
                 else -> topScrollOffset()
             }
         }
@@ -268,7 +294,7 @@ interface SettlingAppBarScrollBehavior : JayAppBarScrollBehavior {
                     } else {
                         actualScrollOffsetLimit
                     },
-                    animationSpec = snapAnimationSpec
+                    animationSpec = snapAnimationSpec,
                 ) {
                     scrollOffset = value - when {
                         !isTopAndTotalPxValid -> abs(scrollOffsetLimit)
@@ -348,7 +374,16 @@ private class EnterAlwaysCollapsedAppBarScrollBehavior(
             _scrollOffset = if (isAtTop() || !isTopAndTotalPxValid) {
                 newOffset.fastCoerceIn(scrollOffsetLimit, 0f)
             } else {
-                newOffset.fastCoerceIn(-totalHeightPx, if (searchHeightPx > 0f) -(topHeightPx + bottomHeightPx) + insetPaddingForSearchPx else -bottomHeightPx)
+                newOffset.fastCoerceIn(
+                    -totalHeightPx,
+                    if (searchHeightPx >
+                        0f
+                    ) {
+                        -(topHeightPx + bottomHeightPx) + insetPaddingForSearchPx
+                    } else {
+                        -bottomHeightPx
+                    },
+                )
             }
         }
 
@@ -375,7 +410,6 @@ private class EnterAlwaysCollapsedAppBarScrollBehavior(
                     placeable.placeWithLayer(0, scrollOffset)
                 }
             }
-
     }
 
     override fun Modifier.appBarScrollBehavior(): Modifier {
@@ -424,8 +458,9 @@ private class EnterAlwaysCollapsedAppBarScrollBehavior(
                 // collapse the app bar in that case, neither the app bar nor the content will ever
                 // move again.
                 val blockedAtRest = !canScroll() && scrollOffset == 0f
-                if (blockedAtRest || scrollCheck())
+                if (blockedAtRest || scrollCheck()) {
                     return Offset.Zero
+                }
 
                 val prevHeightOffset = scrollOffset
                 scrollOffset += available.y
@@ -443,7 +478,7 @@ private class EnterAlwaysCollapsedAppBarScrollBehavior(
             override fun onPostScroll(
                 consumed: Offset,
                 available: Offset,
-                source: NestedScrollSource
+                source: NestedScrollSource,
             ): Offset {
                 if (!canScroll() && scrollOffset == 0f) return Offset.Zero
                 contentOffset += consumed.y
@@ -478,7 +513,6 @@ private class EnterAlwaysCollapsedAppBarScrollBehavior(
             }
         }
 
-
     companion object {
         fun Saver(
             canScroll: () -> Boolean,
@@ -495,7 +529,7 @@ private class EnterAlwaysCollapsedAppBarScrollBehavior(
                         it.topHeightPx,
                         it.bottomHeightPx,
                         it.searchHeightPx,
-                        it.insetPaddingForSearchPx
+                        it.insetPaddingForSearchPx,
                     )
                 },
                 restore = {
@@ -700,12 +734,12 @@ fun enterAlwaysCollapsedAppBarScrollBehavior(
         canScroll,
         isAtTop,
         saver =
-            EnterAlwaysCollapsedAppBarScrollBehavior.Saver(
-                canScroll = canScroll,
-                isAtTop = isAtTop,
-                snapAnimationSpec = snapAnimationSpec,
-                flingAnimationSpec = flingAnimationSpec,
-            )
+        EnterAlwaysCollapsedAppBarScrollBehavior.Saver(
+            canScroll = canScroll,
+            isAtTop = isAtTop,
+            snapAnimationSpec = snapAnimationSpec,
+            flingAnimationSpec = flingAnimationSpec,
+        ),
     ) {
         EnterAlwaysCollapsedAppBarScrollBehavior(
             initialOffset = initialOffset,
@@ -737,11 +771,11 @@ fun enterAlwaysAppBarScrollBehavior(
         flingAnimationSpec,
         canScroll,
         saver =
-            EnterAlwaysAppBarScrollBehavior.Saver(
-                canScroll = canScroll,
-                snapAnimationSpec = snapAnimationSpec,
-                flingAnimationSpec = flingAnimationSpec,
-            )
+        EnterAlwaysAppBarScrollBehavior.Saver(
+            canScroll = canScroll,
+            snapAnimationSpec = snapAnimationSpec,
+            flingAnimationSpec = flingAnimationSpec,
+        ),
     ) {
         EnterAlwaysAppBarScrollBehavior(
             initialOffset = initialOffset,

@@ -53,8 +53,6 @@ import eu.kanade.tachiyomi.util.system.launchNonCancellableIO
 import eu.kanade.tachiyomi.util.system.localeContext
 import eu.kanade.tachiyomi.util.system.withIOContext
 import eu.kanade.tachiyomi.util.system.withUIContext
-import java.util.Date
-import java.util.concurrent.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -89,6 +87,8 @@ import yokai.domain.storage.StorageManager
 import yokai.domain.track.interactor.GetTrack
 import yokai.i18n.MR
 import yokai.util.lang.getString
+import java.util.Date
+import java.util.concurrent.CancellationException
 
 /**
  * Presenter used by the activity to perform background operations.
@@ -444,7 +444,7 @@ class ReaderViewModel(
 
     fun toggleRead(chapter: Chapter) {
         chapter.read = !chapter.read
-        val lastPageToSave = if (chapter.read) chapter.last_page_read.toLong() else 0L 
+        val lastPageToSave = if (chapter.read) chapter.last_page_read.toLong() else 0L
         viewModelScope.launchNonCancellableIO {
             updateChapter.await(
                 ChapterUpdate(
@@ -452,8 +452,8 @@ class ReaderViewModel(
                     read = chapter.read,
                     bookmark = chapter.bookmark,
                     lastPageRead = lastPageToSave,
-                    pagesLeft = if (chapter.read) 0 else chapter.pages_left.toLong()
-                )
+                    pagesLeft = if (chapter.read) 0 else chapter.pages_left.toLong(),
+                ),
             )
         }
     }
@@ -467,7 +467,7 @@ class ReaderViewModel(
                     bookmark = chapter.bookmark,
                     lastPageRead = chapter.last_page_read.toLong(),
                     pagesLeft = chapter.pages_left.toLong(),
-                )
+                ),
             )
         }
     }
@@ -646,7 +646,7 @@ class ReaderViewModel(
                     bookmark = readerChapter.chapter.bookmark,
                     lastPageRead = readerChapter.chapter.last_page_read.toLong(),
                     pagesLeft = readerChapter.chapter.pages_left.toLong(),
-                )
+                ),
             )
         }
     }
@@ -721,9 +721,17 @@ class ReaderViewModel(
         val manga = manga ?: return null
         val source = getSource() ?: return null
         val chapter = mainChapter ?: getCurrentChapter()?.chapter ?: return null
-        val chapterUrl = try { source.getChapterUrl(chapter) } catch (_: Exception) { null }
+        val chapterUrl = try {
+            source.getChapterUrl(chapter)
+        } catch (_: Exception) {
+            null
+        }
         return chapterUrl.takeIf { !it.isNullOrBlank() }
-            ?: try { source.getChapterUrl(manga, chapter) } catch (_: Exception) { null }
+            ?: try {
+                source.getChapterUrl(manga, chapter)
+            } catch (_: Exception) {
+                null
+            }
     }
 
     fun getSource() = manga?.source?.let { sourceManager.getOrStub(it) } as? HttpSource
@@ -825,7 +833,8 @@ class ReaderViewModel(
         // Build destination file.
         val filename = DiskUtil.buildValidFilename(
             "${manga.title} - ${chapter.preferredChapterName(context, manga, preferences)}".take(225),
-        ) + (if (downloadPreferences.downloadWithId().get()) " (${chapter.id})" else "") + " - ${page.number}.${type.extension}"
+        ) + (if (downloadPreferences.downloadWithId().get()) " (${chapter.id})" else "") +
+            " - ${page.number}.${type.extension}"
 
         val destFile = directory.createFile(filename)!!
         stream().use { input ->
@@ -839,7 +848,14 @@ class ReaderViewModel(
     /**
      * Saves the image of [page1] and [page2] in the given [directory] and returns the file location.
      */
-    private fun saveImages(page1: ReaderPage, page2: ReaderPage, isLTR: Boolean, @ColorInt bg: Int, directory: UniFile, manga: Manga): UniFile {
+    private fun saveImages(
+        page1: ReaderPage,
+        page2: ReaderPage,
+        isLTR: Boolean,
+        @ColorInt bg: Int,
+        directory: UniFile,
+        manga: Manga,
+    ): UniFile {
         val stream1 = page1.stream!!
         ImageUtil.findImageType(stream1) ?: throw Exception("Not an image")
         val stream2 = page2.stream!!
@@ -858,7 +874,8 @@ class ReaderViewModel(
         // Build destination file.
         val filename = DiskUtil.buildValidFilename(
             "${manga.title} - ${chapter.preferredChapterName(context, manga, preferences)}".take(225),
-        ) + (if (downloadPreferences.downloadWithId().get()) " (${chapter.id})" else "") + " - ${page1.number}-${page2.number}.jpg"
+        ) + (if (downloadPreferences.downloadWithId().get()) " (${chapter.id})" else "") +
+            " - ${page1.number}-${page2.number}.jpg"
 
         val destFile = directory.createFile(filename)!!
         stream.use { input ->
@@ -1005,7 +1022,9 @@ class ReaderViewModel(
      * Results of the set as cover feature.
      */
     enum class SetAsCoverResult {
-        Success, AddToLibraryFirst, Error
+        Success,
+        AddToLibraryFirst,
+        Error,
     }
 
     /**

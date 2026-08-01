@@ -2,13 +2,11 @@ package eu.kanade.tachiyomi.ui.recents
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
+import dev.icerock.moko.resources.compose.stringResource
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.items.AbstractHeaderItem
 import eu.davidea.flexibleadapter.items.IFlexible
 import eu.kanade.tachiyomi.R
-import yokai.i18n.MR
-import yokai.util.lang.getString
-import dev.icerock.moko.resources.compose.stringResource
 import eu.kanade.tachiyomi.data.database.models.Chapter
 import eu.kanade.tachiyomi.data.database.models.ChapterImpl
 import eu.kanade.tachiyomi.data.database.models.MangaChapterHistory
@@ -16,6 +14,8 @@ import eu.kanade.tachiyomi.data.download.model.Download
 import eu.kanade.tachiyomi.source.model.Page
 import eu.kanade.tachiyomi.ui.manga.chapter.BaseChapterHolder
 import eu.kanade.tachiyomi.ui.manga.chapter.BaseChapterItem
+import yokai.i18n.MR
+import yokai.util.lang.getString
 
 class RecentMangaItem(
     val mch: MangaChapterHistory = MangaChapterHistory.createBlank(),
@@ -78,7 +78,9 @@ class RecentMangaItem(
     ) {
         if (mch.manga.id == null) {
             (holder as? RecentMangaFooterHolder)?.bind((header as? RecentMangaHeaderItem)?.recentsType ?: 0)
-        } else if (chapter.id != null) (holder as? RecentMangaHolder)?.bind(this)
+        } else if (chapter.id != null) {
+            (holder as? RecentMangaHolder)?.bind(this)
+        }
     }
 
     class DownloadInfo {
@@ -94,7 +96,9 @@ class RecentMangaItem(
 
         var status: Download.State
             get() = download?.status ?: _status
-            set(value) { _status = value }
+            set(value) {
+                _status = value
+            }
 
         @Transient var download: Download? = null
 

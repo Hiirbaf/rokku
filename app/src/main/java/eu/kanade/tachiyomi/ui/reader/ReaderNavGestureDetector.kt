@@ -7,7 +7,7 @@ import eu.kanade.tachiyomi.util.view.expand
 import kotlin.math.abs
 
 class ReaderNavGestureDetector(private val activity: ReaderActivity) : GestureDetector
-.SimpleOnGestureListener() {
+    .SimpleOnGestureListener() {
 
     var hasScrollHorizontal = false
     var lockVertical = false

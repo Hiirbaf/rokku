@@ -83,6 +83,7 @@ class DownloadButton @JvmOverloads constructor(context: Context, attrs: Attribut
                 binding.downloadBorder.drawable.setTint(activeColor)
                 binding.downloadIcon.drawable.setTint(Color.WHITE)
             }
+
             Download.State.NOT_DOWNLOADED -> {
                 binding.downloadBorder.isVisible = true
                 binding.downloadProgress.isVisible = false
@@ -91,6 +92,7 @@ class DownloadButton @JvmOverloads constructor(context: Context, attrs: Attribut
                 binding.downloadBorder.drawable.setTint(activeColor)
                 binding.downloadIcon.drawable.setTint(activeColor)
             }
+
             Download.State.QUEUE -> {
                 binding.downloadBorder.isVisible = false
                 binding.downloadProgress.isVisible = false
@@ -98,6 +100,7 @@ class DownloadButton @JvmOverloads constructor(context: Context, attrs: Attribut
                 binding.downloadProgress.isIndeterminate = true
                 binding.downloadIcon.drawable.setTint(disabledColor)
             }
+
             Download.State.DOWNLOADING -> {
                 binding.downloadBorder.isVisible = true
                 binding.downloadProgress.isVisible = true
@@ -124,6 +127,7 @@ class DownloadButton @JvmOverloads constructor(context: Context, attrs: Attribut
                     iconAnimation?.start()
                 }
             }
+
             Download.State.DOWNLOADED -> {
                 binding.downloadProgress.isVisible = false
                 binding.downloadBorder.isVisible = true
@@ -150,6 +154,7 @@ class DownloadButton @JvmOverloads constructor(context: Context, attrs: Attribut
                     binding.downloadIcon.drawable.setTint(downloadedTextColor)
                 }
             }
+
             Download.State.ERROR -> {
                 binding.downloadProgress.isVisible = false
                 binding.downloadBorder.isVisible = true

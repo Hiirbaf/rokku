@@ -41,7 +41,9 @@ object AuthenticatorUtil {
         val promptInfo = BiometricPrompt.PromptInfo.Builder()
             .setTitle(title)
             .setSubtitle(subtitle)
-            .setAllowedAuthenticators(BiometricManager.Authenticators.DEVICE_CREDENTIAL or BiometricManager.Authenticators.BIOMETRIC_WEAK)
+            .setAllowedAuthenticators(
+                BiometricManager.Authenticators.DEVICE_CREDENTIAL or BiometricManager.Authenticators.BIOMETRIC_WEAK,
+            )
             .setConfirmationRequired(confirmationRequired)
             .build()
 
@@ -52,7 +54,8 @@ object AuthenticatorUtil {
      * Returns true if Class 2 biometric or credential lock is set and available to use
      */
     fun Context.isAuthenticationSupported(): Boolean {
-        val authenticators = BiometricManager.Authenticators.BIOMETRIC_WEAK or BiometricManager.Authenticators.DEVICE_CREDENTIAL
+        val authenticators =
+            BiometricManager.Authenticators.BIOMETRIC_WEAK or BiometricManager.Authenticators.DEVICE_CREDENTIAL
         return BiometricManager.from(this).canAuthenticate(authenticators) == BiometricManager.BIOMETRIC_SUCCESS
     }
 

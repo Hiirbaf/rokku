@@ -11,6 +11,6 @@ class LibraryComposePresenter :
 
     data class State(
         var isLoading: Boolean = true,
-        var library: LibraryMap = emptyMap()
+        var library: LibraryMap = emptyMap(),
     )
 }

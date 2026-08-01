@@ -161,6 +161,7 @@ class ExpandedAppBarLayout@JvmOverloads constructor(context: Context, attrs: Att
                 controller is FloatingSearchInterface && controller.showFloatingBar() -> {
                     ToolbarState.SEARCH_ONLY
                 }
+
                 else -> ToolbarState.COMPACT
             }
         } else {
@@ -172,6 +173,7 @@ class ExpandedAppBarLayout@JvmOverloads constructor(context: Context, attrs: Att
                         ToolbarState.COMPACT
                     }
                 }
+
                 else -> ToolbarState.EXPANDED
             }
         }
@@ -232,7 +234,13 @@ class ExpandedAppBarLayout@JvmOverloads constructor(context: Context, attrs: Att
             MathUtils.clamp(
                 translationY,
                 -realHeight + (if (context.isTablet()) minTabletHeight else 0),
-                if (compactSearchMode && toolbarMode == ToolbarState.EXPANDED) -realHeight + top + minTabletHeight else 0f,
+                if (compactSearchMode &&
+                    toolbarMode == ToolbarState.EXPANDED
+                ) {
+                    -realHeight + top + minTabletHeight
+                } else {
+                    0f
+                },
             )
         }
         super.setTranslationY(newY)
@@ -323,14 +331,17 @@ class ExpandedAppBarLayout@JvmOverloads constructor(context: Context, attrs: Att
                     -realHeight.toFloat() + top + minTabletHeight,
                 )
             }
+
             // for regular compact modes, no need to clamp, setTranslationY will take care of it
             toolbarMode != ToolbarState.EXPANDED -> {
                 translationY
             }
+
             // if the recycler hasn't scrolled past the app bars height...
             offset < realHeight - shortH - tabHeight -> {
                 -offset.toFloat()
             }
+
             else -> {
                 MathUtils.clamp(
                     translationY,
@@ -398,8 +409,8 @@ class ExpandedAppBarLayout@JvmOverloads constructor(context: Context, attrs: Att
             else -> idle
         }
         if (if (useSearchToolbar) {
-            -y >= height || (state <= idle) || context.isTablet()
-        } else {
+                -y >= height || (state <= idle) || context.isTablet()
+            } else {
                 mainActivity.currentToolbar == searchToolbar
             }
         ) {

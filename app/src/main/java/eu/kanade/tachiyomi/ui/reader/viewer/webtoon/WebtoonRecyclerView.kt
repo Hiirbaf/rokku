@@ -193,7 +193,11 @@ open class WebtoonRecyclerView @JvmOverloads constructor(
 
         setScaleRate(currentScale)
 
-        layoutParams.height = if (currentScale < 1) { (originalHeight / currentScale).toInt() } else { originalHeight }
+        layoutParams.height = if (currentScale < 1) {
+            (originalHeight / currentScale).toInt()
+        } else {
+            originalHeight
+        }
         halfHeight = layoutParams.height / 2
 
         if (currentScale != DEFAULT_RATE) {
@@ -271,11 +275,13 @@ open class WebtoonRecyclerView @JvmOverloads constructor(
                     downX = (ev.x + 0.5f).toInt()
                     downY = (ev.y + 0.5f).toInt()
                 }
+
                 MotionEvent.ACTION_POINTER_DOWN -> {
                     scrollPointerId = ev.getPointerId(actionIndex)
                     downX = (ev.getX(actionIndex) + 0.5f).toInt()
                     downY = (ev.getY(actionIndex) + 0.5f).toInt()
                 }
+
                 MotionEvent.ACTION_MOVE -> {
                     if (isDoubleTapping && isQuickScaling) {
                         return true
@@ -320,6 +326,7 @@ open class WebtoonRecyclerView @JvmOverloads constructor(
                         zoomScrollBy(dx, dy)
                     }
                 }
+
                 MotionEvent.ACTION_UP -> {
                     if (isDoubleTapping && !isQuickScaling) {
                         listener.onDoubleTapConfirmed(ev)
@@ -328,6 +335,7 @@ open class WebtoonRecyclerView @JvmOverloads constructor(
                     isDoubleTapping = false
                     isQuickScaling = false
                 }
+
                 MotionEvent.ACTION_CANCEL -> {
                     isZoomDragging = false
                     isDoubleTapping = false

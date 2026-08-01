@@ -65,7 +65,7 @@ fun AppBarActions(
     var showMenu by remember { mutableStateOf(false) }
 
     actions.filterIsInstance<AppBar.Action>().map {
-        TooltipBox (
+        TooltipBox(
             positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
             tooltip = {
                 PlainTooltip {

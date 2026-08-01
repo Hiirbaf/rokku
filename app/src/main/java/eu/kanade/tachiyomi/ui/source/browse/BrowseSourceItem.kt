@@ -49,7 +49,12 @@ class BrowseSourceItem(
                     setMargins(4.dpToPx)
                 }
             }
-            BrowseSourceGridHolder(composeView, adapter, listType == LibraryItem.LAYOUT_COMPACT_GRID, outlineOnCovers.get())
+            BrowseSourceGridHolder(
+                composeView,
+                adapter,
+                listType == LibraryItem.LAYOUT_COMPACT_GRID,
+                outlineOnCovers.get(),
+            )
         } else {
             BrowseSourceListHolder(view, adapter, outlineOnCovers.get())
         }

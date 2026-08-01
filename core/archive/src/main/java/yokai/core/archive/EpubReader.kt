@@ -1,10 +1,10 @@
 package yokai.core.archive
 
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import java.io.Closeable
 import java.io.File
 import java.io.InputStream
-import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
 
 /**
  * Wrapper over ZipFile to load files in epub format.

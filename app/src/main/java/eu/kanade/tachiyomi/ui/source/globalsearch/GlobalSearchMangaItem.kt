@@ -52,7 +52,7 @@ class GlobalSearchMangaItem(
     override fun unbindViewHolder(
         adapter: FlexibleAdapter<IFlexible<RecyclerView.ViewHolder>>?,
         holder: GlobalSearchMangaHolder?,
-        position: Int
+        position: Int,
     ) {
         job?.cancel()
         job = null

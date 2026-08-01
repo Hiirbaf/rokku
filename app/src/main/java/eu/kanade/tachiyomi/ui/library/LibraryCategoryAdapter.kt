@@ -13,7 +13,6 @@ import eu.kanade.tachiyomi.util.lang.removeArticles
 import eu.kanade.tachiyomi.util.system.isLTR
 import eu.kanade.tachiyomi.util.system.timeSpanFromNow
 import eu.kanade.tachiyomi.util.system.withDefContext
-import java.util.*
 import kotlinx.coroutines.runBlocking
 import uy.kohesive.injekt.injectLazy
 import yokai.domain.category.interactor.GetCategories
@@ -22,6 +21,7 @@ import yokai.domain.history.interactor.GetHistory
 import yokai.domain.ui.UiPreferences
 import yokai.i18n.MR
 import yokai.util.lang.getString
+import java.util.*
 
 /**
  * Adapter storing a list of manga in a certain category.
@@ -203,16 +203,20 @@ class LibraryCategoryAdapter(val controller: LibraryController?) :
                 vibrateOnCategoryChange(item.category.name)
                 item.category.name
             }
+
             is LibraryPlaceholderItem -> {
                 item.header?.category?.name.orEmpty()
             }
+
             is LibraryMangaItem -> {
                 val text =
                     when (getSort(position)) {
                         LibrarySort.DragAndDrop -> {
                             if (item.header.category.isDynamic && item.manga.manga.id != null) {
                                 // FIXME: Don't do blocking
-                                val category = runBlocking { getCategories.awaitByMangaId(item.manga.manga.id!!) }.firstOrNull()?.name
+                                val category = runBlocking {
+                                    getCategories.awaitByMangaId(item.manga.manga.id!!)
+                                }.firstOrNull()?.name
                                 category ?: context.getString(MR.strings.default_value)
                             } else {
                                 val title = item.manga.manga.title
@@ -223,6 +227,7 @@ class LibraryCategoryAdapter(val controller: LibraryController?) :
                                 }
                             }
                         }
+
                         LibrarySort.DateFetched -> {
                             val id = item.manga.manga.id ?: return ""
                             // FIXME: Don't do blocking
@@ -230,6 +235,7 @@ class LibraryCategoryAdapter(val controller: LibraryController?) :
                             val last = history.maxOfOrNull { it.date_fetch }
                             context.timeSpanFromNow(MR.strings.fetched_, last ?: 0)
                         }
+
                         LibrarySort.LastRead -> {
                             val id = item.manga.manga.id ?: return ""
                             // FIXME: Don't do blocking
@@ -237,6 +243,7 @@ class LibraryCategoryAdapter(val controller: LibraryController?) :
                             val last = history.maxOfOrNull { it.last_read }
                             context.timeSpanFromNow(MR.strings.read_, last ?: 0)
                         }
+
                         LibrarySort.Unread -> {
                             val unread = item.manga.unread
                             if (unread > 0) {
@@ -245,6 +252,7 @@ class LibraryCategoryAdapter(val controller: LibraryController?) :
                                 context.getString(MR.strings.read)
                             }
                         }
+
                         LibrarySort.TotalChapters -> {
                             val total = item.manga.totalChapters
                             if (total > 0) {
@@ -257,12 +265,15 @@ class LibraryCategoryAdapter(val controller: LibraryController?) :
                                 "N/A"
                             }
                         }
+
                         LibrarySort.LatestChapter -> {
                             context.timeSpanFromNow(MR.strings.updated_, item.manga.manga.last_update)
                         }
+
                         LibrarySort.DateAdded -> {
                             context.timeSpanFromNow(MR.strings.added_, item.manga.manga.date_added)
                         }
+
                         LibrarySort.Title -> {
                             val title = if (preferences.removeArticles().get()) {
                                 item.manga.manga.title.removeArticles()
@@ -271,6 +282,7 @@ class LibraryCategoryAdapter(val controller: LibraryController?) :
                             }
                             getFirstLetter(title)
                         }
+
                         LibrarySort.Random -> {
                             context.getString(MR.strings.random)
                         }
@@ -284,6 +296,7 @@ class LibraryCategoryAdapter(val controller: LibraryController?) :
                     else -> item.header?.category?.name.orEmpty() + " - " + text
                 }
             }
+
             else -> ""
         }
     }

@@ -13,16 +13,16 @@ import eu.kanade.tachiyomi.util.storage.DiskUtil
 import eu.kanade.tachiyomi.util.system.toast
 import eu.kanade.tachiyomi.util.system.withIOContext
 import eu.kanade.tachiyomi.util.system.withUIContext
-import java.io.File
-import java.io.IOException
-import java.io.InputStream
-import java.util.concurrent.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import uy.kohesive.injekt.injectLazy
 import yokai.domain.manga.interactor.GetManga
 import yokai.i18n.MR
 import yokai.util.lang.getString
+import java.io.File
+import java.io.IOException
+import java.io.InputStream
+import java.util.concurrent.*
 
 /**
  * Class used to create cover cache.
@@ -219,12 +219,13 @@ class CoverCache(val context: Context) {
         getCustomCoverFile(manga).outputStream().use {
             @Suppress("DEPRECATION")
             bitmap.compress(
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     Bitmap.CompressFormat.WEBP_LOSSLESS
-                else
-                    Bitmap.CompressFormat.WEBP,
+                } else {
+                    Bitmap.CompressFormat.WEBP
+                },
                 100,
-                it
+                it,
             )
             bitmap.recycle()
         }

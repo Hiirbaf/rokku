@@ -94,7 +94,12 @@ internal class AppUpdateNotifier(private val context: Context) {
             addAction(
                 R.drawable.ic_new_releases_outline_24dp,
                 context.getString(MR.strings.release_page),
-                PendingIntent.getActivity(context, releaseUrl.hashCode(), releaseIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE),
+                PendingIntent.getActivity(
+                    context,
+                    releaseUrl.hashCode(),
+                    releaseIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+                ),
             )
         }
     }
@@ -265,5 +270,4 @@ internal class AppUpdateNotifier(private val context: Context) {
     fun cancel() {
         NotificationReceiver.dismissNotification(context, Notifications.ID_UPDATER)
     }
-
 }

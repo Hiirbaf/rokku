@@ -2,16 +2,16 @@ package eu.kanade.tachiyomi.ui.source.filter
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
+import dev.icerock.moko.resources.compose.stringResource
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
 import eu.davidea.flexibleadapter.items.IFlexible
 import eu.davidea.viewholders.FlexibleViewHolder
 import eu.kanade.tachiyomi.source.model.Filter
 import eu.kanade.tachiyomi.widget.TriStateCheckBox
-import eu.kanade.tachiyomi.R as TR
 import yokai.i18n.MR
 import yokai.util.lang.getString
-import dev.icerock.moko.resources.compose.stringResource
+import eu.kanade.tachiyomi.R as TR
 
 open class TriStateItem(val filter: Filter.TriState) : AbstractFlexibleItem<TriStateItem.Holder>() {
 
@@ -56,7 +56,10 @@ open class TriStateItem(val filter: Filter.TriState) : AbstractFlexibleItem<TriS
         return filter.hashCode()
     }
 
-    class Holder(view: View, adapter: FlexibleAdapter<IFlexible<RecyclerView.ViewHolder>>) : FlexibleViewHolder(view, adapter) {
+    class Holder(view: View, adapter: FlexibleAdapter<IFlexible<RecyclerView.ViewHolder>>) : FlexibleViewHolder(
+        view,
+        adapter,
+    ) {
 
         val text: TriStateCheckBox = itemView.findViewById(TR.id.nav_view_item)
     }

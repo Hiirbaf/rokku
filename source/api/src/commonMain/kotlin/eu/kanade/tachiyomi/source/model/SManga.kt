@@ -1,7 +1,7 @@
 package eu.kanade.tachiyomi.source.model
 
-import java.io.Serializable
 import kotlinx.serialization.json.JsonObject
+import java.io.Serializable
 
 interface SManga : Serializable {
 

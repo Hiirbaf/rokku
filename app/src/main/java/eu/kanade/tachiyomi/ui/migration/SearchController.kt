@@ -32,9 +32,7 @@ class SearchController(
 ),
     BottomNavBarInterface {
 
-    /**
-     * Called when controller is initialized.
-     */
+    // Called when controller is initialized.
     init {
         setHasOptionsMenu(true)
     }
@@ -80,7 +78,11 @@ class SearchController(
         // Inflate menu.
         inflater.inflate(R.menu.catalogue_new_list, menu)
 
-        setOnQueryTextChangeListener(activityBinding?.searchToolbar?.searchView, onlyOnSubmit = true, hideKbOnSubmit = true) {
+        setOnQueryTextChangeListener(
+            activityBinding?.searchToolbar?.searchView,
+            onlyOnSubmit = true,
+            hideKbOnSubmit = true,
+        ) {
             presenter.search(it ?: "")
             setTitle() // Update toolbar title
             true

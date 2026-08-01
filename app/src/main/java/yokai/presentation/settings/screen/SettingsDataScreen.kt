@@ -98,7 +98,9 @@ object SettingsDataScreen : ComposableSettings() {
     }
 
     @Composable
-    private fun getStorageLocationPreference(storagePreferences: StoragePreferences): Preference.PreferenceItem.TextPreference {
+    private fun getStorageLocationPreference(
+        storagePreferences: StoragePreferences,
+    ): Preference.PreferenceItem.TextPreference {
         val context = LocalContext.current
         val pickStoragePicker = storageLocationPicker(storagePreferences.baseStorageDirectory())
 
@@ -111,7 +113,7 @@ object SettingsDataScreen : ComposableSettings() {
                 } catch (e: ActivityNotFoundException) {
                     context.toast(MR.strings.file_picker_error)
                 }
-            }
+            },
         )
     }
 
@@ -244,7 +246,8 @@ object SettingsDataScreen : ComposableSettings() {
                 ),
                 Preference.PreferenceItem.InfoPreference(
                     stringResource(MR.strings.backup_info) +
-                        "\n\n" + stringResource(MR.strings.last_auto_backup_info, relativeTimeSpanString(lastAutoBackup)),
+                        "\n\n" +
+                        stringResource(MR.strings.last_auto_backup_info, relativeTimeSpanString(lastAutoBackup)),
                 ),
             ),
         )
@@ -289,11 +292,13 @@ object SettingsDataScreen : ComposableSettings() {
                             try {
                                 val deletedFiles = chapterCache.clear()
                                 withUIContext {
-                                    context.toast(context.getString(
-                                        MR.plurals.cache_cleared,
-                                        deletedFiles,
-                                        deletedFiles,
-                                    ))
+                                    context.toast(
+                                        context.getString(
+                                            MR.plurals.cache_cleared,
+                                            deletedFiles,
+                                            deletedFiles,
+                                        ),
+                                    )
                                     cacheReadableSizeSema++
                                 }
                             } catch (e: Throwable) {
@@ -315,7 +320,7 @@ object SettingsDataScreen : ComposableSettings() {
                             coverCache.deleteAllCachedCovers()
                             withUIContext { onlineCoverCacheSizeSema++ }
                         }
-                    }
+                    },
                 ),
                 Preference.PreferenceItem.TextPreference(
                     title = stringResource(MR.strings.clean_up_cached_covers),
@@ -329,7 +334,7 @@ object SettingsDataScreen : ComposableSettings() {
                             coverCache.deleteOldCovers()
                             withUIContext { chapterCoverCacheSizeSema++ }
                         }
-                    }
+                    },
                 ),
                 /*
                 Preference.PreferenceItem.SwitchPreference(

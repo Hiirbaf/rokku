@@ -42,7 +42,8 @@ abstract class LibraryItem(
     ) {
         holder.onSetValues(this)
         (holder as? LibraryGridHolder)?.setSelected(adapter.isSelected(position))
-        (holder.itemView.layoutParams as? StaggeredGridLayoutManager.LayoutParams)?.isFullSpan = this is LibraryPlaceholderItem
+        (holder.itemView.layoutParams as? StaggeredGridLayoutManager.LayoutParams)?.isFullSpan =
+            this is LibraryPlaceholderItem
     }
 
     companion object {

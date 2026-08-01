@@ -42,7 +42,7 @@ class ForwardSlantedShape(private val slantAmount: Float) : Shape {
                 lineTo(size.width, size.height)
                 lineTo(0f, size.height)
                 close()
-            }
+            },
         )
     }
 }
@@ -69,11 +69,11 @@ data class BadgeSegment(
                         fontSize = fontSize,
                         style = TextStyle(
                             platformStyle = PlatformTextStyle(
-                                includeFontPadding = false
+                                includeFontPadding = false,
                             ),
                         ),
                     )
-                }
+                },
             )
         }
     }
@@ -94,7 +94,7 @@ fun Badge(
             .height(height)
             .clip(CutCornerShape(bottomEnd = 5.dp)),
         horizontalArrangement = Arrangement.spacedBy(-slant),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         segments.forEachIndexed { index, segment ->
             val isFirst = index == 0
@@ -106,15 +106,17 @@ fun Badge(
             val rightStructuralPad = if (isLast || segment.fillEntireSegment) 0.dp else slant
 
             val startPad = leftStructuralPad +
-                if (segment.fillEntireSegment)
+                if (segment.fillEntireSegment) {
                     0.dp
-                else
+                } else {
                     segment.contentPadding.calculateStartPadding(layoutDirection).let { if (isFirst) it + 4.dp else it }
+                }
             val endPad = rightStructuralPad +
-                if (segment.fillEntireSegment)
+                if (segment.fillEntireSegment) {
                     0.dp
-                else
+                } else {
                     segment.contentPadding.calculateEndPadding(layoutDirection).let { if (isLast) it + 4.dp else it }
+                }
             val topPad = if (segment.fillEntireSegment) 0.dp else segment.contentPadding.calculateTopPadding()
             val bottomPad = if (segment.fillEntireSegment) 0.dp else segment.contentPadding.calculateBottomPadding()
 
@@ -124,7 +126,7 @@ fun Badge(
                     .clip(shape)
                     .background(segment.backgroundColor)
                     .padding(start = startPad, end = endPad, top = topPad, bottom = bottomPad),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 segment.content()
             }

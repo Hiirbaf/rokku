@@ -1,13 +1,13 @@
 package eu.kanade.tachiyomi.ui.recents
 
 import android.view.View
-import eu.kanade.tachiyomi.R
-import yokai.i18n.MR
-import yokai.util.lang.getString
 import dev.icerock.moko.resources.compose.stringResource
+import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.databinding.RecentsFooterItemBinding
 import eu.kanade.tachiyomi.ui.manga.chapter.BaseChapterHolder
 import eu.kanade.tachiyomi.util.view.setText
+import yokai.i18n.MR
+import yokai.util.lang.getString
 
 class RecentMangaFooterHolder(
     view: View,
@@ -20,6 +20,7 @@ class RecentMangaFooterHolder(
             RecentMangaHeaderItem.CONTINUE_READING -> {
                 binding.title.setText(MR.strings.view_history)
             }
+
             RecentMangaHeaderItem.NEW_CHAPTERS -> {
                 binding.title.setText(MR.strings.view_all_updates)
             }

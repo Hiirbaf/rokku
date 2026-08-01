@@ -27,7 +27,9 @@ class CategoryItem(val category: Category, val itemCount: Int? = null) : Abstrac
         override fun bindView(item: CategoryItem, payloads: List<Any>) {
             val catText = item.category.name + if (item.itemCount != null) {
                 " (${item.itemCount})"
-            } else { "" }
+            } else {
+                ""
+            }
             categoryTitle.text = catText
         }
 

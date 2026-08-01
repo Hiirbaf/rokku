@@ -20,12 +20,12 @@ import eu.kanade.tachiyomi.ui.reader.settings.ReadingModeType
 import eu.kanade.tachiyomi.ui.reader.viewer.ViewerNavigation
 import eu.kanade.tachiyomi.ui.recents.RecentsPresenter
 import eu.kanade.tachiyomi.util.system.Themes
-import java.text.DateFormat
-import java.util.Locale
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import java.text.DateFormat
+import java.util.Locale
 import eu.kanade.tachiyomi.data.preference.PreferenceKeys as Keys
 import eu.kanade.tachiyomi.data.preference.PreferenceValues as Values
 
@@ -154,7 +154,10 @@ class PreferencesHelper(val context: Context, val preferenceStore: PreferenceSto
 
     fun readerVerticalSeekbarModes() = preferenceStore.getStringSet(
         Keys.readerVerticalSeekbarModes,
-        setOf(ReadingModeType.LONG_STRIP.prefValue.toString(), ReadingModeType.CONTINUOUS_VERTICAL.prefValue.toString()),
+        setOf(
+            ReadingModeType.LONG_STRIP.prefValue.toString(),
+            ReadingModeType.CONTINUOUS_VERTICAL.prefValue.toString(),
+        ),
     )
 
     fun readerVerticalSeekbarDockLeft() = preferenceStore.getBoolean(Keys.readerVerticalSeekbarDockLeft, false)
@@ -163,7 +166,10 @@ class PreferencesHelper(val context: Context, val preferenceStore: PreferenceSto
 
     fun showNavigationOverlayNewUser() = preferenceStore.getBoolean(Keys.showNavigationOverlayNewUser, true)
 
-    fun showNavigationOverlayNewUserWebtoon() = preferenceStore.getBoolean(Keys.showNavigationOverlayNewUserWebtoon, true)
+    fun showNavigationOverlayNewUserWebtoon() = preferenceStore.getBoolean(
+        Keys.showNavigationOverlayNewUserWebtoon,
+        true,
+    )
 
     fun preloadSize() = preferenceStore.getInt(Keys.preloadSize, 6)
 
@@ -221,9 +227,15 @@ class PreferencesHelper(val context: Context, val preferenceStore: PreferenceSto
 
     fun libraryUpdateLastTimestamp() = preferenceStore.getLong("library_update_last_timestamp", 0L)
 
-    fun libraryUpdateDeviceRestriction() = preferenceStore.getStringSet("library_update_restriction", setOf(DEVICE_ONLY_ON_WIFI))
+    fun libraryUpdateDeviceRestriction() = preferenceStore.getStringSet(
+        "library_update_restriction",
+        setOf(DEVICE_ONLY_ON_WIFI),
+    )
 
-    fun libraryUpdateMangaRestriction() = preferenceStore.getStringSet("library_update_manga_restriction", setOf(MANGA_HAS_UNREAD, MANGA_NON_COMPLETED, MANGA_NON_READ))
+    fun libraryUpdateMangaRestriction() = preferenceStore.getStringSet(
+        "library_update_manga_restriction",
+        setOf(MANGA_HAS_UNREAD, MANGA_NON_COMPLETED, MANGA_NON_READ),
+    )
 
     fun libraryUpdateCategories() = preferenceStore.getStringSet("library_update_categories", emptySet())
     fun libraryUpdateCategoriesExclude() = preferenceStore.getStringSet("library_update_categories_exclude", emptySet())
@@ -259,10 +271,16 @@ class PreferencesHelper(val context: Context, val preferenceStore: PreferenceSto
     fun automaticExtUpdates() = preferenceStore.getBoolean(Keys.automaticExtUpdates, true)
 
     // TODO: SourcePref
-    fun installedExtensionsOrder() = preferenceStore.getInt(Keys.installedExtensionsOrder, InstalledExtensionsOrder.Name.value)
+    fun installedExtensionsOrder() = preferenceStore.getInt(
+        Keys.installedExtensionsOrder,
+        InstalledExtensionsOrder.Name.value,
+    )
 
     // TODO: SourcePref
-    fun migrationSourceOrder() = preferenceStore.getInt("migration_source_order", Values.MigrationSourceOrder.Alphabetically.value)
+    fun migrationSourceOrder() = preferenceStore.getInt(
+        "migration_source_order",
+        Values.MigrationSourceOrder.Alphabetically.value,
+    )
 
     fun collapsedCategories() = preferenceStore.getStringSet("collapsed_categories", mutableSetOf())
 
@@ -329,7 +347,10 @@ class PreferencesHelper(val context: Context, val preferenceStore: PreferenceSto
 
     fun collapseGroupedUpdates() = preferenceStore.getBoolean("group_chapters_updates", false)
 
-    fun groupChaptersHistory() = preferenceStore.getEnum("group_chapters_history_type", RecentsPresenter.GroupType.ByWeek)
+    fun groupChaptersHistory() = preferenceStore.getEnum(
+        "group_chapters_history_type",
+        RecentsPresenter.GroupType.ByWeek,
+    )
 
     fun collapseGroupedHistory() = preferenceStore.getBoolean("collapse_group_history", true)
 
@@ -355,7 +376,10 @@ class PreferencesHelper(val context: Context, val preferenceStore: PreferenceSto
 
     fun showAllCategories() = preferenceStore.getBoolean("show_all_categories", true)
 
-    fun showAllCategoriesWhenSearchingSingleCategory() = preferenceStore.getBoolean("show_all_categories_when_searching_single_category", false)
+    fun showAllCategoriesWhenSearchingSingleCategory() = preferenceStore.getBoolean(
+        "show_all_categories_when_searching_single_category",
+        false,
+    )
 
     fun hopperGravity() = preferenceStore.getInt("hopper_gravity", 1)
 
@@ -414,7 +438,10 @@ class PreferencesHelper(val context: Context, val preferenceStore: PreferenceSto
     fun appShouldAutoUpdate() = preferenceStore.getInt(Keys.shouldAutoUpdate, AppDownloadInstallJob.ONLY_ON_UNMETERED)
 
     // TODO: SourcePref
-    fun autoUpdateExtensions() = preferenceStore.getInt(Keys.autoUpdateExtensions, AppDownloadInstallJob.ONLY_ON_UNMETERED)
+    fun autoUpdateExtensions() = preferenceStore.getInt(
+        Keys.autoUpdateExtensions,
+        AppDownloadInstallJob.ONLY_ON_UNMETERED,
+    )
 
     fun filterChapterByRead() = preferenceStore.getInt(Keys.defaultChapterFilterByRead, Manga.SHOW_ALL)
 
@@ -422,13 +449,19 @@ class PreferencesHelper(val context: Context, val preferenceStore: PreferenceSto
 
     fun filterChapterByBookmarked() = preferenceStore.getInt(Keys.defaultChapterFilterByBookmarked, Manga.SHOW_ALL)
 
-    fun sortChapterOrder() = preferenceStore.getInt(Keys.defaultChapterSortBySourceOrNumber, Manga.CHAPTER_SORTING_SOURCE)
+    fun sortChapterOrder() = preferenceStore.getInt(
+        Keys.defaultChapterSortBySourceOrNumber,
+        Manga.CHAPTER_SORTING_SOURCE,
+    )
 
     fun hideChapterTitlesByDefault() = preferenceStore.getBoolean(Keys.hideChapterTitles, false)
 
     fun chaptersDescAsDefault() = preferenceStore.getBoolean(Keys.chaptersDescAsDefault, true)
 
-    fun sortChapterByAscendingOrDescending() = preferenceStore.getInt(Keys.defaultChapterSortByAscendingOrDescending, Manga.CHAPTER_SORT_DESC)
+    fun sortChapterByAscendingOrDescending() = preferenceStore.getInt(
+        Keys.defaultChapterSortByAscendingOrDescending,
+        Manga.CHAPTER_SORT_DESC,
+    )
 
     fun coverRatios() = preferenceStore.getStringSet(Keys.coverRatios, emptySet())
 

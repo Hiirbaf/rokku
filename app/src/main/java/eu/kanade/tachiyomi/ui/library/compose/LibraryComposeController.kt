@@ -18,7 +18,6 @@ import eu.kanade.tachiyomi.ui.library.models.LibraryItem
 import eu.kanade.tachiyomi.ui.main.BottomSheetController
 import eu.kanade.tachiyomi.ui.main.FloatingSearchInterface
 import eu.kanade.tachiyomi.ui.main.RootSearchInterface
-import java.util.Locale
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 import yokai.domain.ui.UiPreferences
@@ -26,12 +25,13 @@ import yokai.i18n.MR
 import yokai.presentation.library.LibraryContent
 import yokai.presentation.theme.YokaiTheme
 import yokai.util.lang.getString
+import java.util.Locale
 
 class LibraryComposeController(
     bundle: Bundle? = null,
     val uiPreferences: UiPreferences = Injekt.get(),
     val preferences: PreferencesHelper = Injekt.get(),
-) : BaseCoroutineController<LibraryControllerBinding, LibraryComposePresenter>(bundle) ,
+) : BaseCoroutineController<LibraryControllerBinding, LibraryComposePresenter>(bundle),
     BottomSheetController,
     RootSearchInterface,
     FloatingSearchInterface {

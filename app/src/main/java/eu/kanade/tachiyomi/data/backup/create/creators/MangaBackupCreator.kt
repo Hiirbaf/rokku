@@ -47,8 +47,9 @@ class MangaBackupCreator(
                 handler.awaitList {
                     chaptersQueries.getChaptersByMangaId(
                         it,
-                        0,  // We want all chapters, so ignore scanlator filter
-                        BackupChapter::mapper)
+                        0, // We want all chapters, so ignore scanlator filter
+                        BackupChapter::mapper,
+                    )
                 }
             }.orEmpty()
             if (chapters.isNotEmpty()) {

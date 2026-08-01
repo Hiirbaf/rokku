@@ -140,7 +140,12 @@ class SettingsReaderController : SettingsLegacyController() {
 
                     onClick {
                         val intent = Intent().apply {
-                            setComponent(ComponentName("com.android.settings", "com.vivo.settings.display.FullScreenDisplayActivity"))
+                            setComponent(
+                                ComponentName(
+                                    "com.android.settings",
+                                    "com.vivo.settings.display.FullScreenDisplayActivity",
+                                ),
+                            )
                         }
                         startActivity(intent)
                     }
@@ -148,7 +153,8 @@ class SettingsReaderController : SettingsLegacyController() {
             }
             listPreference(activity) {
                 bindTo(readerPreferences.landscapeCutoutBehavior())
-                title = "${context.getString(MR.strings.cutout_area_behavior)} (${context.getString(MR.strings.landscape)})"
+                title =
+                    "${context.getString(MR.strings.cutout_area_behavior)} (${context.getString(MR.strings.landscape)})"
                 val values = LandscapeCutoutBehaviour.entries
                 entriesRes = values.map { it.titleResId }.toTypedArray()
                 entryValues = values.map { it.name }

@@ -10,11 +10,11 @@ import androidx.core.view.setPadding
 import androidx.preference.Preference
 import androidx.preference.PreferenceViewHolder
 import com.google.android.material.card.MaterialCardView
+import dev.icerock.moko.resources.compose.stringResource
 import eu.kanade.tachiyomi.R
+import eu.kanade.tachiyomi.util.system.dpToPx
 import yokai.i18n.MR
 import yokai.util.lang.getString
-import dev.icerock.moko.resources.compose.stringResource
-import eu.kanade.tachiyomi.util.system.dpToPx
 import android.R as AR
 
 class TrackerPreference @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) :

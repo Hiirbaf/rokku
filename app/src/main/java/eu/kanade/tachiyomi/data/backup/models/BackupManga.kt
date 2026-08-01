@@ -95,7 +95,7 @@ data class BackupManga(
             customStatus != 0
         ) {
             return CustomMangaInfo(
-                mangaId= 0L,
+                mangaId = 0L,
                 title = customTitle,
                 author = customAuthor,
                 artist = customArtist,

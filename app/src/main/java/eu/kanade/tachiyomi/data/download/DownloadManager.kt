@@ -285,7 +285,13 @@ class DownloadManager(
      * @param manga the manga of the chapters.
      * @param source the source of the chapters.
      */
-    suspend fun cleanupChapters(allChapters: List<Chapter>, manga: Manga, source: Source, removeRead: Boolean, removeNonFavorite: Boolean): Int {
+    suspend fun cleanupChapters(
+        allChapters: List<Chapter>,
+        manga: Manga,
+        source: Source,
+        removeRead: Boolean,
+        removeNonFavorite: Boolean,
+    ): Int {
         var cleaned = 0
 
         if (removeNonFavorite && !manga.favorite) {

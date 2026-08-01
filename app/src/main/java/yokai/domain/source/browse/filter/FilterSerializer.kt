@@ -2,8 +2,6 @@ package yokai.domain.source.browse.filter
 
 import eu.kanade.tachiyomi.source.model.Filter
 import eu.kanade.tachiyomi.source.model.FilterList
-import kotlin.reflect.KMutableProperty1
-import kotlin.reflect.full.isSubclassOf
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.boolean
@@ -17,6 +15,8 @@ import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.long
 import kotlinx.serialization.json.put
 import kotlinx.serialization.json.putJsonObject
+import kotlin.reflect.KMutableProperty1
+import kotlin.reflect.full.isSubclassOf
 
 class FilterSerializer {
     private val serializers = listOf<Serializer<*>>(

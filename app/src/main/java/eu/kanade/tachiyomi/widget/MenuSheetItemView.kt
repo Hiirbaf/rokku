@@ -12,12 +12,12 @@ import androidx.annotation.StringRes
 import androidx.core.view.isGone
 import androidx.core.widget.TextViewCompat
 import dev.icerock.moko.resources.StringResource
-import eu.kanade.tachiyomi.R
-import yokai.i18n.MR
-import yokai.util.lang.getString
 import dev.icerock.moko.resources.compose.stringResource
+import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.databinding.MenuSheetItemBinding
 import eu.kanade.tachiyomi.util.system.getResourceColor
+import yokai.i18n.MR
+import yokai.util.lang.getString
 
 class MenuSheetItemView constructor(context: Context, attrs: AttributeSet?) :
     LinearLayout(context, attrs) {

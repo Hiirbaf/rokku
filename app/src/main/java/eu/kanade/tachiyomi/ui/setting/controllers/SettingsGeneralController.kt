@@ -11,8 +11,6 @@ import androidx.core.os.LocaleListCompat
 import androidx.preference.PreferenceScreen
 import eu.kanade.tachiyomi.BuildConfig
 import eu.kanade.tachiyomi.R
-import yokai.i18n.MR
-import yokai.util.lang.getString
 import eu.kanade.tachiyomi.data.updater.AppDownloadInstallJob
 import eu.kanade.tachiyomi.ui.setting.SettingsLegacyController
 import eu.kanade.tachiyomi.ui.setting.ThemePreference
@@ -25,16 +23,18 @@ import eu.kanade.tachiyomi.ui.setting.onChange
 import eu.kanade.tachiyomi.ui.setting.onClick
 import eu.kanade.tachiyomi.ui.setting.preference
 import eu.kanade.tachiyomi.ui.setting.preferenceCategory
-import eu.kanade.tachiyomi.ui.setting.summaryMRes as summaryRes
 import eu.kanade.tachiyomi.ui.setting.switchPreference
-import eu.kanade.tachiyomi.ui.setting.titleMRes as titleRes
 import eu.kanade.tachiyomi.util.lang.addBetaTag
 import eu.kanade.tachiyomi.util.lang.compareToCaseInsensitiveNaturalOrder
 import eu.kanade.tachiyomi.util.system.LocaleHelper
 import eu.kanade.tachiyomi.util.system.systemLangContext
 import yokai.domain.base.BasePreferences
+import yokai.i18n.MR
+import yokai.util.lang.getString
 import java.util.*
 import eu.kanade.tachiyomi.data.preference.PreferenceKeys as Keys
+import eu.kanade.tachiyomi.ui.setting.summaryMRes as summaryRes
+import eu.kanade.tachiyomi.ui.setting.titleMRes as titleRes
 
 class SettingsGeneralController : SettingsLegacyController() {
 
@@ -136,7 +136,8 @@ class SettingsGeneralController : SettingsLegacyController() {
                     key = Keys.shouldAutoUpdate
                     titleRes = MR.strings.auto_update_app
                     entryRange = 0..2
-                    entriesRes = arrayOf(MR.strings.over_any_network, MR.strings.over_wifi_only, MR.strings.dont_auto_update)
+                    entriesRes =
+                        arrayOf(MR.strings.over_any_network, MR.strings.over_wifi_only, MR.strings.dont_auto_update)
                     defaultValue = AppDownloadInstallJob.ONLY_ON_UNMETERED
                 }
             }

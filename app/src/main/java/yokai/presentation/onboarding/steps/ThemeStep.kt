@@ -24,17 +24,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.app.ActivityCompat
 import com.google.android.material.color.DynamicColors
-import eu.kanade.tachiyomi.R
-import yokai.i18n.MR
-import yokai.util.lang.getString
 import dev.icerock.moko.resources.compose.stringResource
+import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.core.storage.preference.collectAsState
 import eu.kanade.tachiyomi.data.preference.PreferencesHelper
 import eu.kanade.tachiyomi.util.system.Themes
 import eu.kanade.tachiyomi.util.system.appDelegateNightMode
 import uy.kohesive.injekt.injectLazy
+import yokai.i18n.MR
 import yokai.presentation.component.ThemeItem
 import yokai.presentation.theme.Size
+import yokai.util.lang.getString
 
 internal class ThemeStep : OnboardingStep {
     override val isComplete: Boolean = true
@@ -93,13 +93,13 @@ internal class ThemeStep : OnboardingStep {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(text = stringResource(MR.strings.follow_system_theme))
                 Switch(
                     checked = nightMode == AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM,
                     colors = SwitchDefaults.colors(
-                        checkedTrackColor = MaterialTheme.colorScheme.primary
+                        checkedTrackColor = MaterialTheme.colorScheme.primary,
                     ),
                     onCheckedChange = {
                         when (it) {
@@ -111,15 +111,16 @@ internal class ThemeStep : OnboardingStep {
                                     ActivityCompat.recreate(activity)
                                 }
                             }
+
                             false -> preferences.nightMode().set(context.appDelegateNightMode())
                         }
-                    }
+                    },
                 )
             }
 
             Row(
                 modifier = Modifier.horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.spacedBy(Size.medium)
+                horizontalArrangement = Arrangement.spacedBy(Size.medium),
             ) {
                 lightThemes.forEach { theme ->
                     val isSelected =
@@ -136,15 +137,15 @@ internal class ThemeStep : OnboardingStep {
                                 context,
                                 isSelected = isSelected,
                                 followingSystemTheme = followingSystemTheme,
-                                isDarkTheme = false
+                                isDarkTheme = false,
                             )
-                        }
+                        },
                     )
                 }
             }
             Row(
                 modifier = Modifier.horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.spacedBy(Size.medium)
+                horizontalArrangement = Arrangement.spacedBy(Size.medium),
             ) {
                 darkThemes.forEach { theme ->
                     val isSelected =
@@ -161,9 +162,9 @@ internal class ThemeStep : OnboardingStep {
                                 context,
                                 isSelected = isSelected,
                                 followingSystemTheme = followingSystemTheme,
-                                isDarkTheme = true
+                                isDarkTheme = true,
                             )
-                        }
+                        },
                     )
                 }
             }
@@ -175,11 +176,13 @@ internal class ThemeStep : OnboardingStep {
         isDarkTheme: Boolean,
         darkAppTheme: Themes,
         lightAppTheme: Themes,
-        nightMode: Int
+        nightMode: Int,
     ): Boolean {
         return when (nightMode) {
             AppCompatDelegate.MODE_NIGHT_YES -> darkAppTheme == theme && isDarkTheme
+
             AppCompatDelegate.MODE_NIGHT_NO -> lightAppTheme == theme && !isDarkTheme
+
             else ->
                 (darkAppTheme == theme && isDarkTheme) || (lightAppTheme == theme && !isDarkTheme)
         }
@@ -190,7 +193,7 @@ internal class ThemeStep : OnboardingStep {
         context: Context,
         isSelected: Boolean,
         followingSystemTheme: Boolean,
-        isDarkTheme: Boolean
+        isDarkTheme: Boolean,
     ) {
         val nightMode =
             when (isDarkTheme) {
@@ -198,6 +201,7 @@ internal class ThemeStep : OnboardingStep {
                     preferences.darkTheme().set(theme)
                     AppCompatDelegate.MODE_NIGHT_YES
                 }
+
                 false -> {
                     preferences.lightTheme().set(theme)
                     AppCompatDelegate.MODE_NIGHT_NO

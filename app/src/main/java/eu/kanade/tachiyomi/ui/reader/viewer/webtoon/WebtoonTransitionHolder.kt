@@ -69,7 +69,12 @@ class WebtoonTransitionHolder(
      * Binds the given [transition] with this view holder, subscribing to its state.
      */
     fun bind(transition: ChapterTransition) {
-        transitionView.bind(viewer.config.readerTheme, transition, viewer.downloadManager, viewer.activity.viewModel.manga)
+        transitionView.bind(
+            viewer.config.readerTheme,
+            transition,
+            viewer.downloadManager,
+            viewer.activity.viewModel.manga,
+        )
 
         transition.to?.let { observeStatus(it, transition) }
     }
@@ -93,7 +98,9 @@ class WebtoonTransitionHolder(
                     pagesContainer.removeAllViews()
                     when (state) {
                         is ReaderChapter.State.Loading -> setLoading()
+
                         is ReaderChapter.State.Error -> setError(state.error, transition)
+
                         is ReaderChapter.State.Wait, is ReaderChapter.State.Loaded -> {
                             // No additional view is added
                         }

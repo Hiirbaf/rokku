@@ -18,7 +18,6 @@ import eu.kanade.tachiyomi.ui.manga.MangaDetailsController
 import eu.kanade.tachiyomi.util.view.setCards
 import eu.kanade.tachiyomi.util.view.setVectorCompat
 import eu.kanade.tachiyomi.util.view.withFadeTransaction
-import java.text.DecimalFormat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -34,6 +33,7 @@ import yokai.domain.manga.models.cover
 import yokai.i18n.MR
 import yokai.util.coil.loadManga
 import yokai.util.lang.getString
+import java.text.DecimalFormat
 
 class MigrationProcessHolder(
     private val view: View,

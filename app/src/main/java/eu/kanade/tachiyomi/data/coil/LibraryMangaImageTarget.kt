@@ -48,9 +48,12 @@ fun Palette.getBestColor(): Int? {
     return when {
         (dominantSwatch?.hsl?.get(1) ?: 0f) >= .25f &&
             domLum <= .8f && domLum > .2f -> dominantSwatch?.rgb
+
         vibPopulation >= mutedPopulation * 0.75f -> vibrantSwatch?.rgb
+
         mutedPopulation > vibPopulation * 1.5f &&
             (mutedSwatch?.hsl?.get(1) ?: 0f) > mutedSaturationLimit -> mutedSwatch?.rgb
+
         else -> arrayListOf(vibrantSwatch, lightVibrantSwatch, darkVibrantSwatch).maxByOrNull {
             if (it === vibrantSwatch) (it?.population ?: -1) * 3 else it?.population ?: -1
         }?.rgb

@@ -21,7 +21,9 @@ open class ListMatPreference @JvmOverloads constructor(
     var entryValues: List<String> = emptyList()
     var entriesRes: Array<StringResource>
         get() = emptyArray()
-        set(value) { entries = value.map { context.getString(it) } }
+        set(value) {
+            entries = value.map { context.getString(it) }
+        }
     private var defValue: String = ""
     var tempEntry: String? = null
     var tempValue: Int? = null

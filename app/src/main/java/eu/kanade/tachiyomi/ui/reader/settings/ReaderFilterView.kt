@@ -178,7 +178,8 @@ class ReaderFilterView @JvmOverloads constructor(context: Context, attrs: Attrib
             binding.txtBrightnessSliderValue.text = value.toString()
             window?.attributes = window?.attributes?.apply { screenBrightness = max(0.01f, value / 100f) }
         } else {
-            window?.attributes = window?.attributes?.apply { screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE }
+            window?.attributes =
+                window?.attributes?.apply { screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE }
         }
     }
 

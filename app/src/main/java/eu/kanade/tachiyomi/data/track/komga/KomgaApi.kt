@@ -43,10 +43,10 @@ class KomgaApi(private val client: OkHttpClient) {
                         .newCall(
                             GET(
                                 "${
-                                url.replace(
-                                    "/api/v1/series/",
-                                    "/api/v2/series/",
-                                )
+                                    url.replace(
+                                        "/api/v1/series/",
+                                        "/api/v2/series/",
+                                    )
                                 }/read-progress/tachiyomi",
                             ),
                         )

@@ -35,7 +35,10 @@ class AboutController : BaseComposeController() {
         )
     }
 
-    @Deprecated("Use [DialogHostState.showNewUpdateDialog] instead", ReplaceWith("DialogHostState.showNewUpdateDialog()"))
+    @Deprecated(
+        "Use [DialogHostState.showNewUpdateDialog] instead",
+        ReplaceWith("DialogHostState.showNewUpdateDialog()"),
+    )
     class NewUpdateDialogController(bundle: Bundle? = null) : DialogController(bundle) {
 
         constructor(body: String, url: String, isBeta: Boolean?) : this(

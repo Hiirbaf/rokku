@@ -17,10 +17,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.adapters.ItemAdapter
 import com.mikepenz.fastadapter.listeners.ClickEventHook
-import eu.kanade.tachiyomi.R
-import yokai.i18n.MR
-import yokai.util.lang.getString
 import dev.icerock.moko.resources.compose.stringResource
+import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.databinding.ReaderChaptersSheetBinding
 import eu.kanade.tachiyomi.ui.reader.ReaderActivity
 import eu.kanade.tachiyomi.ui.reader.ReaderViewModel
@@ -33,6 +31,8 @@ import eu.kanade.tachiyomi.util.view.expand
 import eu.kanade.tachiyomi.util.view.isCollapsed
 import eu.kanade.tachiyomi.util.view.isExpanded
 import kotlinx.coroutines.launch
+import yokai.i18n.MR
+import yokai.util.lang.getString
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -102,7 +102,11 @@ class ReaderChapterSheet @JvmOverloads constructor(context: Context, attrs: Attr
                     binding.chapterRecycler.alpha = trueProgress
                     if (activity.sheetManageNavColor && progress > 0f) {
                         activity.window.navigationBarColor =
-                            lerpColor(ColorUtils.setAlphaComponent(navPrimary, if (hasLightNav) 0 else 179), navPrimary, trueProgress)
+                            lerpColor(
+                                ColorUtils.setAlphaComponent(navPrimary, if (hasLightNav) 0 else 179),
+                                navPrimary,
+                                trueProgress,
+                            )
                     }
                     if (lastScale != 1f && scaleY != 1f) {
                         val scaleProgress = ((1f - progress) * (1f - lastScale)) + lastScale
@@ -161,10 +165,10 @@ class ReaderChapterSheet @JvmOverloads constructor(context: Context, attrs: Attr
                     activity.reEnableBackPressedCallBack()
 
                     if ((
-                        state == BottomSheetBehavior.STATE_COLLAPSED ||
-                            state == BottomSheetBehavior.STATE_EXPANDED ||
-                            state == BottomSheetBehavior.STATE_HIDDEN
-                        ) &&
+                            state == BottomSheetBehavior.STATE_COLLAPSED ||
+                                state == BottomSheetBehavior.STATE_EXPANDED ||
+                                state == BottomSheetBehavior.STATE_HIDDEN
+                            ) &&
                         scaleY != 1f
                     ) {
                         scaleX = 1f
@@ -193,7 +197,11 @@ class ReaderChapterSheet @JvmOverloads constructor(context: Context, attrs: Attr
                     activity.isScrollingThroughPagesOrChapters = true
 
                     loadingPos = position
-                    val itemView = (binding.chapterRecycler.findViewHolderForAdapterPosition(position) as? ReaderChapterItem.ViewHolder)?.binding
+                    val itemView = (
+                        binding.chapterRecycler.findViewHolderForAdapterPosition(
+                            position,
+                        ) as? ReaderChapterItem.ViewHolder
+                        )?.binding
                     itemView?.bookmarkImage?.isVisible = false
                     itemView?.progress?.isVisible = true
                     activity.lifecycleScope.launch {
@@ -264,7 +272,11 @@ class ReaderChapterSheet @JvmOverloads constructor(context: Context, attrs: Attr
     }
 
     fun resetChapter() {
-        val itemView = (binding.chapterRecycler.findViewHolderForAdapterPosition(loadingPos) as? ReaderChapterItem.ViewHolder)?.binding
+        val itemView = (
+            binding.chapterRecycler.findViewHolderForAdapterPosition(
+                loadingPos,
+            ) as? ReaderChapterItem.ViewHolder
+            )?.binding
         itemView?.bookmarkImage?.isVisible = true
         itemView?.progress?.isVisible = false
     }

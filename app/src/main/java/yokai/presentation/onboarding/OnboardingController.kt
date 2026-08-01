@@ -15,7 +15,6 @@ class OnboardingController :
 
     @Composable
     override fun ScreenContent() {
-
         val hasShownOnboarding by basePreferences.hasShownOnboarding().collectAsState()
 
         val finishOnboarding: () -> Unit = {
@@ -31,7 +30,7 @@ class OnboardingController :
         )
 
         OnboardingScreen(
-            onComplete = finishOnboarding
+            onComplete = finishOnboarding,
         )
     }
 }

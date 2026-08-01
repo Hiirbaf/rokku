@@ -27,9 +27,6 @@ import eu.kanade.tachiyomi.util.view.checkHeightThen
 import eu.kanade.tachiyomi.util.view.expand
 import eu.kanade.tachiyomi.widget.E2EBottomSheetDialog
 import eu.kanade.tachiyomi.widget.TriStateCheckBox
-import java.util.Date
-import java.util.Locale
-import kotlin.math.max
 import kotlinx.coroutines.runBlocking
 import uy.kohesive.injekt.injectLazy
 import yokai.domain.category.interactor.GetCategories
@@ -38,6 +35,9 @@ import yokai.domain.manga.interactor.UpdateManga
 import yokai.domain.manga.models.MangaUpdate
 import yokai.i18n.MR
 import yokai.util.lang.getString
+import java.util.Date
+import java.util.Locale
+import kotlin.math.max
 
 class SetCategoriesSheet(
     private val activity: Activity,
@@ -202,7 +202,9 @@ class SetCategoriesSheet(
             },
             when (items.size) {
                 0 -> context.getString(MR.strings.default_category).lowercase(Locale.ROOT)
+
                 1 -> items.firstOrNull()?.name ?: ""
+
                 else -> context.getString(
                     MR.plurals.category_plural,
                     items.size,
@@ -252,7 +254,8 @@ class SetCategoriesSheet(
                     categories.mapIndexed { index, category ->
                         AddCategoryItem(category).apply {
                             skipInversed =
-                                preselected.getOrElse(index) { TriStateCheckBox.State.UNCHECKED } != TriStateCheckBox.State.IGNORE
+                                preselected.getOrElse(index) { TriStateCheckBox.State.UNCHECKED } !=
+                                TriStateCheckBox.State.IGNORE
                             state = map[category.id] ?: TriStateCheckBox.State.CHECKED
                         }
                     },
@@ -280,7 +283,7 @@ class SetCategoriesSheet(
                         id = manga.id!!,
                         favorite = manga.favorite,
                         dateAdded = manga.date_added,
-                    )
+                    ),
                 )
             }
         }

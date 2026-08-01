@@ -9,6 +9,7 @@ import android.graphics.RenderEffect
 import android.graphics.Shader
 import android.graphics.drawable.BitmapDrawable
 import android.os.Build
+import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -52,7 +53,6 @@ import eu.kanade.tachiyomi.util.view.resetStrokeColor
 import io.noties.markwon.Markwon
 import io.noties.markwon.SoftBreakAddsNewLinePlugin
 import io.noties.markwon.linkify.LinkifyPlugin
-import android.text.method.LinkMovementMethod
 import yokai.i18n.MR
 import yokai.util.coil.MarkwonCoil3ImagesPlugin
 import yokai.util.coil.loadManga
@@ -199,7 +199,8 @@ class MangaHeaderHolder(
                 true
             }
             trackButton.setOnClickListener { adapter.delegate.showTrackingSheet() }
-            relatedRecycler?.layoutManager = LinearLayoutManager(itemView.context, LinearLayoutManager.HORIZONTAL, false)
+            relatedRecycler?.layoutManager =
+                LinearLayoutManager(itemView.context, LinearLayoutManager.HORIZONTAL, false)
             relatedRecycler?.adapter = relatedCardAdapter
             relatedTitleWrapper?.setOnClickListener { adapter.delegate.openRelatedMangaScreen() }
             if (startExpanded) {
@@ -238,7 +239,10 @@ class MangaHeaderHolder(
             binding.lessButton.isVisible = !isTablet
             binding.moreButtonGroup.isVisible = false
             if (animated) {
-                val animVector = AnimatedVectorDrawableCompat.create(binding.root.context, R.drawable.anim_expand_more_to_less)
+                val animVector = AnimatedVectorDrawableCompat.create(
+                    binding.root.context,
+                    R.drawable.anim_expand_more_to_less,
+                )
                 binding.lessButton.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, animVector, null)
                 animVector?.start()
             }
@@ -304,7 +308,13 @@ class MangaHeaderHolder(
 
     private fun setDescription() {
         if (binding != null) {
-            val desc = adapter.controller.mangaPresenter().manga.description?.replace("<", "&lt;")?.replace(">", "&gt;")?.replace(Regex("""(?m)^\s*-\s*$"""), "\\-")?.replace(Regex("""(?m)^\s*\*\s*$"""), "\\*")
+            val desc = adapter.controller.mangaPresenter().manga.description?.replace(
+                "<",
+                "&lt;",
+            )?.replace(
+                ">",
+                "&gt;",
+            )?.replace(Regex("""(?m)^\s*-\s*$"""), "\\-")?.replace(Regex("""(?m)^\s*\*\s*$"""), "\\*")
             binding.mangaSummary.movementMethod = LinkMovementMethod.getInstance()
             binding.mangaSummary.text = when {
                 desc.isNullOrBlank() -> itemView.context.getString(MR.strings.no_description)
@@ -326,6 +336,7 @@ class MangaHeaderHolder(
             chapterBinding.filtersText.text = presenter.currentFilters()
         }
     }
+
     // updatereadingbutton fixes issue where fixing skipped chapter marking & latency caused button text to not update until reloaded
     // though it still functioned properly without correct chapter number text, directing to correct unread chapter number.
     // Updating this button still introduces slight latency when manuallying marking chapters with header visible but is near nonexistent now.
@@ -359,6 +370,7 @@ class MangaHeaderHolder(
             }
         }
     }
+
     @SuppressLint("SetTextI18n", "StringFormatInvalid")
     fun bind(item: MangaHeaderItem) {
         val presenter = adapter.delegate.mangaPresenter()
@@ -560,7 +572,10 @@ class MangaHeaderHolder(
             val accentArray = FloatArray(3)
 
             ColorUtils.colorToHSL(baseTagColor, bgArray)
-            ColorUtils.colorToHSL(adapter.delegate.accentColor() ?: context.getResourceColor(R.attr.colorSecondary), accentArray)
+            ColorUtils.colorToHSL(
+                adapter.delegate.accentColor() ?: context.getResourceColor(R.attr.colorSecondary),
+                accentArray,
+            )
             val downloadedColor = ColorUtils.setAlphaComponent(
                 ColorUtils.HSLToColor(
                     floatArrayOf(

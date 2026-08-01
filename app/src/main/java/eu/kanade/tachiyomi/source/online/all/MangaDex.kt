@@ -10,7 +10,6 @@ import eu.kanade.tachiyomi.source.model.SChapter
 import eu.kanade.tachiyomi.source.model.SManga
 import eu.kanade.tachiyomi.source.online.DelegatedHttpSource
 import eu.kanade.tachiyomi.source.online.HttpSource
-import java.util.Locale
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
@@ -22,6 +21,7 @@ import uy.kohesive.injekt.injectLazy
 import yokai.domain.manga.interactor.GetManga
 import yokai.i18n.MR
 import yokai.util.lang.getString
+import java.util.Locale
 
 class MangaDex(delegate: HttpSource) : DelegatedHttpSource(delegate) {
 

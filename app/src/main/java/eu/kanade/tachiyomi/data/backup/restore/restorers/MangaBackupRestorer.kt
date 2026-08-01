@@ -14,7 +14,6 @@ import eu.kanade.tachiyomi.source.model.SChapter
 import eu.kanade.tachiyomi.util.chapter.ChapterUtil
 import eu.kanade.tachiyomi.util.manga.MangaUtil
 import eu.kanade.tachiyomi.util.system.launchNow
-import kotlin.math.max
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 import yokai.data.DatabaseHandler
@@ -31,6 +30,7 @@ import yokai.domain.manga.interactor.InsertManga
 import yokai.domain.manga.interactor.UpdateManga
 import yokai.domain.track.interactor.GetTrack
 import yokai.domain.track.interactor.InsertTrack
+import kotlin.math.max
 
 class MangaBackupRestorer(
     private val customMangaManager: CustomMangaManager = Injekt.get(),
@@ -67,7 +67,16 @@ class MangaBackupRestorer(
             val dbManga = getManga.awaitByUrlAndSource(manga.url, manga.source)
             if (dbManga == null) {
                 // Manga not in database
-                restoreNewManga(manga, chapters, categories, history, tracks, backupCategories, filteredScanlators, customManga)
+                restoreNewManga(
+                    manga,
+                    chapters,
+                    categories,
+                    history,
+                    tracks,
+                    backupCategories,
+                    filteredScanlators,
+                    customManga,
+                )
             } else {
                 // Manga in database
                 // Copy information from manga already in database
@@ -76,7 +85,16 @@ class MangaBackupRestorer(
                 manga.copyFrom(dbManga)
                 updateManga.await(manga.toMangaUpdate())
                 // Fetch rest of manga information
-                restoreExistingManga(manga, chapters, categories, history, tracks, backupCategories, filteredScanlators, customManga)
+                restoreExistingManga(
+                    manga,
+                    chapters,
+                    categories,
+                    history,
+                    tracks,
+                    backupCategories,
+                    filteredScanlators,
+                    customManga,
+                )
             }
         } catch (e: Exception) {
             onError(manga, e)

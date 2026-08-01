@@ -44,7 +44,7 @@ class AboutLicenseScreen : Screen() {
                         ),
                     )
                     true
-                }
+                },
             )
         }
     }

@@ -19,8 +19,14 @@ import eu.kanade.tachiyomi.util.system.getResourceColor
 class FloatingToolbar @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) :
     BaseToolbar(context, attrs) {
 
-    private val actionColorAlpha = ColorUtils.setAlphaComponent(context.getResourceColor(R.attr.actionBarTintColor), 200)
-    private val actionColorAlphaSecondary = ColorUtils.setAlphaComponent(context.getResourceColor(R.attr.actionBarTintColor), 150)
+    private val actionColorAlpha = ColorUtils.setAlphaComponent(
+        context.getResourceColor(R.attr.actionBarTintColor),
+        200,
+    )
+    private val actionColorAlphaSecondary = ColorUtils.setAlphaComponent(
+        context.getResourceColor(R.attr.actionBarTintColor),
+        150,
+    )
 
     private lateinit var toolbarsubTitle: TextView
     private lateinit var cardIncogImage: ImageView

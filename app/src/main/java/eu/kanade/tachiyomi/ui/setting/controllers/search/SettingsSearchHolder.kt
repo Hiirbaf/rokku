@@ -2,15 +2,15 @@ package eu.kanade.tachiyomi.ui.setting.controllers.search
 
 import android.view.View
 import androidx.core.graphics.ColorUtils
+import dev.icerock.moko.resources.compose.stringResource
 import eu.davidea.viewholders.FlexibleViewHolder
 import eu.kanade.tachiyomi.R
-import yokai.i18n.MR
-import yokai.util.lang.getString
-import dev.icerock.moko.resources.compose.stringResource
 import eu.kanade.tachiyomi.databinding.SettingsSearchControllerCardBinding
 import eu.kanade.tachiyomi.ui.setting.SettingsLegacyController
 import eu.kanade.tachiyomi.util.lang.highlightText
 import eu.kanade.tachiyomi.util.system.getResourceColor
+import yokai.i18n.MR
+import yokai.util.lang.getString
 import kotlin.reflect.full.createInstance
 
 /**
@@ -46,6 +46,7 @@ class SettingsSearchHolder(view: View, val adapter: SettingsSearchAdapter) :
         val color = ColorUtils.setAlphaComponent(itemView.context.getResourceColor(R.attr.colorSecondary), 75)
         binding.searchResultPrefTitle.text = item.settingsSearchResult.title.highlightText(item.searchResult, color)
         binding.searchResultPrefSummary.text = item.settingsSearchResult.summary.highlightText(item.searchResult, color)
-        binding.searchResultPrefBreadcrumb.text = item.settingsSearchResult.breadcrumb.highlightText(item.searchResult, color)
+        binding.searchResultPrefBreadcrumb.text =
+            item.settingsSearchResult.breadcrumb.highlightText(item.searchResult, color)
     }
 }

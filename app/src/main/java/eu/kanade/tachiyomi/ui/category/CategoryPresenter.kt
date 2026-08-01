@@ -122,7 +122,7 @@ class CategoryPresenter(
                         CategoryUpdate(
                             id = category.id!!.toLong(),
                             order = category.order.toLong(),
-                        )
+                        ),
                     )
                 }
             updateCategories.await(updates)
@@ -155,7 +155,7 @@ class CategoryPresenter(
                 CategoryUpdate(
                     id = category.id!!.toLong(),
                     name = category.name,
-                )
+                ),
             )
         }
         categories.find { it.id == category.id }?.name = name

@@ -16,7 +16,8 @@ fun WindowInsetsCompat.getBottomGestureInsets(): Int {
 /** returns if device using gesture nav and supports true edge to edge */
 fun WindowInsetsCompat.isBottomTappable() =
     Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q &&
-        getInsetsIgnoringVisibility(systemBars()).bottom != getInsetsIgnoringVisibility(mandatorySystemGestures()).bottom
+        getInsetsIgnoringVisibility(systemBars()).bottom !=
+        getInsetsIgnoringVisibility(mandatorySystemGestures()).bottom
 
 val View.rootWindowInsetsCompat
     get() = rootWindowInsets?.let { WindowInsetsCompat.toWindowInsetsCompat(it) }

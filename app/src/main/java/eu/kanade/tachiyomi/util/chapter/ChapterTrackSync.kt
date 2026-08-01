@@ -33,7 +33,7 @@ suspend fun syncChaptersWithTrackServiceTwoWay(
     remoteTrack: Track,
     service: TrackService,
     updateChapter: UpdateChapter = Injekt.get(),
-    insertTrack: InsertTrack = Injekt.get()
+    insertTrack: InsertTrack = Injekt.get(),
 ) = withIOContext {
     if (service !is EnhancedTrackService) {
         return@withIOContext

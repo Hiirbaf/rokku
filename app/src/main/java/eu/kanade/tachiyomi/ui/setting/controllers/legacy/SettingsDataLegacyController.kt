@@ -328,7 +328,7 @@ class SettingsDataLegacyController : SettingsLegacyController() {
                 val listView = (dialog as AlertDialog).listView
                 val booleanArrayList = arrayListOf(true)
                 // TODO: Allow library_entries to be disabled
-                for (i in 1 until listView.count) {  // skip 0, since 0 is always enabled
+                for (i in 1 until listView.count) { // skip 0, since 0 is always enabled
                     booleanArrayList.add(listView.isItemChecked(i))
                 }
                 createBackup(BackupOptions.fromBooleanArray(booleanArrayList.toBooleanArray()), picker = true)
@@ -348,16 +348,16 @@ class SettingsDataLegacyController : SettingsLegacyController() {
             var message = activity.getString(MR.strings.restore_content_full)
             if (results.missingSources.isNotEmpty()) {
                 message += "\n\n${activity.getString(MR.strings.restore_missing_sources)}\n${
-                results.missingSources.joinToString(
-                    "\n",
-                ) { "- $it" }
+                    results.missingSources.joinToString(
+                        "\n",
+                    ) { "- $it" }
                 }"
             }
             if (results.missingTrackers.isNotEmpty()) {
                 message += "\n\n${activity.getString(MR.strings.restore_missing_trackers)}\n${
-                results.missingTrackers.joinToString(
-                    "\n",
-                ) { "- $it" }
+                    results.missingTrackers.joinToString(
+                        "\n",
+                    ) { "- $it" }
                 }"
             }
 

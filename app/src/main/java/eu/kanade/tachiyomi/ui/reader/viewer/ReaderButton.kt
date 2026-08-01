@@ -5,11 +5,11 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.MotionEvent
 import com.google.android.material.button.MaterialButton
+import dev.icerock.moko.resources.compose.stringResource
 import eu.kanade.tachiyomi.R
+import eu.kanade.tachiyomi.ui.reader.viewer.pager.PagerViewer
 import yokai.i18n.MR
 import yokai.util.lang.getString
-import dev.icerock.moko.resources.compose.stringResource
-import eu.kanade.tachiyomi.ui.reader.viewer.pager.PagerViewer
 
 /**
  * A button class to be used by child views of the pager viewer. All tap gestures are handled by

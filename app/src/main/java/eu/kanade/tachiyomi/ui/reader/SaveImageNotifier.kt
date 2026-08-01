@@ -9,14 +9,14 @@ import coil3.imageLoader
 import coil3.request.CachePolicy
 import coil3.request.ImageRequest
 import com.hippo.unifile.UniFile
-import eu.kanade.tachiyomi.R
-import yokai.i18n.MR
-import yokai.util.lang.getString
 import dev.icerock.moko.resources.compose.stringResource
+import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.data.notification.NotificationHandler
 import eu.kanade.tachiyomi.data.notification.NotificationReceiver
 import eu.kanade.tachiyomi.data.notification.Notifications
 import eu.kanade.tachiyomi.util.system.notificationManager
+import yokai.i18n.MR
+import yokai.util.lang.getString
 import android.R as AR
 
 /**
@@ -42,7 +42,9 @@ class SaveImageNotifier(private val context: Context) {
      * @param file image file containing downloaded page image.
      */
     fun onComplete(file: UniFile) {
-        val request = ImageRequest.Builder(context).memoryCachePolicy(CachePolicy.DISABLED).diskCachePolicy(CachePolicy.DISABLED)
+        val request = ImageRequest.Builder(
+            context,
+        ).memoryCachePolicy(CachePolicy.DISABLED).diskCachePolicy(CachePolicy.DISABLED)
             .data(file.uri)
             .size(720, 1280)
             .target(

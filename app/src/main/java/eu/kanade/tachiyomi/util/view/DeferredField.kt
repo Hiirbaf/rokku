@@ -24,7 +24,7 @@ class DeferredField<T> {
      * Calling this more than once is a no-op after the first call.
      */
     fun initialize(content: T) {
-        if (initialized) return  // Guard: already initialized, nothing to do
+        if (initialized) return // Guard: already initialized, nothing to do
 
         // Fast-path new listeners
         this.content = content
@@ -40,7 +40,7 @@ class DeferredField<T> {
      * Safe to call multiple times — uses tryLock() correctly and only unlocks if we won the lock.
      */
     fun set(content: T) {
-        val locked = mutex.tryLock()  // Returns false if already unlocked (already initialized)
+        val locked = mutex.tryLock() // Returns false if already unlocked (already initialized)
         this.content = content
         initialized = true
         // Only unlock if we successfully locked — avoids IllegalStateException

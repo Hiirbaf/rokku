@@ -7,8 +7,8 @@ import android.webkit.CookieManager
 import android.webkit.WebSettings
 import android.webkit.WebView
 import co.touchlab.kermit.Logger
-import kotlin.coroutines.resume
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
 
 object WebViewUtil {
     private const val CHROME_PACKAGE = "com.android.chrome"

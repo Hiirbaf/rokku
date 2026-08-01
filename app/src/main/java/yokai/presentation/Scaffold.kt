@@ -52,10 +52,11 @@ fun YokaiScaffold(
     val (color, scrolledColor) = getTopAppBarColor(title)
 
     SideEffect {
-        val activity  = view.context as Activity
+        val activity = view.context as Activity
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.VANILLA_ICE_CREAM)
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.VANILLA_ICE_CREAM) {
                 activity.window.statusBarColor = Color.Transparent.toArgb()
+            }
             WindowInsetsControllerCompat(activity.window, view).isAppearanceLightStatusBars = useDarkIcons
         }
     }
@@ -86,6 +87,7 @@ fun YokaiScaffold(
                     textFieldState = textFieldState,
                     searchResult = searchResult,
                 )
+
                 AppBarType.LARGE -> JayExpandedTopAppBar(
                     title = {
                         Text(text = title)
@@ -107,6 +109,7 @@ fun YokaiScaffold(
                     textFieldState = textFieldState,
                     searchResult = searchResult,
                 )
+
                 AppBarType.NONE -> {}
             }
         },

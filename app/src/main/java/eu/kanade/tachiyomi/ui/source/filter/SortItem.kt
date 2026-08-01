@@ -2,16 +2,16 @@ package eu.kanade.tachiyomi.ui.source.filter
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
+import dev.icerock.moko.resources.compose.stringResource
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.items.AbstractSectionableItem
 import eu.davidea.flexibleadapter.items.IFlexible
 import eu.davidea.viewholders.FlexibleViewHolder
 import eu.kanade.tachiyomi.R
-import yokai.i18n.MR
-import yokai.util.lang.getString
-import dev.icerock.moko.resources.compose.stringResource
 import eu.kanade.tachiyomi.source.model.Filter
 import eu.kanade.tachiyomi.widget.SortTextView
+import yokai.i18n.MR
+import yokai.util.lang.getString
 
 class SortItem(val name: String, val group: SortGroup) : AbstractSectionableItem<SortItem.Holder, SortGroup>(group) {
 
@@ -58,7 +58,10 @@ class SortItem(val name: String, val group: SortGroup) : AbstractSectionableItem
         return result
     }
 
-    class Holder(view: View, adapter: FlexibleAdapter<IFlexible<RecyclerView.ViewHolder>>) : FlexibleViewHolder(view, adapter) {
+    class Holder(view: View, adapter: FlexibleAdapter<IFlexible<RecyclerView.ViewHolder>>) : FlexibleViewHolder(
+        view,
+        adapter,
+    ) {
 
         val text: SortTextView = itemView.findViewById(R.id.nav_view_item)
     }

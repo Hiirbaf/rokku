@@ -31,10 +31,10 @@ import eu.kanade.tachiyomi.util.view.activityBinding
 import eu.kanade.tachiyomi.util.view.fullAppBarHeight
 import eu.kanade.tachiyomi.util.view.scrollViewWith
 import eu.kanade.tachiyomi.util.view.snack
-import kotlin.math.max
-import kotlin.math.roundToInt
 import yokai.i18n.MR
 import yokai.util.lang.getString
+import kotlin.math.max
+import kotlin.math.roundToInt
 import android.R as AR
 
 class ClearDatabaseController :
@@ -162,11 +162,13 @@ class ClearDatabaseController :
         val adapter = adapter ?: return false
         when (item.itemId) {
             R.id.action_select_all -> adapter.selectAll()
+
             R.id.action_select_inverse -> {
                 adapter.currentItems.forEachIndexed { index, _ ->
                     adapter.toggleSelection(index)
                 }
             }
+
             R.id.action_sort_alpha, R.id.action_sort_largest -> {
                 val sortBy = when (item.itemId) {
                     R.id.action_sort_alpha -> ClearDatabasePresenter.SortSources.ALPHA
@@ -177,6 +179,7 @@ class ClearDatabaseController :
                 item.isChecked = true
                 adapter.clearSelection()
             }
+
             R.id.action_select_uninstalled -> {
                 val currentSelection = adapter.selectedPositionsAsSet
                 val uninstalledSelection = (0 until adapter.itemCount)

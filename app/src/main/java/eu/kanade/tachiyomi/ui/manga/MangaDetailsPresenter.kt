@@ -72,10 +72,6 @@ import eu.kanade.tachiyomi.util.system.launchUI
 import eu.kanade.tachiyomi.util.system.withIOContext
 import eu.kanade.tachiyomi.util.system.withUIContext
 import eu.kanade.tachiyomi.widget.TriStateCheckBox
-import java.io.File
-import java.io.FileOutputStream
-import java.io.OutputStream
-import java.util.Locale
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -111,6 +107,10 @@ import yokai.domain.track.interactor.InsertTrack
 import yokai.i18n.MR
 import yokai.util.isLewd
 import yokai.util.lang.getString
+import java.io.File
+import java.io.FileOutputStream
+import java.io.OutputStream
+import java.util.Locale
 
 class MangaDetailsPresenter(
     val mangaId: Long,
@@ -170,7 +170,7 @@ class MangaDetailsPresenter(
     var allHistory: List<History> = emptyList()
         private set
 
-    val headerItem: MangaHeaderItem by lazy { MangaHeaderItem(mangaId, view?.fromCatalogue == true)}
+    val headerItem: MangaHeaderItem by lazy { MangaHeaderItem(mangaId, view?.fromCatalogue == true) }
     val relatedMangaItem: RelatedMangaHeaderItem by lazy { RelatedMangaHeaderItem(mangaId) }
     var tabletChapterHeaderItem: MangaHeaderItem? = null
         get() {
@@ -180,6 +180,7 @@ class MangaDetailsPresenter(
                         isChapterHeader = true
                     }
                 }
+
                 else -> if (field != null) {
                     field = null
                 }
@@ -438,9 +439,17 @@ class MangaDetailsPresenter(
 
     fun getChapterUrl(chapter: Chapter): String? {
         val source = source as? HttpSource ?: return null
-        val chapterUrl = try { source.getChapterUrl(chapter) } catch (_: Exception) { null }
+        val chapterUrl = try {
+            source.getChapterUrl(chapter)
+        } catch (_: Exception) {
+            null
+        }
         return chapterUrl.takeIf { !it.isNullOrBlank() }
-            ?: try { source.getChapterUrl(manga, chapter) } catch (_: Exception) { null }
+            ?: try {
+                source.getChapterUrl(manga, chapter)
+            } catch (_: Exception) {
+                null
+            }
     }
 
     private fun getScrollType(chapters: List<ChapterItem>) {
@@ -502,7 +511,11 @@ class MangaDetailsPresenter(
     fun deleteChapters(chapters: List<ChapterItem>, update: Boolean = true, isEverything: Boolean = false) {
         chapters.forEach { chapter ->
             this.chapters.find { it.id == chapter.id }?.apply {
-                if (chapter.chapter.bookmark && !preferences.removeBookmarkedChapters().get() && !isEverything) return@apply
+                if (chapter.chapter.bookmark && !preferences.removeBookmarkedChapters().get() &&
+                    !isEverything
+                ) {
+                    return@apply
+                }
                 status = Download.State.NOT_DOWNLOADED
                 download = null
             }
@@ -808,7 +821,9 @@ class MangaDetailsPresenter(
     fun hideTitle(hide: Boolean) {
         manga.displayMode = if (hide) Manga.CHAPTER_DISPLAY_NUMBER else Manga.CHAPTER_DISPLAY_NAME
         manga.setFilterToLocal()
-        presenterScope.launchNonCancellableIO { updateManga.await(MangaUpdate(manga.id!!, chapterFlags = manga.chapter_flags)) }
+        presenterScope.launchNonCancellableIO {
+            updateManga.await(MangaUpdate(manga.id!!, chapterFlags = manga.chapter_flags))
+        }
         if (mangaFilterMatchesDefault()) {
             manga.setFilterToGlobal()
         }
@@ -863,10 +878,42 @@ class MangaDetailsPresenter(
         val filtersId = mutableListOf<StringResource?>()
         filtersId.add(if (manga.readFilter(preferences) == Manga.CHAPTER_SHOW_READ) MR.strings.read else null)
         filtersId.add(if (manga.readFilter(preferences) == Manga.CHAPTER_SHOW_UNREAD) MR.strings.unread else null)
-        filtersId.add(if (manga.downloadedFilter(preferences) == Manga.CHAPTER_SHOW_DOWNLOADED) MR.strings.downloaded else null)
-        filtersId.add(if (manga.downloadedFilter(preferences) == Manga.CHAPTER_SHOW_NOT_DOWNLOADED) MR.strings.not_downloaded else null)
-        filtersId.add(if (manga.bookmarkedFilter(preferences) == Manga.CHAPTER_SHOW_BOOKMARKED) MR.strings.bookmarked else null)
-        filtersId.add(if (manga.bookmarkedFilter(preferences) == Manga.CHAPTER_SHOW_NOT_BOOKMARKED) MR.strings.not_bookmarked else null)
+        filtersId.add(
+            if (manga.downloadedFilter(preferences) ==
+                Manga.CHAPTER_SHOW_DOWNLOADED
+            ) {
+                MR.strings.downloaded
+            } else {
+                null
+            },
+        )
+        filtersId.add(
+            if (manga.downloadedFilter(preferences) ==
+                Manga.CHAPTER_SHOW_NOT_DOWNLOADED
+            ) {
+                MR.strings.not_downloaded
+            } else {
+                null
+            },
+        )
+        filtersId.add(
+            if (manga.bookmarkedFilter(preferences) ==
+                Manga.CHAPTER_SHOW_BOOKMARKED
+            ) {
+                MR.strings.bookmarked
+            } else {
+                null
+            },
+        )
+        filtersId.add(
+            if (manga.bookmarkedFilter(preferences) ==
+                Manga.CHAPTER_SHOW_NOT_BOOKMARKED
+            ) {
+                MR.strings.not_bookmarked
+            } else {
+                null
+            },
+        )
         filtersId.add(if (isScanlatorFiltered()) MR.strings.scanlators else null)
         return filtersId.filterNotNull()
             .joinToString(", ") { view?.view?.context?.getString(it) ?: "" }
@@ -878,7 +925,7 @@ class MangaDetailsPresenter(
             MangaUtil.setScanlatorFilter(
                 updateManga,
                 manga,
-                if (filteredScanlators.size == allChapterScanlators.size) emptySet() else filteredScanlators
+                if (filteredScanlators.size == allChapterScanlators.size) emptySet() else filteredScanlators,
             )
             asyncUpdateMangaAndChapters(true)
         }
@@ -896,15 +943,17 @@ class MangaDetailsPresenter(
     fun confirmDeletion() {
         presenterScope.launchNonCancellableIO {
             manga.removeCover(coverCache)
-            customMangaManager.saveMangaInfo(CustomMangaInfo(
-                mangaId = manga.id!!,
-                title = null,
-                author = null,
-                artist = null,
-                description = null,
-                genre = null,
-                status = null,
-            ))
+            customMangaManager.saveMangaInfo(
+                CustomMangaInfo(
+                    mangaId = manga.id!!,
+                    title = null,
+                    author = null,
+                    artist = null,
+                    description = null,
+                    genre = null,
+                    status = null,
+                ),
+            )
             downloadManager.deleteManga(manga, source)
             asyncUpdateMangaAndChapters(true)
         }
@@ -986,7 +1035,7 @@ class MangaDetailsPresenter(
                         description = manga.originalDescription,
                         genres = manga.originalGenre?.split(", ").orEmpty(),
                         status = manga.ogStatus,
-                    )
+                    ),
                 )
             }
         } else {
@@ -1083,7 +1132,9 @@ class MangaDetailsPresenter(
     }
 
     private fun saveCover(directory: UniFile): UniFile {
-        val cover = coverCache.getCustomCoverFile(manga).takeIf { it.exists() } ?: coverCache.getCoverFile(manga.thumbnail_url, !manga.favorite)
+        val cover =
+            coverCache.getCustomCoverFile(manga).takeIf { it.exists() }
+                ?: coverCache.getCoverFile(manga.thumbnail_url, !manga.favorite)
         val type = cover?.let { ImageUtil.findImageType(it.inputStream()) }
             ?: throw Exception("Not an image")
 

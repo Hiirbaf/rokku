@@ -10,7 +10,7 @@ import kotlin.math.pow
 import kotlin.math.sign
 
 class LibraryCategoryGestureDetector(private val controller: LibraryController?) : GestureDetector
-.SimpleOnGestureListener() {
+    .SimpleOnGestureListener() {
     var locked = false
     var cancelled = false
     private val poa = 1.7f

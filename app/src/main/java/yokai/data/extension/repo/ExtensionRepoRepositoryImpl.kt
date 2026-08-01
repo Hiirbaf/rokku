@@ -8,7 +8,7 @@ import yokai.domain.extension.repo.ExtensionRepoRepository
 import yokai.domain.extension.repo.exception.SaveExtensionRepoException
 import yokai.domain.extension.repo.model.ExtensionRepo
 
-class ExtensionRepoRepositoryImpl(private val handler: DatabaseHandler): ExtensionRepoRepository {
+class ExtensionRepoRepositoryImpl(private val handler: DatabaseHandler) : ExtensionRepoRepository {
     override fun subscribeAll(): Flow<List<ExtensionRepo>> =
         handler.subscribeToList { extension_reposQueries.findAll(::mapExtensionRepo) }
 
@@ -19,7 +19,9 @@ class ExtensionRepoRepositoryImpl(private val handler: DatabaseHandler): Extensi
         handler.awaitOneOrNull { extension_reposQueries.findOne(baseUrl, ::mapExtensionRepo) }
 
     override suspend fun getRepositoryBySigningKeyFingerprint(fingerprint: String): ExtensionRepo? =
-        handler.awaitOneOrNull { extension_reposQueries.findOneBySigningKeyFingerprint(fingerprint, ::mapExtensionRepo) }
+        handler.awaitOneOrNull {
+            extension_reposQueries.findOneBySigningKeyFingerprint(fingerprint, ::mapExtensionRepo)
+        }
 
     override fun getCount(): Flow<Int> =
         handler.subscribeToOne { extension_reposQueries.count() }.map { it.toInt() }
@@ -29,7 +31,7 @@ class ExtensionRepoRepositoryImpl(private val handler: DatabaseHandler): Extensi
         name: String,
         shortName: String?,
         website: String,
-        signingKeyFingerprint: String
+        signingKeyFingerprint: String,
     ) {
         try {
             handler.await { extension_reposQueries.insert(baseUrl, name, shortName, website, signingKeyFingerprint) }
@@ -43,7 +45,7 @@ class ExtensionRepoRepositoryImpl(private val handler: DatabaseHandler): Extensi
         name: String,
         shortName: String?,
         website: String,
-        signingKeyFingerprint: String
+        signingKeyFingerprint: String,
     ) {
         try {
             handler.await { extension_reposQueries.upsert(baseUrl, name, shortName, website, signingKeyFingerprint) }

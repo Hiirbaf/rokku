@@ -4,7 +4,6 @@ import android.content.Context
 import com.hippo.unifile.UniFile
 import eu.kanade.tachiyomi.data.database.models.MangaImpl
 import eu.kanade.tachiyomi.domain.manga.models.Manga
-import java.nio.charset.StandardCharsets
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
@@ -27,6 +26,7 @@ import yokai.domain.library.custom.interactor.GetCustomManga
 import yokai.domain.library.custom.interactor.RelinkCustomManga
 import yokai.domain.library.custom.model.CustomMangaInfo
 import yokai.domain.library.custom.model.CustomMangaInfo.Companion.getMangaInfo
+import java.nio.charset.StandardCharsets
 
 class CustomMangaManager(val context: Context) {
     private val scope = CoroutineScope(Dispatchers.IO)
@@ -117,12 +117,12 @@ class CustomMangaManager(val context: Context) {
     private val CustomMangaInfo.shouldDelete
         get() = (
             title == null &&
-            author == null &&
-            artist == null &&
-            description == null &&
-            genre == null &&
-            (status ?: -1) == -1
-        )
+                author == null &&
+                artist == null &&
+                description == null &&
+                genre == null &&
+                (status ?: -1) == -1
+            )
 
     suspend fun updateMangaInfo(oldId: Long?, newId: Long?, manga: CustomMangaInfo) {
         if (oldId == null || newId == null) return
@@ -258,13 +258,13 @@ class CustomMangaManager(val context: Context) {
                             web = null,
                             publishingStatus = status.takeUnless { it == 0 }?.let {
                                 ComicInfo.PublishingStatusTachiyomi(
-                                    ComicInfoPublishingStatus.toComicInfoValue(it.toLong())
+                                    ComicInfoPublishingStatus.toComicInfoValue(it.toLong()),
                                 )
                             },
                             categories = null,
                             source = null,
                             language = null,
-                        )
+                        ),
                     )
                 }
             }

@@ -57,7 +57,7 @@ internal class PermissionStep : OnboardingStep {
                     @Suppress("DEPRECATION")
                     Settings.Secure.getInt(
                         context.contentResolver,
-                        Settings.Secure.INSTALL_NON_MARKET_APPS
+                        Settings.Secure.INSTALL_NON_MARKET_APPS,
                     ) != 0
                 } || context.isShizukuInstalled
             notificationGranted = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

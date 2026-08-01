@@ -33,7 +33,7 @@ class StatsPresenter(
     private val trackManager: TrackManager = Injekt.get(),
     private val downloadManager: DownloadManager = Injekt.get(),
     private val sourceManager: SourceManager = Injekt.get(),
-): BaseCoroutinePresenter<StatsController>() {
+) : BaseCoroutinePresenter<StatsController>() {
     private val handler: DatabaseHandler by injectLazy()
     private val getLibraryManga: GetLibraryManga by injectLazy()
     private val getTrack: GetTrack by injectLazy()

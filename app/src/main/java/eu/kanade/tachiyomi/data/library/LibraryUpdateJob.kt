@@ -46,8 +46,8 @@ import eu.kanade.tachiyomi.source.model.UpdateStrategy
 import eu.kanade.tachiyomi.source.online.HttpSource
 import eu.kanade.tachiyomi.util.chapter.syncChaptersWithSource
 import eu.kanade.tachiyomi.util.chapter.syncChaptersWithTrackServiceTwoWay
-import eu.kanade.tachiyomi.util.manga.MangaShortcutManager
 import eu.kanade.tachiyomi.util.isLocal
+import eu.kanade.tachiyomi.util.manga.MangaShortcutManager
 import eu.kanade.tachiyomi.util.shouldDownloadNewChapters
 import eu.kanade.tachiyomi.util.storage.getUriCompat
 import eu.kanade.tachiyomi.util.system.createFileInCacheDir
@@ -56,12 +56,6 @@ import eu.kanade.tachiyomi.util.system.isConnectedToWifi
 import eu.kanade.tachiyomi.util.system.localeContext
 import eu.kanade.tachiyomi.util.system.tryToSetForeground
 import eu.kanade.tachiyomi.util.system.withIOContext
-import java.io.File
-import java.lang.ref.WeakReference
-import java.util.Date
-import java.util.concurrent.CancellationException
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.atomic.AtomicInteger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
@@ -93,6 +87,12 @@ import yokai.domain.track.interactor.GetTrack
 import yokai.domain.track.interactor.InsertTrack
 import yokai.i18n.MR
 import yokai.util.lang.getString
+import java.io.File
+import java.lang.ref.WeakReference
+import java.util.Date
+import java.util.concurrent.CancellationException
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicInteger
 
 class LibraryUpdateJob(private val context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
@@ -368,7 +368,9 @@ class LibraryUpdateJob(private val context: Context, workerParams: WorkerParamet
             }
         }
         newUpdates.clear()
-        if (skippedUpdates.isNotEmpty() && Notifications.isNotificationChannelEnabled(context, Notifications.CHANNEL_LIBRARY_SKIPPED)) {
+        if (skippedUpdates.isNotEmpty() &&
+            Notifications.isNotificationChannelEnabled(context, Notifications.CHANNEL_LIBRARY_SKIPPED)
+        ) {
             val skippedFile = writeErrorFile(
                 skippedUpdates,
                 "skipped",
@@ -496,7 +498,7 @@ class LibraryUpdateJob(private val context: Context, workerParams: WorkerParamet
 
             if (tags.contains(WORK_NAME_AUTO) && manga.manga.isLocal()) {
                 // This prevents data loss if files are temporarily moved when a background job runs.
-                 return@filter false
+                return@filter false
             }
 
             if (!tags.contains(WORK_NAME_AUTO) && manga.manga.isLocal()) {
@@ -507,15 +509,19 @@ class LibraryUpdateJob(private val context: Context, workerParams: WorkerParamet
                 MANGA_NON_COMPLETED in restrictions && manga.manga.status == SManga.COMPLETED -> {
                     skippedUpdates[manga.manga] = context.getString(MR.strings.skipped_reason_completed)
                 }
+
                 MANGA_HAS_UNREAD in restrictions && manga.unread != 0 -> {
                     skippedUpdates[manga.manga] = context.getString(MR.strings.skipped_reason_not_caught_up)
                 }
+
                 MANGA_NON_READ in restrictions && manga.totalChapters > 0 && !manga.hasRead -> {
                     skippedUpdates[manga.manga] = context.getString(MR.strings.skipped_reason_not_started)
                 }
+
                 manga.manga.update_strategy != UpdateStrategy.ALWAYS_UPDATE -> {
                     skippedUpdates[manga.manga] = context.getString(MR.strings.skipped_reason_not_always_update)
                 }
+
                 else -> {
                     return@filter true
                 }
@@ -577,7 +583,11 @@ class LibraryUpdateJob(private val context: Context, workerParams: WorkerParamet
     /**
      * Writes basic file of update errors to cache dir.
      */
-    private fun writeErrorFile(errors: Map<Manga, String?>, fileName: String = "errors", additionalInfo: String? = null): File {
+    private fun writeErrorFile(
+        errors: Map<Manga, String?>,
+        fileName: String = "errors",
+        additionalInfo: String? = null,
+    ): File {
         try {
             if (errors.isNotEmpty()) {
                 val file = context.createFileInCacheDir("tachiyomi_update_$fileName.txt")
@@ -700,7 +710,9 @@ class LibraryUpdateJob(private val context: Context, workerParams: WorkerParamet
 
         private var runExtensionUpdatesAfter = false
 
-        fun runExtensionUpdatesAfterJob() { runExtensionUpdatesAfter = true }
+        fun runExtensionUpdatesAfterJob() {
+            runExtensionUpdatesAfter = true
+        }
 
         fun setupTask(context: Context, prefInterval: Int? = null) {
             val preferences = Injekt.get<PreferencesHelper>()

@@ -29,14 +29,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import dev.icerock.moko.resources.compose.stringResource
 import eu.kanade.tachiyomi.R
 import yokai.i18n.MR
 import yokai.util.lang.getString
-import dev.icerock.moko.resources.compose.stringResource
 import android.R as AR
 
 private enum class State {
-    CHECKED, INVERSED, UNCHECKED
+    CHECKED,
+    INVERSED,
+    UNCHECKED,
 }
 
 @Composable

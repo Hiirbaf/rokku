@@ -68,7 +68,12 @@ class PagerTransitionHolder(
         addView(transitionView)
         addView(pagesContainer)
 
-        transitionView.bind(viewer.config.readerTheme, transition, viewer.downloadManager, viewer.activity.viewModel.manga)
+        transitionView.bind(
+            viewer.config.readerTheme,
+            transition,
+            viewer.downloadManager,
+            viewer.activity.viewModel.manga,
+        )
 
         transition.to?.let { observeStatus(it) }
 
@@ -99,7 +104,9 @@ class PagerTransitionHolder(
                     pagesContainer.removeAllViews()
                     when (state) {
                         is ReaderChapter.State.Loading -> setLoading()
+
                         is ReaderChapter.State.Error -> setError(state.error)
+
                         is ReaderChapter.State.Wait, is ReaderChapter.State.Loaded -> {
                             // No additional view is added
                         }

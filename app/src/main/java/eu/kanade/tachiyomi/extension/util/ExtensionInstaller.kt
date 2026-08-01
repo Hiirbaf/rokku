@@ -22,7 +22,6 @@ import eu.kanade.tachiyomi.util.system.e
 import eu.kanade.tachiyomi.util.system.isPackageInstalled
 import eu.kanade.tachiyomi.util.system.launchUI
 import eu.kanade.tachiyomi.util.system.toast
-import java.io.File
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -48,6 +47,7 @@ import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 import uy.kohesive.injekt.injectLazy
 import yokai.domain.base.BasePreferences
+import java.io.File
 
 /**
  * The installer which installs, updates and uninstalls the extensions.
@@ -121,7 +121,11 @@ internal class ExtensionInstaller(private val context: Context) {
      * @param url The url of the apk.
      * @param extension The extension to install.
      */
-    suspend fun downloadAndInstall(url: String, extension: ExtensionManager.ExtensionInfo, scope: CoroutineScope): Flow<ExtensionIntallInfo> {
+    suspend fun downloadAndInstall(
+        url: String,
+        extension: ExtensionManager.ExtensionInfo,
+        scope: CoroutineScope,
+    ): Flow<ExtensionIntallInfo> {
         val pkgName = extension.pkgName
 
         val oldDownload = activeDownloads[pkgName]
@@ -284,7 +288,9 @@ internal class ExtensionInstaller(private val context: Context) {
                 setInstalling(pkgName, uri.hashCode())
                 shizukuInstaller?.addToQueue(downloadId, pkgName, uri)
             }
+
             BasePreferences.ExtensionInstaller.PRIVATE -> installPrivately(downloadId, pkgName, uri)
+
             else -> {
                 val extensionManager = Injekt.get<ExtensionManager>()
                 if (extensionManager.installedExtensionsFlow.value.find { it.pkgName == pkgName }?.isShared == false) {

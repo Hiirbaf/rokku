@@ -15,7 +15,6 @@ import eu.kanade.tachiyomi.source.Source
 import eu.kanade.tachiyomi.source.SourceManager
 import eu.kanade.tachiyomi.ui.migration.MigrationFlags
 import eu.kanade.tachiyomi.util.system.launchUI
-import java.util.Date
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.withContext
@@ -36,6 +35,7 @@ import yokai.domain.manga.models.MangaUpdate
 import yokai.domain.track.interactor.GetTrack
 import yokai.domain.track.interactor.InsertTrack
 import yokai.domain.ui.UiPreferences
+import java.util.Date
 
 class MigrationProcessAdapter(
     val controller: MigrationListController,
@@ -57,6 +57,7 @@ class MigrationProcessAdapter(
     private val enhancedServices by lazy {
         Injekt.get<TrackManager>().services.filterIsInstance<EnhancedTrackService>()
     }
+
     // NEW: batch safety (snapshot of items used in Migrate All)
     private var migrationBatch: List<MigrationProcessItem> = emptyList()
 
@@ -234,7 +235,7 @@ class MigrationProcessAdapter(
                         } else if (chapter.chapter_number <= maxChapterRead) {
                             update = ChapterUpdate(
                                 id = chapter.id!!,
-                                read = true
+                                read = true,
                             )
                         }
                         update?.let { chapterUpdates.add(it) }
@@ -248,7 +249,7 @@ class MigrationProcessAdapter(
                 val categories = Injekt.get<GetCategories>().awaitByMangaId(prevManga.id)
                 Injekt.get<SetMangaCategories>().await(
                     manga.id,
-                    categories.mapNotNull { it.id?.toLong() }
+                    categories.mapNotNull { it.id?.toLong() },
                 )
             }
             // Update track
@@ -276,7 +277,7 @@ class MigrationProcessAdapter(
                     MangaUpdate(
                         id = prevManga.id!!,
                         favorite = false,
-                    )
+                    ),
                 )
             }
 
@@ -289,7 +290,7 @@ class MigrationProcessAdapter(
                 if (coverCache.getCustomCoverFile(prevManga).exists()) {
                     coverCache.setCustomCoverToCache(
                         manga,
-                        coverCache.getCustomCoverFile(prevManga).inputStream()
+                        coverCache.getCustomCoverFile(prevManga).inputStream(),
                     )
                     manga.updateCoverLastModified()
                 }
@@ -298,7 +299,7 @@ class MigrationProcessAdapter(
                     customMangaManager.updateMangaInfo(
                         prevManga.id,
                         manga.id,
-                        customManga.getMangaInfo()
+                        customManga.getMangaInfo(),
                     )
                 }
             }
@@ -309,7 +310,7 @@ class MigrationProcessAdapter(
                     title = manga.title,
                     favorite = manga.favorite,
                     dateAdded = manga.date_added,
-                )
+                ),
             )
         }
     }

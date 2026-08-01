@@ -59,7 +59,7 @@ class DownloadPageLoader(
         return pages.map { page ->
             ReaderPage(page.index, page.url, page.imageUrl, stream = {
                 context.contentResolver.openInputStream(page.uri ?: Uri.EMPTY)!!
-            },).apply {
+            }).apply {
                 status = Page.State.Ready
             }
         }

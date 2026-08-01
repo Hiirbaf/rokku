@@ -5,12 +5,12 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
 import androidx.core.view.updateLayoutParams
-import eu.kanade.tachiyomi.R
-import yokai.i18n.MR
-import yokai.util.lang.getString
 import dev.icerock.moko.resources.compose.stringResource
+import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.databinding.SortTextViewBinding
 import eu.kanade.tachiyomi.util.view.setVectorCompat
+import yokai.i18n.MR
+import yokai.util.lang.getString
 
 class SortTextView constructor(context: Context, attrs: AttributeSet?) :
     FrameLayout(context, attrs) {
@@ -89,9 +89,11 @@ class SortTextView constructor(context: Context, attrs: AttributeSet?) :
                 State.ASCENDING -> {
                     setVectorCompat(R.drawable.ic_arrow_upward_24dp, R.attr.colorSecondary)
                 }
+
                 State.DESCENDING -> {
                     setVectorCompat(R.drawable.ic_arrow_downward_24dp, R.attr.colorSecondary)
                 }
+
                 State.NONE -> {
                     setVectorCompat(R.drawable.ic_blank_24dp, R.attr.colorOnSurface)
                 }
@@ -103,7 +105,6 @@ class SortTextView constructor(context: Context, attrs: AttributeSet?) :
         ASCENDING,
         DESCENDING,
         NONE,
-        ;
     }
 
     /**

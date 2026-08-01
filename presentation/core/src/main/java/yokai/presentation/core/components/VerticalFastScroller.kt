@@ -48,15 +48,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastFirstOrNull
 import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.fastMaxBy
-import kotlin.math.abs
-import kotlin.math.max
-import kotlin.math.min
-import kotlin.math.roundToInt
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.sample
 import yokai.presentation.core.components.Scroller.STICKY_HEADER_KEY_PREFIX
+import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.roundToInt
 
 /**
  * Draws vertical fast scroller to a lazy list
@@ -194,7 +194,7 @@ fun VerticalFastScroller(
 }
 
 class DynamicGridCells(
-    val original: Any
+    val original: Any,
 ) {
     init {
         check(original is GridCells || original is StaggeredGridCells)
@@ -202,12 +202,13 @@ class DynamicGridCells(
 
     fun Density.calculateCrossAxisCellSizes(availableSize: Int, spacing: Int): IntArray =
         with(this@DynamicGridCells) {
-            if (original is GridCells)
+            if (original is GridCells) {
                 calculateCrossAxisCellSizesImpl(original, availableSize, spacing)
-            else if (original is StaggeredGridCells)
+            } else if (original is StaggeredGridCells) {
                 calculateCrossAxisCellSizesImpl(original, availableSize, spacing)
-            else
+            } else {
                 throw IllegalStateException()
+            }
         }
 }
 
@@ -335,16 +336,32 @@ fun VerticalGridFastScroller(
                         scrollItemWhole
                     }
                     when (state) {
-                        is LazyGridState -> state.layoutInfo.visibleItemsInfo.find { it.index == actualIndex }?.size?.height ?: 0
-                        is LazyStaggeredGridState -> state.layoutInfo.visibleItemsInfo.find { it.index == actualIndex }?.size?.height ?: 0
+                        is LazyGridState -> state.layoutInfo.visibleItemsInfo.find {
+                            it.index == actualIndex
+                        }?.size?.height
+                            ?: 0
+
+                        is LazyStaggeredGridState -> state.layoutInfo.visibleItemsInfo.find {
+                            it.index == actualIndex
+                        }?.size?.height
+                            ?: 0
+
                         else -> throw IllegalStateException()
                     }
                 }
                 val scrollItemOffset = scrollItemSize * offsetRatio
 
                 when (state) {
-                    is LazyGridState -> state.scrollToItem(index = scrollItemWhole, scrollOffset = scrollItemOffset.roundToInt())
-                    is LazyStaggeredGridState -> state.scrollToItem(index = scrollItemWhole, scrollOffset = scrollItemOffset.roundToInt())
+                    is LazyGridState -> state.scrollToItem(
+                        index = scrollItemWhole,
+                        scrollOffset = scrollItemOffset.roundToInt(),
+                    )
+
+                    is LazyStaggeredGridState -> state.scrollToItem(
+                        index = scrollItemWhole,
+                        scrollOffset = scrollItemOffset.roundToInt(),
+                    )
+
                     else -> throw IllegalStateException()
                 }
                 scrolled.tryEmit(Unit)
@@ -356,7 +373,7 @@ fun VerticalGridFastScroller(
                     is LazyGridState -> state.firstVisibleItemScrollOffset
                     is LazyStaggeredGridState -> state.firstVisibleItemScrollOffset
                     else -> throw IllegalStateException()
-                }
+                },
             ) {
                 val totalItemsCount = when (state) {
                     is LazyGridState -> state.layoutInfo.totalItemsCount
@@ -458,6 +475,7 @@ private fun computeScrollOffset(state: ScrollableState): Int {
 
             (itemsBefore * avgSizePerRow + (0 - startDecoratedTop)).roundToInt()
         }
+
         is LazyStaggeredGridState -> {
             val visibleItems = state.layoutInfo.visibleItemsInfo
             val startChild = visibleItems.first()
@@ -472,6 +490,7 @@ private fun computeScrollOffset(state: ScrollableState): Int {
 
             (itemsBefore * avgSizePerRow + (0 - startDecoratedTop)).roundToInt()
         }
+
         else -> throw IllegalStateException()
     }
 }
@@ -493,6 +512,7 @@ private fun computeScrollRange(state: ScrollableState): Int {
 
             (laidOutArea.toFloat() / laidOutRange * state.layoutInfo.totalItemsCount).roundToInt()
         }
+
         is LazyStaggeredGridState -> {
             val visibleItems = state.layoutInfo.visibleItemsInfo
             val startChild = visibleItems.first()
@@ -502,6 +522,7 @@ private fun computeScrollRange(state: ScrollableState): Int {
 
             (laidOutArea.toFloat() / laidOutRange * state.layoutInfo.totalItemsCount).roundToInt()
         }
+
         else -> throw IllegalStateException()
     }
 }

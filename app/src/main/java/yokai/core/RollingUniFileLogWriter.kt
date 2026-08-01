@@ -10,12 +10,6 @@ import com.hippo.unifile.UniFile
 import eu.kanade.tachiyomi.BuildConfig
 import eu.kanade.tachiyomi.util.system.launchIO
 import eu.kanade.tachiyomi.util.system.withIOContext
-import java.io.IOException
-import java.io.OutputStream
-import java.text.DateFormat
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
@@ -27,6 +21,12 @@ import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.newSingleThreadContext
+import java.io.IOException
+import java.io.OutputStream
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 /**
  * Copyright (c) 2024 Touchlab
@@ -54,7 +54,7 @@ class RollingUniFileLogWriter(
             CoroutineExceptionHandler { _, throwable ->
                 println("RollingUniFileLogWriter: Uncaught exception in writer coroutine")
                 throwable.printStackTrace()
-            }
+            },
     )
 
     private val loggingChannel: Channel<ByteArray> = Channel()
@@ -74,7 +74,8 @@ class RollingUniFileLogWriter(
                 severity = severity,
                 tag = Tag(tag),
                 message = Message(message),
-            ), throwable
+            ),
+            throwable,
         )
     }
 
@@ -97,7 +98,9 @@ class RollingUniFileLogWriter(
         return if (size > rollOnSize) {
             rollLogs()
             true
-        } else false
+        } else {
+            false
+        }
     }
 
     private fun rollLogs() {
@@ -112,7 +115,9 @@ class RollingUniFileLogWriter(
                 try {
                     sourcePath.renameTo(targetFileName)
                 } catch (e: Exception) {
-                    println("RollingUniFileLogWriter: Failed to roll log file ${sourcePath.filePath} to $targetFileName (sourcePath exists=${sourcePath.exists()})")
+                    println(
+                        "RollingUniFileLogWriter: Failed to roll log file ${sourcePath.filePath} to $targetFileName (sourcePath exists=${sourcePath.exists()})",
+                    )
                     e.printStackTrace()
                 }
             }
@@ -121,12 +126,18 @@ class RollingUniFileLogWriter(
 
     private fun fileNameForLogIndex(index: Int): String {
         val date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
-        val name = "${date}-${BuildConfig.BUILD_TYPE}"
-        return if (index == 0) "${name}.log" else "$name (${index}).log"
+        val name = "$date-${BuildConfig.BUILD_TYPE}"
+        return if (index == 0) "$name.log" else "$name ($index).log"
     }
 
     private fun pathForLogIndex(index: Int, create: Boolean = false): UniFile? {
-        return if (create) logPath.createFile(fileNameForLogIndex(index)) else logPath.findFile(fileNameForLogIndex(index))
+        return if (create) {
+            logPath.createFile(
+                fileNameForLogIndex(index),
+            )
+        } else {
+            logPath.findFile(fileNameForLogIndex(index))
+        }
     }
 
     private suspend fun writer() = withIOContext {
@@ -143,7 +154,7 @@ class RollingUniFileLogWriter(
                 .listFiles { file, filename ->
                     val match = LOG_FILE_REGEX.find(filename)
                     match?.groupValues?.get(1)?.let { key ->
-                        dupes["${key}.log"] = dupes["${key}.log"].orEmpty() + listOf(file)
+                        dupes["$key.log"] = dupes["$key.log"].orEmpty() + listOf(file)
                     }
 
                     match == null

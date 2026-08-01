@@ -4,16 +4,16 @@ import android.view.View
 import android.widget.EditText
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputLayout
+import dev.icerock.moko.resources.compose.stringResource
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
 import eu.davidea.flexibleadapter.items.IFlexible
 import eu.davidea.viewholders.FlexibleViewHolder
 import eu.kanade.tachiyomi.R
-import yokai.i18n.MR
-import yokai.util.lang.getString
-import dev.icerock.moko.resources.compose.stringResource
 import eu.kanade.tachiyomi.source.model.Filter
 import eu.kanade.tachiyomi.widget.SimpleTextWatcher
+import yokai.i18n.MR
+import yokai.util.lang.getString
 
 open class TextItem(val filter: Filter.Text) : AbstractFlexibleItem<TextItem.Holder>() {
 
@@ -47,7 +47,10 @@ open class TextItem(val filter: Filter.Text) : AbstractFlexibleItem<TextItem.Hol
         return filter.hashCode()
     }
 
-    class Holder(view: View, adapter: FlexibleAdapter<IFlexible<RecyclerView.ViewHolder>>) : FlexibleViewHolder(view, adapter) {
+    class Holder(view: View, adapter: FlexibleAdapter<IFlexible<RecyclerView.ViewHolder>>) : FlexibleViewHolder(
+        view,
+        adapter,
+    ) {
 
         val wrapper: TextInputLayout = itemView.findViewById(R.id.nav_view_item_wrapper)
         val edit: EditText = itemView.findViewById(R.id.nav_view_item)

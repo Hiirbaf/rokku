@@ -74,7 +74,6 @@ import eu.kanade.tachiyomi.util.view.withFadeTransaction
 import eu.kanade.tachiyomi.widget.AutofitRecyclerView
 import eu.kanade.tachiyomi.widget.EmptyView
 import eu.kanade.tachiyomi.widget.LinearLayoutManagerAccurateOffset
-import kotlin.math.roundToInt
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -85,6 +84,7 @@ import yokai.i18n.MR
 import yokai.presentation.core.icons.CustomIcons
 import yokai.presentation.core.icons.LocalSource
 import yokai.util.lang.getString
+import kotlin.math.roundToInt
 
 /**
  * Controller to manage the catalogues available in the app.
@@ -157,7 +157,8 @@ open class BrowseSourceController(bundle: Bundle) :
     var savedSearches by mutableStateOf(emptyList<SavedSearch>())
 
     private val isBehindGlobalSearch: Boolean
-        get() = router.backstackSize >= 2 && router.backstack[router.backstackSize - 2].controller is GlobalSearchController
+        get() = router.backstackSize >= 2 &&
+            router.backstack[router.backstackSize - 2].controller is GlobalSearchController
 
     /** Watch for manga data changes */
     private var watchJob: Job? = null
@@ -257,7 +258,8 @@ open class BrowseSourceController(bundle: Bundle) :
             oldPosition = (oldRecycler.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition()
                 .takeIf { it != RecyclerView.NO_POSITION }
                 ?: (oldRecycler.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
-            oldOffset = oldRecycler.layoutManager?.findViewByPosition(oldPosition)?.y?.minus(oldRecycler.paddingTop) ?: 0f
+            oldOffset =
+                oldRecycler.layoutManager?.findViewByPosition(oldPosition)?.y?.minus(oldRecycler.paddingTop) ?: 0f
             oldRecycler.adapter = null
 
             binding.catalogueView.removeView(oldRecycler)
@@ -267,21 +269,23 @@ open class BrowseSourceController(bundle: Bundle) :
             RecyclerView(view.context).apply {
                 id = R.id.recycler
                 layoutManager = LinearLayoutManagerAccurateOffset(context)
-                layoutParams = RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+                layoutParams =
+                    RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
                 addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
             }
         } else {
             (binding.catalogueView.inflate(R.layout.manga_recycler_autofit) as AutofitRecyclerView).apply {
                 setGridSize(preferences)
 
-                (layoutManager as androidx.recyclerview.widget.GridLayoutManager).spanSizeLookup = object : androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup() {
-                    override fun getSpanSize(position: Int): Int {
-                        return when (adapter?.getItemViewType(position)) {
-                            R.layout.manga_grid_item, null -> 1
-                            else -> spanCount
+                (layoutManager as androidx.recyclerview.widget.GridLayoutManager).spanSizeLookup =
+                    object : androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup() {
+                        override fun getSpanSize(position: Int): Int {
+                            return when (adapter?.getItemViewType(position)) {
+                                R.layout.manga_grid_item, null -> 1
+                                else -> spanCount
+                            }
                         }
                     }
-                }
             }
         }
         recycler.clipToPadding = false
@@ -311,7 +315,10 @@ open class BrowseSourceController(bundle: Bundle) :
         binding.floatingBrowseBar.applyBottomAnimatedInsets(8.dpToPx)
 
         if (oldPosition != RecyclerView.NO_POSITION) {
-            (recycler.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(oldPosition, oldOffset.roundToInt())
+            (recycler.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(
+                oldPosition,
+                oldOffset.roundToInt(),
+            )
             if (oldPosition > 0 && (activity as? MainActivity)?.currentToolbar != activityBinding?.searchToolbar) {
                 activityBinding?.appBar?.useSearchToolbarForMenu(true)
             }
@@ -470,7 +477,7 @@ open class BrowseSourceController(bundle: Bundle) :
             },
             onSavedSearchClicked = ss@{ searchId ->
                 viewScope.launchIO {
-                    val search = presenter.loadSearch(searchId)  // Grab the latest data from database
+                    val search = presenter.loadSearch(searchId) // Grab the latest data from database
                     if (search?.filters == null) return@launchIO
 
                     withUIContext {
@@ -488,7 +495,7 @@ open class BrowseSourceController(bundle: Bundle) :
                     .setPositiveButton(MR.strings.cancel, null)
                     .setNegativeButton(android.R.string.ok) { _, _ -> presenter.deleteSearch(searchId) }
                     .show()
-            }
+            },
         )
         filterSheet?.setFilters(presenter.filterItems)
         presenter.filtersChanged = false
@@ -740,7 +747,11 @@ open class BrowseSourceController(bundle: Bundle) :
 
         return when {
             error.message == null -> ""
-            error.message!!.startsWith("HTTP error") -> "${error.message}: ${activity!!.getString(MR.strings.check_site_in_web)}"
+
+            error.message!!.startsWith(
+                "HTTP error",
+            ) -> "${error.message}: ${activity!!.getString(MR.strings.check_site_in_web)}"
+
             else -> error.message!!
         }
     }

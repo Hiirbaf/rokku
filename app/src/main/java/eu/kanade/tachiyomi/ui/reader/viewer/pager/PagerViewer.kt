@@ -200,16 +200,22 @@ abstract class PagerViewer(val activity: ReaderActivity) : BaseViewer {
                 when {
                     // Use case happens on new chapter load
                     currentPage == pageF -> null
-                    currentPage is ReaderPage && pageF is ReaderPage -> if (pageF.number == (currentPage as ReaderPage).number) {
+
+                    currentPage is ReaderPage && pageF is ReaderPage -> if (pageF.number ==
+                        (currentPage as ReaderPage).number
+                    ) {
                         // the InsertPage is always the second in the reading direction
                         pageF is InsertPage
                     } else {
                         pageF.number > (currentPage as ReaderPage).number
                     }
+
                     currentPage is ChapterTransition.Prev && pageF is ReaderPage ->
                         (currentPage as ChapterTransition).from == pageF.chapter
+
                     currentPage is ChapterTransition.Next && pageF is ReaderPage ->
                         (currentPage as ChapterTransition).to == pageF.chapter
+
                     else -> true
                 }
             currentPage = pageF
@@ -217,8 +223,12 @@ abstract class PagerViewer(val activity: ReaderActivity) : BaseViewer {
                 is ReaderPage -> {
                     onReaderPageSelected(pageF, allowPreload, page.second is ReaderPage, forward)
                 }
+
                 is ChapterTransition -> onTransitionSelected(pageF)
-                else -> throw UnsupportedOperationException("${pageF::class.qualifiedName ?: "anonymous"} is not supported!")
+
+                else -> throw UnsupportedOperationException(
+                    "${pageF::class.qualifiedName ?: "anonymous"} is not supported!",
+                )
             }
         }
     }
@@ -246,7 +256,12 @@ abstract class PagerViewer(val activity: ReaderActivity) : BaseViewer {
      * Called when a [ReaderPage] is marked as active. It notifies the
      * activity of the change and requests the preload of the next chapter if this is the last page.
      */
-    private fun onReaderPageSelected(page: ReaderPage, allowPreload: Boolean, hasExtraPage: Boolean, forward: Boolean?) {
+    private fun onReaderPageSelected(
+        page: ReaderPage,
+        allowPreload: Boolean,
+        hasExtraPage: Boolean,
+        forward: Boolean?,
+    ) {
         activity.onPageSelected(page, hasExtraPage)
 
         // Notify holder of page change
@@ -467,6 +482,7 @@ abstract class PagerViewer(val activity: ReaderActivity) : BaseViewer {
                     if (!config.volumeKeysInverted) moveDown() else moveUp()
                 }
             }
+
             KeyEvent.KEYCODE_VOLUME_UP -> {
                 if (!config.volumeKeysEnabled || activity.menuVisible) {
                     return false
@@ -474,13 +490,21 @@ abstract class PagerViewer(val activity: ReaderActivity) : BaseViewer {
                     if (!config.volumeKeysInverted) moveUp() else moveDown()
                 }
             }
+
             KeyEvent.KEYCODE_DPAD_RIGHT -> if (isUp) moveRight()
+
             KeyEvent.KEYCODE_DPAD_LEFT -> if (isUp) moveLeft()
+
             KeyEvent.KEYCODE_DPAD_DOWN -> if (isUp) moveDown()
+
             KeyEvent.KEYCODE_DPAD_UP -> if (isUp) moveUp()
+
             KeyEvent.KEYCODE_PAGE_DOWN -> if (isUp) moveDown()
+
             KeyEvent.KEYCODE_PAGE_UP -> if (isUp) moveUp()
+
             KeyEvent.KEYCODE_MENU -> if (isUp) activity.toggleMenu()
+
             else -> return false
         }
         return true

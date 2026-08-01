@@ -2,14 +2,14 @@ package eu.kanade.tachiyomi.ui.source.globalsearch
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
+import dev.icerock.moko.resources.compose.stringResource
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
 import eu.davidea.flexibleadapter.items.IFlexible
 import eu.kanade.tachiyomi.R
+import eu.kanade.tachiyomi.source.CatalogueSource
 import yokai.i18n.MR
 import yokai.util.lang.getString
-import dev.icerock.moko.resources.compose.stringResource
-import eu.kanade.tachiyomi.source.CatalogueSource
 
 /**
  * Item that contains search result information.
@@ -18,7 +18,11 @@ import eu.kanade.tachiyomi.source.CatalogueSource
  * @param results the search results.
  * @param highlighted whether this search item should be highlighted/marked in the catalogue search view.
  */
-class GlobalSearchItem(val source: CatalogueSource, val results: List<GlobalSearchMangaItem>?, val highlighted: Boolean = false) :
+class GlobalSearchItem(
+    val source: CatalogueSource,
+    val results: List<GlobalSearchMangaItem>?,
+    val highlighted: Boolean = false,
+) :
     AbstractFlexibleItem<GlobalSearchHolder>() {
 
     /**
@@ -35,7 +39,10 @@ class GlobalSearchItem(val source: CatalogueSource, val results: List<GlobalSear
      *
      * @return holder of view.
      */
-    override fun createViewHolder(view: View, adapter: FlexibleAdapter<IFlexible<RecyclerView.ViewHolder>>): GlobalSearchHolder {
+    override fun createViewHolder(
+        view: View,
+        adapter: FlexibleAdapter<IFlexible<RecyclerView.ViewHolder>>,
+    ): GlobalSearchHolder {
         return GlobalSearchHolder(view, adapter as GlobalSearchAdapter)
     }
 

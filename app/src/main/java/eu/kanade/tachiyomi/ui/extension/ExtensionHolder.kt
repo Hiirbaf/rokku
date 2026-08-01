@@ -61,6 +61,7 @@ class ExtensionHolder(view: View, val adapter: ExtensionAdapter) :
                             infoText.add("")
                         }
                 }
+
                 InstalledExtensionsOrder.RecentlyInstalled -> {
                     ExtensionLoader.extensionInstallDate(itemView.context, extension)
                         .takeUnless { it == 0L }?.let {
@@ -77,6 +78,7 @@ class ExtensionHolder(view: View, val adapter: ExtensionAdapter) :
                             infoText.add("")
                         }
                 }
+
                 else -> binding.date.isVisible = false
             }
         } else {
@@ -114,12 +116,14 @@ class ExtensionHolder(view: View, val adapter: ExtensionAdapter) :
                     target(CoverViewTarget(binding.sourceImage))
                 }
             }
+
             is Extension.Installed -> {
                 binding.sourceImage.load(extension.icon)
             }
+
             is Extension.Untrusted -> {
                 binding.sourceImage.setImageDrawable(
-                    context.contextCompatDrawable(R.drawable.ic_report_24dp)
+                    context.contextCompatDrawable(R.drawable.ic_report_24dp),
                 )
             }
         }
@@ -177,10 +181,12 @@ class ExtensionHolder(view: View, val adapter: ExtensionAdapter) :
             when {
                 extension.hasUpdate -> {
                     isActivated = true
-                    stateListAnimator = AnimatorInflater.loadStateListAnimator(context, R.animator.icon_btn_state_list_anim)
+                    stateListAnimator =
+                        AnimatorInflater.loadStateListAnimator(context, R.animator.icon_btn_state_list_anim)
                     rippleColor = ColorStateList.valueOf(context.getColor(R.color.on_secondary_highlight))
                     setText(MR.strings.update)
                 }
+
                 else -> {
                     setText(MR.strings.settings)
                 }

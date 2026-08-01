@@ -21,7 +21,7 @@ fun Context.setAppIcon(basePreferences: BasePreferences, selectedIcon: BasePrefe
             packageManager.setComponentEnabledSetting(
                 componentName,
                 newState,
-                PackageManager.DONT_KILL_APP
+                PackageManager.DONT_KILL_APP,
             )
 
             if (!selectedIsEnabled) selectedIsEnabled = selectedIcon == icon

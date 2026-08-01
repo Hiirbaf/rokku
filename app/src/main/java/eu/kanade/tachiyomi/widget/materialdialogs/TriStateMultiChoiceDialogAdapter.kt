@@ -44,15 +44,20 @@ internal class TriStateMultiChoiceDialogAdapter(
             previousSelection.forEachIndexed { index, previous ->
                 val current = value[index]
                 when {
-                    current == TriStateCheckBox.State.CHECKED.ordinal && previous != TriStateCheckBox.State.CHECKED.ordinal -> {
+                    current == TriStateCheckBox.State.CHECKED.ordinal &&
+                        previous != TriStateCheckBox.State.CHECKED.ordinal -> {
                         // This value was selected
                         notifyItemChanged(index, CheckPayload)
                     }
-                    current == TriStateCheckBox.State.IGNORE.ordinal && previous != TriStateCheckBox.State.IGNORE.ordinal -> {
+
+                    current == TriStateCheckBox.State.IGNORE.ordinal &&
+                        previous != TriStateCheckBox.State.IGNORE.ordinal -> {
                         // This value was inverse selected
                         notifyItemChanged(index, InverseCheckPayload)
                     }
-                    current == TriStateCheckBox.State.UNCHECKED.ordinal && previous != TriStateCheckBox.State.UNCHECKED.ordinal -> {
+
+                    current == TriStateCheckBox.State.UNCHECKED.ordinal &&
+                        previous != TriStateCheckBox.State.UNCHECKED.ordinal -> {
                         // This value was unselected
                         notifyItemChanged(index, UncheckPayload)
                     }
@@ -65,7 +70,9 @@ internal class TriStateMultiChoiceDialogAdapter(
         val newSelection = this.currentSelection.toMutableList()
         newSelection[index] = when (currentSelection[index]) {
             TriStateCheckBox.State.CHECKED.ordinal -> TriStateCheckBox.State.IGNORE.ordinal
+
             TriStateCheckBox.State.IGNORE.ordinal -> TriStateCheckBox.State.UNCHECKED.ordinal
+
             // UNCHECKED
             else -> defaultOrdinal
         }
@@ -115,10 +122,12 @@ internal class TriStateMultiChoiceDialogAdapter(
                 holder.controlView.setState(TriStateCheckBox.State.CHECKED, true)
                 return
             }
+
             InverseCheckPayload -> {
                 holder.controlView.setState(TriStateCheckBox.State.IGNORE, true)
                 return
             }
+
             UncheckPayload -> {
                 holder.controlView.setState(TriStateCheckBox.State.UNCHECKED, true)
                 return

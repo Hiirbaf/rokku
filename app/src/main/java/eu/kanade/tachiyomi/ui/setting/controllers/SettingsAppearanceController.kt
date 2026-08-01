@@ -25,11 +25,11 @@ import eu.kanade.tachiyomi.util.system.getPrefTheme
 import eu.kanade.tachiyomi.util.system.isInNightMode
 import eu.kanade.tachiyomi.util.view.activityBinding
 import eu.kanade.tachiyomi.util.view.moveRecyclerViewUp
-import kotlin.math.max
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import yokai.i18n.MR
 import yokai.util.lang.getString
+import kotlin.math.max
 import eu.kanade.tachiyomi.data.preference.PreferenceKeys as Keys
 import eu.kanade.tachiyomi.ui.setting.summaryMRes as summaryRes
 import eu.kanade.tachiyomi.ui.setting.titleMRes as titleRes

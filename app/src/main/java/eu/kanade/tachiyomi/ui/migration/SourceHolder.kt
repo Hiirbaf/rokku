@@ -3,16 +3,16 @@ package eu.kanade.tachiyomi.ui.migration
 import android.view.View
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
-import eu.kanade.tachiyomi.R
-import yokai.i18n.MR
-import yokai.util.lang.getString
 import dev.icerock.moko.resources.compose.stringResource
+import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.databinding.MigrationCardItemBinding
 import eu.kanade.tachiyomi.source.icon
 import eu.kanade.tachiyomi.ui.base.holder.BaseFlexibleViewHolder
 import eu.kanade.tachiyomi.util.lang.withColor
 import eu.kanade.tachiyomi.util.system.LocaleHelper
 import eu.kanade.tachiyomi.util.system.getResourceColor
+import yokai.i18n.MR
+import yokai.util.lang.getString
 import java.util.Locale
 
 class SourceHolder(view: View, val adapter: SourceAdapter) :
@@ -34,6 +34,7 @@ class SourceHolder(view: View, val adapter: SourceAdapter) :
         binding.lang.text = when {
             item.isUninstalled -> itemView.context.getString(MR.strings.source_not_installed)
                 .withColor(itemView.context.getResourceColor(R.attr.colorError))
+
             item.isObsolete -> buildSpannedString {
                 append(LocaleHelper.getSourceDisplayName(source.lang, itemView.context))
                 append("  ")
@@ -41,6 +42,7 @@ class SourceHolder(view: View, val adapter: SourceAdapter) :
                     append(itemView.context.getString(MR.strings.obsolete).uppercase())
                 }
             }
+
             else -> LocaleHelper.getSourceDisplayName(source.lang, itemView.context)
         }
 

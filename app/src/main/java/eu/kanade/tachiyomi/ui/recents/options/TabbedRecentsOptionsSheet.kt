@@ -5,12 +5,12 @@ import android.view.View.inflate
 import androidx.annotation.IntRange
 import androidx.core.view.isVisible
 import dev.icerock.moko.resources.StringResource
-import eu.kanade.tachiyomi.R
-import yokai.i18n.MR
-import yokai.util.lang.getString
 import dev.icerock.moko.resources.compose.stringResource
+import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.ui.recents.RecentsController
 import eu.kanade.tachiyomi.widget.TabbedBottomSheetDialog
+import yokai.i18n.MR
+import yokai.util.lang.getString
 
 class TabbedRecentsOptionsSheet(val controller: RecentsController, @IntRange(from = 0, to = 2) startingTab: Int) :
     TabbedBottomSheetDialog(controller.activity!!) {

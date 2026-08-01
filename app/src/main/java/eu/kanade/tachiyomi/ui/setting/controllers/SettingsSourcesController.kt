@@ -8,10 +8,8 @@ import androidx.appcompat.widget.SearchView
 import androidx.preference.CheckBoxPreference
 import androidx.preference.PreferenceGroup
 import androidx.preference.PreferenceScreen
-import eu.kanade.tachiyomi.R
-import yokai.i18n.MR
-import yokai.util.lang.getString
 import dev.icerock.moko.resources.compose.stringResource
+import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.core.preference.minusAssign
 import eu.kanade.tachiyomi.core.preference.plusAssign
 import eu.kanade.tachiyomi.source.SourceManager
@@ -21,14 +19,16 @@ import eu.kanade.tachiyomi.ui.main.FloatingSearchInterface
 import eu.kanade.tachiyomi.ui.main.MainActivity
 import eu.kanade.tachiyomi.ui.setting.SettingsLegacyController
 import eu.kanade.tachiyomi.ui.setting.onChange
-import eu.kanade.tachiyomi.ui.setting.titleMRes as titleRes
 import eu.kanade.tachiyomi.util.system.LocaleHelper
 import eu.kanade.tachiyomi.util.view.activityBinding
 import eu.kanade.tachiyomi.util.view.setOnQueryTextChangeListener
 import eu.kanade.tachiyomi.widget.preference.SwitchPreferenceCategory
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
+import yokai.i18n.MR
+import yokai.util.lang.getString
 import java.util.TreeMap
+import eu.kanade.tachiyomi.ui.setting.titleMRes as titleRes
 
 class SettingsSourcesController : SettingsLegacyController(), FloatingSearchInterface {
     init {
@@ -226,7 +226,10 @@ class SettingsSourcesController : SettingsLegacyController(), FloatingSearchInte
     override fun showFloatingBar() = activityBinding?.appBar?.useLargeToolbar == true
 
     var expandActionViewFromInteraction = false
-    private fun MenuItem.fixExpand(onExpand: ((MenuItem) -> Boolean)? = null, onCollapse: ((MenuItem) -> Boolean)? = null) {
+    private fun MenuItem.fixExpand(
+        onExpand: ((MenuItem) -> Boolean)? = null,
+        onCollapse: ((MenuItem) -> Boolean)? = null,
+    ) {
         setOnActionExpandListener(
             object : MenuItem.OnActionExpandListener {
                 override fun onMenuItemActionExpand(item: MenuItem): Boolean {
@@ -304,7 +307,9 @@ class SettingsSourcesController : SettingsLegacyController(), FloatingSearchInte
     }
 
     enum class SourcesSort(val value: Int) {
-        Alpha(0), Enabled(1);
+        Alpha(0),
+        Enabled(1),
+        ;
 
         companion object {
             fun from(i: Int): SourcesSort? = entries.find { it.value == i }

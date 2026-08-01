@@ -3,10 +3,10 @@ package yokai.data.util
 import app.cash.sqldelight.ExecutableQuery
 import app.cash.sqldelight.Query
 import app.cash.sqldelight.db.QueryResult
-import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.CoroutineContext
 
 fun <T : Any> ExecutableQuery<T>.executeAsFirst(): T {
     return executeAsFirstOrNull() ?: throw NullPointerException("ResultSet returned null for $this")

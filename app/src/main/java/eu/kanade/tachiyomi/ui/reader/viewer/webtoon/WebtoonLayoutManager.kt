@@ -13,7 +13,10 @@ import eu.kanade.tachiyomi.ui.reader.ReaderActivity
  * This layout manager uses the same package name as the support library in order to use a package
  * protected method.
  */
-class WebtoonLayoutManager(activity: ReaderActivity, private val extraLayoutSpace: Int) : LinearLayoutManager(activity) {
+class WebtoonLayoutManager(
+    activity: ReaderActivity,
+    private val extraLayoutSpace: Int,
+) : LinearLayoutManager(activity) {
 
     init {
         isItemPrefetchEnabled = false

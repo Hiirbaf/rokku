@@ -1,15 +1,15 @@
 package eu.kanade.tachiyomi.network.interceptor
 
 import android.os.SystemClock
-import java.io.IOException
-import java.util.concurrent.TimeUnit
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
+import java.io.IOException
+import java.util.concurrent.TimeUnit
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 /**
  * An OkHttp interceptor that handles given url host's rate limiting.

@@ -18,17 +18,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
-import eu.kanade.tachiyomi.R
-import yokai.i18n.MR
-import yokai.util.lang.getString
 import dev.icerock.moko.resources.compose.stringResource
+import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.util.system.toast
 import kotlinx.coroutines.flow.collectLatest
 import uy.kohesive.injekt.injectLazy
 import yokai.domain.storage.StoragePreferences
+import yokai.i18n.MR
 import yokai.presentation.component.preference.storageLocationText
 import yokai.presentation.settings.screen.data.storageLocationPicker
 import yokai.presentation.theme.Size
+import yokai.util.lang.getString
 
 internal class StorageStep : OnboardingStep {
 
@@ -73,7 +73,7 @@ internal class StorageStep : OnboardingStep {
 
             HorizontalDivider(
                 modifier = Modifier.padding(vertical = Size.small),
-                color = MaterialTheme.colorScheme.onPrimaryContainer
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
             )
 
             Text(stringResource(MR.strings.onboarding_storage_help_info))
@@ -81,7 +81,7 @@ internal class StorageStep : OnboardingStep {
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
                     handler.openUri(
-                        "https://rokku-app.github.io/docs/faq/storage#migrating-from-tachiyomi-v0-14-x-or-earlier"
+                        "https://rokku-app.github.io/docs/faq/storage#migrating-from-tachiyomi-v0-14-x-or-earlier",
                     )
                 },
             ) {

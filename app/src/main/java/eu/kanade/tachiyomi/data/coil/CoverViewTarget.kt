@@ -17,7 +17,7 @@ class CoverViewTarget(
 ) : ImageViewTarget(view) {
 
     override fun onError(error: Image?) {
-        //val drawable = error?.asDrawable(view.context.resources)
+        // val drawable = error?.asDrawable(view.context.resources)
 
         progress?.isVisible = false
         view.scaleType = ImageView.ScaleType.CENTER
@@ -31,7 +31,7 @@ class CoverViewTarget(
     }
 
     override fun onStart(placeholder: Image?) {
-        //val drawable = placeholder?.asDrawable(view.context.resources)
+        // val drawable = placeholder?.asDrawable(view.context.resources)
 
         progress?.isVisible = true
         view.scaleType = scaleType
@@ -39,7 +39,7 @@ class CoverViewTarget(
     }
 
     override fun onSuccess(result: Image) {
-        //val drawable = result?.asDrawable(view.context.resources)
+        // val drawable = result?.asDrawable(view.context.resources)
 
         progress?.isVisible = false
         view.scaleType = scaleType

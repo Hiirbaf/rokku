@@ -21,14 +21,18 @@ class BackupNotifier(private val context: Context) {
 
     private val preferences: PreferencesHelper by injectLazy()
 
-    private val progressNotificationBuilder = context.notificationBuilder(Notifications.CHANNEL_BACKUP_RESTORE_PROGRESS) {
+    private val progressNotificationBuilder = context.notificationBuilder(
+        Notifications.CHANNEL_BACKUP_RESTORE_PROGRESS,
+    ) {
         setLargeIcon(BitmapFactory.decodeResource(context.resources, R.mipmap.ic_launcher))
         setSmallIcon(R.drawable.ic_rokku)
         setAutoCancel(false)
         setOngoing(true)
     }
 
-    private val completeNotificationBuilder = context.notificationBuilder(Notifications.CHANNEL_BACKUP_RESTORE_COMPLETE) {
+    private val completeNotificationBuilder = context.notificationBuilder(
+        Notifications.CHANNEL_BACKUP_RESTORE_COMPLETE,
+    ) {
         setLargeIcon(BitmapFactory.decodeResource(context.resources, R.mipmap.ic_launcher))
         setSmallIcon(R.drawable.ic_rokku)
         setAutoCancel(false)
@@ -75,7 +79,11 @@ class BackupNotifier(private val context: Context) {
             addAction(
                 R.drawable.ic_share_24dp,
                 context.getString(MR.strings.share),
-                NotificationReceiver.shareBackupPendingBroadcast(context, unifile.uri, Notifications.ID_BACKUP_COMPLETE),
+                NotificationReceiver.shareBackupPendingBroadcast(
+                    context,
+                    unifile.uri,
+                    Notifications.ID_BACKUP_COMPLETE,
+                ),
             )
 
             show(Notifications.ID_BACKUP_COMPLETE)

@@ -104,10 +104,12 @@ class WebtoonAdapter(val viewer: WebtoonViewer) : RecyclerView.Adapter<RecyclerV
                 val view = ReaderPageImageView(parent.context, isWebtoon = true)
                 WebtoonPageHolder(view, viewer)
             }
+
             TRANSITION_VIEW -> {
                 val view = LinearLayout(parent.context)
                 WebtoonTransitionHolder(view, viewer)
             }
+
             else -> error("Unknown view type")
         }
     }

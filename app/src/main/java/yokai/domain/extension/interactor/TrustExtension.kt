@@ -21,11 +21,11 @@ class TrustExtension(
     }
 
     fun trust(pkgName: String, versionCode: Long, signatureHash: String) {
-       sourcePreferences.trustedExtensions().getAndSet { exts ->
-           val removed = exts.filterNot { it.startsWith("$pkgName:") }.toMutableSet()
+        sourcePreferences.trustedExtensions().getAndSet { exts ->
+            val removed = exts.filterNot { it.startsWith("$pkgName:") }.toMutableSet()
 
-           removed.also { it += "$pkgName:$versionCode:$signatureHash" }
-       }
+            removed.also { it += "$pkgName:$versionCode:$signatureHash" }
+        }
     }
 
     fun revokeAll() {

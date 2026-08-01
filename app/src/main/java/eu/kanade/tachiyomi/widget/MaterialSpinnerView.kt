@@ -16,15 +16,15 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
 import androidx.core.view.forEach
 import androidx.core.view.get
-import eu.kanade.tachiyomi.R
-import yokai.i18n.MR
-import yokai.util.lang.getString
 import dev.icerock.moko.resources.compose.stringResource
+import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.core.preference.Preference
 import eu.kanade.tachiyomi.databinding.MaterialSpinnerViewBinding
 import eu.kanade.tachiyomi.util.lang.tintText
 import eu.kanade.tachiyomi.util.system.getResourceColor
 import eu.kanade.tachiyomi.util.system.toast
+import yokai.i18n.MR
+import yokai.util.lang.getString
 import kotlin.math.max
 
 class MaterialSpinnerView constructor(context: Context, attrs: AttributeSet?) :
@@ -85,7 +85,9 @@ class MaterialSpinnerView constructor(context: Context, attrs: AttributeSet?) :
         val str = a.getString(R.styleable.MaterialSpinnerView_title) ?: ""
         title = str
 
-        val entries = (a.getTextArray(R.styleable.MaterialSpinnerView_android_entries) ?: emptyArray()).map { it.toString() }
+        val entries = (a.getTextArray(R.styleable.MaterialSpinnerView_android_entries) ?: emptyArray()).map {
+            it.toString()
+        }
         this.entries = entries
 
         val maxLines = a.getInt(R.styleable.MaterialSpinnerView_android_maxLines, Int.MAX_VALUE)

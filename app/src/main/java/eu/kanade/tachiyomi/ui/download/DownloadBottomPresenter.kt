@@ -14,7 +14,8 @@ import uy.kohesive.injekt.injectLazy
 /**
  * Presenter of [DownloadBottomSheet].
  */
-class DownloadBottomPresenter : BaseCoroutinePresenter<DownloadBottomSheet>(),
+class DownloadBottomPresenter :
+    BaseCoroutinePresenter<DownloadBottomSheet>(),
     DownloadQueue.Listener {
 
     /**

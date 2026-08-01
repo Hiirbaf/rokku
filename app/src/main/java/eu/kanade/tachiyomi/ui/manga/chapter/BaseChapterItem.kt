@@ -23,7 +23,9 @@ abstract class BaseChapterItem<T : BaseChapterHolder, H : AbstractHeaderItem<*>>
 
     var status: Download.State
         get() = download?.status ?: _status
-        set(value) { _status = value }
+        set(value) {
+            _status = value
+        }
 
     @Transient var download: Download? = null
 

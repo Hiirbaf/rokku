@@ -37,8 +37,6 @@ import eu.kanade.tachiyomi.util.view.isCollapsed
 import eu.kanade.tachiyomi.util.view.isExpanded
 import eu.kanade.tachiyomi.util.view.isHidden
 import eu.kanade.tachiyomi.util.view.setText
-import kotlin.math.max
-import kotlin.math.roundToInt
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.drop
@@ -51,6 +49,8 @@ import uy.kohesive.injekt.api.get
 import uy.kohesive.injekt.injectLazy
 import yokai.i18n.MR
 import yokai.util.lang.getString
+import kotlin.math.max
+import kotlin.math.roundToInt
 
 class FilterBottomSheet @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) :
     LinearLayout(context, attrs),
@@ -259,7 +259,9 @@ class FilterBottomSheet @JvmOverloads constructor(context: Context, attrs: Attri
     private fun stateChanged(state: Int) {
         controller?.updateHopperY()
         if (state == BottomSheetBehavior.STATE_COLLAPSED) {
-            libraryRecycler?.updatePaddingRelative(bottom = sheetBehavior?.peekHeight ?: 0 + 10.dpToPx + bottomBarHeight)
+            libraryRecycler?.updatePaddingRelative(
+                bottom = sheetBehavior?.peekHeight ?: 0 + 10.dpToPx + bottomBarHeight,
+            )
         }
         if (state == BottomSheetBehavior.STATE_EXPANDED) {
             binding.pill.alpha = 0f
@@ -516,6 +518,7 @@ class FilterBottomSheet @JvmOverloads constructor(context: Context, attrs: Attri
                 FILTER_TRACKER = view.nameOf(index) ?: ""
                 null
             }
+
             unreadProgress -> {
                 unread.reset()
                 preferences.filterUnread().set(
@@ -526,14 +529,20 @@ class FilterBottomSheet @JvmOverloads constructor(context: Context, attrs: Attri
                 )
                 null
             }
+
             unread -> {
                 unreadProgress.reset()
                 preferences.filterUnread()
             }
+
             downloaded -> preferences.filterDownloaded()
+
             completed -> preferences.filterCompleted()
+
             bookmarked -> preferences.filterBookmarked()
+
             tracked -> preferences.filterTracked()
+
             mangaType -> {
                 val newIndex = when (view.nameOf(index)) {
                     context.getString(MR.strings.manga) -> Manga.TYPE_MANGA
@@ -545,7 +554,9 @@ class FilterBottomSheet @JvmOverloads constructor(context: Context, attrs: Attri
                 preferences.filterMangaType().set(newIndex)
                 null
             }
+
             contentType -> preferences.filterContentType()
+
             else -> null
         }?.set(index + 1)
     }
@@ -639,7 +650,7 @@ class FilterBottomSheet @JvmOverloads constructor(context: Context, attrs: Attri
         SeriesType('m', MR.strings.series_type),
         Bookmarked('b', MR.strings.bookmarked),
         Tracked('t', MR.strings.tracking),
-        ContentType('s', MR.strings.content_type)
+        ContentType('s', MR.strings.content_type),
         ;
 
         companion object {

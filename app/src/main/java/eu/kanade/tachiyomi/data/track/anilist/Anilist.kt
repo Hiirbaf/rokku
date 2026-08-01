@@ -101,14 +101,19 @@ class Anilist(private val context: Context, id: Long) : TrackService(id) {
         return when (scorePreference.get()) {
             // 10 point
             POINT_10 -> IntRange(0, 10).map(Int::toString).toImmutableList()
+
             // 100 point
             POINT_100 -> IntRange(0, 100).map(Int::toString).toImmutableList()
+
             // 5 stars
             POINT_5 -> IntRange(0, 5).map { "$it ★" }.toImmutableList()
+
             // Smiley
             POINT_3 -> listOf("-", "😦", "😐", "😊").toImmutableList()
+
             // 10 point decimal
             POINT_10_DECIMAL -> IntRange(0, 100).map { (it / 10f).toString() }.toImmutableList()
+
             else -> throw Exception("Unknown score type")
         }
     }
@@ -117,20 +122,25 @@ class Anilist(private val context: Context, id: Long) : TrackService(id) {
         return when (scorePreference.get()) {
             // 10 point
             POINT_10 -> index * 10f
+
             // 100 point
             POINT_100 -> index.toFloat()
+
             // 5 stars
             POINT_5 -> when (index) {
                 0 -> 0f
                 else -> index * 20f - 10f
             }
+
             // Smiley
             POINT_3 -> when (index) {
                 0 -> 0f
                 else -> index * 25f + 10f
             }
+
             // 10 point decimal
             POINT_10_DECIMAL -> index.toFloat()
+
             else -> throw Exception("Unknown score type")
         }
     }

@@ -10,14 +10,14 @@ import eu.kanade.tachiyomi.util.system.WebViewUtil
 import eu.kanade.tachiyomi.util.system.launchUI
 import eu.kanade.tachiyomi.util.system.setDefaultSettings
 import eu.kanade.tachiyomi.util.system.toast
-import java.util.Locale
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
 import okhttp3.Headers
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
 import yokai.i18n.MR
+import java.util.Locale
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 
 abstract class WebViewInterceptor(
     private val context: Context,
@@ -33,7 +33,7 @@ abstract class WebViewInterceptor(
         // Crashes on some devices. We skip this in some cases since the only impact is slower
         // WebView init in those rare cases.
         // See https://bugs.chromium.org/p/chromium/issues/detail?id=1279562
-        if (DeviceUtil.isMiui || Build.VERSION.SDK_INT == Build.VERSION_CODES.S && DeviceUtil.isSamsung) {
+        if (DeviceUtil.isMiui || (Build.VERSION.SDK_INT == Build.VERSION_CODES.S && DeviceUtil.isSamsung)) {
             return@lazy
         }
 
@@ -97,4 +97,6 @@ private fun isRequestHeaderSafe(_name: String, _value: String): Boolean {
     if (name == "connection" && value == "upgrade") return false
     return true
 }
-private val unsafeHeaderNames = listOf("content-length", "host", "trailer", "te", "upgrade", "cookie2", "keep-alive", "transfer-encoding", "set-cookie")
+private val unsafeHeaderNames = listOf(
+    "content-length", "host", "trailer", "te", "upgrade", "cookie2", "keep-alive", "transfer-encoding", "set-cookie",
+)

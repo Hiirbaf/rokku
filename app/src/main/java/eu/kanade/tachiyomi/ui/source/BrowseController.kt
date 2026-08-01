@@ -118,9 +118,7 @@ class BrowseController :
     override val mainRecycler: RecyclerView
         get() = binding.sourceRecycler
 
-    /**
-     * Called when controller is initialized.
-     */
+    // Called when controller is initialized.
     init {
         setHasOptionsMenu(true)
     }
@@ -195,7 +193,7 @@ class BrowseController :
 
         binding.bottomSheet.root.sheetBehavior?.addBottomSheetCallback(
             object : BottomSheetBehavior
-            .BottomSheetCallback() {
+                .BottomSheetCallback() {
                 override fun onSlide(bottomSheet: View, progress: Float) {
                     val oldShow = showingExtensions
                     showingExtensions = progress > 0.92f
@@ -228,10 +226,10 @@ class BrowseController :
 
                     binding.bottomSheet.root.apply {
                         if ((
-                            state == BottomSheetBehavior.STATE_COLLAPSED ||
-                                state == BottomSheetBehavior.STATE_EXPANDED ||
-                                state == BottomSheetBehavior.STATE_HIDDEN
-                            ) &&
+                                state == BottomSheetBehavior.STATE_COLLAPSED ||
+                                    state == BottomSheetBehavior.STATE_EXPANDED ||
+                                    state == BottomSheetBehavior.STATE_HIDDEN
+                                ) &&
                             scaleY != 1f
                         ) {
                             scaleX = 1f
@@ -300,10 +298,16 @@ class BrowseController :
                 view?.context?.getString(MR.strings.extensions)
             }
         val onExtensionTab = binding.bottomSheet.tabs.selectedTabPosition == 0
-        if (binding.bottomSheet.sheetToolbar.menu.findItem(if (onExtensionTab) R.id.action_search else R.id.action_migration_guide) != null) {
+        if (binding.bottomSheet.sheetToolbar.menu.findItem(
+                if (onExtensionTab) R.id.action_search else R.id.action_migration_guide,
+            ) !=
+            null
+        ) {
             return
         }
-        val oldSearchView = binding.bottomSheet.sheetToolbar.menu.findItem(R.id.action_search)?.actionView as? SearchView
+        val oldSearchView = binding.bottomSheet.sheetToolbar.menu.findItem(
+            R.id.action_search,
+        )?.actionView as? SearchView
         oldSearchView?.setOnQueryTextListener(null)
         binding.bottomSheet.sheetToolbar.menu.clear()
         binding.bottomSheet.sheetToolbar.inflateMenu(
@@ -363,12 +367,15 @@ class BrowseController :
                 R.id.action_filter -> {
                     router.pushController(ExtensionFilterController().withFadeTransaction())
                 }
+
                 R.id.action_migration_guide -> {
                     activity?.openInBrowser(HELP_URL)
                 }
+
                 R.id.action_sources_settings -> {
                     router.pushController(SettingsBrowseController().withFadeTransaction())
                 }
+
                 R.id.action_extension_repos_settings -> {
                     router.pushController(ExtensionRepoController().withFadeTransaction())
                 }
@@ -703,12 +710,15 @@ class BrowseController :
             R.id.action_filter -> {
                 router.pushController(SettingsSourcesController().withFadeTransaction())
             }
+
             R.id.action_migration_guide -> {
                 activity?.openInBrowser(HELP_URL)
             }
+
             R.id.action_sources_settings -> {
                 router.pushController(SettingsBrowseController().withFadeTransaction())
             }
+
             else -> return super.onOptionsItemSelected(item)
         }
         return true

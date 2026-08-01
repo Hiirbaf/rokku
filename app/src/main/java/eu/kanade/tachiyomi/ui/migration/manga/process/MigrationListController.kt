@@ -50,8 +50,6 @@ import eu.kanade.tachiyomi.util.view.setPositiveButton
 import eu.kanade.tachiyomi.util.view.setTextColorAlpha
 import eu.kanade.tachiyomi.util.view.setTitle
 import eu.kanade.tachiyomi.util.view.withFadeTransaction
-import java.util.concurrent.atomic.AtomicInteger
-import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -67,6 +65,8 @@ import yokai.domain.manga.interactor.GetManga
 import yokai.domain.manga.interactor.UpdateManga
 import yokai.i18n.MR
 import yokai.util.lang.getString
+import java.util.concurrent.atomic.AtomicInteger
+import kotlin.coroutines.CoroutineContext
 import android.R as AR
 
 class MigrationListController(bundle: Bundle? = null) :
@@ -209,7 +209,8 @@ class MigrationListController(bundle: Bundle? = null) :
                                                 } catch (e: Exception) {
                                                     return@source null
                                                 }
-                                                manga.progress.value = validSources.size to processedSources.incrementAndGet()
+                                                manga.progress.value =
+                                                    validSources.size to processedSources.incrementAndGet()
                                                 localManga to update.chapters.size
                                             } else {
                                                 null
@@ -365,11 +366,14 @@ class MigrationListController(bundle: Bundle? = null) :
                     router.pushController(searchController.withFadeTransaction())
                 }
             }
+
             R.id.action_skip -> adapter?.removeManga(position)
+
             R.id.action_migrate_now -> {
                 adapter?.migrateManga(position, false)
                 manaulMigrations++
             }
+
             R.id.action_copy_now -> {
                 adapter?.migrateManga(position, true)
                 manaulMigrations++
@@ -545,6 +549,7 @@ class MigrationListController(bundle: Bundle? = null) :
                     mangaSkipped,
                 )
             }
+
             else -> return super.onOptionsItemSelected(item)
         }
         return true

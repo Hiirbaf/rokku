@@ -74,7 +74,6 @@ import eu.kanade.tachiyomi.util.view.setMessage
 import eu.kanade.tachiyomi.util.view.setPositiveButton
 import eu.kanade.tachiyomi.util.view.setTitle
 import eu.kanade.tachiyomi.util.view.withFadeTransaction
-import java.io.File
 import kotlinx.collections.immutable.toImmutableMap
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -95,6 +94,7 @@ import yokai.domain.source.SourcePreferences
 import yokai.domain.ui.settings.ReaderPreferences
 import yokai.i18n.MR
 import yokai.util.lang.getString
+import java.io.File
 
 @Deprecated("Migrating to compose", replaceWith = ReplaceWith("SettingsAdvancedController"))
 class SettingsAdvancedLegacyController : SettingsLegacyController() {
@@ -196,7 +196,9 @@ class SettingsAdvancedLegacyController : SettingsLegacyController() {
                     if (it != BuildConfig.BETA) {
                         activity!!.materialAlertDialog()
                             .setTitle(MR.strings.warning)
-                            .setMessage(if (it) MR.strings.warning_enroll_into_beta else MR.strings.warning_unenroll_from_beta)
+                            .setMessage(
+                                if (it) MR.strings.warning_enroll_into_beta else MR.strings.warning_unenroll_from_beta,
+                            )
                             .setPositiveButton(R.string.ok) { _, _ -> isChecked = it }
                             .setNegativeButton(R.string.cancel, null)
                             .show()
@@ -330,7 +332,9 @@ class SettingsAdvancedLegacyController : SettingsLegacyController() {
 
                 onChange {
                     if (it == BasePreferences.ExtensionInstaller.SHIZUKU) {
-                        return@onChange if (!context.isPackageInstalled(ShizukuInstaller.Companion.shizukuPkgName) && !Sui.isSui()) {
+                        return@onChange if (!context.isPackageInstalled(ShizukuInstaller.Companion.shizukuPkgName) &&
+                            !Sui.isSui()
+                        ) {
                             context.materialAlertDialog()
                                 .setTitle(MR.strings.ext_installer_shizuku)
                                 .setMessage(MR.strings.ext_installer_shizuku_unavailable_dialog)
@@ -354,10 +358,12 @@ class SettingsAdvancedLegacyController : SettingsLegacyController() {
                             summary = context.getString(MR.strings.ext_installer_summary)
                             isVisible = true && Build.VERSION.SDK_INT < Build.VERSION_CODES.S
                         }
+
                         BasePreferences.ExtensionInstaller.LEGACY -> {
                             summary = context.getString(MR.strings.ext_installer_summary_legacy)
                             isVisible = true
                         }
+
                         else -> isVisible = false
                     }
                 }
@@ -426,14 +432,18 @@ class SettingsAdvancedLegacyController : SettingsLegacyController() {
                     GLUtil.DEVICE_TEXTURE_LIMIT > GLUtil.SAFE_TEXTURE_LIMIT
 
                 basePreferences.hardwareBitmapThreshold().changesIn(viewScope) { threshold ->
-                    summary = context.getString(MR.strings.pref_hardware_bitmap_threshold_summary, entryMap[threshold].orEmpty())
+                    summary =
+                        context.getString(
+                            MR.strings.pref_hardware_bitmap_threshold_summary,
+                            entryMap[threshold].orEmpty(),
+                        )
                 }
             }
 
             switchPreference {
-              bindTo(basePreferences.alwaysDecodeLongStripWithSSIV())
-              titleMRes = MR.strings.pref_always_decode_long_strip_with_ssiv
-              summaryMRes = MR.strings.pref_always_decode_long_strip_with_ssiv_summary
+                bindTo(basePreferences.alwaysDecodeLongStripWithSSIV())
+                titleMRes = MR.strings.pref_always_decode_long_strip_with_ssiv
+                summaryMRes = MR.strings.pref_always_decode_long_strip_with_ssiv_summary
             }
 
             preference {
@@ -475,7 +485,9 @@ class SettingsAdvancedLegacyController : SettingsLegacyController() {
                         activity!!.materialAlertDialog()
                             .setTitle(MR.strings.warning)
                             .setMessage("I told you this would crash the app, why would you want that?")
-                            .setPositiveButton("Crash it anyway") { _, _ -> throw RuntimeException("Fell into the void") }
+                            .setPositiveButton("Crash it anyway") { _, _ ->
+                                throw RuntimeException("Fell into the void")
+                            }
                             .setNegativeButton("Nevermind", null)
                             .show()
                     }
@@ -489,7 +501,7 @@ class SettingsAdvancedLegacyController : SettingsLegacyController() {
                             .setTitle("Are you sure?")
                             .setMessage(
                                 "Failed workers should clear out by itself eventually, " +
-                                    "this option should only be used if you're being impatient and you know what you're doing."
+                                    "this option should only be used if you're being impatient and you know what you're doing.",
                             )
                             .setPositiveButton("Prune") { _, _ -> context.workManager.pruneWork() }
                             .setNegativeButton("Cancel", null)
@@ -526,7 +538,8 @@ class SettingsAdvancedLegacyController : SettingsLegacyController() {
                         continue
                     }
                     val chapterList = getChapter.awaitAll(manga, false)
-                    foldersCleared += downloadManager.cleanupChapters(chapterList, manga, source, removeRead, removeNonFavorite)
+                    foldersCleared +=
+                        downloadManager.cleanupChapters(chapterList, manga, source, removeRead, removeNonFavorite)
                 }
             }
             launchUI {

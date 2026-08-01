@@ -70,7 +70,13 @@ fun JayExpandedTopAppBar(
 
     val appBarContainerColor = l@{
         if (textFieldState != null) return@l Color.Transparent
-        if ((scrollBehavior?.overlappedFraction() ?: 0f) > 0.01f) colors.scrolledContainerColor else colors.containerColor
+        if ((scrollBehavior?.overlappedFraction() ?: 0f) >
+            0.01f
+        ) {
+            colors.scrolledContainerColor
+        } else {
+            colors.containerColor
+        }
     }
 
     val bottomCollapsedFractionOrZero = { scrollBehavior?.bottomCollapsedFraction(titleTextFontSizePx) ?: 0f }
@@ -92,21 +98,21 @@ fun JayExpandedTopAppBar(
 
     Column(
         modifier =
-            Modifier
-                .semantics { isTraversalGroup = true }
-                .pointerInput(Unit) {}
+        Modifier
+            .semantics { isTraversalGroup = true }
+            .pointerInput(Unit) {},
     ) {
         Column(
-            modifier = Modifier.drawBehind { drawRect(color = appBarContainerColor()) }
+            modifier = Modifier.drawBehind { drawRect(color = appBarContainerColor()) },
         ) {
             Surface(
                 color = Color.Transparent,
                 modifier =
-                    modifier
-                        .then(scrollBehavior?.let { with(it) { Modifier.smallAppBarScrollBehavior() } } ?: Modifier)
-                        .onSizeChanged { scrollBehavior?.topHeightPx = it.height.toFloat() }
-                        .fillMaxWidth()
-                        .windowInsetsPadding(windowInsets)
+                modifier
+                    .then(scrollBehavior?.let { with(it) { Modifier.smallAppBarScrollBehavior() } } ?: Modifier)
+                    .onSizeChanged { scrollBehavior?.topHeightPx = it.height.toFloat() }
+                    .fillMaxWidth()
+                    .windowInsetsPadding(windowInsets),
             ) {
                 Row(
                     modifier = Modifier.padding(contentPadding),
@@ -116,21 +122,29 @@ fun JayExpandedTopAppBar(
                         Box(
                             Modifier
                                 .padding(start = 4.dp)
-                                .then(if (bottomCollapsedFractionOrZero() >= 1f) Modifier.alpha(titleAlpha()) else Modifier)
+                                .then(
+                                    if (bottomCollapsedFractionOrZero() >=
+                                        1f
+                                    ) {
+                                        Modifier.alpha(titleAlpha())
+                                    } else {
+                                        Modifier
+                                    },
+                                ),
                         ) {
                             it()
                         }
                     }
                     Box(
                         modifier =
-                            Modifier
-                                .weight(1f)
-                                .alpha(titleAlpha())
+                        Modifier
+                            .weight(1f)
+                            .alpha(titleAlpha()),
                     ) {
                         ProvideContentColorTextStyle(
                             contentColor = colors.titleContentColor,
                             textStyle = smallTitleTextStyle,
-                            content = title
+                            content = title,
                         )
                     }
                     actions?.let {
@@ -155,23 +169,23 @@ fun JayExpandedTopAppBar(
             Surface(
                 color = Color.Transparent,
                 modifier =
-                    modifier
-                        .then(scrollBehavior?.let { with(it) { Modifier.largeAppBarScrollBehavior() } } ?: Modifier)
-                        .onSizeChanged { scrollBehavior?.bottomHeightPx = it.height.toFloat() }
-                        .fillMaxWidth()
-                        .semantics { isTraversalGroup = true },
+                modifier
+                    .then(scrollBehavior?.let { with(it) { Modifier.largeAppBarScrollBehavior() } } ?: Modifier)
+                    .onSizeChanged { scrollBehavior?.bottomHeightPx = it.height.toFloat() }
+                    .fillMaxWidth()
+                    .semantics { isTraversalGroup = true },
             ) {
                 Box(
                     modifier =
-                        Modifier
-                            .padding(start = 16.dp, top = 64.dp, bottom = 8.dp)
-                            .weight(1f)
-                            .alpha(bottomTitleAlpha())
+                    Modifier
+                        .padding(start = 16.dp, top = 64.dp, bottom = 8.dp)
+                        .weight(1f)
+                        .alpha(bottomTitleAlpha()),
                 ) {
                     ProvideContentColorTextStyle(
                         contentColor = colors.titleContentColor,
                         textStyle = titleTextStyle,
-                        content = title
+                        content = title,
                     )
                 }
             }
@@ -186,15 +200,15 @@ fun JayExpandedTopAppBar(
                     containerColor = colors.scrolledContainerColor,
                 ),
                 modifier =
-                    modifier
-                        .padding(horizontal = 8.dp)
-                        .then(scrollBehavior?.let { with(it) { Modifier.searchAppBarScrollBehavior() } } ?: Modifier)
-                        .onSizeChanged {
-                            scrollBehavior?.insetPaddingForSearchPx = insetPaddingForSearchPx
-                            scrollBehavior?.searchHeightPx = it.height.toFloat()
-                        }
-                        .fillMaxWidth()
-                        .semantics { isTraversalGroup = true },
+                modifier
+                    .padding(horizontal = 8.dp)
+                    .then(scrollBehavior?.let { with(it) { Modifier.searchAppBarScrollBehavior() } } ?: Modifier)
+                    .onSizeChanged {
+                        scrollBehavior?.insetPaddingForSearchPx = insetPaddingForSearchPx
+                        scrollBehavior?.searchHeightPx = it.height.toFloat()
+                    }
+                    .fillMaxWidth()
+                    .semantics { isTraversalGroup = true },
                 inputField = {
                     SearchBarDefaults.InputField(
                         query = textFieldState.text.toString(),
@@ -205,7 +219,7 @@ fun JayExpandedTopAppBar(
                         },
                         expanded = if (searchResult != null) expanded else false,
                         onExpandedChange = { expanded = it },
-                        placeholder = { Text("Search") },  // TODO
+                        placeholder = { Text("Search") }, // TODO
                     )
                 },
                 expanded = if (searchResult != null) expanded else false,
@@ -239,17 +253,30 @@ fun JayTopAppBar(
     textFieldState: TextFieldState? = null,
     searchResult: @Composable (ColumnScope.() -> Unit)? = null,
 ) {
-
     val appBarContainerColor = {
-        if ((scrollBehavior?.overlappedFraction() ?: 0f) > 0.01f) colors.scrolledContainerColor else colors.containerColor
+        if ((scrollBehavior?.overlappedFraction() ?: 0f) >
+            0.01f
+        ) {
+            colors.scrolledContainerColor
+        } else {
+            colors.containerColor
+        }
     }
 
     Box(
         modifier =
-            modifier
-                .then(if (textFieldState == null) Modifier.drawBehind { drawRect(color = appBarContainerColor()) } else Modifier)
-                .semantics { isTraversalGroup = true }
-                .pointerInput(Unit) {}
+        modifier
+            .then(
+                if (textFieldState ==
+                    null
+                ) {
+                    Modifier.drawBehind { drawRect(color = appBarContainerColor()) }
+                } else {
+                    Modifier
+                },
+            )
+            .semantics { isTraversalGroup = true }
+            .pointerInput(Unit) {},
     ) {
         if (textFieldState != null) {
             var expanded by rememberSaveable { mutableStateOf(false) }
@@ -257,12 +284,12 @@ fun JayTopAppBar(
             Surface(
                 color = Color.Transparent,
                 modifier =
-                    modifier
-                        .padding(horizontal = 8.dp)
-                        .then(scrollBehavior?.let { with(it) { Modifier.appBarScrollBehavior() } } ?: Modifier)
-                        .onSizeChanged { scrollBehavior?.scrollOffsetLimit = -it.height.toFloat() }
-                        .fillMaxWidth()
-                        .windowInsetsPadding(windowInsets)
+                modifier
+                    .padding(horizontal = 8.dp)
+                    .then(scrollBehavior?.let { with(it) { Modifier.appBarScrollBehavior() } } ?: Modifier)
+                    .onSizeChanged { scrollBehavior?.scrollOffsetLimit = -it.height.toFloat() }
+                    .fillMaxWidth()
+                    .windowInsetsPadding(windowInsets),
             ) {
                 SearchBar(
                     inputField = {
@@ -275,12 +302,12 @@ fun JayTopAppBar(
                             },
                             expanded = if (searchResult != null) expanded else false,
                             onExpandedChange = { expanded = it },
-                            placeholder = { Text("Search") }  // TODO
+                            placeholder = { Text("Search") }, // TODO
                         )
                     },
                     expanded = if (searchResult != null) expanded else false,
                     onExpandedChange = { expanded = it },
-                    windowInsets = WindowInsets(),  // Handled by Modifier.
+                    windowInsets = WindowInsets(), // Handled by Modifier.
                     content = searchResult ?: {},
                 )
             }
@@ -288,11 +315,11 @@ fun JayTopAppBar(
             Surface(
                 color = Color.Transparent,
                 modifier =
-                    modifier
-                        .then(scrollBehavior?.let { with(it) { Modifier.appBarScrollBehavior() } } ?: Modifier)
-                        .onSizeChanged { scrollBehavior?.scrollOffsetLimit = -it.height.toFloat() }
-                        .fillMaxWidth()
-                        .windowInsetsPadding(windowInsets)
+                modifier
+                    .then(scrollBehavior?.let { with(it) { Modifier.appBarScrollBehavior() } } ?: Modifier)
+                    .onSizeChanged { scrollBehavior?.scrollOffsetLimit = -it.height.toFloat() }
+                    .fillMaxWidth()
+                    .windowInsetsPadding(windowInsets),
             ) {
                 Row(
                     modifier = Modifier.padding(contentPadding),
@@ -307,7 +334,7 @@ fun JayTopAppBar(
                         ProvideContentColorTextStyle(
                             contentColor = colors.titleContentColor,
                             textStyle = titleTextStyle,
-                            content = title
+                            content = title,
                         )
                     }
                     actions?.let {
@@ -337,13 +364,13 @@ fun JayTopAppBar(
 internal fun ProvideContentColorTextStyle(
     contentColor: Color,
     textStyle: TextStyle,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val mergedStyle = LocalTextStyle.current.merge(textStyle)
     CompositionLocalProvider(
         LocalContentColor provides contentColor,
         LocalTextStyle provides mergedStyle,
-        content = content
+        content = content,
     )
 }
 

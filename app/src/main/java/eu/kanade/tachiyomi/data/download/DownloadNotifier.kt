@@ -323,5 +323,4 @@ internal class DownloadNotifier(private val context: Context) {
         errorThrown = true
         isDownloading = false
     }
-
 }

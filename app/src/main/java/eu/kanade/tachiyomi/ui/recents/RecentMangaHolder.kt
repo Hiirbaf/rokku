@@ -31,11 +31,11 @@ import eu.kanade.tachiyomi.util.system.dpToPx
 import eu.kanade.tachiyomi.util.system.timeSpanFromNow
 import eu.kanade.tachiyomi.util.view.setAnimVectorCompat
 import eu.kanade.tachiyomi.util.view.setCards
-import java.util.Date
-import java.util.concurrent.TimeUnit
 import yokai.i18n.MR
 import yokai.util.coil.loadManga
 import yokai.util.lang.getString
+import java.util.Date
+import java.util.concurrent.TimeUnit
 import android.R as AR
 
 class RecentMangaHolder(
@@ -69,8 +69,8 @@ class RecentMangaHolder(
                 }
             }
             if (isUpdates && binding.moreChaptersLayout.children.any { view ->
-                !RecentSubChapterItemBinding.bind(view).subtitle.text.isNullOrBlank()
-            }
+                    !RecentSubChapterItemBinding.bind(view).subtitle.text.isNullOrBlank()
+                }
             ) {
                 showScanlatorInBody(moreVisible)
             } else {
@@ -189,7 +189,9 @@ class RecentMangaHolder(
         binding.body.isVisible = !isSmallUpdates
         binding.body.text = when {
             item.mch.chapter.id == null -> context.timeSpanFromNow(MR.strings.added_, item.mch.manga.date_added)
+
             isSmallUpdates -> ""
+
             item.mch.history.id == null -> {
                 if (isUpdates) {
                     if (adapter.sortByFetched) {
@@ -202,13 +204,19 @@ class RecentMangaHolder(
                         context.timeSpanFromNow(MR.strings.updated_, item.chapter.date_upload)
                 }
             }
+
             item.chapter.id != item.mch.chapter.id -> readLastText(!moreVisible)
-            item.chapter.last_page_read > 0 && !item.chapter.read -> context.timeSpanFromNow(MR.strings.read_, item.mch.history.last_read) +
+
+            item.chapter.last_page_read > 0 && !item.chapter.read -> context.timeSpanFromNow(
+                MR.strings.read_,
+                item.mch.history.last_read,
+            ) +
                 "\n" + itemView.context.getString(
-                MR.strings.page_x_of_y,
-                item.chapter.last_page_read + 1,
-                item.chapter.pages_left + item.chapter.last_page_read,
-            )
+                    MR.strings.page_x_of_y,
+                    item.chapter.last_page_read + 1,
+                    item.chapter.pages_left + item.chapter.last_page_read,
+                )
+
             else -> context.timeSpanFromNow(MR.strings.read_, item.mch.history.last_read)
         }
         if ((context as? Activity)?.isDestroyed != true) {
@@ -310,9 +318,17 @@ class RecentMangaHolder(
                 ""
             } + itemView.context.getString(
                 if (notValidNum) MR.strings.last_read_ else MR.strings.last_read_chapter_,
-                if (notValidNum) item.mch.chapter.name else adapter.decimalFormat.format(item.mch.chapter.chapter_number),
+                if (notValidNum) {
+                    item.mch.chapter.name
+                } else {
+                    adapter.decimalFormat.format(
+                        item.mch.chapter.chapter_number,
+                    )
+                },
             )
-        } else { "" }
+        } else {
+            ""
+        }
     }
 
     private fun showScanlatorInBody(add: Boolean, originalItem: RecentMangaItem? = null) {
@@ -470,6 +486,7 @@ class RecentMangaHolder(
                 RecentMangaAdapter.ShowRecentsDLs.OnlyDownloaded,
                 ->
                     status !in Download.State.CHECKED..Download.State.NOT_DOWNLOADED || !isChapterRead
+
                 else -> binding.downloadButton.downloadButton.isVisible
             }
     }
@@ -485,12 +502,15 @@ class RecentMangaHolder(
                 RecentMangaAdapter.ShowRecentsDLs.OnlyDownloaded,
                 ->
                     status !in Download.State.CHECKED..Download.State.NOT_DOWNLOADED || !isChapterRead
+
                 else -> downloadButton.isVisible
             }
     }
 
     override fun getFrontView(): View {
-        return if (chapterId == null) { binding.mainView } else {
+        return if (chapterId == null) {
+            binding.mainView
+        } else {
             binding.moreChaptersLayout.children.find { it.tag == "sub $chapterId" }
                 ?: binding.mainView
         }

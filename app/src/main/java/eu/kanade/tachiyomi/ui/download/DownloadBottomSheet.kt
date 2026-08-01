@@ -242,9 +242,11 @@ class DownloadBottomSheet @JvmOverloads constructor(
             R.id.clear_queue -> {
                 presenter.stopDownloads()
             }
+
             R.id.newest, R.id.oldest -> {
                 reorderQueue({ it.download.chapter.date_upload }, item.itemId == R.id.newest)
             }
+
             R.id.asc, R.id.desc -> {
                 reorderQueue({ it.download.chapter.chapter_number }, item.itemId == R.id.desc)
             }
@@ -351,6 +353,7 @@ class DownloadBottomSheet @JvmOverloads constructor(
                     }
                     presenter.reorder(newDownloads)
                 }
+
                 R.id.move_to_top_series -> {
                     val (selectedSeries, otherSeries) = adapter?.currentItems
                         ?.filterIsInstance<DownloadItem>()
@@ -359,6 +362,7 @@ class DownloadBottomSheet @JvmOverloads constructor(
                         ?: Pair(listOf<Download>(), listOf<Download>())
                     presenter.reorder(selectedSeries + otherSeries)
                 }
+
                 R.id.move_to_bottom_series -> {
                     val (selectedSeries, otherSeries) = adapter?.currentItems
                         ?.filterIsInstance<DownloadItem>()
@@ -367,6 +371,7 @@ class DownloadBottomSheet @JvmOverloads constructor(
                         ?: Pair(listOf<Download>(), listOf<Download>())
                     presenter.reorder(otherSeries + selectedSeries)
                 }
+
                 R.id.cancel_series -> {
                     val allDownloadsForSeries = adapter?.currentItems
                         ?.filterIsInstance<DownloadItem>()

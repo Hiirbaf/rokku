@@ -8,7 +8,7 @@ import kotlin.math.min
  *
  * REF: https://gist.github.com/ademar111190/34d3de41308389a0d0d8
  */
-fun levenshteinDistance(lhs : CharSequence, rhs : CharSequence): Int {
+fun levenshteinDistance(lhs: CharSequence, rhs: CharSequence): Int {
     if (lhs == rhs) return 0
     if (lhs.isEmpty()) return rhs.length
     if (rhs.isEmpty()) return lhs.length
@@ -46,7 +46,7 @@ fun levenshteinDistance(lhs : CharSequence, rhs : CharSequence): Int {
     return cost.last()
 }
 
-fun normalizedLevenshteinSimilarity(lhs : CharSequence, rhs : CharSequence): Double {
+fun normalizedLevenshteinSimilarity(lhs: CharSequence, rhs: CharSequence): Double {
     val distance by lazy {
         val maxLength = max(lhs.length, rhs.length)
         if (maxLength == 0) return@lazy 0.0

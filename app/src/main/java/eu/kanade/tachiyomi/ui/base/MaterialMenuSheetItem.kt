@@ -3,11 +3,11 @@ package eu.kanade.tachiyomi.ui.base
 import android.view.View
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.items.AbstractItem
+import dev.icerock.moko.resources.compose.stringResource
 import eu.kanade.tachiyomi.R
+import eu.kanade.tachiyomi.databinding.MenuSheetItemBinding
 import yokai.i18n.MR
 import yokai.util.lang.getString
-import dev.icerock.moko.resources.compose.stringResource
-import eu.kanade.tachiyomi.databinding.MenuSheetItemBinding
 
 class MaterialMenuSheetItem(val sheetItem: MaterialMenuSheet.MenuSheetItem) : AbstractItem<MaterialMenuSheetItem.ViewHolder>() {
 

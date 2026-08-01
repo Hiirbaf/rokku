@@ -51,7 +51,9 @@ class SavedSearchesAdapter(
                     Content()
                 }
             }
-            binding.savedSearches.setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnDetachedFromWindowOrReleasedFromPool)
+            binding.savedSearches.setViewCompositionStrategy(
+                ViewCompositionStrategy.DisposeOnDetachedFromWindowOrReleasedFromPool,
+            )
         }
 
         @Composable
@@ -83,7 +85,7 @@ class SavedSearchesAdapter(
                                     onClick = { onSavedSearchClicked(search.id) },
                                     interactionSource = inputChipInteractionSource,
                                     indication = null,
-                                )
+                                ),
                         )
                     }
                 }

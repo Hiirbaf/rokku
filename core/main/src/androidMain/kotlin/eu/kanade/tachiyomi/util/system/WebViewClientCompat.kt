@@ -67,8 +67,9 @@ abstract class WebViewClientCompat : WebViewClient() {
         )
     }
 
-    @Deprecated("Deprecated in Java",
-        ReplaceWith("onReceivedErrorCompat(view, errorCode, description, failingUrl, failingUrl == view.url)")
+    @Deprecated(
+        "Deprecated in Java",
+        ReplaceWith("onReceivedErrorCompat(view, errorCode, description, failingUrl, failingUrl == view.url)"),
     )
     final override fun onReceivedError(
         view: WebView,

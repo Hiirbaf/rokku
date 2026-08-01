@@ -23,13 +23,13 @@ abstract class BaseComposeController(bundle: Bundle? = null) :
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup,
-        savedViewState: Bundle?
+        savedViewState: Bundle?,
     ): View {
         setAppBarVisibility()
         return ComposeView(container.context).apply {
             layoutParams = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT
+                ViewGroup.LayoutParams.MATCH_PARENT,
             )
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {

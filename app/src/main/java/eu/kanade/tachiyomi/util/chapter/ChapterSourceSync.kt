@@ -6,7 +6,6 @@ import eu.kanade.tachiyomi.domain.manga.models.Manga
 import eu.kanade.tachiyomi.source.Source
 import eu.kanade.tachiyomi.source.model.SChapter
 import eu.kanade.tachiyomi.source.online.HttpSource
-import java.util.*
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 import uy.kohesive.injekt.injectLazy
@@ -20,6 +19,7 @@ import yokai.domain.chapter.services.ChapterRecognition
 import yokai.domain.library.LibraryPreferences
 import yokai.domain.manga.interactor.UpdateManga
 import yokai.domain.manga.models.MangaUpdate
+import java.util.*
 
 /**
  * Helper method for syncing the list of chapters from the source with the ones from the database.
@@ -89,7 +89,8 @@ suspend fun syncChaptersWithSource(
         if (source is HttpSource) {
             source.prepareNewChapter(chapter, manga)
         }
-        chapter.chapter_number = ChapterRecognition.parseChapterNumber(chapter.name, manga.title, chapter.chapter_number)
+        chapter.chapter_number =
+            ChapterRecognition.parseChapterNumber(chapter.name, manga.title, chapter.chapter_number)
 
         val dbChapter = dbChapters.find { it.url == chapter.url }
 

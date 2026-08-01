@@ -25,16 +25,16 @@ import androidx.core.graphics.scale
 import co.touchlab.kermit.Logger
 import com.hippo.unifile.UniFile
 import eu.kanade.tachiyomi.R
+import okio.Buffer
+import okio.BufferedSource
+import tachiyomi.decoder.Format
+import tachiyomi.decoder.ImageDecoder
 import java.io.InputStream
 import java.util.Locale
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
-import okio.Buffer
-import okio.BufferedSource
-import tachiyomi.decoder.Format
-import tachiyomi.decoder.ImageDecoder
 
 object ImageUtil {
 
@@ -91,10 +91,13 @@ object ImageUtil {
             // https://coil-kt.github.io/coil/getting_started/#supported-image-formats
             when (type.format) {
                 Format.Gif -> true
+
                 // Animated WebP on Android 9+
                 Format.Webp -> type.isAnimated && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P
+
                 // Animated Heif on Android 11+
                 Format.Heif -> type.isAnimated && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R
+
                 else -> false
             }
         } catch (_: Exception) {
@@ -155,12 +158,19 @@ object ImageUtil {
         val botLeftIsDark = image.getPixel(left, bot).isDark
         val botRightIsDark = image.getPixel(right, bot).isDark
 
-        var darkBG = (topLeftIsDark && (botLeftIsDark || botRightIsDark || topRightIsDark || midLeftIsDark || topMidIsDark)) ||
-            (topRightIsDark && (botRightIsDark || botLeftIsDark || midRightIsDark || topMidIsDark))
+        var darkBG =
+            (topLeftIsDark && (botLeftIsDark || botRightIsDark || topRightIsDark || midLeftIsDark || topMidIsDark)) ||
+                (topRightIsDark && (botRightIsDark || botLeftIsDark || midRightIsDark || topMidIsDark))
 
         if (!image.getPixel(left, top).isWhite && pixelIsClose(image.getPixel(left, top), image.getPixel(midX, top)) &&
-            !image.getPixel(right, top).isWhite && pixelIsClose(image.getPixel(right, top), image.getPixel(right, bot)) &&
-            !image.getPixel(right, bot).isWhite && pixelIsClose(image.getPixel(right, bot), image.getPixel(midX, bot)) &&
+            !image.getPixel(
+                right,
+                top,
+            ).isWhite && pixelIsClose(image.getPixel(right, top), image.getPixel(right, bot)) &&
+            !image.getPixel(
+                right,
+                bot,
+            ).isWhite && pixelIsClose(image.getPixel(right, bot), image.getPixel(midX, bot)) &&
             !image.getPixel(midX, top).isWhite && pixelIsClose(image.getPixel(midX, top), image.getPixel(right, top)) &&
             !image.getPixel(midX, bot).isWhite && pixelIsClose(image.getPixel(midX, bot), image.getPixel(left, bot)) &&
             !image.getPixel(left, bot).isWhite && pixelIsClose(image.getPixel(left, bot), image.getPixel(left, top))
@@ -250,6 +260,7 @@ object ImageUtil {
                     overallWhitePixels = 0
                     break@outer
                 }
+
                 blackStreak -> {
                     darkBG = true
                     if (x == right || x == right + offsetX) {
@@ -264,6 +275,7 @@ object ImageUtil {
                         break@outer
                     }
                 }
+
                 whiteStrak || whitePixels > 22 -> darkBG = false
             }
         }
@@ -297,24 +309,24 @@ object ImageUtil {
             }
         }
         if (!isLandscape && (
-            topIsBlackStreak || (
-                topLeftIsDark && topRightIsDark &&
-                    image.getPixel(left - offsetX, top).isDark && image.getPixel(right + offsetX, top).isDark &&
-                    (topMidIsDark || overallBlackPixels > 9)
+                topIsBlackStreak || (
+                    topLeftIsDark && topRightIsDark &&
+                        image.getPixel(left - offsetX, top).isDark && image.getPixel(right + offsetX, top).isDark &&
+                        (topMidIsDark || overallBlackPixels > 9)
+                    )
                 )
-            )
         ) {
             return GradientDrawable(
                 GradientDrawable.Orientation.TOP_BOTTOM,
                 intArrayOf(blackPixel, blackPixel, backgroundColor, backgroundColor),
             )
         } else if (!isLandscape && (
-            bottomIsBlackStreak || (
-                botLeftIsDark && botRightIsDark &&
-                    image.getPixel(left - offsetX, bot).isDark && image.getPixel(right + offsetX, bot).isDark &&
-                    (image.getPixel(midX, bot).isDark || overallBlackPixels > 9)
+                bottomIsBlackStreak || (
+                    botLeftIsDark && botRightIsDark &&
+                        image.getPixel(left - offsetX, bot).isDark && image.getPixel(right + offsetX, bot).isDark &&
+                        (image.getPixel(midX, bot).isDark || overallBlackPixels > 9)
+                    )
                 )
-            )
         ) {
             return GradientDrawable(
                 GradientDrawable.Orientation.TOP_BOTTOM,
@@ -334,7 +346,12 @@ object ImageUtil {
         val result = Bitmap.createBitmap(width / 2, height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(result)
         progressCallback?.invoke(98)
-        canvas.drawBitmap(imageBitmap, Rect(if (!secondHalf) 0 else width / 2, 0, if (secondHalf) width else width / 2, height), result.rect, null)
+        canvas.drawBitmap(
+            imageBitmap,
+            Rect(if (!secondHalf) 0 else width / 2, 0, if (secondHalf) width else width / 2, height),
+            result.rect,
+            null,
+        )
         progressCallback?.invoke(99)
         val output = Buffer()
         result.compress(Bitmap.CompressFormat.JPEG, 100, output.outputStream())
@@ -657,6 +674,7 @@ object ImageUtil {
         val booleans = listOf(true, false)
         return when {
             booleans.any { isSidePadded(!rightSide, checkWhite = it) > 1 } -> 0
+
             booleans.any {
                 when (isSidePadded(rightSide, checkWhite = it)) {
                     2 -> true
@@ -664,8 +682,11 @@ object ImageUtil {
                     else -> false
                 }
             } -> 3
+
             booleans.any { isSideLonger(rightSide, checkWhite = it) } -> 2
+
             booleans.any { isOneSideMorePadded(rightSide, checkWhite = it) } -> 1
+
             else -> 0
         }
     }
@@ -688,7 +709,13 @@ object ImageUtil {
             getPixel(unPaddedSide, (height * (it / 50f)).roundToInt()).isWhiteOrDark(checkWhite)
         }
         return if (isNotFullyUnPadded) {
-            if (paddedCount == 49) 2 else if (paddedCount >= (if (halfCheck) 25 else 47)) 1 else 0
+            if (paddedCount == 49) {
+                2
+            } else if (paddedCount >= (if (halfCheck) 25 else 47)) {
+                1
+            } else {
+                0
+            }
         } else {
             0
         }
@@ -837,6 +864,7 @@ object ImageUtil {
                 "N5702L", // NUU Mobile G3
             )
         }
+
         27 -> run {
             val device = Build.DEVICE ?: return@run false
             return@run device in arrayOf(
@@ -897,6 +925,7 @@ object ImageUtil {
                 "SHIFT6m", // SHIFT 6m
             )
         }
+
         else -> false
     }
 

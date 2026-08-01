@@ -54,6 +54,7 @@ class LibraryListHolder(
                         },
                     )
                 }
+
                 is LibraryPlaceholderItem.Type.Hidden -> {
                     binding.title.text = null
                     binding.title.isVisible = false

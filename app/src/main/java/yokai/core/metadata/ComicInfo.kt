@@ -39,7 +39,7 @@ fun getComicInfo(
     tags = null,
     web = ComicInfo.Web(urls.joinToString(" ")),
     publishingStatus = ComicInfo.PublishingStatusTachiyomi(
-        ComicInfoPublishingStatus.toComicInfoValue(manga.status.toLong())
+        ComicInfoPublishingStatus.toComicInfoValue(manga.status.toLong()),
     ),
     categories = categories?.let { ComicInfo.CategoriesTachiyomi(it.joinToString()) },
     source = ComicInfo.SourceMihon(sourceName),
@@ -62,7 +62,7 @@ fun SManga.toComicInfo(lang: String? = null) = ComicInfo(
     tags = null,
     web = null,
     publishingStatus = ComicInfo.PublishingStatusTachiyomi(
-        ComicInfoPublishingStatus.toComicInfoValue(status.toLong())
+        ComicInfoPublishingStatus.toComicInfoValue(status.toLong()),
     ),
     categories = null,
     source = null,
@@ -238,9 +238,9 @@ fun String.stripNonValidXML1_0Characters() = filter { it.isValidXML1_0() }
 
 fun Char.isValidXML1_0() = code.let { c ->
     c == 0x9 ||
-    c == 0xA ||
-    c == 0xD ||
-    c in 0x20..0xD7FF ||
-    c in 0xE000..0xFFFD ||
-    c in 0x10000..0x10FFFF
+        c == 0xA ||
+        c == 0xD ||
+        c in 0x20..0xD7FF ||
+        c in 0xE000..0xFFFD ||
+        c in 0x10000..0x10FFFF
 }

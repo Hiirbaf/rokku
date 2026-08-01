@@ -47,12 +47,6 @@ import eu.kanade.tachiyomi.util.system.launchIO
 import eu.kanade.tachiyomi.util.system.launchNonCancellableIO
 import eu.kanade.tachiyomi.util.system.withIOContext
 import eu.kanade.tachiyomi.util.system.withUIContext
-import java.util.Calendar
-import java.util.Date
-import java.util.Locale
-import java.util.concurrent.TimeUnit
-import kotlin.math.roundToInt
-import kotlin.random.Random
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -84,6 +78,12 @@ import yokai.domain.track.interactor.GetTrack
 import yokai.i18n.MR
 import yokai.util.isLewd
 import yokai.util.lang.getString
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
+import java.util.concurrent.TimeUnit
+import kotlin.math.roundToInt
+import kotlin.random.Random
 
 typealias LibraryMap = Map<Category, List<LibraryItem>>
 typealias LibraryMutableMap = MutableMap<Category, List<LibraryItem>>
@@ -138,6 +138,7 @@ class LibraryPresenter(
         private set
     val currentLibraryItems: List<LibraryItem>
         get() = currentLibrary.values.flatten()
+
     /** List of all manga to be displayed */
     private var libraryToDisplay: LibraryMutableMap = mutableMapOf()
     val libraryItemsToDisplay: List<LibraryItem>
@@ -147,7 +148,9 @@ class LibraryPresenter(
         private set
     var currentCategory: Category?
         get() = allCategories.find { it.id == currentCategoryId }
-        set(value) { currentCategoryId = value?.id ?: 0 }
+        set(value) {
+            currentCategoryId = value?.id ?: 0
+        }
 
     private var hiddenLibraryItems: List<LibraryItem> = emptyList()
     var forceShowAllCategories = false
@@ -175,12 +178,12 @@ class LibraryPresenter(
 
         !(
             filterDownloaded == 0 &&
-            filterUnread == 0 &&
-            filterCompleted == 0 &&
-            filterTracked == 0 &&
-            filterMangaType == 0 &&
-            filterContentType == 0
-        )
+                filterUnread == 0 &&
+                filterCompleted == 0 &&
+                filterTracked == 0 &&
+                filterMangaType == 0 &&
+                filterContentType == 0
+            )
     }
 
     fun isCategoryMoreThanOne(): Boolean = allCategories.size > 1
@@ -242,7 +245,9 @@ class LibraryPresenter(
             // Initial setup
             if (categories.isEmpty()) {
                 val dbCategories = getCategories.await()
-                if ((dbCategories + Category.createDefault(context)).distinctBy { it.order }.size != dbCategories.size + 1) {
+                if ((dbCategories + Category.createDefault(context)).distinctBy { it.order }.size !=
+                    dbCategories.size + 1
+                ) {
                     reorderCategories(dbCategories)
                 }
                 categories = lastCategories ?: getCategories.await().toMutableList()
@@ -282,7 +287,7 @@ class LibraryPresenter(
         val sortedCategories = categories.sortedBy { it.order }
         sortedCategories.forEachIndexed { i, category -> category.order = i }
         updateCategories.await(
-            sortedCategories.map { CategoryUpdate(id = it.id!!.toLong(), order = it.order.toLong()) }
+            sortedCategories.map { CategoryUpdate(id = it.id!!.toLong(), order = it.order.toLong()) },
         )
     }
 
@@ -366,12 +371,12 @@ class LibraryPresenter(
         val filtersOff = view?.isSubClass != true &&
             (
                 filterPrefs.filterDownloaded == 0 &&
-                filterPrefs.filterUnread == 0 &&
-                filterPrefs.filterCompleted == 0 &&
-                filterPrefs.filterTracked == 0 &&
-                filterPrefs.filterMangaType == 0 &&
-                filterPrefs.filterContentType == 0
-            )
+                    filterPrefs.filterUnread == 0 &&
+                    filterPrefs.filterCompleted == 0 &&
+                    filterPrefs.filterTracked == 0 &&
+                    filterPrefs.filterMangaType == 0 &&
+                    filterPrefs.filterContentType == 0
+                )
         hasActiveFilters = !filtersOff
         val realCount = mutableMapOf<Int, Int>()
         val filteredItems = this.mapValues { (key, items) ->
@@ -389,13 +394,13 @@ class LibraryPresenter(
                 }
 
                 if (
-                    !showEmptyCategoriesWhileFiltering
-                    && item is LibraryPlaceholderItem
-                    && item.type is LibraryPlaceholderItem.Type.Hidden
+                    !showEmptyCategoriesWhileFiltering &&
+                    item is LibraryPlaceholderItem &&
+                    item.type is LibraryPlaceholderItem.Type.Hidden
                 ) {
                     val subItems = (libraryToDisplay[key] ?: hiddenLibraryItems)
-                            .filterIsInstance<LibraryMangaItem>()
-                            .filter { it.manga.category == item.category }
+                        .filterIsInstance<LibraryMangaItem>()
+                        .filter { it.manga.category == item.category }
                     if (subItems.isEmpty()) {
                         return@f filtersOff
                     } else {
@@ -454,8 +459,9 @@ class LibraryPresenter(
 
         if (filterPrefs.filterMangaType > 0) {
             if (if (filterPrefs.filterMangaType == Manga.TYPE_MANHWA) {
-                item.manga.manga.seriesType(sourceManager = sourceManager) !in arrayOf(filterPrefs.filterMangaType, Manga.TYPE_WEBTOON)
-            } else {
+                    item.manga.manga.seriesType(sourceManager = sourceManager) !in
+                        arrayOf(filterPrefs.filterMangaType, Manga.TYPE_WEBTOON)
+                } else {
                     filterPrefs.filterMangaType != item.manga.manga.seriesType(sourceManager = sourceManager)
                 }
             ) {
@@ -669,28 +675,38 @@ class LibraryPresenter(
             val category = i1.header.category
             val compare = when {
                 i1 is LibraryPlaceholderItem -> -1
+
                 i2 is LibraryPlaceholderItem -> 1
+
                 i1 !is LibraryMangaItem || i2 !is LibraryMangaItem -> 0
+
                 category.mangaSort != null -> {
                     var sort = when (category.sortingMode() ?: LibrarySort.Title) {
                         LibrarySort.Title -> sortAlphabetical(i1, i2)
+
                         LibrarySort.LatestChapter -> i2.manga.latestUpdate.compareTo(i1.manga.latestUpdate)
+
                         LibrarySort.Unread -> when {
                             i1.manga.unread == i2.manga.unread -> 0
                             i1.manga.unread == 0 -> if (category.isAscending()) 1 else -1
                             i2.manga.unread == 0 -> if (category.isAscending()) -1 else 1
                             else -> i1.manga.unread.compareTo(i2.manga.unread)
                         }
+
                         LibrarySort.LastRead -> {
                             i2.manga.lastRead.compareTo(i1.manga.lastRead)
                         }
+
                         LibrarySort.TotalChapters -> {
                             i2.manga.totalChapters.compareTo(i1.manga.totalChapters)
                         }
+
                         LibrarySort.DateFetched -> {
                             i2.manga.lastFetch.compareTo(i1.manga.lastFetch)
                         }
+
                         LibrarySort.DateAdded -> i2.manga.manga.date_added.compareTo(i1.manga.manga.date_added)
+
                         LibrarySort.DragAndDrop -> {
                             if (category.isDynamic) {
                                 val category1 = categoryOrderMap[i1.manga.category] ?: 0
@@ -700,6 +716,7 @@ class LibraryPresenter(
                                 sortAlphabetical(i1, i2)
                             }
                         }
+
                         LibrarySort.Random -> {
                             error("You're not supposed to be here...")
                         }
@@ -707,6 +724,7 @@ class LibraryPresenter(
                     if (!category.isAscending()) sort *= -1
                     sort
                 }
+
                 category.mangaOrder.isNotEmpty() -> {
                     val order = category.mangaOrder
                     val index1 = order.indexOf(i1.manga.manga.id!!)
@@ -718,6 +736,7 @@ class LibraryPresenter(
                         else -> index1.compareTo(index2)
                     }
                 }
+
                 else -> 0
             }
             if (compare == 0 && i1 is LibraryMangaItem && i2 is LibraryMangaItem) {
@@ -739,7 +758,7 @@ class LibraryPresenter(
                         CategoryUpdate(
                             id = category.id!!.toLong(),
                             mangaOrder = category.mangaOrderToString(),
-                        )
+                        ),
                     )
                 }
             }
@@ -764,7 +783,9 @@ class LibraryPresenter(
                 // Force default category to always be at the top. This also for some reason fixed a bug where Default
                 // category would disappear whenever a new category is added.
                 category.id == 0 -> -1
+
                 category2.id == 0 -> 1
+
                 else -> category.order.compareTo(category2.order)
             }
         }
@@ -812,21 +833,21 @@ class LibraryPresenter(
         preferences.collapsedCategories().changes(),
         preferences.collapsedDynamicCategories().changes(),
     ) {
-       ItemPreferences(
-           filterDownloaded = it[0] as Int,
-           filterUnread = it[1] as Int,
-           filterCompleted = it[2] as Int,
-           filterTracked = it[3] as Int,
-           filterMangaType = it[4] as Int,
-           filterContentType = it[5] as Int,
-           filterBookmarked = it[6] as Int,
-           groupType = it[7] as Int,
-           showAllCategories = it[8] as Boolean,
-           sortingMode = it[9] as Int,
-           sortAscending = it[10] as Boolean,
-           collapsedCategories = it[11] as Set<String>,
-           collapsedDynamicCategories = it[12] as Set<String>,
-       )
+        ItemPreferences(
+            filterDownloaded = it[0] as Int,
+            filterUnread = it[1] as Int,
+            filterCompleted = it[2] as Int,
+            filterTracked = it[3] as Int,
+            filterMangaType = it[4] as Int,
+            filterContentType = it[5] as Int,
+            filterBookmarked = it[6] as Int,
+            groupType = it[7] as Int,
+            showAllCategories = it[8] as Boolean,
+            sortingMode = it[9] as Int,
+            sortAscending = it[10] as Boolean,
+            collapsedCategories = it[11] as Set<String>,
+            collapsedDynamicCategories = it[12] as Set<String>,
+        )
     }
 
 //    private fun MutableList<LibraryItem>.addRemovedManga(
@@ -938,7 +959,7 @@ class LibraryPresenter(
                 val id = category.id!!
                 id to LibraryHeaderItem({ this@LibraryPresenter.categories.getOrDefault(id) }, id)
             } + (0 to LibraryHeaderItem({ this@LibraryPresenter.categories.getOrDefault(0) }, 0))
-        ).toMap()
+            ).toMap()
 
         val categoriesHidden = if (forceShowAllCategories || controllerIsSubClass) {
             emptySet()
@@ -946,13 +967,13 @@ class LibraryPresenter(
             collapsedCategories.mapNotNull { it.toIntOrNull() }.toSet()
         }
 
-        val map = if (!libraryIsGrouped)
+        val map = if (!libraryIsGrouped) {
             libraryManga
                 .asSequence()
                 .distinctBy { it.manga.id }
                 .map { LibraryMangaItem(it, catItemAll, viewContext) }
                 .groupBy { categoryAll }
-        else {
+        } else {
             val rt = libraryManga
                 .asSequence()
                 .mapNotNull {
@@ -968,8 +989,8 @@ class LibraryPresenter(
             categories
                 .associateWith { rt[it.id].orEmpty() }
                 .mapValues { (key, values) ->
-                    val catId = key.id!!  // null check already handled by mapNotNull
-                    val headerItem = headerItems[catId]!!  // null check already handled by mapNotNull
+                    val catId = key.id!! // null check already handled by mapNotNull
+                    val headerItem = headerItems[catId]!! // null check already handled by mapNotNull
 
                     // Hide category if "Show all categories" is enabled and there's more than 1 category
                     if (catId in categoriesHidden && showAll && categories.size > 1) {
@@ -1061,6 +1082,7 @@ class LibraryPresenter(
                         LibraryMangaItem(manga, makeOrGetHeader(it), viewContext)
                     }
                 }
+
                 BY_TRACK_STATUS -> {
                     val tracks = getTrack.awaitAllByMangaId(manga.manga.id!!)
                     val track = tracks.find { track ->
@@ -1078,6 +1100,7 @@ class LibraryPresenter(
                     }
                     listOf(LibraryMangaItem(manga, makeOrGetHeader(status), viewContext))
                 }
+
                 BY_SOURCE -> {
                     val source = sourceManager.getOrStub(manga.manga.source)
                     listOf(
@@ -1088,6 +1111,7 @@ class LibraryPresenter(
                         ),
                     )
                 }
+
                 BY_AUTHOR -> {
                     if (manga.manga.artist.isNullOrBlank() && manga.manga.author.isNullOrBlank()) {
                         listOf(LibraryMangaItem(manga, makeOrGetHeader(unknown), viewContext))
@@ -1105,6 +1129,7 @@ class LibraryPresenter(
                         }
                     }
                 }
+
                 BY_LANGUAGE -> {
                     val lang = getLanguage(manga.manga)
                     listOf(
@@ -1123,8 +1148,11 @@ class LibraryPresenter(
                         ),
                     )
                 }
+
                 // BY_STATUS
-                else -> listOf(LibraryMangaItem(manga, makeOrGetHeader(context.mapStatus(manga.manga.status)), viewContext))
+                else -> listOf(
+                    LibraryMangaItem(manga, makeOrGetHeader(context.mapStatus(manga.manga.status)), viewContext),
+                )
             }
         }.flatten().groupBy { it.header.catId }
 
@@ -1162,7 +1190,7 @@ class LibraryPresenter(
         val map = headers
             .associateWith { items[it.id].orEmpty() }
             .mapValues { (key, values) ->
-                val catId = key.id!!  // null check already handled by mapNotNull
+                val catId = key.id!! // null check already handled by mapNotNull
                 val headerItem = tagItems[key.dynamicHeaderKey()]
                 if (key.isHidden) {
                     val mergedTitle = values.joinToString("-") {
@@ -1306,7 +1334,6 @@ class LibraryPresenter(
     fun updateLibrary() = presenterScope.launch {
         forceUpdateEvent.send(Unit)
     }
-
 
     /** Undo the removal of the manga once in library */
     fun reAddMangas(mangas: List<Manga>) {
@@ -1612,9 +1639,11 @@ class LibraryPresenter(
                             )?.name
                         randomSource?.chopByWords(30)
                     }
+
                     randomTitle -> {
                         getLibraryManga.await().randomOrNull(random)?.manga?.title?.chopByWords(30)
                     }
+
                     in randomTags -> {
                         val tags = RecentsPresenter.getRecentManga(true)
                             .map { it.first.genre.orEmpty().split(",").map(String::trim) }
@@ -1639,6 +1668,7 @@ class LibraryPresenter(
                             groupedTags.take(8).randomOrNull(random)
                         }
                     }
+
                     else -> ""
                 } ?: "",
             )
@@ -1659,7 +1689,10 @@ class LibraryPresenter(
             libraryManga.forEach { manga ->
                 if (manga.manga.id == null) return@forEach
                 if (manga.manga.date_added == 0L) {
-                    val chapters = getChapter.awaitAll(manga.manga.id!!, manga.manga.filtered_scanlators?.isNotBlank() == true)
+                    val chapters = getChapter.awaitAll(
+                        manga.manga.id!!,
+                        manga.manga.filtered_scanlators?.isNotBlank() == true,
+                    )
                     manga.manga.date_added = chapters.minByOrNull { it.date_fetch }?.date_fetch ?: 0L
                     updateManga.await(MangaUpdate(manga.manga.id!!, dateAdded = manga.manga.date_added))
                 }
@@ -1671,7 +1704,13 @@ class LibraryPresenter(
         ) {
             val libraryManga = getManga.awaitFavorites()
             libraryManga.forEach { manga ->
-                try { withUIContext { MangaCoverMetadata.setRatioAndColors(manga.id, manga.thumbnail_url, manga.favorite) } } catch (_: Exception) { }
+                try {
+                    withUIContext {
+                        MangaCoverMetadata.setRatioAndColors(manga.id, manga.thumbnail_url, manga.favorite)
+                    }
+                } catch (
+                    _: Exception,
+                ) { }
             }
             MangaCoverMetadata.savePrefs()
         }

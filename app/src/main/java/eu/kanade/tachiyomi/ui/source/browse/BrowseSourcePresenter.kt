@@ -276,7 +276,7 @@ open class BrowseSourcePresenter(
                 MangaUpdate(
                     id = localManga.id!!,
                     title = sManga.title,
-                )
+                ),
             )
         } else if (!localManga.favorite) {
             // if the manga isn't a favorite, set its display title from source
@@ -358,11 +358,17 @@ open class BrowseSourcePresenter(
         return mapNotNull { filter ->
             when (filter) {
                 is Filter.Header -> HeaderItem(filter)
+
                 is Filter.Separator -> SeparatorItem(filter)
+
                 is Filter.CheckBox -> CheckboxItem(filter)
+
                 is Filter.TriState -> TriStateItem(filter)
+
                 is Filter.Text -> TextItem(filter)
+
                 is Filter.Select<*> -> SelectItem(filter)
+
                 is Filter.Group<*> -> {
                     val group = GroupItem(filter)
                     val subItems = filter.state.mapNotNull { type ->
@@ -378,6 +384,7 @@ open class BrowseSourcePresenter(
                     group.subItems = subItems
                     group
                 }
+
                 is Filter.Sort -> {
                     val group = SortGroup(filter)
                     val subItems = filter.values.map {
@@ -416,6 +423,6 @@ open class BrowseSourcePresenter(
     }
 
     suspend fun loadSearches(): List<SavedSearch> {
-       return getSavedSearch.awaitAllBySourceId(sourceId).applyAllSave(source.getFilterList())
+        return getSavedSearch.awaitAllBySourceId(sourceId).applyAllSave(source.getFilterList())
     }
 }

@@ -1,9 +1,9 @@
 package eu.kanade.tachiyomi.data.database.models
 
 import eu.kanade.tachiyomi.source.model.SChapter
-import java.io.Serializable
 import yokai.data.memoAdapter
 import yokai.domain.chapter.models.ChapterUpdate
+import java.io.Serializable
 
 interface Chapter : SChapter, Serializable {
 

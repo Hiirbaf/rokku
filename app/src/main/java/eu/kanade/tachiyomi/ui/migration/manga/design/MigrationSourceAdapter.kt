@@ -39,7 +39,7 @@ class MigrationSourceAdapter(
         val sourceManager: SourceManager by injectLazy()
         savedInstanceState.getParcelableArrayListCompat(
             SELECTED_SOURCES_KEY,
-            MigrationSourceItem.ParcelableSI::class.java
+            MigrationSourceItem.ParcelableSI::class.java,
         )?.let {
             updateDataSet(it.map { MigrationSourceItem.fromParcelable(sourceManager, it) })
         }

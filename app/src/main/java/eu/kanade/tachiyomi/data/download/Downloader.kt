@@ -25,9 +25,6 @@ import eu.kanade.tachiyomi.util.system.launchNow
 import eu.kanade.tachiyomi.util.system.withIOContext
 import eu.kanade.tachiyomi.util.system.withUIContext
 import eu.kanade.tachiyomi.util.system.writeText
-import java.io.File
-import java.util.*
-import java.util.zip.*
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -65,6 +62,9 @@ import yokai.domain.category.interactor.GetCategories
 import yokai.domain.download.DownloadPreferences
 import yokai.i18n.MR
 import yokai.util.lang.getString
+import java.io.File
+import java.util.*
+import java.util.zip.*
 
 /**
  * This class is the one in charge of downloading chapters.
@@ -196,7 +196,8 @@ class Downloader(
                         // Ignore completed downloads, leave them in the queue
                         .filter {
                             val statusValue = it.status.value
-                            Download.State.NOT_DOWNLOADED.value <= statusValue && statusValue <= Download.State.DOWNLOADING.value
+                            Download.State.NOT_DOWNLOADED.value <= statusValue &&
+                                statusValue <= Download.State.DOWNLOADING.value
                         }
                         .groupBy { it.source }
                         .toList()
@@ -332,7 +333,10 @@ class Downloader(
             notifier.onError(context.getString(MR.strings.couldnt_download_low_space), chapName)
             return
         }
-        val chapterDirname = provider.getChapterDirName(download.chapter, includeId = downloadPreferences.downloadWithId().get())
+        val chapterDirname = provider.getChapterDirName(
+            download.chapter,
+            includeId = downloadPreferences.downloadWithId().get(),
+        )
         val tmpDir = mangaDir.createDirectory(chapterDirname + TMP_DIR_SUFFIX)!!
 
         try {
@@ -437,9 +441,12 @@ class Downloader(
             val fileName = it.name.orEmpty()
             when {
                 fileName in listOf(COMIC_INFO_FILE, NOMEDIA_FILE) -> false
+
                 fileName.endsWith(".tmp") -> false
+
                 // Only count the first split page and not the others
                 fileName.contains("__") && !fileName.endsWith("__001.jpg") -> false
+
                 else -> true
             }
         }
@@ -476,6 +483,7 @@ class Downloader(
             // If the image is already downloaded, do nothing. Otherwise download from network
             val file = when {
                 imageFile != null -> imageFile
+
                 chapterCache.isImageInCache(page.imageUrl!!) -> moveImageFromCache(
                     chapterCache.getImageFile(
                         page.imageUrl!!,
@@ -483,6 +491,7 @@ class Downloader(
                     tmpDir,
                     filename,
                 )
+
                 else -> downloadImage(page, download.source, tmpDir, filename)
             }
 
@@ -601,7 +610,7 @@ class Downloader(
 
             ImageUtil.splitTallImage(tmpDir, imageFile, fileName)
         } catch (e: Exception) {
-            Logger.e(e) { "Failed to split downloaded image"}
+            Logger.e(e) { "Failed to split downloaded image" }
         }
     }
 
@@ -647,8 +656,12 @@ class Downloader(
             .orEmpty()
             .map { it.name.trim() }
             .takeUnless { it.isEmpty() }
-        val url = try { source.getChapterUrl(chapter) } catch (_: Exception) { null }
-            ?: source.getChapterUrl(manga, chapter).takeIf { !it.isNullOrBlank() }  // FIXME: Not sure if this is necessary
+        val url = try {
+            source.getChapterUrl(chapter)
+        } catch (_: Exception) {
+            null
+        }
+            ?: source.getChapterUrl(manga, chapter).takeIf { !it.isNullOrBlank() } // FIXME: Not sure if this is necessary
 
         val comicInfo = getComicInfo(
             manga,

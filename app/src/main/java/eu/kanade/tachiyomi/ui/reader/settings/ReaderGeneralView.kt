@@ -15,9 +15,9 @@ import eu.kanade.tachiyomi.util.lang.addBetaTag
 import eu.kanade.tachiyomi.util.lang.withSubtitle
 import eu.kanade.tachiyomi.util.system.DeviceUtil
 import eu.kanade.tachiyomi.widget.BaseReaderSettingsView
-import kotlin.math.roundToInt
 import yokai.i18n.MR
 import yokai.util.lang.getString
+import kotlin.math.roundToInt
 
 class ReaderGeneralView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) :
     BaseReaderSettingsView<ReaderGeneralLayoutBinding>(context, attrs) {
@@ -30,7 +30,9 @@ class ReaderGeneralView @JvmOverloads constructor(context: Context, attrs: Attri
             (context as ReaderActivity).viewModel.setMangaReadingMode(readingModeType.flagValue)
 
             val mangaViewer = activity.viewModel.getMangaReadingMode()
-            if (mangaViewer == ReadingModeType.LONG_STRIP.flagValue || mangaViewer == ReadingModeType.CONTINUOUS_VERTICAL.flagValue) {
+            if (mangaViewer == ReadingModeType.LONG_STRIP.flagValue ||
+                mangaViewer == ReadingModeType.CONTINUOUS_VERTICAL.flagValue
+            ) {
                 initWebtoonPreferences()
             } else {
                 initPagerPreferences()
@@ -135,6 +137,7 @@ class ReaderGeneralView @JvmOverloads constructor(context: Context, attrs: Attri
 
     private fun updatePrefs() {
         binding.cutoutShort.isVisible =
-            DeviceUtil.hasCutout(context as ReaderActivity).ordinal >= DeviceUtil.CutoutSupport.MODERN.ordinal && preferences.fullscreen().get()
+            DeviceUtil.hasCutout(context as ReaderActivity).ordinal >= DeviceUtil.CutoutSupport.MODERN.ordinal &&
+            preferences.fullscreen().get()
     }
 }

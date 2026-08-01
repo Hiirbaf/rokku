@@ -37,7 +37,7 @@ class BackupRestoreJob(val context: Context, workerParams: WorkerParameters) : C
                 ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
             } else {
                 0
-            }
+            },
         )
     }
 

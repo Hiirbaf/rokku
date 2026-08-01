@@ -47,7 +47,9 @@ class LibraryMangaItem(
         val libraryLayout = libraryLayout
         val isFixedSize = uniformSize
 
-        if (libraryLayout == LAYOUT_LIST) { return listHolder }
+        if (libraryLayout == LAYOUT_LIST) {
+            return listHolder
+        }
 
         view.apply {
             val isStaggered = parent.layoutManager is StaggeredGridLayoutManager

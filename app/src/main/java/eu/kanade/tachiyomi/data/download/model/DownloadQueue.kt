@@ -33,13 +33,16 @@ sealed class DownloadQueue {
                     // Initial update of the downloaded pages
                     onQueueUpdate(download)
                 }
+
                 Download.State.DOWNLOADED -> {
                     cancelProgressJob(download)
 
                     onProgressUpdate(download)
                     onQueueUpdate(download)
                 }
+
                 Download.State.ERROR -> cancelProgressJob(download)
+
                 else -> {
                     /* unused */
                 }

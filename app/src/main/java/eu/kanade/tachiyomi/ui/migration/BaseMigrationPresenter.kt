@@ -67,7 +67,9 @@ abstract class BaseMigrationPresenter<T : BaseMigrationInterface>(
                     {
                         when (sortOrder) {
                             PreferenceValues.MigrationSourceOrder.Alphabetically -> it.first.name
+
                             PreferenceValues.MigrationSourceOrder.MostEntries -> Long.MAX_VALUE - it.second
+
                             PreferenceValues.MigrationSourceOrder.Obsolete ->
                                 it.first !is SourceManager.StubSource &&
                                     it.first.id !in obsoleteSources

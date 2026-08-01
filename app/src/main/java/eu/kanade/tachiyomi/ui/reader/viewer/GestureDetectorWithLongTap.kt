@@ -47,15 +47,18 @@ open class GestureDetectorWithLongTap(
                     handler.postDelayed(longTapFn, longTapTime)
                 }
             }
+
             MotionEvent.ACTION_MOVE -> {
                 if (abs(ev.rawX - downX) > slop || abs(ev.rawY - downY) > slop) {
                     handler.removeCallbacks(longTapFn)
                 }
             }
+
             MotionEvent.ACTION_UP -> {
                 lastUp = ev.eventTime
                 handler.removeCallbacks(longTapFn)
             }
+
             MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_POINTER_DOWN -> {
                 handler.removeCallbacks(longTapFn)
             }

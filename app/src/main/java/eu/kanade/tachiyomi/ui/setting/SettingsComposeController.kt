@@ -6,7 +6,7 @@ import cafe.adriel.voyager.transitions.CrossfadeTransition
 import eu.kanade.tachiyomi.ui.base.controller.BaseComposeController
 import yokai.presentation.settings.ComposableSettings
 
-abstract class SettingsComposeController: BaseComposeController(), SettingsControllerInterface {
+abstract class SettingsComposeController : BaseComposeController(), SettingsControllerInterface {
     override fun getTitle(): String? = __getTitle()
     override fun getSearchTitle(): String? = __getTitle()
 

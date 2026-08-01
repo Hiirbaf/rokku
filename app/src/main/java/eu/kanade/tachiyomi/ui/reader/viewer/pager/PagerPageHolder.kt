@@ -38,9 +38,6 @@ import eu.kanade.tachiyomi.util.system.withUIContext
 import eu.kanade.tachiyomi.util.view.backgroundColor
 import eu.kanade.tachiyomi.util.view.isVisibleOnScreen
 import eu.kanade.tachiyomi.widget.ViewPagerAdapter
-import java.io.InputStream
-import kotlin.math.min
-import kotlin.math.roundToInt
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.Default
@@ -52,6 +49,9 @@ import kotlinx.coroutines.withContext
 import okio.Buffer
 import okio.BufferedSource
 import uy.kohesive.injekt.injectLazy
+import java.io.InputStream
+import kotlin.math.min
+import kotlin.math.roundToInt
 
 /**
  * View of the ViewPager that contains a page of a chapter.
@@ -301,7 +301,11 @@ class PagerPageHolder(
 
     private fun SubsamplingScaleImageView.landscapeZoom(forward: Boolean?) {
         forward ?: return
-        if (viewer.config.landscapeZoom && viewer.config.imageScaleType == SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE && sWidth > sHeight && scale == minScale) {
+        if (viewer.config.landscapeZoom &&
+            viewer.config.imageScaleType == SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE &&
+            sWidth > sHeight &&
+            scale == minScale
+        ) {
             handler.postDelayed(500) {
                 val point = when (viewer.config.imageZoomType) {
                     ZoomType.Left -> if (forward) PointF(0F, 0F) else PointF(sWidth.toFloat(), 0F)
@@ -338,17 +342,21 @@ class PagerPageHolder(
     private suspend fun processStatus(status: Page.State) {
         when (status) {
             is Page.State.Queue -> setQueued()
+
             is Page.State.LoadPage -> setLoading()
+
             is Page.State.DownloadImage -> {
                 launchProgressJob()
                 setDownloading()
             }
+
             is Page.State.Ready -> {
                 if (extraPage == null) {
                     setImage()
                 }
                 cancelProgressJob(1)
             }
+
             is Page.State.Error -> {
                 setError()
                 cancelProgressJob(1)
@@ -364,15 +372,19 @@ class PagerPageHolder(
     private suspend fun processStatus2(status: Page.State) {
         when (status) {
             is Page.State.Queue -> setQueued()
+
             is Page.State.LoadPage -> setLoading()
+
             is Page.State.DownloadImage -> {
                 launchProgressJob2()
                 setDownloading()
             }
+
             is Page.State.Ready -> {
                 setImage()
                 cancelProgressJob(2)
             }
+
             is Page.State.Error -> {
                 setError()
                 cancelProgressJob(2)
@@ -501,10 +513,11 @@ class PagerPageHolder(
             }
         } catch (e: Throwable) {
             val logMsg = "Failed to set reader page image"
-            if (e is CancellationException)
-                Logger.w(e) { logMsg }  // probably user exiting the reader page before the image loads
-            else
+            if (e is CancellationException) {
+                Logger.w(e) { logMsg } // probably user exiting the reader page before the image loads
+            } else {
                 Logger.e(e) { logMsg }
+            }
             withUIContext {
                 setError()
             }
@@ -522,10 +535,17 @@ class PagerPageHolder(
                 cutoutSupport = DeviceUtil.hasCutout(viewer.activity),
                 cutoutBehavior = viewer.config.cutoutBehavior,
                 topCutoutInset = viewer.activity.window.decorView.rootWindowInsets?.topCutoutInset()?.toFloat() ?: 0f,
-                bottomCutoutInset = viewer.activity.window.decorView.rootWindowInsets?.bottomCutoutInset()?.toFloat() ?: 0f,
+                bottomCutoutInset =
+                viewer.activity.window.decorView.rootWindowInsets?.bottomCutoutInset()?.toFloat() ?: 0f,
                 scaleTypeIsFullFit = viewer.config.scaleTypeIsFullFit(),
-                isFullscreen = viewer.config.isFullscreen
-                    && if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) !viewer.activity.isInMultiWindowMode else true,
+                isFullscreen = viewer.config.isFullscreen &&
+                    if (Build.VERSION.SDK_INT >=
+                        Build.VERSION_CODES.Q
+                    ) {
+                        !viewer.activity.isInMultiWindowMode
+                    } else {
+                        true
+                    },
                 isSplitScreen = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && viewer.activity.isInMultiWindowMode,
                 insets = viewer.activity.window.decorView.rootWindowInsets,
             ),
@@ -741,10 +761,13 @@ class PagerPageHolder(
                 when (page.index) {
                     // 3rd page shouldn't shift if the 1st page is a spread
                     2 -> pages?.get(0)?.fullPage != true
+
                     // 2nd page shouldn't shift if the 1st page is more likely an end page
                     1 -> isFirstPageNotEnd
+
                     // 1st page shouldn't shift if the 2nd page is definitely an end page
                     0 -> extraPage?.endPageConfidence != 3 || page.endPageConfidence == 3
+
                     else -> false
                 }
             ) {

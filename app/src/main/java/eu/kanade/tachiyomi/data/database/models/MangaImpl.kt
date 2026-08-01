@@ -6,9 +6,9 @@ import eu.kanade.tachiyomi.data.library.CustomMangaManager
 import eu.kanade.tachiyomi.domain.manga.models.Manga
 import eu.kanade.tachiyomi.source.model.SManga
 import eu.kanade.tachiyomi.source.model.UpdateStrategy
-import kotlin.jvm.Transient
 import kotlinx.serialization.json.JsonObject
 import uy.kohesive.injekt.injectLazy
+import kotlin.jvm.Transient
 
 open class MangaImpl(
     override var id: Long? = null,
@@ -31,19 +31,27 @@ open class MangaImpl(
 
     override var author: String?
         get() = if (favorite) customMangaManager.getManga(this)?.author ?: ogAuthor else ogAuthor
-        set(value) { ogAuthor = value }
+        set(value) {
+            ogAuthor = value
+        }
 
     override var artist: String?
         get() = if (favorite) customMangaManager.getManga(this)?.artist ?: ogArtist else ogArtist
-        set(value) { ogArtist = value }
+        set(value) {
+            ogArtist = value
+        }
 
     override var description: String?
         get() = if (favorite) customMangaManager.getManga(this)?.description ?: ogDesc else ogDesc
-        set(value) { ogDesc = value }
+        set(value) {
+            ogDesc = value
+        }
 
     override var genre: String?
         get() = if (favorite) customMangaManager.getManga(this)?.genre ?: ogGenre else ogGenre
-        set(value) { ogGenre = value }
+        set(value) {
+            ogGenre = value
+        }
 
     override var status: Int
         get() = if (favorite) {
@@ -52,7 +60,9 @@ open class MangaImpl(
         } else {
             ogStatus
         }
-        set(value) { ogStatus = value }
+        set(value) {
+            ogStatus = value
+        }
 
     override var thumbnail_url: String? = null
 

@@ -97,10 +97,10 @@ fun BadgeSegments(
                             modifier = Modifier
                                 .fillMaxHeight()
                                 .wrapContentWidth()
-                                .aspectRatio(3f / 2f)
+                                .aspectRatio(3f / 2f),
                         )
-                    }
-                )
+                    },
+                ),
             )
 
             if (downloadCount > 0) {
@@ -109,7 +109,7 @@ fun BadgeSegments(
                         backgroundColor = MaterialTheme.colorScheme.tertiary,
                         text = downloadCount.toString(),
                         textColor = MaterialTheme.colorScheme.onTertiary,
-                    )
+                    ),
                 )
             }
 
@@ -119,7 +119,7 @@ fun BadgeSegments(
                         backgroundColor = MaterialTheme.colorScheme.secondary,
                         text = unreadCount.toString(),
                         textColor = MaterialTheme.colorScheme.onSecondary,
-                    )
+                    ),
                 )
             }
         }
@@ -153,7 +153,7 @@ fun MangaComfortableGridItem(
                             data = coverData,
                             onState = { state ->
                                 isLoading = state is AsyncImagePainter.State.Loading
-                            }
+                            },
                         )
                         if (isLoading) {
                             LoadingIndicator(modifier = Modifier.align(Alignment.Center))
@@ -217,7 +217,7 @@ fun MangaCompactGridItem(
                         data = coverData,
                         onState = { state ->
                             isLoading = state is AsyncImagePainter.State.Loading
-                        }
+                        },
                     )
                     if (isLoading) {
                         LoadingIndicator(modifier = Modifier.align(Alignment.Center))

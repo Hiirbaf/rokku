@@ -23,10 +23,8 @@ import com.mikepenz.fastadapter.adapters.ItemAdapter
 import com.mikepenz.fastadapter.items.AbstractItem
 import com.mikepenz.fastadapter.select.SelectExtension
 import com.mikepenz.fastadapter.select.getSelectExtension
-import eu.kanade.tachiyomi.R
-import yokai.i18n.MR
-import yokai.util.lang.getString
 import dev.icerock.moko.resources.compose.stringResource
+import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.data.preference.PreferencesHelper
 import eu.kanade.tachiyomi.databinding.ThemeItemBinding
 import eu.kanade.tachiyomi.databinding.ThemesPreferenceBinding
@@ -38,6 +36,8 @@ import eu.kanade.tachiyomi.util.system.getResourceColor
 import eu.kanade.tachiyomi.util.system.isInNightMode
 import eu.kanade.tachiyomi.util.view.setText
 import uy.kohesive.injekt.injectLazy
+import yokai.i18n.MR
+import yokai.util.lang.getString
 import kotlin.math.max
 import android.R as AR
 
@@ -69,12 +69,18 @@ class ThemePreference @JvmOverloads constructor(context: Context, attrs: Attribu
         val supportsDynamic = DynamicColors.isDynamicColorAvailable()
         itemAdapterLight.set(
             enumConstants
-                .filter { (!it.isDarkTheme || it.followsSystem) && (it.styleRes != R.style.Theme_Tachiyomi_Monet || supportsDynamic) }
+                .filter {
+                    (!it.isDarkTheme || it.followsSystem) &&
+                        (it.styleRes != R.style.Theme_Tachiyomi_Monet || supportsDynamic)
+                }
                 .map { ThemeItem(it, false) },
         )
         itemAdapterDark.set(
             enumConstants
-                .filter { (it.isDarkTheme || it.followsSystem) && (it.styleRes != R.style.Theme_Tachiyomi_Monet || supportsDynamic) }
+                .filter {
+                    (it.isDarkTheme || it.followsSystem) &&
+                        (it.styleRes != R.style.Theme_Tachiyomi_Monet || supportsDynamic)
+                }
                 .map { ThemeItem(it, true) },
         )
         isSelectable = false
@@ -94,14 +100,14 @@ class ThemePreference @JvmOverloads constructor(context: Context, attrs: Attribu
                 if (!selected) {
                     preferences.nightMode().set(nightMode)
                 } else if (preferences.nightMode()
-                    .get() != AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+                        .get() != AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
                 ) {
                     preferences.nightMode().set(nightMode)
                 }
                 if ((
-                    preferences.nightMode().get() == AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM &&
-                        nightMode != context.appDelegateNightMode()
-                    ) ||
+                        preferences.nightMode().get() == AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM &&
+                            nightMode != context.appDelegateNightMode()
+                        ) ||
                     (!selected && nightMode == context.appDelegateNightMode())
                 ) {
                     fastAdapterLight.notifyDataSetChanged()
@@ -208,7 +214,9 @@ class ThemePreference @JvmOverloads constructor(context: Context, attrs: Attribu
                 }
                 return when (preferences.nightMode().get()) {
                     AppCompatDelegate.MODE_NIGHT_YES -> darkTheme == theme && isDarkTheme
+
                     AppCompatDelegate.MODE_NIGHT_NO -> lightTheme == theme && !isDarkTheme
+
                     else -> (darkTheme == theme && isDarkTheme) ||
                         (lightTheme == theme && !isDarkTheme)
                 }

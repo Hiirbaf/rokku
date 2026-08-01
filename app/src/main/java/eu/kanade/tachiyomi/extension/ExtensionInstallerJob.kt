@@ -43,7 +43,10 @@ import yokai.i18n.MR
 import java.lang.ref.WeakReference
 import kotlin.math.max
 
-class ExtensionInstallerJob(val context: Context, workerParams: WorkerParameters) : CoroutineWorker(context, workerParams) {
+class ExtensionInstallerJob(val context: Context, workerParams: WorkerParameters) : CoroutineWorker(
+    context,
+    workerParams,
+) {
 
     private val notifier = ExtensionInstallNotifier(context.localeContext)
 
