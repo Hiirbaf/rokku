@@ -213,6 +213,16 @@ class SettingsLibraryController : SettingsLegacyController() {
                 summaryRes = MR.strings.auto_refresh_covers_summary
                 defaultValue = true
             }
+            switchPreference {
+                bindTo(libraryPreferences.fetchMetadataOnAdd())
+                titleRes = MR.strings.fetch_metadata_on_add
+                summaryRes = MR.strings.fetch_metadata_on_add_summary
+            }
+            switchPreference {
+                bindTo(libraryPreferences.fetchChaptersOnAdd())
+                titleRes = MR.strings.fetch_chapters_on_add
+                summaryRes = MR.strings.fetch_chapters_on_add_summary
+            }
         }
 
         preferenceCategory {

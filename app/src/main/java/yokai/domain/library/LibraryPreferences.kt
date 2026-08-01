@@ -7,6 +7,9 @@ class LibraryPreferences(private val preferenceStore: PreferenceStore) {
 
     fun markDuplicateReadChapterAsRead() = preferenceStore.getStringSet("mark_duplicate_read_chapter_read", emptySet())
 
+    fun fetchMetadataOnAdd() = preferenceStore.getBoolean("fetch_metadata_on_add", false)
+    fun fetchChaptersOnAdd() = preferenceStore.getBoolean("fetch_chapters_on_add", false)
+
     companion object {
         const val MARK_DUPLICATE_READ_CHAPTER_READ_NEW = "new"
         const val MARK_DUPLICATE_READ_CHAPTER_READ_EXISTING = "existing"

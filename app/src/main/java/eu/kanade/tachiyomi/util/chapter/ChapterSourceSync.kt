@@ -1,6 +1,8 @@
 package eu.kanade.tachiyomi.util.chapter
 
+import co.touchlab.kermit.Logger
 import eu.kanade.tachiyomi.data.database.models.Chapter
+import eu.kanade.tachiyomi.data.database.models.copyFrom
 import eu.kanade.tachiyomi.data.download.DownloadManager
 import eu.kanade.tachiyomi.domain.manga.models.Manga
 import eu.kanade.tachiyomi.source.Source
@@ -229,4 +231,34 @@ private fun shouldUpdateDbChapter(dbChapter: Chapter, sourceChapter: Chapter): B
         dbChapter.chapter_number != sourceChapter.chapter_number ||
         dbChapter.source_order != sourceChapter.source_order ||
         dbChapter.memo != sourceChapter.memo
+}
+
+/**
+ * Immediately pulls fresh details and/or the chapter list for [manga] from [source], for a
+ * manga that was just added to the library from a screen (browse, global search) where only
+ * search-result-level info was loaded - as opposed to relying on the next scheduled library
+ * update to pick it up. Failures are swallowed since this is a best-effort convenience fetch,
+ * not a user-initiated refresh.
+ */
+suspend fun fetchAndApplyMangaUpdateOnAdd(
+    manga: Manga,
+    source: Source,
+    fetchDetails: Boolean,
+    fetchChapters: Boolean,
+    updateManga: UpdateManga = Injekt.get(),
+) {
+    if (!fetchDetails && !fetchChapters) return
+    try {
+        val update = source.getMangaUpdate(manga.copy(), emptyList(), fetchDetails, fetchChapters)
+        if (fetchDetails) {
+            manga.copyFrom(update.manga)
+            manga.initialized = true
+            updateManga.await(manga.toMangaUpdate())
+        }
+        if (fetchChapters && update.chapters.isNotEmpty()) {
+            syncChaptersWithSource(update.chapters, manga, source)
+        }
+    } catch (e: Exception) {
+        Logger.e(e) { "Failed to fetch metadata/chapters on add for ${manga.title}" }
+    }
 }

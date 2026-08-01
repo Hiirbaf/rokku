@@ -12,6 +12,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 
 ### Additions
 - Add a `src:` search prefix to filter the library by source name or ID (e.g. `src:MangaDex` or `src:2499283573021220255`)
+- Add options to immediately fetch metadata and/or the chapter list from the source when adding a manga to the library, instead of waiting for the next library update (Settings > Library, both off by default)
 
 ### Other
 - Enable and fix Kotlin style checks (`kotlinter`) project-wide; it was declared but never actually wired up, so it had never run

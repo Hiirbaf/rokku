@@ -25,6 +25,7 @@ import eu.kanade.tachiyomi.ui.main.MainActivity
 import eu.kanade.tachiyomi.ui.manga.MangaDetailsController
 import eu.kanade.tachiyomi.ui.migration.MigrationFlags
 import eu.kanade.tachiyomi.ui.migration.manga.process.MigrationProcessAdapter
+import eu.kanade.tachiyomi.util.chapter.fetchAndApplyMangaUpdateOnAdd
 import eu.kanade.tachiyomi.util.chapter.syncChaptersWithTrackServiceTwoWay
 import eu.kanade.tachiyomi.util.lang.asButton
 import eu.kanade.tachiyomi.util.system.launchIO
@@ -47,6 +48,7 @@ import uy.kohesive.injekt.api.get
 import yokai.domain.category.interactor.GetCategories
 import yokai.domain.category.interactor.SetMangaCategories
 import yokai.domain.chapter.interactor.GetChapter
+import yokai.domain.library.LibraryPreferences
 import yokai.domain.manga.interactor.GetManga
 import yokai.domain.manga.interactor.UpdateManga
 import yokai.domain.manga.models.MangaUpdate
@@ -58,6 +60,25 @@ import java.util.Locale
 import android.R as AR
 
 fun Manga.isLocal() = source == LocalSource.ID
+
+/**
+ * When adding from a screen where only search-result-level info was loaded (browse, global
+ * search), immediately pull fresh details/chapters instead of waiting for the next scheduled
+ * library update, if the user opted into it.
+ */
+private fun Manga.fetchOnAddIfEnabled(
+    sourceManager: SourceManager,
+    scope: CoroutineScope,
+    libraryPreferences: LibraryPreferences = Injekt.get(),
+) {
+    val fetchDetails = libraryPreferences.fetchMetadataOnAdd().get()
+    val fetchChapters = libraryPreferences.fetchChaptersOnAdd().get()
+    if (!fetchDetails && !fetchChapters) return
+    val source = sourceManager.get(source) ?: return
+    scope.launchIO {
+        fetchAndApplyMangaUpdateOnAdd(this@fetchOnAddIfEnabled, source, fetchDetails, fetchChapters)
+    }
+}
 
 suspend fun Manga.shouldDownloadNewChapters(prefs: PreferencesHelper, getCategories: GetCategories = Injekt.get()): Boolean {
     if (!favorite) return false
@@ -216,6 +237,7 @@ suspend fun Manga.addOrRemoveToFavorites(
                     ),
                 )
                 setMangaCategories.await(this@addOrRemoveToFavorites.id!!, listOf(defaultCategory.id!!.toLong()))
+                fetchOnAddIfEnabled(sourceManager, scope)
                 return withUIContext {
                     onMangaMoved()
                     (activity as? MainActivity)?.showNotificationPermissionPrompt()
@@ -244,6 +266,7 @@ suspend fun Manga.addOrRemoveToFavorites(
                     ),
                 )
                 setMangaCategories.await(this@addOrRemoveToFavorites.id!!, lastUsedCategories.map { it.id!!.toLong() })
+                fetchOnAddIfEnabled(sourceManager, scope)
                 return withUIContext {
                     onMangaMoved()
                     (activity as? MainActivity)?.showNotificationPermissionPrompt()
@@ -284,6 +307,7 @@ suspend fun Manga.addOrRemoveToFavorites(
                     ),
                 )
                 setMangaCategories.await(this@addOrRemoveToFavorites.id!!, emptyList())
+                fetchOnAddIfEnabled(sourceManager, scope)
                 return withUIContext {
                     onMangaMoved()
                     (activity as? MainActivity)?.showNotificationPermissionPrompt()

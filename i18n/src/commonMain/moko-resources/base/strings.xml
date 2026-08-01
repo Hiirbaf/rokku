@@ -241,6 +241,10 @@
     <string name="auto_refresh_covers_summary">Refresh covers in library as well
         when updating library</string>
     <string name="global_updates">Global updates</string>
+    <string name="fetch_metadata_on_add">Fetch metadata when adding to library</string>
+    <string name="fetch_metadata_on_add_summary">Immediately pull fresh details (cover, description, etc.) from the source instead of waiting for the next library update</string>
+    <string name="fetch_chapters_on_add">Fetch chapters when adding to library</string>
+    <string name="fetch_chapters_on_add_summary">Immediately pull the chapter list from the source instead of waiting for the next library update</string>
     <string name="display_buttons_bottom_reader">Buttons at bottom of reader</string>
     <string name="certain_buttons_can_be_found">Certain buttons can be found in other places if disabled here</string>
     <string name="search_suggestions">Search suggestions</string>
