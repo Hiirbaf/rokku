@@ -19,10 +19,11 @@ Types used in this repo:
 - `ci` - CI/CD workflow changes (`.github/workflows/`)
 - `chore` - everything else (repo maintenance, tooling, translation syncs)
 
-The `.github/workflows/changelog.yml` workflow drafts the `[Unreleased]` section of
-`CHANGELOG.md` from these commits (via [git-cliff](https://git-cliff.org/), configured in
-`cliff.toml`) as a starting point - it's not meant to be merged as-is. `CHANGELOG.md`'s entries are
-user-facing release notes, not raw commit messages, so reword the draft before a release goes out.
+`CHANGELOG.md`'s `[Unreleased]` section is updated by hand alongside the commits it describes,
+in the same user-facing, prose style as the rest of the file (not a raw commit log). If you want a
+sanity check of what's landed since the last tag, `cliff.toml` configures
+[git-cliff](https://git-cliff.org/) to draft one from Conventional Commits -
+run `git-cliff --unreleased` locally; it's a manual spot-check tool, not something CI runs.
 
 ## Translations
 
