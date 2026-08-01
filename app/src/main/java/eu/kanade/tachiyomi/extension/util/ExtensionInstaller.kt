@@ -270,9 +270,13 @@ internal class ExtensionInstaller(private val context: Context) {
      */
     fun installApk(downloadId: Long, uri: Uri) {
         val pkgName = activeDownloads.entries.find { it.value == downloadId }?.key
-        val useActivity =
-            (pkgName?.let { !ExtensionLoader.isExtensionInstalledByApp(context, pkgName) } ?: true) ||
-                Build.VERSION.SDK_INT < Build.VERSION_CODES.S
+        // Always drive the install through ExtensionInstallActivity so the system's confirmation
+        // dialog is shown directly. The background-broadcast path (ExtensionInstallBroadcast) used
+        // to be preferred for updates on Android 12+ to dodge background-activity-launch
+        // restrictions, but it falls back to a tap-to-confirm notification whose PackageInstaller
+        // session can get stuck pending forever if that notification is missed or the tap doesn't
+        // resume it.
+        val useActivity = true
         val basePreferences: BasePreferences by injectLazy()
         when (basePreferences.extensionInstaller().get()) {
             BasePreferences.ExtensionInstaller.SHIZUKU -> {
