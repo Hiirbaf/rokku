@@ -316,3 +316,4 @@ androidComponents {
         (variantBuilder as? com.android.build.api.variant.HasUnitTestBuilder)?.enableUnitTest = true
     }
 }
+
