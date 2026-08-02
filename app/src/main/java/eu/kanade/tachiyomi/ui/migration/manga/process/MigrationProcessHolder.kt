@@ -37,10 +37,10 @@ import yokai.domain.manga.models.MangaCover
 import yokai.domain.manga.models.cover
 import yokai.i18n.MR
 import yokai.presentation.manga.components.MangaCoverRatio
-import yokai.presentation.manga.components.MangaCover as MangaCoverComposable
 import yokai.presentation.theme.YokaiTheme
 import yokai.util.lang.getString
 import java.text.DecimalFormat
+import yokai.presentation.manga.components.MangaCover as MangaCoverComposable
 
 class MigrationProcessHolder(
     private val view: View,
