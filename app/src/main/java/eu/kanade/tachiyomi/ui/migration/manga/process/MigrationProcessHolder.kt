@@ -2,18 +2,22 @@ package eu.kanade.tachiyomi.ui.migration.manga.process
 
 import android.view.View
 import androidx.appcompat.widget.PopupMenu
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import eu.kanade.tachiyomi.R
-import eu.kanade.tachiyomi.data.coil.useCustomCover
-import eu.kanade.tachiyomi.databinding.MangaGridItemBinding
+import eu.kanade.tachiyomi.databinding.MigrationMangaGridItemBinding
 import eu.kanade.tachiyomi.databinding.MigrationProcessItemBinding
 import eu.kanade.tachiyomi.domain.manga.models.Manga
 import eu.kanade.tachiyomi.source.Source
 import eu.kanade.tachiyomi.source.SourceManager
 import eu.kanade.tachiyomi.ui.base.holder.BaseFlexibleViewHolder
-import eu.kanade.tachiyomi.ui.library.setFreeformCoverRatio
 import eu.kanade.tachiyomi.ui.manga.MangaDetailsController
 import eu.kanade.tachiyomi.util.view.setCards
 import eu.kanade.tachiyomi.util.view.setVectorCompat
@@ -29,9 +33,12 @@ import kotlinx.coroutines.withContext
 import uy.kohesive.injekt.injectLazy
 import yokai.domain.chapter.interactor.GetChapter
 import yokai.domain.manga.interactor.GetManga
+import yokai.domain.manga.models.MangaCover
 import yokai.domain.manga.models.cover
 import yokai.i18n.MR
-import yokai.util.coil.loadManga
+import yokai.presentation.manga.components.MangaCoverRatio
+import yokai.presentation.manga.components.MangaCover as MangaCoverComposable
+import yokai.presentation.theme.YokaiTheme
 import yokai.util.lang.getString
 import java.text.DecimalFormat
 
@@ -53,7 +60,31 @@ class MigrationProcessHolder(
     private val holderScope = MainScope()
     private var bindJob: Job? = null
 
+    // Covers render through the same Coil-Compose path (yokai.presentation.manga.components.
+    // MangaCover) as Library/Browse/Global Search, instead of a manually managed ImageView -
+    // see GlobalSearchMangaHolder for why the manual dispose()/CoverViewTarget approach was
+    // unreliable here too (rebinds landing on an already-moved-on holder).
+    private var fromCover by mutableStateOf(MangaCover(0L, 0L, "", 0L, false))
+    private var toCover by mutableStateOf(MangaCover(0L, 0L, "", 0L, false))
+
     init {
+        binding.migrationMangaCardFrom.coverThumbnail.setContent {
+            YokaiTheme {
+                MangaCoverComposable(
+                    data = fromCover,
+                    modifier = Modifier.fillMaxWidth().aspectRatio(MangaCoverRatio.BOOK),
+                )
+            }
+        }
+        binding.migrationMangaCardTo.coverThumbnail.setContent {
+            YokaiTheme {
+                MangaCoverComposable(
+                    data = toCover,
+                    modifier = Modifier.fillMaxWidth().aspectRatio(MangaCoverRatio.BOOK),
+                )
+            }
+        }
+
         // We need to post a Runnable to show the popup to make sure that the PopupMenu is
         // correctly positioned. The reason being that the view may change position before the
         // PopupMenu is shown.
@@ -75,9 +106,6 @@ class MigrationProcessHolder(
         // dispatcher thread pool and causing the progressive UI slowdown.
         bindJob?.cancel()
         bindJob = holderScope.launch {
-            binding.migrationMangaCardFrom.setFreeformCoverRatio(item.manga.manga())
-            binding.migrationMangaCardTo.setFreeformCoverRatio(null)
-
             val manga = item.manga.manga()
             val source = item.manga.mangaSource()
 
@@ -92,9 +120,10 @@ class MigrationProcessHolder(
             binding.migrationMenu.isInvisible = true
             binding.skipManga.isVisible = true
             binding.migrationMangaCardTo.resetManga()
+            toCover = MangaCover(0L, 0L, "", 0L, false)
             if (manga != null) {
                 withContext(Dispatchers.Main) {
-                    binding.migrationMangaCardFrom.attachManga(manga, source)
+                    binding.migrationMangaCardFrom.attachManga(manga, source) { fromCover = it }
                     binding.migrationMangaCardFrom.root.setOnClickListener {
                         adapter.controller.router.pushController(
                             MangaDetailsController(
@@ -121,7 +150,7 @@ class MigrationProcessHolder(
                         return@withContext
                     }
                     if (searchResult != null && resultSource != null) {
-                        binding.migrationMangaCardTo.attachManga(searchResult, resultSource)
+                        binding.migrationMangaCardTo.attachManga(searchResult, resultSource) { toCover = it }
                         binding.migrationMangaCardTo.root.setOnClickListener {
                             adapter.controller.router.pushController(
                                 MangaDetailsController(
@@ -131,7 +160,7 @@ class MigrationProcessHolder(
                             )
                         }
                     } else {
-                        binding.migrationMangaCardTo.coverThumbnail.setImageDrawable(null)
+                        toCover = MangaCover(0L, 0L, "", 0L, false)
                         binding.migrationMangaCardTo.progress.isVisible = false
                         binding.migrationMangaCardTo.title.text =
                             view.context.getString(MR.strings.no_alternatives_found)
@@ -152,9 +181,8 @@ class MigrationProcessHolder(
         bindJob?.cancel()
     }
 
-    private fun MangaGridItemBinding.resetManga() {
+    private fun MigrationMangaGridItemBinding.resetManga() {
         progress.isVisible = true
-        coverThumbnail.setImageDrawable(null)
         compactTitle.text = ""
         title.text = ""
         subtitle.text = ""
@@ -164,22 +192,15 @@ class MigrationProcessHolder(
         root.setOnClickListener(null)
     }
 
-    private suspend fun MangaGridItemBinding.attachManga(manga: Manga, source: Source) {
+    private suspend fun MigrationMangaGridItemBinding.attachManga(
+        manga: Manga,
+        source: Source,
+        setCover: (MangaCover) -> Unit,
+    ) {
         (root.layoutParams as ConstraintLayout.LayoutParams).verticalBias = 1f
         progress.isVisible = false
 
-        // Rebinds happen repeatedly in quick succession (e.g. once per progress tick while a
-        // multi-source search runs), and a dispose()+reload on every rebind can cancel the same
-        // cover's in-flight Coil request over and over before it ever finishes - the same failure
-        // mode confirmed for GlobalSearchMangaHolder. Skip the reload if this exact cover is
-        // already loading/loaded for this ImageView.
-        val coverKey = "${manga.id}|${manga.thumbnail_url}"
-        if (coverThumbnail.tag != coverKey) {
-            coverThumbnail.tag = coverKey
-            coverThumbnail.loadManga(manga.cover(), progress) {
-                useCustomCover(false)
-            }
-        }
+        setCover(manga.cover())
 
         compactTitle.isVisible = true
         gradient.isVisible = true
