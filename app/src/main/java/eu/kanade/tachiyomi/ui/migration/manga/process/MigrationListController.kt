@@ -55,6 +55,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Semaphore
@@ -436,6 +437,10 @@ class MigrationListController(bundle: Bundle? = null) :
             adapter?.performMigrations(false) { current, total ->
                 dialog.setMessage("$current / $total")
             }
+            // Let the final count actually render before tearing the dialog down - without this,
+            // a single-manga migration (the common case) goes from "0/0" straight to dismissed in
+            // the same coroutine step, so the real count is never visible on screen.
+            delay(300)
             dialog.dismiss()
             navigateOut()
         }
@@ -447,6 +452,7 @@ class MigrationListController(bundle: Bundle? = null) :
             adapter?.performMigrations(true) { current, total ->
                 dialog.setMessage("$current / $total")
             }
+            delay(300)
             dialog.dismiss()
             navigateOut()
         }
