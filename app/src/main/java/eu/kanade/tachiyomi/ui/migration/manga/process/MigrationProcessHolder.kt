@@ -1,6 +1,5 @@
 package eu.kanade.tachiyomi.ui.migration.manga.process
 
-import android.util.Log
 import android.view.View
 import androidx.appcompat.widget.PopupMenu
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -169,15 +168,17 @@ class MigrationProcessHolder(
         (root.layoutParams as ConstraintLayout.LayoutParams).verticalBias = 1f
         progress.isVisible = false
 
-        // TEMP DIAGNOSTIC LOGGING (blank-cover bug investigation) - remove once diagnosed.
-        Log.e(
-            "RokkuCoverDebug",
-            "MigrationProcessHolder.attachManga: title=${manga.title} thumbnail_url=${manga.thumbnail_url} " +
-                "initialized=${manga.initialized} source=${source.name}",
-        )
-
-        coverThumbnail.loadManga(manga.cover(), progress) {
-            useCustomCover(false)
+        // Rebinds happen repeatedly in quick succession (e.g. once per progress tick while a
+        // multi-source search runs), and a dispose()+reload on every rebind can cancel the same
+        // cover's in-flight Coil request over and over before it ever finishes - the same failure
+        // mode confirmed for GlobalSearchMangaHolder. Skip the reload if this exact cover is
+        // already loading/loaded for this ImageView.
+        val coverKey = "${manga.id}|${manga.thumbnail_url}"
+        if (coverThumbnail.tag != coverKey) {
+            coverThumbnail.tag = coverKey
+            coverThumbnail.loadManga(manga.cover(), progress) {
+                useCustomCover(false)
+            }
         }
 
         compactTitle.isVisible = true

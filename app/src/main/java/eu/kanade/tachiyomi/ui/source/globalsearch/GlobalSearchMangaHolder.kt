@@ -1,7 +1,6 @@
 package eu.kanade.tachiyomi.ui.source.globalsearch
 
 import android.graphics.drawable.RippleDrawable
-import android.util.Log
 import android.view.View
 import androidx.core.view.isVisible
 import coil3.dispose
@@ -19,12 +18,13 @@ class GlobalSearchMangaHolder(view: View, adapter: GlobalSearchCardAdapter) :
 
     private val binding = SourceGlobalSearchControllerCardItemBinding.bind(view)
 
-    // The presenter re-emits/re-sorts the full item list every time a single source's search
-    // completes (one setItems() call per source, not batched), so with several sources
-    // finishing within milliseconds of each other, this holder gets rebound repeatedly in quick
-    // succession. dispose()+reload on every bind cancels the in-flight Coil request each time,
-    // so the cover can be perpetually cancelled before it ever finishes loading. Skip the
-    // dispose+reload if this is the same manga/cover as last time and something is already shown.
+    // The list gets rebound repeatedly in quick succession (multiple times within a single
+    // source's own update, well under the debounce window). dispose()+reload on every bind
+    // cancels the in-flight Coil request each time, so - since network fetches routinely take
+    // longer than the gap between rebinds - the cover can be cancelled every single time before
+    // it ever finishes loading, no matter how it's throttled upstream. Skip the dispose+reload
+    // entirely if this is the same manga/cover as last time, regardless of whether that load
+    // has finished yet, so the first enqueued request is left alone to complete.
     private var lastBoundMangaId: Long? = null
     private var lastBoundThumbnailUrl: String? = null
 
@@ -59,20 +59,12 @@ class GlobalSearchMangaHolder(view: View, adapter: GlobalSearchCardAdapter) :
     }
 
     fun setImage(manga: Manga) {
-        if (manga.id == lastBoundMangaId &&
-            manga.thumbnail_url == lastBoundThumbnailUrl &&
-            binding.itemImage.drawable != null
-        ) {
+        if (manga.id == lastBoundMangaId && manga.thumbnail_url == lastBoundThumbnailUrl) {
             return
         }
         lastBoundMangaId = manga.id
         lastBoundThumbnailUrl = manga.thumbnail_url
 
-        Log.e(
-            "RokkuCoverDebug",
-            "GlobalSearchMangaHolder.setImage: LOADING title=${manga.title} " +
-                "view=${System.identityHashCode(binding.itemImage)} thumb=${manga.thumbnail_url}",
-        )
         binding.itemImage.dispose()
         if (!manga.thumbnail_url.isNullOrEmpty()) {
             binding.itemImage.loadManga(manga.cover(), binding.progress)
