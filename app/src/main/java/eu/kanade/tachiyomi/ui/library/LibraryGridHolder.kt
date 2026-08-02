@@ -103,11 +103,16 @@ class LibraryGridHolder(
         setReadingButton(item)
         setSelected(adapter.isSelected(flexibleAdapterPosition))
         // Only reload cover if it has actually changed, to avoid grey flash on
-        // library flow re-emissions (e.g. when tabbing back into the app).
+        // library flow re-emissions (e.g. when tabbing back into the app). A manga just added
+        // to the library can emit a second re-emission (e.g. from the categories write) while
+        // the first cover fetch is still in flight; skipping the reload then would strand the
+        // thumbnail blank forever since nothing else retries it, so always retry while there's
+        // no drawable to show yet, regardless of whether the tag looks unchanged.
         val mangaId = item.manga.manga.id
         val coverModified = item.manga.manga.cover_last_modified
         if (binding.coverThumbnail.tag != mangaId ||
-            coverModified != (binding.coverThumbnail.getTag(R.id.manga_cover_modified) as? Long)
+            coverModified != (binding.coverThumbnail.getTag(R.id.manga_cover_modified) as? Long) ||
+            binding.coverThumbnail.drawable == null
         ) {
             binding.coverThumbnail.tag = mangaId
             binding.coverThumbnail.setTag(R.id.manga_cover_modified, coverModified)
