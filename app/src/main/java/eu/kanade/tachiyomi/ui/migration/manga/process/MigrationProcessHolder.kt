@@ -70,8 +70,12 @@ class MigrationProcessHolder(
     init {
         binding.migrationMangaCardFrom.coverThumbnail.setContent {
             YokaiTheme {
+                // A blank thumbnail_url (initial state / not fetched yet, e.g. while the "to"
+                // card is still waiting on a search result) is not "broken" - don't hand it to
+                // Coil, or it fails the request and renders the error/broken-image placeholder
+                // instead of the neutral loading one.
                 MangaCoverComposable(
-                    data = fromCover,
+                    data = fromCover.takeIf { it.url.isNotBlank() },
                     modifier = Modifier.fillMaxWidth().aspectRatio(MangaCoverRatio.BOOK),
                 )
             }
@@ -79,7 +83,7 @@ class MigrationProcessHolder(
         binding.migrationMangaCardTo.coverThumbnail.setContent {
             YokaiTheme {
                 MangaCoverComposable(
-                    data = toCover,
+                    data = toCover.takeIf { it.url.isNotBlank() },
                     modifier = Modifier.fillMaxWidth().aspectRatio(MangaCoverRatio.BOOK),
                 )
             }

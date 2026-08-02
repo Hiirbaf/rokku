@@ -33,7 +33,10 @@ class GlobalSearchMangaHolder(view: View, adapter: GlobalSearchCardAdapter) :
     init {
         binding.itemImage.setContent {
             YokaiTheme {
-                MangaCoverComposable(data = cover)
+                // A blank thumbnail_url (initial state / not fetched yet) is not "broken" -
+                // don't hand it to Coil at all, or it fails the request and renders the
+                // error/broken-image placeholder instead of the neutral loading one.
+                MangaCoverComposable(data = cover.takeIf { it.url.isNotBlank() })
             }
         }
 
