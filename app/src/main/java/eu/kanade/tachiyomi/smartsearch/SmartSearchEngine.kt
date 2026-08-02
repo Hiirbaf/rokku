@@ -8,6 +8,7 @@ import eu.kanade.tachiyomi.util.lang.toNormalized
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.supervisorScope
 import uy.kohesive.injekt.injectLazy
 import yokai.domain.manga.interactor.GetManga
@@ -24,7 +25,15 @@ class SmartSearchEngine(
     private val getManga: GetManga by injectLazy()
     private val insertManga: InsertManga by injectLazy()
 
-    /*suspend fun smartSearch(source: CatalogueSource, title: String): SManga? {
+    /**
+     * Tries several variations of [title] (full cleaned title, then progressively shorter
+     * word combinations) against [source], aggregating every candidate above the eligibility
+     * threshold, instead of a single query with the full title. A single query often misses a
+     * legitimate match if the source's own search doesn't rank it highly for the exact
+     * (possibly noisy) title text - e.g. subtitles, alternate symbols/punctuation, or word
+     * order differences the source's search doesn't handle well.
+     */
+    suspend fun smartSearch(source: CatalogueSource, title: String): SManga? {
         val cleanedTitle = cleanSmartSearchTitle(title)
 
         val queries = getSmartSearchQueries(cleanedTitle)
@@ -32,11 +41,17 @@ class SmartSearchEngine(
         val eligibleManga = supervisorScope {
             queries.map { query ->
                 async(Dispatchers.Default) {
-                    val builtQuery = if(extraSearchParams != null) {
+                    val builtQuery = if (extraSearchParams != null) {
                         "$query ${extraSearchParams.trim()}"
-                    } else query
+                    } else {
+                        query
+                    }
 
-                    val searchResults = source.getSearchManga(1, builtQuery, FilterList())
+                    val searchResults = try {
+                        source.getSearchManga(1, builtQuery, source.getFilterList())
+                    } catch (e: Exception) {
+                        return@async emptyList()
+                    }
 
                     searchResults.mangas.map {
                         val cleanedMangaTitle = cleanSmartSearchTitle(it.title)
@@ -49,33 +64,51 @@ class SmartSearchEngine(
             }.flatMap { it.await() }
         }
 
-        return eligibleManga.maxBy { it.dist }?.manga
-    }*/
+        return eligibleManga.maxByOrNull { it.dist }?.manga
+    }
 
-    suspend fun normalSearch(source: CatalogueSource, title: String): SManga? {
-        val titleNormalized = title.toNormalized()
-        val eligibleManga = supervisorScope {
-            val searchQuery = if (extraSearchParams != null) {
-                "$titleNormalized ${extraSearchParams.trim()}"
-            } else {
-                titleNormalized
-            }
-            val searchResults =
-                source.getSearchManga(1, searchQuery, source.getFilterList())
+    private fun cleanSmartSearchTitle(title: String): String {
+        val preTitle = title.toNormalized().lowercase()
 
-            if (searchResults.mangas.size == 1) {
-                return@supervisorScope listOf(SearchEntry(searchResults.mangas.first(), 0.0))
-            }
-
-            searchResults.mangas.map {
-                val normalizedDistance = normalizedLevenshteinSimilarity(titleNormalized, it.title.toNormalized())
-                SearchEntry(it, normalizedDistance)
-            }.filter { (_, normalizedDistance) ->
-                normalizedDistance >= MIN_NORMAL_ELIGIBLE_THRESHOLD
-            }
+        // Remove text in brackets
+        var cleanedTitle = removeTextInBrackets(preTitle, true)
+        if (cleanedTitle.length <= 5) { // Title is suspiciously short, try parsing it backwards
+            cleanedTitle = removeTextInBrackets(preTitle, false)
         }
 
-        return eligibleManga.maxByOrNull { it.dist }?.manga
+        // Strip non-special characters
+        cleanedTitle = cleanedTitle.replace(titleRegex, " ")
+
+        // Strip splitters and consecutive spaces
+        cleanedTitle = cleanedTitle.trim().replace(" - ", " ").replace(consecutiveSpacesRegex, " ").trim()
+
+        return cleanedTitle
+    }
+
+    private fun getSmartSearchQueries(cleanedTitle: String): List<String> {
+        val splitCleanedTitle = cleanedTitle.split(" ")
+        val splitSortedByLargest = splitCleanedTitle.sortedByDescending { it.length }
+
+        if (splitCleanedTitle.isEmpty()) {
+            return emptyList()
+        }
+
+        // Search cleaned title
+        // Search two largest words
+        // Search largest word
+        // Search first two words
+        // Search first word
+        val searchQueries = listOf(
+            listOf(cleanedTitle),
+            splitSortedByLargest.take(2),
+            splitSortedByLargest.take(1),
+            splitCleanedTitle.take(2),
+            splitCleanedTitle.take(1),
+        )
+
+        return searchQueries
+            .map { it.joinToString(" ").trim() }
+            .distinct()
     }
 
     private fun removeTextInBrackets(text: String, readForward: Boolean): String {
@@ -143,7 +176,6 @@ class SmartSearchEngine(
 
     companion object {
         const val MIN_SMART_ELIGIBLE_THRESHOLD = 0.4
-        const val MIN_NORMAL_ELIGIBLE_THRESHOLD = 0.4
 
         private val titleRegex = Regex("[^a-zA-Z0-9- ]")
         private val consecutiveSpacesRegex = Regex(" +")

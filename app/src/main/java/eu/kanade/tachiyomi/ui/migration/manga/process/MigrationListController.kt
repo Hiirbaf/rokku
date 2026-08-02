@@ -184,7 +184,7 @@ class MigrationListController(bundle: Bundle? = null) :
                                 async source@{
                                     sourceSemaphore.withPermit {
                                         try {
-                                            val searchResult = smartSearchEngine.normalSearch(
+                                            val searchResult = smartSearchEngine.smartSearch(
                                                 source,
                                                 mangaObj.title,
                                             )
@@ -233,7 +233,7 @@ class MigrationListController(bundle: Bundle? = null) :
                         } else {
                             validSources.forEachIndexed { index, source ->
                                 val searchResult = try {
-                                    val searchResult = smartSearchEngine.normalSearch(
+                                    val searchResult = smartSearchEngine.smartSearch(
                                         source,
                                         mangaObj.title,
                                     )
