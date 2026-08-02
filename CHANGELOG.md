@@ -954,4 +954,3 @@ First release under the Rokku name. Everything below was inherited as broken fro
 
 ### Fixes
 - Fixed visual glitch on certain page (J2K)
-
