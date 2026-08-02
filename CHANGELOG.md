@@ -14,10 +14,20 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Add a `src:` search prefix to filter the library by source name or ID (e.g. `src:MangaDex` or `src:2499283573021220255`)
 - Add options to immediately fetch metadata and/or the chapter list from the source when adding a manga to the library, instead of waiting for the next library update (Settings > Library, both off by default)
 
+### Fixes
+- Fix a manga's cover sometimes staying blank in the library grid after adding it, until the item was rebound (e.g. by long-pressing it)
+- Fix covers never loading in Global Search and Migration, caused by the list rebinding/resorting fast enough to keep cancelling each cover's own in-flight load before it could finish; both now render covers the same Coil/Compose way as the Library and Browse screens
+- Fix a broken-image icon showing while a Global Search/Migration cover was still loading or searching, instead of a neutral placeholder
+- Fix the migration screen's toolbar title staying stuck at "(0/0)" instead of showing the real manga count
+- Fix "Migrate All"'s progress dialog not showing the final count for a moment before closing, most noticeable when migrating a single manga
+- Fix "Migrate All"'s progress counting every manga it looked at instead of only the ones actually migrated (e.g. migrating 3 of 4 manga showed "4/4" instead of "3/4")
+- Fix automatic migration matching only trying the manga's exact full title against a source's search, missing manga a manual search could still find; it now also tries shorter word combinations as a fallback, with a stricter similarity requirement so a coincidentally shared generic word can't match a completely unrelated manga
+
 ### Other
 - Enable and fix Kotlin style checks (`kotlinter`) project-wide; it was declared but never actually wired up, so it had never run
 - Add CI workflows for Kotlin style checks and CodeQL security analysis
 - Document the commit message convention in CONTRIBUTING.md
+- Publish nightly build releases to a separate `rokku-nightly` repo instead of the main one, keeping its tags/releases list to actual versions
 
 ## [1.3.2]
 
