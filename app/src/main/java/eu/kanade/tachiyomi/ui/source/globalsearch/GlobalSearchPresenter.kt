@@ -18,6 +18,7 @@ import eu.kanade.tachiyomi.util.system.launchIO
 import eu.kanade.tachiyomi.util.system.launchUI
 import eu.kanade.tachiyomi.util.system.withUIContext
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -58,6 +59,12 @@ open class GlobalSearchPresenter(
     val sources by lazy { getSourcesToQuery() }
 
     private var fetchSourcesJob: Job? = null
+
+    // Debounces setItems() emissions: with several sources completing within milliseconds of
+    // each other, emitting (and fully re-sorting/rebinding the list) once per source cancels
+    // each cover's in-flight Coil load before it can finish, permanently stranding it blank.
+    // Coalescing rapid completions into a single emission gives loads a chance to complete.
+    private var setItemsJob: Job? = null
 
     private var loadTime = hashMapOf<Long, Long>()
 
@@ -137,6 +144,14 @@ open class GlobalSearchPresenter(
     /**
      * Creates a catalogue search item
      */
+    private fun scheduleSetItems() {
+        setItemsJob?.cancel()
+        setItemsJob = presenterScope.launch {
+            delay(250)
+            withUIContext { view?.setItems(items) }
+        }
+    }
+
     protected open fun createCatalogueSearchItem(
         source: CatalogueSource,
         results: List<GlobalSearchMangaItem>?,
@@ -213,7 +228,7 @@ open class GlobalSearchPresenter(
                                     { "${it.source.name.lowercase(Locale.getDefault())} (${it.source.lang})" },
                                 ),
                             )
-                        withUIContext { view?.setItems(items) }
+                        scheduleSetItems()
                     }
                 }
             }
