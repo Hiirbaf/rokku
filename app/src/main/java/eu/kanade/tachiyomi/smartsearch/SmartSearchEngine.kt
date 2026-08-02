@@ -8,8 +8,6 @@ import eu.kanade.tachiyomi.util.lang.toNormalized
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
-import kotlinx.coroutines.supervisorScope
 import uy.kohesive.injekt.injectLazy
 import yokai.domain.manga.interactor.GetManga
 import yokai.domain.manga.interactor.InsertManga
@@ -26,45 +24,45 @@ class SmartSearchEngine(
     private val insertManga: InsertManga by injectLazy()
 
     /**
-     * Tries several variations of [title] (full cleaned title, then progressively shorter
-     * word combinations) against [source], aggregating every candidate above the eligibility
-     * threshold, instead of a single query with the full title. A single query often misses a
-     * legitimate match if the source's own search doesn't rank it highly for the exact
-     * (possibly noisy) title text - e.g. subtitles, alternate symbols/punctuation, or word
-     * order differences the source's search doesn't handle well.
+     * Tries several variations of [title] against [source], from most to least specific (full
+     * cleaned title first, then progressively shorter word combinations), stopping at the first
+     * variation that finds an eligible candidate. A single full-title query often misses a
+     * legitimate match if the source's own search doesn't rank it highly for the exact (possibly
+     * noisy) title text - e.g. subtitles, alternate symbols/punctuation, or word order the
+     * source's search doesn't handle well - but the shorter, more generic fallback queries (down
+     * to a single word) are also much more likely to coincidentally match a completely different
+     * manga. Only escalating to those once the safer full-title query comes up empty (matching
+     * Mihon's regularSearch-by-default, deepSearch-as-fallback split) keeps that risk as a last
+     * resort instead of blending it in with every migration.
      */
     suspend fun smartSearch(source: CatalogueSource, title: String): SManga? {
         val cleanedTitle = cleanSmartSearchTitle(title)
 
-        val queries = getSmartSearchQueries(cleanedTitle)
+        for (query in getSmartSearchQueries(cleanedTitle)) {
+            val builtQuery = if (extraSearchParams != null) {
+                "$query ${extraSearchParams.trim()}"
+            } else {
+                query
+            }
 
-        val eligibleManga = supervisorScope {
-            queries.map { query ->
-                async(Dispatchers.Default) {
-                    val builtQuery = if (extraSearchParams != null) {
-                        "$query ${extraSearchParams.trim()}"
-                    } else {
-                        query
-                    }
+            val searchResults = try {
+                source.getSearchManga(1, builtQuery, source.getFilterList())
+            } catch (e: Exception) {
+                continue
+            }
 
-                    val searchResults = try {
-                        source.getSearchManga(1, builtQuery, source.getFilterList())
-                    } catch (e: Exception) {
-                        return@async emptyList()
-                    }
-
-                    searchResults.mangas.map {
-                        val cleanedMangaTitle = cleanSmartSearchTitle(it.title)
-                        val normalizedDistance = normalizedLevenshteinSimilarity(cleanedTitle, cleanedMangaTitle)
-                        SearchEntry(it, normalizedDistance)
-                    }.filter { (_, normalizedDistance) ->
-                        normalizedDistance >= MIN_SMART_ELIGIBLE_THRESHOLD
-                    }
+            val bestMatch = searchResults.mangas
+                .map {
+                    val cleanedMangaTitle = cleanSmartSearchTitle(it.title)
+                    SearchEntry(it, normalizedLevenshteinSimilarity(cleanedTitle, cleanedMangaTitle))
                 }
-            }.flatMap { it.await() }
+                .filter { (_, normalizedDistance) -> normalizedDistance >= MIN_SMART_ELIGIBLE_THRESHOLD }
+                .maxByOrNull { it.dist }
+
+            if (bestMatch != null) return bestMatch.manga
         }
 
-        return eligibleManga.maxByOrNull { it.dist }?.manga
+        return null
     }
 
     private fun cleanSmartSearchTitle(title: String): String {
