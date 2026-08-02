@@ -199,15 +199,6 @@ jobs:
 
           echo "STAGE=${stage}" >> $GITHUB_OUTPUT
 
-      - name: Create and push tag
-        if: env.VERSION_TAG != ''
-        run: |
-          set -e
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag "${{ env.VERSION_TAG }}"
-          git push origin "${{ env.VERSION_TAG }}"
-
       - name: Sign APK
         uses: null2264/actions/android-signer@363cb9cf3d66bd9c72ed6860142c6b2c121d7e94
         if: env.VERSION_TAG != ''
@@ -286,15 +277,16 @@ jobs:
         if: startsWith(env.VERSION_TAG, 'r')
         uses: softprops/action-gh-release@v2
         with:
+          repository: rokku-app/rokku-nightly
           tag_name: ${{ env.VERSION_TAG }}
           name: Rokku Nightly (${{ env.VERSION_TAG }})
           body: |
             > [!CAUTION]
             > _**This alpha version is for testing only!**_
             >
-            > This build is triggered by commit [`${{ env.COMMIT_SHORT_HASH }}`](https://github.com/thiago8rocha/Rokku/commit/${{ env.COMMIT_HASH }})
+            > This build is triggered by commit [`${{ env.COMMIT_SHORT_HASH }}`](https://github.com/rokku-app/rokku/commit/${{ env.COMMIT_HASH }})
 
-            It is not ready for daily use and we do not guarantee its usability. Please download the latest stable releases instead (https://github.com/thiago8rocha/Rokku/releases/latest). If you insist, please be sure to ALWAYS backup before updating.
+            It is not ready for daily use and we do not guarantee its usability. Please download the latest stable releases instead (https://github.com/rokku-app/rokku/releases/latest). If you insist, please be sure to ALWAYS backup before updating.
 
             ${{ steps.changelog.outputs.CHANGELOG }}
             ---
@@ -321,4 +313,4 @@ jobs:
           draft: false
           prerelease: true
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.NIGHTLY_PAT }}

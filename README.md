@@ -21,7 +21,7 @@ A free and open source manga reader
 ## Download
 
 [![Rokku Stable](https://img.shields.io/github/v/release/rokku-app/rokku?maxAge=3600&label=Stable&labelColor=06599d&color=043b69&filter=v*)](https://github.com/rokku-app/rokku/releases)
-[![Rokku Nightly](https://img.shields.io/github/v/release/rokku-app/rokku?maxAge=3600&label=Nightly&labelColor=2c2c47&color=1c1c39&filter=r*&include_prereleases)](https://github.com/rokku-app/rokku/releases)
+[![Rokku Nightly](https://img.shields.io/github/v/release/rokku-app/rokku-nightly?maxAge=3600&label=Nightly&labelColor=2c2c47&color=1c1c39&include_prereleases)](https://github.com/rokku-app/rokku-nightly/releases)
 
 *Requires Android 8.0 or higher.*
 
