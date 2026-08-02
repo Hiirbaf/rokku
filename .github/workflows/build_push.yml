@@ -277,6 +277,7 @@ jobs:
         if: startsWith(env.VERSION_TAG, 'r')
         uses: softprops/action-gh-release@v2
         with:
+          token: ${{ secrets.NIGHTLY_PAT }}
           repository: rokku-app/rokku-nightly
           tag_name: ${{ env.VERSION_TAG }}
           name: Rokku Nightly (${{ env.VERSION_TAG }})
@@ -312,5 +313,3 @@ jobs:
             rokku-x86_64-${{ env.VERSION_TAG }}.apk
           draft: false
           prerelease: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.NIGHTLY_PAT }}
