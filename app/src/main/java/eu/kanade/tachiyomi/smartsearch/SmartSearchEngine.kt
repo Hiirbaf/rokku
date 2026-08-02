@@ -38,7 +38,7 @@ class SmartSearchEngine(
     suspend fun smartSearch(source: CatalogueSource, title: String): SManga? {
         val cleanedTitle = cleanSmartSearchTitle(title)
 
-        for (query in getSmartSearchQueries(cleanedTitle)) {
+        getSmartSearchQueries(cleanedTitle).forEachIndexed { index, query ->
             val builtQuery = if (extraSearchParams != null) {
                 "$query ${extraSearchParams.trim()}"
             } else {
@@ -48,24 +48,22 @@ class SmartSearchEngine(
             val searchResults = try {
                 source.getSearchManga(1, builtQuery, source.getFilterList())
             } catch (e: Exception) {
-                continue
+                return@forEachIndexed
             }
 
-            val scored = searchResults.mangas.map {
-                val cleanedMangaTitle = cleanSmartSearchTitle(it.title)
-                SearchEntry(it, normalizedLevenshteinSimilarity(cleanedTitle, cleanedMangaTitle))
-            }
-            val bestMatch = scored
-                .filter { (_, normalizedDistance) -> normalizedDistance >= MIN_SMART_ELIGIBLE_THRESHOLD }
+            // The full-title query (index 0) is specific enough that MIN_SMART_ELIGIBLE_THRESHOLD
+            // is a reasonable bar. The shorter fallback queries are much noisier - a single
+            // generic word shared by two completely unrelated manga can score just over 0.4 by
+            // coincidence - so require a much closer match before trusting one of those.
+            val threshold = if (index == 0) MIN_SMART_ELIGIBLE_THRESHOLD else MIN_SMART_FALLBACK_THRESHOLD
+
+            val bestMatch = searchResults.mangas
+                .map {
+                    val cleanedMangaTitle = cleanSmartSearchTitle(it.title)
+                    SearchEntry(it, normalizedLevenshteinSimilarity(cleanedTitle, cleanedMangaTitle))
+                }
+                .filter { (_, normalizedDistance) -> normalizedDistance >= threshold }
                 .maxByOrNull { it.dist }
-
-            // TEMP DIAGNOSTIC LOGGING (migration match-quality investigation) - remove once diagnosed.
-            android.util.Log.e(
-                "RokkuCoverDebug",
-                "smartSearch: source=${source.name} query=\"$builtQuery\" cleanedTitle=\"$cleanedTitle\" " +
-                    "candidates=${scored.map { "${it.manga.title}(${it.dist})" }} " +
-                    "picked=${bestMatch?.manga?.title}(${bestMatch?.dist})",
-            )
 
             if (bestMatch != null) return bestMatch.manga
         }
@@ -182,6 +180,7 @@ class SmartSearchEngine(
 
     companion object {
         const val MIN_SMART_ELIGIBLE_THRESHOLD = 0.4
+        const val MIN_SMART_FALLBACK_THRESHOLD = 0.6
 
         private val titleRegex = Regex("[^a-zA-Z0-9- ]")
         private val consecutiveSpacesRegex = Regex(" +")
