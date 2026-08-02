@@ -1,6 +1,7 @@
 package eu.kanade.tachiyomi.ui.source.globalsearch
 
 import android.graphics.drawable.RippleDrawable
+import android.util.Log
 import android.view.View
 import androidx.core.view.isVisible
 import coil3.dispose
@@ -67,6 +68,11 @@ class GlobalSearchMangaHolder(view: View, adapter: GlobalSearchCardAdapter) :
         lastBoundMangaId = manga.id
         lastBoundThumbnailUrl = manga.thumbnail_url
 
+        Log.e(
+            "RokkuCoverDebug",
+            "GlobalSearchMangaHolder.setImage: LOADING title=${manga.title} " +
+                "view=${System.identityHashCode(binding.itemImage)} thumb=${manga.thumbnail_url}",
+        )
         binding.itemImage.dispose()
         if (!manga.thumbnail_url.isNullOrEmpty()) {
             binding.itemImage.loadManga(manga.cover(), binding.progress)

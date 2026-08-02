@@ -1,5 +1,6 @@
 package eu.kanade.tachiyomi.data.coil
 
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import androidx.core.view.isVisible
@@ -18,6 +19,7 @@ class CoverViewTarget(
 
     override fun onError(error: Image?) {
         // val drawable = error?.asDrawable(view.context.resources)
+        Log.e("RokkuCoverDebug", "CoverViewTarget.onError view=${System.identityHashCode(view)}")
 
         progress?.isVisible = false
         view.scaleType = ImageView.ScaleType.CENTER
@@ -32,6 +34,7 @@ class CoverViewTarget(
 
     override fun onStart(placeholder: Image?) {
         // val drawable = placeholder?.asDrawable(view.context.resources)
+        Log.e("RokkuCoverDebug", "CoverViewTarget.onStart view=${System.identityHashCode(view)}")
 
         progress?.isVisible = true
         view.scaleType = scaleType
@@ -40,6 +43,7 @@ class CoverViewTarget(
 
     override fun onSuccess(result: Image) {
         // val drawable = result?.asDrawable(view.context.resources)
+        Log.e("RokkuCoverDebug", "CoverViewTarget.onSuccess view=${System.identityHashCode(view)}")
 
         progress?.isVisible = false
         view.scaleType = scaleType
