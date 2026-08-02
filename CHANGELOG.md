@@ -10,6 +10,8 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 
 ## [Unreleased]
 
+## [1.4.0]
+
 ### Additions
 - Add a `src:` search prefix to filter the library by source name or ID (e.g. `src:MangaDex` or `src:2499283573021220255`)
 - Add options to immediately fetch metadata and/or the chapter list from the source when adding a manga to the library, instead of waiting for the next library update (Settings > Library, both off by default)
