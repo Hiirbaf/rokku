@@ -1,8 +1,10 @@
 package yokai.presentation.manga.components
 
-import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -18,6 +20,8 @@ import coil3.compose.AsyncImagePainter
 import eu.kanade.tachiyomi.R
 import yokai.util.rememberResourceBitmapPainter
 
+private val PlaceholderColor = Color(0x1F888888)
+
 @Composable
 fun MangaCover(
     data: Any?,
@@ -29,35 +33,40 @@ fun MangaCover(
     onClick: (() -> Unit)? = null,
     onState: ((AsyncImagePainter.State) -> Unit)? = null,
 ) {
+    val sizedModifier = modifier
+        .then(if (ratio != null) Modifier.aspectRatio(ratio) else Modifier)
+        .clip(shape)
+        .then(
+            if (onClick != null) {
+                Modifier.clickable(
+                    role = Role.Button,
+                    onClick = onClick,
+                )
+            } else {
+                Modifier
+            },
+        )
+
+    // Coil's AsyncImage treats a null model as a genuine failed request
+    // (NullRequestDataException), rendering the error/broken-image state - not a "nothing to
+    // load yet" placeholder. A manga with no cover data yet (still loading/searching) is not
+    // broken, so render the plain placeholder box directly instead of asking Coil to "load"
+    // nothing.
+    if (data == null) {
+        Box(modifier = sizedModifier.fillMaxSize().background(PlaceholderColor))
+        return
+    }
+
     AsyncImage(
         model = data,
-        placeholder = ColorPainter(Color(0x1F888888)),
+        placeholder = ColorPainter(PlaceholderColor),
         error = rememberResourceBitmapPainter(id = R.drawable.cover_error),
         contentDescription = contentDescription,
         contentScale = contentScale,
         onLoading = { state -> onState?.invoke(state) },
         onSuccess = { state -> onState?.invoke(state) },
-        onError = { state ->
-            Log.e(
-                "RokkuCoverDebug",
-                "MangaCover AsyncImage onError data=$data throwable=${state.result.throwable}",
-                state.result.throwable,
-            )
-            onState?.invoke(state)
-        },
-        modifier = modifier
-            .then(if (ratio != null) Modifier.aspectRatio(ratio) else Modifier)
-            .clip(shape)
-            .then(
-                if (onClick != null) {
-                    Modifier.clickable(
-                        role = Role.Button,
-                        onClick = onClick,
-                    )
-                } else {
-                    Modifier
-                },
-            ),
+        onError = { state -> onState?.invoke(state) },
+        modifier = sizedModifier,
     )
 }
 
