@@ -100,28 +100,33 @@ class MigrationProcessAdapter(
     suspend fun performMigrations(copy: Boolean, onProgress: (current: Int, total: Int) -> Unit = { _, _ -> }) {
         migrationBatch = currentItems.toList()
         val total = migrationBatch.size
+        // Counts mangas actually migrated, not just processed - a manga whose search never
+        // completed/matched is skipped below without migrating, but the loop still needs to
+        // move on to the next one. Reporting the loop position as "current" made the dialog
+        // claim e.g. "4/4" even when only 3 of 4 mangas had actually been migrated.
+        var migratedCount = 0
 
         withContext(Dispatchers.IO) {
-            migrationBatch.forEachIndexed { index, migratingManga ->
+            migrationBatch.forEach { migratingManga ->
                 val manga = migratingManga.manga
                 if (manga.searchResult.initialized) {
-                    val toMangaObj =
-                        getManga.awaitById(manga.searchResult.get() ?: return@forEachIndexed)
-                            ?: return@forEachIndexed
-
-                    val prevManga = manga.manga() ?: return@forEachIndexed
-                    val source = sourceManager.get(toMangaObj.source) ?: return@forEachIndexed
-                    val prevSource = sourceManager.get(prevManga.source)
-                    migrateMangaInternal(
-                        prevSource,
-                        source,
-                        prevManga,
-                        toMangaObj,
-                        !copy,
-                    )
+                    val toMangaObj = manga.searchResult.get()?.let { getManga.awaitById(it) }
+                    val prevManga = manga.manga()
+                    val source = toMangaObj?.let { sourceManager.get(it.source) }
+                    if (toMangaObj != null && prevManga != null && source != null) {
+                        val prevSource = sourceManager.get(prevManga.source)
+                        migrateMangaInternal(
+                            prevSource,
+                            source,
+                            prevManga,
+                            toMangaObj,
+                            !copy,
+                        )
+                        migratedCount++
+                    }
                 }
                 withContext(Dispatchers.Main) {
-                    onProgress(index + 1, total)
+                    onProgress(migratedCount, total)
                 }
             }
         }
