@@ -12,7 +12,6 @@
 
 A free and open source manga reader
 
-[![GitHub downloads](https://img.shields.io/github/downloads/rokku-app/rokku/total?label=downloads&labelColor=27303D&color=0D1117&logo=github&logoColor=FFFFFF&style=flat)](https://github.com/rokku-app/rokku/releases)
 [![CI](https://github.com/rokku-app/rokku/actions/workflows/build_push.yml/badge.svg?labelColor=27303D)](https://github.com/rokku-app/rokku/actions/workflows/build_push.yml)
 [![License: Apache-2.0](https://img.shields.io/github/license/rokku-app/rokku?labelColor=27303D&color=0877d2)](/LICENSE)
 [![Translation status](https://img.shields.io/weblate/progress/rokku?labelColor=27303D&color=946300)](https://hosted.weblate.org/engage/rokku/)
