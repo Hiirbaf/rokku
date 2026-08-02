@@ -51,13 +51,21 @@ class SmartSearchEngine(
                 continue
             }
 
-            val bestMatch = searchResults.mangas
-                .map {
-                    val cleanedMangaTitle = cleanSmartSearchTitle(it.title)
-                    SearchEntry(it, normalizedLevenshteinSimilarity(cleanedTitle, cleanedMangaTitle))
-                }
+            val scored = searchResults.mangas.map {
+                val cleanedMangaTitle = cleanSmartSearchTitle(it.title)
+                SearchEntry(it, normalizedLevenshteinSimilarity(cleanedTitle, cleanedMangaTitle))
+            }
+            val bestMatch = scored
                 .filter { (_, normalizedDistance) -> normalizedDistance >= MIN_SMART_ELIGIBLE_THRESHOLD }
                 .maxByOrNull { it.dist }
+
+            // TEMP DIAGNOSTIC LOGGING (migration match-quality investigation) - remove once diagnosed.
+            android.util.Log.e(
+                "RokkuCoverDebug",
+                "smartSearch: source=${source.name} query=\"$builtQuery\" cleanedTitle=\"$cleanedTitle\" " +
+                    "candidates=${scored.map { "${it.manga.title}(${it.dist})" }} " +
+                    "picked=${bestMatch?.manga?.title}(${bestMatch?.dist})",
+            )
 
             if (bestMatch != null) return bestMatch.manga
         }
