@@ -1,6 +1,5 @@
 package eu.kanade.tachiyomi.ui.source.globalsearch
 
-import android.util.Log
 import eu.kanade.tachiyomi.data.cache.CoverCache
 import eu.kanade.tachiyomi.data.database.models.create
 import eu.kanade.tachiyomi.data.database.models.removeCover
@@ -252,28 +251,16 @@ open class GlobalSearchPresenter(
     private fun initializeFetchImageSubscription() {
         fetchImageJob?.cancel()
         fetchImageJob = fetchImageFlow.onEach { (mangaList, source) ->
-            Log.e(
-                "RokkuCoverDebug",
-                "fetchImage: source=${source.name} mangas=${mangaList.map { "${it.title}(thumb=${it.thumbnail_url},init=${it.initialized})" }}",
-            )
             mangaList
                 .filter { it.thumbnail_url == null && !it.initialized }
                 .forEach {
                     presenterScope.launchIO {
                         try {
                             val manga = getMangaDetails(it, source)
-                            Log.e(
-                                "RokkuCoverDebug",
-                                "fetchImage: getMangaDetails OK for ${it.title}, thumbnail_url=${manga.thumbnail_url}",
-                            )
                             withUIContext {
                                 view?.onMangaInitialized(source as CatalogueSource, manga)
                             }
                         } catch (e: Exception) {
-                            Log.e(
-                                "RokkuCoverDebug",
-                                "fetchImage: getMangaDetails FAILED for ${it.title}: ${e.message}",
-                            )
                             withUIContext {
                                 view?.onMangaInitialized(source as CatalogueSource, it)
                             }
