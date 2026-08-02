@@ -1,5 +1,6 @@
 package yokai.presentation.manga.components
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -36,7 +37,14 @@ fun MangaCover(
         contentScale = contentScale,
         onLoading = { state -> onState?.invoke(state) },
         onSuccess = { state -> onState?.invoke(state) },
-        onError = { state -> onState?.invoke(state) },
+        onError = { state ->
+            Log.e(
+                "RokkuCoverDebug",
+                "MangaCover AsyncImage onError data=$data throwable=${state.result.throwable}",
+                state.result.throwable,
+            )
+            onState?.invoke(state)
+        },
         modifier = modifier
             .then(if (ratio != null) Modifier.aspectRatio(ratio) else Modifier)
             .clip(shape)
