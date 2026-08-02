@@ -1,5 +1,6 @@
 package eu.kanade.tachiyomi.smartsearch
 
+import android.util.Log
 import eu.kanade.tachiyomi.data.database.models.create
 import eu.kanade.tachiyomi.domain.manga.models.Manga
 import eu.kanade.tachiyomi.source.CatalogueSource
@@ -135,8 +136,20 @@ class SmartSearchEngine(
         if (localManga == null) {
             val newManga = Manga.create(sManga.url, sManga.title, sourceId)
             newManga.copyFrom(sManga)
+            // TEMP DIAGNOSTIC LOGGING (blank-cover bug investigation) - remove once diagnosed.
+            Log.e(
+                "RokkuCoverDebug",
+                "SmartSearchEngine.networkToLocalManga: NEW manga title=${sManga.title} " +
+                    "sManga.thumbnail_url=${sManga.thumbnail_url} newManga.thumbnail_url=${newManga.thumbnail_url}",
+            )
             newManga.id = insertManga.await(newManga)
             localManga = newManga
+        } else {
+            Log.e(
+                "RokkuCoverDebug",
+                "SmartSearchEngine.networkToLocalManga: EXISTING manga title=${sManga.title} " +
+                    "sManga.thumbnail_url=${sManga.thumbnail_url} localManga.thumbnail_url=${localManga.thumbnail_url}",
+            )
         }
         return localManga
     }

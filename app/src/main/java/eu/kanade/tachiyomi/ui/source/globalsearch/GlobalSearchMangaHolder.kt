@@ -1,6 +1,7 @@
 package eu.kanade.tachiyomi.ui.source.globalsearch
 
 import android.graphics.drawable.RippleDrawable
+import android.util.Log
 import android.view.View
 import androidx.core.view.isVisible
 import coil3.dispose
@@ -49,8 +50,16 @@ class GlobalSearchMangaHolder(view: View, adapter: GlobalSearchCardAdapter) :
 
     fun setImage(manga: Manga) {
         binding.itemImage.dispose()
+        // TEMP DIAGNOSTIC LOGGING (blank-cover bug investigation) - remove once diagnosed.
+        Log.e(
+            "RokkuCoverDebug",
+            "GlobalSearchMangaHolder.setImage: title=${manga.title} " +
+                "thumbnail_url=${manga.thumbnail_url} initialized=${manga.initialized} favorite=${manga.favorite}",
+        )
         if (!manga.thumbnail_url.isNullOrEmpty()) {
             binding.itemImage.loadManga(manga.cover(), binding.progress)
+        } else {
+            Log.e("RokkuCoverDebug", "GlobalSearchMangaHolder.setImage: SKIPPED load, blank thumbnail_url for ${manga.title}")
         }
     }
 }

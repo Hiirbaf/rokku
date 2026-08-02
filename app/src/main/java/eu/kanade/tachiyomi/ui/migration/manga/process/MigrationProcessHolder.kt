@@ -1,5 +1,6 @@
 package eu.kanade.tachiyomi.ui.migration.manga.process
 
+import android.util.Log
 import android.view.View
 import androidx.appcompat.widget.PopupMenu
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -167,6 +168,13 @@ class MigrationProcessHolder(
     private suspend fun MangaGridItemBinding.attachManga(manga: Manga, source: Source) {
         (root.layoutParams as ConstraintLayout.LayoutParams).verticalBias = 1f
         progress.isVisible = false
+
+        // TEMP DIAGNOSTIC LOGGING (blank-cover bug investigation) - remove once diagnosed.
+        Log.e(
+            "RokkuCoverDebug",
+            "MigrationProcessHolder.attachManga: title=${manga.title} thumbnail_url=${manga.thumbnail_url} " +
+                "initialized=${manga.initialized} source=${source.name}",
+        )
 
         coverThumbnail.loadManga(manga.cover(), progress) {
             useCustomCover(false)
