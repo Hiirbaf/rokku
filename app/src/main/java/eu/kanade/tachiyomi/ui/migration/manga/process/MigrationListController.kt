@@ -129,6 +129,11 @@ class MigrationListController(bundle: Bundle? = null) :
         binding.recycler.setOnApplyWindowInsetsListener(RecyclerWindowInsetsListener)
 
         adapter?.updateDataSet(newMigratingManga.map { it.toModal() })
+        // The toolbar title was already rendered once (as "0/0") before the adapter had any
+        // data - nothing refreshes it afterward unless a per-item search happens to complete
+        // and call updateCount(), which "Migrate All" doesn't always trigger. Refresh it now
+        // that the real item count is known, so it doesn't stay stuck at "0/0".
+        setTitle()
 
         if (migrationsJob == null) {
             migrationsJob = launch {
