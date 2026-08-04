@@ -16,7 +16,7 @@ import eu.kanade.tachiyomi.util.view.setAnimVectorCompat
 import yokai.i18n.MR
 import yokai.util.lang.getString
 
-open class GroupItem(val filter: Filter.Group<*>) : AbstractExpandableHeaderItem<GroupItem.Holder, ISectionable<*, *>>() {
+class GroupItem(val filter: Filter.Group<*>) : AbstractExpandableHeaderItem<GroupItem.Holder, ISectionable<*, *>>() {
 
     init {
         isExpanded = false

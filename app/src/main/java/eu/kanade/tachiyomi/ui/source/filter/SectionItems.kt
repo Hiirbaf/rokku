@@ -94,24 +94,3 @@ class SelectSectionItem(filter: Filter.Select<*>) : SelectItem(filter), ISection
         return filter.hashCode()
     }
 }
-
-class GroupSectionItem(filter: Filter.Group<*>) : GroupItem(filter), ISectionable<GroupItem.Holder, GroupItem> {
-
-    private var head: GroupItem? = null
-
-    override fun getHeader(): GroupItem? = head
-
-    override fun setHeader(header: GroupItem?) {
-        head = header
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-        return filter == (other as GroupSectionItem).filter
-    }
-
-    override fun hashCode(): Int {
-        return filter.hashCode()
-    }
-}

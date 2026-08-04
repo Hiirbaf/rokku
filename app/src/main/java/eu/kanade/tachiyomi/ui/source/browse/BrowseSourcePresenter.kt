@@ -18,7 +18,7 @@ import eu.kanade.tachiyomi.ui.base.presenter.BaseCoroutinePresenter
 import eu.kanade.tachiyomi.ui.source.filter.CheckboxItem
 import eu.kanade.tachiyomi.ui.source.filter.CheckboxSectionItem
 import eu.kanade.tachiyomi.ui.source.filter.GroupItem
-import eu.kanade.tachiyomi.ui.source.filter.GroupSectionItem
+import eu.kanade.tachiyomi.ui.source.filter.GroupLabelItem
 import eu.kanade.tachiyomi.ui.source.filter.HeaderItem
 import eu.kanade.tachiyomi.ui.source.filter.SelectItem
 import eu.kanade.tachiyomi.ui.source.filter.SelectSectionItem
@@ -373,7 +373,7 @@ open class BrowseSourcePresenter(
 
                 is Filter.Group<*> -> {
                     val group = GroupItem(filter)
-                    val subItems = filter.toSubItems()
+                    val subItems = filter.toFlattenedSubItems()
                     subItems.forEach { it.header = group }
                     group.subItems = subItems
                     group
@@ -391,21 +391,21 @@ open class BrowseSourcePresenter(
         }
     }
 
-    private fun Filter.Group<*>.toSubItems(): List<ISectionable<*, GroupItem>> {
-        return state.mapNotNull { type ->
+    /**
+     * Nested [Filter.Group]s are flattened into their parent's sub-items (with a non-expandable
+     * label row standing in for the nested group's name) rather than being made expandable
+     * themselves, since FlexibleAdapter doesn't reliably display sub-items that are both
+     * expandable and sectionable at the same time.
+     */
+    private fun Filter.Group<*>.toFlattenedSubItems(): List<ISectionable<*, GroupItem>> {
+        return state.flatMap { type ->
             when (type) {
-                is Filter.CheckBox -> CheckboxSectionItem(type)
-                is Filter.TriState -> TriStateSectionItem(type)
-                is Filter.Text -> TextSectionItem(type)
-                is Filter.Select<*> -> SelectSectionItem(type)
-                is Filter.Group<*> -> {
-                    val nestedGroup = GroupSectionItem(type)
-                    val nestedSubItems = type.toSubItems()
-                    nestedSubItems.forEach { it.header = nestedGroup }
-                    nestedGroup.subItems = nestedSubItems
-                    nestedGroup
-                }
-                else -> null
+                is Filter.CheckBox -> listOf(CheckboxSectionItem(type))
+                is Filter.TriState -> listOf(TriStateSectionItem(type))
+                is Filter.Text -> listOf(TextSectionItem(type))
+                is Filter.Select<*> -> listOf(SelectSectionItem(type))
+                is Filter.Group<*> -> listOf(GroupLabelItem(type)) + type.toFlattenedSubItems()
+                else -> emptyList()
             }
         }
     }
