@@ -133,6 +133,7 @@ class RecentsPresenter(
             preferences.groupChaptersHistory(),
             recentsPreferences.showReadInAllRecents(),
             preferences.sortFetchedTime(),
+            recentsPreferences.filterUpdatesCategories(),
         ).forEach {
             it.changes()
                 .drop(1)
@@ -276,6 +277,7 @@ class RecentsPresenter(
                     !updatePageCount && !isOnFirstPage,
                     query,
                     (if (isCustom) ENDLESS_LIMIT else pageOffset).toLong(),
+                    recentsPreferences.filterUpdatesCategories().get().mapNotNull { it.toLongOrNull() },
                 ).groupBy {
                     val date = it.chapter.date_fetch
                     it.manga.id to if (date <= 0L) "-1" else dateFormat.format(Date(date))

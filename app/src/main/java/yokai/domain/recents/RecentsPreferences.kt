@@ -15,4 +15,7 @@ class RecentsPreferences(private val preferenceStore: PreferenceStore) {
 
     fun showTitleFirstInRecents() =
         preferenceStore.getBoolean(PreferenceKeys.showTitleFirstInRecents, false)
+
+    fun filterUpdatesCategories() =
+        preferenceStore.getStringSet("filter_updates_categories", emptySet())
 }

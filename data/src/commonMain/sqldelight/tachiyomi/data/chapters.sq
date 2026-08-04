@@ -94,6 +94,9 @@ AND lower(M.title) LIKE '%' || :search || '%'
 AND (
     :apply_filter = 0 OR S.name IS NULL
 )
+AND (
+    :apply_category_filter = 0 OR M._id IN (SELECT manga_id FROM mangas_categories WHERE category_id IN :categoryIds)
+)
 ORDER BY C.date_fetch DESC
 LIMIT :limit OFFSET :offset;
 

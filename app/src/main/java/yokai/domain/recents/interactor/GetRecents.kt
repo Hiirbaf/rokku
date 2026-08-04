@@ -15,10 +15,11 @@ class GetRecents(
         isResuming: Boolean,
         search: String = "",
         offset: Long = 0L,
+        categoryIds: Collection<Long> = emptyList(),
     ): List<MangaChapter> {
         val (limit, actualOffset) = limitAndOffset(true, isResuming, offset)
 
-        return chapterRepository.getRecents(filterScanlators, search, limit, actualOffset)
+        return chapterRepository.getRecents(filterScanlators, search, limit, actualOffset, categoryIds)
     }
 
     suspend fun awaitUngrouped(
