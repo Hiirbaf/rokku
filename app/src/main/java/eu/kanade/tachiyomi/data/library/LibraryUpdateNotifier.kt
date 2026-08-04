@@ -354,6 +354,7 @@ class LibraryUpdateNotifier(private val context: Context) {
      */
     private fun getNotificationIntent(): PendingIntent {
         val intent = Intent(context, MainActivity::class.java).apply {
+            setPackage(context.packageName)
             flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
             action = MainActivity.SHORTCUT_RECENTLY_UPDATED
         }
