@@ -33,6 +33,14 @@ AND (
     :apply_filter = 0 OR S.name IS NULL
 );
 
+-- Same as getChaptersByMangaId but without the scanlators_view join, for callers that never
+-- want the scanlator filter applied. scanlators_view is a recursive CTE with no predicate
+-- pushdown on manga_id, so joining it re-scans the whole mangas table on every call; skipping
+-- it here avoids an O(library size) cost per manga (e.g. when backing up a large library).
+getAllChaptersByMangaId:
+SELECT * FROM chapters
+WHERE manga_id = :manga_id;
+
 getChaptersById:
 SELECT * FROM chapters
 WHERE _id = :id;

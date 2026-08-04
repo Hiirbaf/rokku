@@ -9,6 +9,11 @@ interface ChapterRepository {
     suspend fun getChapters(mangaId: Long, filterScanlators: Boolean): List<Chapter>
     fun getChaptersAsFlow(mangaId: Long, filterScanlators: Boolean): Flow<List<Chapter>>
 
+    // Never applies the scanlator filter, unlike getChapters(mangaId, filterScanlators = false):
+    // it skips the scanlators_view join entirely, for callers that never need it (see the query's
+    // own comment for why that join is expensive).
+    suspend fun getAllChapters(mangaId: Long): List<Chapter>
+
     suspend fun getChapterById(id: Long): Chapter?
 
     suspend fun getChaptersByUrl(url: String, filterScanlators: Boolean): List<Chapter>

@@ -16,6 +16,11 @@ class ChapterRepositoryImpl(private val handler: DatabaseHandler) : ChapterRepos
             chaptersQueries.getChaptersByMangaId(mangaId, filterScanlators.toInt().toLong(), Chapter::mapper)
         }
 
+    override suspend fun getAllChapters(mangaId: Long): List<Chapter> =
+        handler.awaitList {
+            chaptersQueries.getAllChaptersByMangaId(mangaId, Chapter::mapper)
+        }
+
     override fun getChaptersAsFlow(mangaId: Long, filterScanlators: Boolean): Flow<List<Chapter>> =
         handler.subscribeToList {
             chaptersQueries.getChaptersByMangaId(mangaId, filterScanlators.toInt().toLong(), Chapter::mapper)
