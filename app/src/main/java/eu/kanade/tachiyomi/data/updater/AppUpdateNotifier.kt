@@ -97,7 +97,7 @@ internal class AppUpdateNotifier(private val context: Context) {
                 PendingIntent.getActivity(
                     context,
                     releaseUrl.hashCode(),
-                    releaseIntent,
+                    Intent.createChooser(releaseIntent, null),
                     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
                 ),
             )
