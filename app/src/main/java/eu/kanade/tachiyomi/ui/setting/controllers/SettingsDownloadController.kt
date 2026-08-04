@@ -53,6 +53,19 @@ class SettingsDownloadController : SettingsLegacyController() {
             title = context.getString(MR.strings.download_with_id)
             summaryRes = MR.strings.download_with_id_details
         }
+        intListPreference(activity) {
+            bindTo(downloadPreferences.parallelSourceLimit())
+            titleRes = MR.strings.pref_download_concurrent_sources
+            entries = (1..10).map { it.toString() }
+            entryValues = (1..10).toList()
+        }
+        intListPreference(activity) {
+            bindTo(downloadPreferences.parallelPageLimit())
+            titleRes = MR.strings.pref_download_concurrent_pages
+            summaryRes = MR.strings.pref_download_concurrent_pages_summary
+            entries = (1..15).map { it.toString() }
+            entryValues = (1..15).toList()
+        }
 
         // FIXME: Don't do blocking
         val dbCategories = runBlocking { getCategories.await() }

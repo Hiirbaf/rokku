@@ -190,31 +190,35 @@ class Downloader(
         if (isRunning) return
 
         downloaderJob = scope.launch {
-            val activeDownloadsFlow = queueState.transformLatest { queue ->
-                while (true) {
-                    val activeDownloads = queue.asSequence()
-                        // Ignore completed downloads, leave them in the queue
-                        .filter {
-                            val statusValue = it.status.value
-                            Download.State.NOT_DOWNLOADED.value <= statusValue &&
-                                statusValue <= Download.State.DOWNLOADING.value
-                        }
-                        .groupBy { it.source }
-                        .toList()
-                        // Concurrently download from 5 different sources
-                        .take(5)
-                        .map { (_, downloads) -> downloads.first() }
-                    emit(activeDownloads)
+            val activeDownloadsFlow = combine(
+                queueState,
+                downloadPreferences.parallelSourceLimit().changes(),
+            ) { queue, parallelSourceLimit -> queue to parallelSourceLimit }
+                .transformLatest { (queue, parallelSourceLimit) ->
+                    while (true) {
+                        val activeDownloads = queue.asSequence()
+                            // Ignore completed downloads, leave them in the queue
+                            .filter {
+                                val statusValue = it.status.value
+                                Download.State.NOT_DOWNLOADED.value <= statusValue &&
+                                    statusValue <= Download.State.DOWNLOADING.value
+                            }
+                            .groupBy { it.source }
+                            .toList()
+                            // Concurrently download from up to `parallelSourceLimit` different sources
+                            .take(parallelSourceLimit)
+                            .map { (_, downloads) -> downloads.first() }
+                        emit(activeDownloads)
 
-                    if (activeDownloads.isEmpty()) break
-                    // Suspend until a download enters the ERROR state
-                    val activeDownloadsErroredFlow =
-                        combine(activeDownloads.map(Download::statusFlow)) { states ->
-                            states.contains(Download.State.ERROR)
-                        }.filter { it }
-                    activeDownloadsErroredFlow.first()
-                }
-            }.distinctUntilChanged()
+                        if (activeDownloads.isEmpty()) break
+                        // Suspend until a download enters the ERROR state
+                        val activeDownloadsErroredFlow =
+                            combine(activeDownloads.map(Download::statusFlow)) { states ->
+                                states.contains(Download.State.ERROR)
+                            }.filter { it }
+                        activeDownloadsErroredFlow.first()
+                    }
+                }.distinctUntilChanged()
 
             // Use supervisorScope to cancel child jobs when the downloader job is cancelled
             supervisorScope {
@@ -379,9 +383,8 @@ class Downloader(
             }
 
             // Start downloading images, consider we can have downloaded images already
-            // Concurrently do 2 pages at a time
             pageList.asFlow()
-                .flatMapMerge(concurrency = 2) { page ->
+                .flatMapMerge(concurrency = downloadPreferences.parallelPageLimit().get()) { page ->
                     flow {
                         withIOContext { getOrDownloadImage(page, download, tmpDir) }
                         emit(page)
