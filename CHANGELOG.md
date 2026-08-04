@@ -13,6 +13,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 ### Additions
 - Add configurable download concurrency (Settings > Downloads): number of simultaneous chapter downloads and simultaneous page downloads per chapter are no longer hardcoded
 - Overhaul library search: support `&&`/`||` boolean operators, `-term` negation, `title:`/`author:`/`artist:`/`genre:` field prefixes (in addition to the existing `src:`), and numeric comparators (`>`, `<`, `=`) on `chapters`, `unread`, and `read`
+- Pasting a manga URL into Global Search now opens that manga directly if the URL matches an already-installed source, instead of running a full text search across every source
 
 ### Changes
 - Debounce library search input (250ms) so refiltering no longer runs on every keystroke
