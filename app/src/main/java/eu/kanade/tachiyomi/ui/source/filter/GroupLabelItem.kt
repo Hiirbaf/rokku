@@ -36,6 +36,10 @@ class GroupLabelItem(val filter: Filter.Group<*>) :
         return com.google.android.material.R.layout.design_navigation_item_subheader
     }
 
+    override fun getItemViewType(): Int {
+        return 104
+    }
+
     override fun createViewHolder(view: View, adapter: FlexibleAdapter<IFlexible<RecyclerView.ViewHolder>>): Holder {
         return Holder(view, adapter)
     }

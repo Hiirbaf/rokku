@@ -394,6 +394,31 @@ open class BrowseSourceController(bundle: Bundle) :
         return true
     }
 
+    /**
+     * Snapshots this filter's state for later comparison via [filterStateMatches]. For a
+     * [Filter.Group], this recurses into its children (which may themselves be nested
+     * [Filter.Group]s) instead of just capturing the list of child Filter objects, so that
+     * changes to grandchildren (e.g. a checkbox inside a nested group) are detected.
+     */
+    private fun Filter<*>.snapshotFilterState(): Any? {
+        return if (this is Filter.Group<*>) {
+            state.map { (it as Filter<*>).snapshotFilterState() }
+        } else {
+            state
+        }
+    }
+
+    private fun Filter<*>.filterStateMatches(snapshot: Any?): Boolean {
+        return if (this is Filter.Group<*>) {
+            val snapshotList = snapshot as? List<*> ?: return false
+            state.indices.all { j ->
+                (state[j] as Filter<*>).filterStateMatches(snapshotList.getOrNull(j))
+            }
+        } else {
+            state == snapshot
+        }
+    }
+
     private fun applyFilters() {
         val allDefault = presenter.filtersMatchDefault()
         showProgressBar()
@@ -404,43 +429,14 @@ open class BrowseSourceController(bundle: Bundle) :
 
     private fun showFilters() {
         if (filterSheet != null) return
-        val oldFilters = mutableListOf<Any?>()
-        for (i in presenter.sourceFilters) {
-            if (i is Filter.Group<*>) {
-                val subFilters = mutableListOf<Any?>()
-                for (j in i.state) {
-                    subFilters.add((j as Filter<*>).state)
-                }
-                oldFilters.add(subFilters)
-            } else {
-                oldFilters.add(i.state)
-            }
-        }
+        val oldFilters = presenter.sourceFilters.map { it.snapshotFilterState() }
 
         filterSheet = SourceFilterSheet(
             activity = activity!!,
             searches = { savedSearches },
             onSearchClicked = {
-                var matches = true
-                for (i in presenter.sourceFilters.indices) {
-                    val filter = oldFilters.getOrNull(i)
-                    if (filter is List<*>) {
-                        for (j in filter.indices) {
-                            if (filter[j] !=
-                                (
-                                    (presenter.sourceFilters[i] as Filter.Group<*>).state[j] as
-                                        Filter<*>
-                                    ).state
-                            ) {
-                                matches = false
-                                break
-                            }
-                        }
-                    } else if (filter != presenter.sourceFilters[i].state) {
-                        matches = false
-                        break
-                    }
-                    if (!matches) break
+                val matches = presenter.sourceFilters.indices.all { i ->
+                    presenter.sourceFilters[i].filterStateMatches(oldFilters.getOrNull(i))
                 }
                 if (!matches) {
                     applyFilters()

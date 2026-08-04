@@ -134,15 +134,7 @@ open class BrowseSourcePresenter(
 
             if (oldFilters.isEmpty()) {
                 for (i in sourceFilters) {
-                    if (i is Filter.Group<*>) {
-                        val subFilters = mutableListOf<Any?>()
-                        for (j in i.state) {
-                            subFilters.add((j as Filter<*>).state)
-                        }
-                        oldFilters.add(subFilters)
-                    } else {
-                        oldFilters.add(i.state)
-                    }
+                    oldFilters.add(i.snapshotState())
                 }
             }
             filtersChanged = false
@@ -159,20 +151,34 @@ open class BrowseSourcePresenter(
     }
 
     fun filtersMatchDefault(): Boolean {
-        for (i in sourceFilters.indices) {
-            val filter = oldFilters.getOrNull(i)
-            if (filter is List<*>) {
-                for (j in filter.indices) {
-                    val state = ((sourceFilters[i] as Filter.Group<*>).state[j] as Filter<*>).state
-                    if (filter[j] != state) {
-                        return false
-                    }
-                }
-            } else if (filter != sourceFilters[i].state) {
-                return false
-            }
+        return sourceFilters.indices.all { i ->
+            sourceFilters[i].stateMatches(oldFilters.getOrNull(i))
         }
-        return true
+    }
+
+    /**
+     * Snapshots this filter's state for later comparison via [stateMatches]. For a [Filter.Group],
+     * this recurses into its children (which may themselves be nested [Filter.Group]s) instead of
+     * just capturing the list of child Filter objects, so that changes to grandchildren (e.g. a
+     * checkbox inside a nested group) are detected.
+     */
+    private fun Filter<*>.snapshotState(): Any? {
+        return if (this is Filter.Group<*>) {
+            state.map { (it as Filter<*>).snapshotState() }
+        } else {
+            state
+        }
+    }
+
+    private fun Filter<*>.stateMatches(snapshot: Any?): Boolean {
+        return if (this is Filter.Group<*>) {
+            val snapshotList = snapshot as? List<*> ?: return false
+            state.indices.all { j ->
+                (state[j] as Filter<*>).stateMatches(snapshotList.getOrNull(j))
+            }
+        } else {
+            state == snapshot
+        }
     }
 
     /**
