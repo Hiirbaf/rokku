@@ -55,6 +55,7 @@ kotlin {
                 api(libs.okhttp.zstd)
 
                 api(androidx.preference)
+                implementation(androidx.webkit)
 
                 implementation(libs.quickjs.android)
 

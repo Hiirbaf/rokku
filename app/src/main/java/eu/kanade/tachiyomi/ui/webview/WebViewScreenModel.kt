@@ -61,4 +61,6 @@ class WebViewScreenModel(
             Logger.d { "Cleared $cleared cookies for: $url" }
         }
     }
+
+    fun defaultUserAgentProvider() = network.defaultUserAgent
 }

@@ -54,6 +54,7 @@ open class WebViewActivity : BaseWebViewActivity() {
                 onNavigateUp = { finish() },
                 initialTitle = intent.extras?.getString(TITLE_KEY),
                 url = url,
+                defaultUserAgentProvider = { network.defaultUserAgent },
                 headers = headers,
                 onUrlChange = { assistUrl = it },
                 onShare = this::shareWebpage,
