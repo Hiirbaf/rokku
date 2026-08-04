@@ -10,6 +10,10 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 
 ## [Unreleased]
 
+### Additions
+- Add configurable download concurrency (Settings > Downloads): number of simultaneous chapter downloads and simultaneous page downloads per chapter are no longer hardcoded
+- Overhaul library search: support `&&`/`||` boolean operators, `-term` negation, `title:`/`author:`/`artist:`/`genre:` field prefixes (in addition to the existing `src:`), and numeric comparators (`>`, `<`, `=`) on `chapters`, `unread`, and `read`
+
 ### Fixes
 - Fix slow backup restore with large libraries by batching manga restoration into chunked database transactions instead of committing every manga individually
 - Fix backup restore posting a system notification update on every single manga (throttled by Android and further slowing large restores); it now only updates once per batch
