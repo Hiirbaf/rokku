@@ -11,6 +11,9 @@ import eu.kanade.tachiyomi.util.BackupUtil
 import eu.kanade.tachiyomi.util.system.createFileInCacheDir
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.ensureActive
+import uy.kohesive.injekt.Injekt
+import uy.kohesive.injekt.api.get
+import yokai.data.DatabaseHandler
 import yokai.i18n.MR
 import yokai.util.lang.getString
 import java.io.File
@@ -20,11 +23,15 @@ import java.util.*
 class BackupRestorer(
     val context: Context,
     val notifier: BackupNotifier,
+    private val handler: DatabaseHandler = Injekt.get(),
     private val categoriesBackupRestorer: CategoriesBackupRestorer = CategoriesBackupRestorer(),
     private val mangaBackupRestorer: MangaBackupRestorer = MangaBackupRestorer(),
     private val preferenceBackupRestorer: PreferenceBackupRestorer = PreferenceBackupRestorer(context),
     private val extensionReposBackupRestorer: ExtensionReposBackupRestorer = ExtensionReposBackupRestorer(),
 ) {
+    companion object {
+        private const val RESTORE_CHUNK_SIZE = 100
+    }
     private var restoreAmount = 0
     private var restoreProgress = 0
 
@@ -91,20 +98,24 @@ class BackupRestorer(
 
             // Restore individual manga
             if (options.libraryEntries) {
-                backup.backupManga.forEach {
-                    ensureActive()
-                    mangaBackupRestorer.restoreManga(
-                        it,
-                        backup.backupCategories,
-                        onComplete = { manga ->
-                            restoreProgress += 1
-                            showRestoreProgress(restoreProgress, restoreAmount, manga.title)
-                        },
-                        onError = { manga, e ->
-                            val sourceName = sourceMapping[manga.source] ?: manga.source.toString()
-                            errors.add(Date() to "${manga.title} [$sourceName]: ${e.message}")
-                        },
-                    )
+                backup.backupManga.chunked(RESTORE_CHUNK_SIZE).forEach { chunk ->
+                    handler.await(inTransaction = true) {
+                        chunk.forEach {
+                            ensureActive()
+                            mangaBackupRestorer.restoreManga(
+                                it,
+                                backup.backupCategories,
+                                onComplete = { manga ->
+                                    restoreProgress += 1
+                                    showRestoreProgress(restoreProgress, restoreAmount, manga.title)
+                                },
+                                onError = { manga, e ->
+                                    val sourceName = sourceMapping[manga.source] ?: manga.source.toString()
+                                    errors.add(Date() to "${manga.title} [$sourceName]: ${e.message}")
+                                },
+                            )
+                        }
+                    }
                 }
             }
         }

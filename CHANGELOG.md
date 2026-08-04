@@ -10,6 +10,9 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 
 ## [Unreleased]
 
+### Fixes
+- Fix slow backup restore with large libraries by batching manga restoration into chunked database transactions instead of committing every manga individually
+
 ## [1.4.0]
 
 ### Additions
