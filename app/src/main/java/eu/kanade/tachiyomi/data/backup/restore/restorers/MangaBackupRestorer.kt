@@ -17,7 +17,6 @@ import eu.kanade.tachiyomi.data.database.models.Category
 import eu.kanade.tachiyomi.util.system.launchNow
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
-import yokai.data.DatabaseHandler
 import yokai.domain.category.interactor.GetCategories
 import yokai.domain.category.interactor.SetMangaCategories
 import yokai.domain.chapter.interactor.GetChapter
@@ -35,7 +34,6 @@ import kotlin.math.max
 
 class MangaBackupRestorer(
     private val customMangaManager: CustomMangaManager = Injekt.get(),
-    private val handler: DatabaseHandler = Injekt.get(),
     private val getCategories: GetCategories = Injekt.get(),
     private val setMangaCategories: SetMangaCategories = Injekt.get(),
     private val getChapter: GetChapter = Injekt.get(),
@@ -136,8 +134,8 @@ class MangaBackupRestorer(
         }
         fetchedManga.id ?: return
 
-        restoreChapters(fetchedManga, chapters)
-        restoreExtras(fetchedManga, categories, history, tracks, backupCategories, filteredScanlators, customManga)
+        val persistedChapters = restoreChapters(fetchedManga, chapters)
+        restoreExtras(fetchedManga, persistedChapters, categories, history, tracks, backupCategories, filteredScanlators, customManga)
     }
 
     private suspend fun restoreExistingManga(
@@ -150,11 +148,15 @@ class MangaBackupRestorer(
         filteredScanlators: List<String>,
         customManga: CustomMangaInfo?,
     ) {
-        restoreChapters(backupManga, chapters)
-        restoreExtras(backupManga, categories, history, tracks, backupCategories, filteredScanlators, customManga)
+        val persistedChapters = restoreChapters(backupManga, chapters)
+        restoreExtras(backupManga, persistedChapters, categories, history, tracks, backupCategories, filteredScanlators, customManga)
     }
 
-    private suspend fun restoreChapters(manga: Manga, chapters: List<Chapter>) {
+    /**
+     * Restores this manga's chapters and returns them as persisted in the database (i.e. with
+     * their real chapter ids), so callers don't need to re-query chapters by url afterwards.
+     */
+    private suspend fun restoreChapters(manga: Manga, chapters: List<Chapter>): List<Chapter> {
         val dbChapters = getChapter.awaitAll(manga)
 
         chapters.forEach { chapter ->
@@ -177,12 +179,17 @@ class MangaBackupRestorer(
         }
 
         val newChapters = chapters.groupBy { it.id != null }
-        newChapters[true]?.let { updateChapter.awaitAll(it.map(Chapter::toProgressUpdate)) }
-        newChapters[false]?.let { insertChapter.awaitBulk(it) }
+        val updatedChapters = newChapters[true] ?: emptyList()
+        updatedChapters.let { updateChapter.awaitAll(it.map(Chapter::toProgressUpdate)) }
+        // insertChapter.awaitBulk returns copies of the inserted chapters with their real ids,
+        // it doesn't mutate the passed-in list.
+        val insertedChapters = newChapters[false]?.let { insertChapter.awaitBulk(it) } ?: emptyList()
+        return updatedChapters + insertedChapters
     }
 
     private suspend fun restoreExtras(
         manga: Manga,
+        persistedChapters: List<Chapter>,
         categories: List<Int>,
         history: List<BackupHistory>,
         tracks: List<Track>,
@@ -191,7 +198,7 @@ class MangaBackupRestorer(
         customManga: CustomMangaInfo?,
     ) {
         restoreCategories(manga, categories, backupCategories)
-        restoreHistoryForManga(history)
+        restoreHistoryForManga(manga, persistedChapters, history)
         restoreTrackForManga(manga, tracks)
         restoreFilteredScanlatorsForManga(manga, filteredScanlators)
         customManga?.let {
@@ -232,28 +239,30 @@ class MangaBackupRestorer(
     /**
      * Restore history from Json
      *
+     * @param manga the manga the history belongs to.
+     * @param persistedChapters this manga's chapters as persisted in the database (with ids).
      * @param history list containing history to be restored
      */
-    internal suspend fun restoreHistoryForManga(history: List<BackupHistory>) {
-        // List containing history to be updated
-        val historyToBeUpdated = ArrayList<History>(history.size)
-        for ((url, lastRead, readDuration) in history) {
-            val dbHistory = handler.awaitOneOrNull { historyQueries.getByChapterUrl(url, History::mapper) }
-            // Check if history already in database and update
+    internal suspend fun restoreHistoryForManga(manga: Manga, persistedChapters: List<Chapter>, history: List<BackupHistory>) {
+        if (history.isEmpty()) return
+
+        // One query for the whole manga instead of one per history entry.
+        val chapterIdByUrl = persistedChapters.associate { it.url to it.id }
+        val dbHistoryByChapterId = getHistory.awaitAllByMangaId(manga.id!!).associateBy { it.chapter_id }
+
+        val historyToBeUpdated = history.mapNotNull { (url, lastRead, readDuration) ->
+            val chapterId = chapterIdByUrl[url] ?: return@mapNotNull null
+            val dbHistory = dbHistoryByChapterId[chapterId]
             if (dbHistory != null) {
                 dbHistory.apply {
                     last_read = max(lastRead, dbHistory.last_read)
                     time_read = max(readDuration, dbHistory.time_read)
                 }
-                historyToBeUpdated.add(dbHistory)
             } else {
-                // If not in database create
-                getChapter.awaitByUrl(url, false)?.let {
-                    val historyToAdd = History.create(it).apply {
-                        last_read = lastRead
-                        time_read = readDuration
-                    }
-                    historyToBeUpdated.add(historyToAdd)
+                History.create().apply {
+                    chapter_id = chapterId
+                    last_read = lastRead
+                    time_read = readDuration
                 }
             }
         }
