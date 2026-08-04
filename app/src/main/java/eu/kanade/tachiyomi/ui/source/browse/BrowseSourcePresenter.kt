@@ -2,6 +2,7 @@ package eu.kanade.tachiyomi.ui.source.browse
 
 import co.touchlab.kermit.Logger
 import eu.davidea.flexibleadapter.items.IFlexible
+import eu.davidea.flexibleadapter.items.ISectionable
 import eu.kanade.tachiyomi.data.cache.CoverCache
 import eu.kanade.tachiyomi.data.database.models.create
 import eu.kanade.tachiyomi.data.database.models.removeCover
@@ -17,6 +18,7 @@ import eu.kanade.tachiyomi.ui.base.presenter.BaseCoroutinePresenter
 import eu.kanade.tachiyomi.ui.source.filter.CheckboxItem
 import eu.kanade.tachiyomi.ui.source.filter.CheckboxSectionItem
 import eu.kanade.tachiyomi.ui.source.filter.GroupItem
+import eu.kanade.tachiyomi.ui.source.filter.GroupSectionItem
 import eu.kanade.tachiyomi.ui.source.filter.HeaderItem
 import eu.kanade.tachiyomi.ui.source.filter.SelectItem
 import eu.kanade.tachiyomi.ui.source.filter.SelectSectionItem
@@ -371,15 +373,7 @@ open class BrowseSourcePresenter(
 
                 is Filter.Group<*> -> {
                     val group = GroupItem(filter)
-                    val subItems = filter.state.mapNotNull { type ->
-                        when (type) {
-                            is Filter.CheckBox -> CheckboxSectionItem(type)
-                            is Filter.TriState -> TriStateSectionItem(type)
-                            is Filter.Text -> TextSectionItem(type)
-                            is Filter.Select<*> -> SelectSectionItem(type)
-                            else -> null
-                        }
-                    }
+                    val subItems = filter.toSubItems()
                     subItems.forEach { it.header = group }
                     group.subItems = subItems
                     group
@@ -393,6 +387,25 @@ open class BrowseSourcePresenter(
                     group.subItems = subItems
                     group
                 }
+            }
+        }
+    }
+
+    private fun Filter.Group<*>.toSubItems(): List<ISectionable<*, GroupItem>> {
+        return state.mapNotNull { type ->
+            when (type) {
+                is Filter.CheckBox -> CheckboxSectionItem(type)
+                is Filter.TriState -> TriStateSectionItem(type)
+                is Filter.Text -> TextSectionItem(type)
+                is Filter.Select<*> -> SelectSectionItem(type)
+                is Filter.Group<*> -> {
+                    val nestedGroup = GroupSectionItem(type)
+                    val nestedSubItems = type.toSubItems()
+                    nestedSubItems.forEach { it.header = nestedGroup }
+                    nestedGroup.subItems = nestedSubItems
+                    nestedGroup
+                }
+                else -> null
             }
         }
     }
