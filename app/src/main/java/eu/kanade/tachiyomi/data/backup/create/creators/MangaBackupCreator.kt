@@ -84,8 +84,12 @@ class MangaBackupCreator(
                 getHistory.awaitAllByMangaId(it)
             }.orEmpty()
             if (historyForManga.isNotEmpty()) {
+                // One query for all of this manga's chapters instead of one per history entry.
+                val urlByChapterId = manga.id?.let { getChapter.awaitAll(it, filterScanlators = false) }
+                    .orEmpty()
+                    .associate { it.id to it.url }
                 val history = historyForManga.mapNotNull { history ->
-                    val url = getChapter.awaitById(history.chapter_id)?.url
+                    val url = urlByChapterId[history.chapter_id]
                     url?.let { BackupHistory(url, history.last_read, history.time_read) }
                 }
                 if (history.isNotEmpty()) {

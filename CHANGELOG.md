@@ -15,6 +15,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Fix backup restore posting a system notification update on every single manga (throttled by Android and further slowing large restores); it now only updates once per batch
 - Fix backup restore re-querying the full category list from the database once per manga instead of once for the whole restore
 - Fix backup restore querying the database once per reading-history entry instead of once per manga, which made restoring a backup with a lot of reading history disproportionately slow
+- Fix the same one-query-per-history-entry issue when *creating* a backup, which made backing up a library with a lot of reading history disproportionately slow
 
 ## [1.4.0]
 
