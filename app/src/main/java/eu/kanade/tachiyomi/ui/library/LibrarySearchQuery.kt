@@ -112,14 +112,20 @@ object LibrarySearchQuery {
         val m = manga.manga
         return when (expr.field) {
             "title" -> m.title.contains(expr.value, true)
+
             "author" -> m.author?.contains(expr.value, true) ?: false
+
             "artist" -> m.artist?.contains(expr.value, true) ?: false
+
             "src", "source" -> {
                 val sourceName by lazy { sourceManager.getOrStub(m.source).name }
                 expr.value.toLongOrNull()?.let { it == m.source } ?: sourceName.contains(expr.value, true)
             }
+
             "genre", "tag" -> containsGenre(expr.value, m.genre?.split(", "), context, manga, sourceManager)
+
             in numericFields -> matchesNumeric(expr, manga)
+
             else -> false
         }
     }
