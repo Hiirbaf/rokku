@@ -20,7 +20,7 @@ object NotificationHandler {
      * @param context context of application
      */
     internal fun openDownloadManagerPendingActivity(context: Context): PendingIntent {
-        val intent = Intent(context, MainActivity::class.java)
+        val intent = Intent(context, MainActivity::class.java).setPackage(context.packageName)
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
         intent.action = MainActivity.SHORTCUT_DOWNLOADS
         return PendingIntent.getActivity(
