@@ -18,6 +18,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Fix the same one-query-per-history-entry issue when *creating* a backup, which made backing up a library with a lot of reading history disproportionately slow
 - Fix backup creation dispatching every manga's queries individually (one dispatcher context-switch each) instead of batching them into chunked transactions, which was the dominant cost for large libraries
 - Fix backup creation's chapter queries needlessly joining the internal scanlator-filter view (a recursive query with no per-manga predicate pushdown, so it re-scanned the whole library on every call) even when the scanlator filter isn't used, which was the actual dominant cost for large libraries
+- Harden the mitigation for a rare crash when bulk-removing/migrating library entries (a sqldelight race between a library query and a concurrent write): retry with a short delay until it clears instead of giving up after a single immediate retry
 
 ## [1.4.0]
 

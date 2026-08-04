@@ -54,7 +54,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -886,8 +885,7 @@ class LibraryPresenter(
     private fun getLibraryFlow(): Flow<LibraryData> {
         val libraryFlow = combine(
             getCategories.subscribe(),
-            // FIXME: Remove retry once a real solution is found
-            getLibraryManga.subscribe().retry(1) { e -> e is NullPointerException },
+            getLibraryManga.subscribe(),
             getPreferencesFlow(),
             forceUpdateEvent.receiveAsFlow(),
         ) { dbCategories, libraryMangaList, prefs, _ ->
