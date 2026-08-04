@@ -147,7 +147,7 @@ class NotificationReceiver : BroadcastReceiver() {
         // Dismiss notification
         dismissNotification(context, notificationId)
         // Launch share activity
-        context.startActivity(sendIntent)
+        context.startActivity(Intent.createChooser(sendIntent, null).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
     }
 
     /**
@@ -167,7 +167,7 @@ class NotificationReceiver : BroadcastReceiver() {
         // Dismiss notification
         dismissNotification(context, notificationId)
         // Launch share activity
-        context.startActivity(sendIntent)
+        context.startActivity(Intent.createChooser(sendIntent, null).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
     }
 
     /**
