@@ -14,12 +14,17 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Add configurable download concurrency (Settings > Downloads): number of simultaneous chapter downloads and simultaneous page downloads per chapter are no longer hardcoded
 - Overhaul library search: support `&&`/`||` boolean operators, `-term` negation, `title:`/`author:`/`artist:`/`genre:` field prefixes (in addition to the existing `src:`), and numeric comparators (`>`, `<`, `=`) on `chapters`, `unread`, and `read`
 - Pasting a manga URL into Global Search now opens that manga directly if the URL matches an already-installed source, instead of running a full text search across every source
+- Add category filtering to the Updates tab (Recents > Updates > display options)
 
 ### Changes
 - Debounce library search input (250ms) so refiltering no longer runs on every keystroke
+- Spoof `Sec-CH-UA` client hints in WebView to match the user agent
+- Update default user agent to Chrome 149
 
 ### Fixes
 - Fix slow backup restore with large libraries by batching manga restoration into chunked database transactions instead of committing every manga individually
+- Fix backup restore inserting duplicate chapters when a backup contains the same chapter URL more than once
+- Fix `X-Requested-With` spoofing leaking to unrelated callers
 - Fix backup restore posting a system notification update on every single manga (throttled by Android and further slowing large restores); it now only updates once per batch
 - Fix backup restore re-querying the full category list from the database once per manga instead of once for the whole restore
 - Fix backup restore querying the database once per reading-history entry instead of once per manga, which made restoring a backup with a lot of reading history disproportionately slow
