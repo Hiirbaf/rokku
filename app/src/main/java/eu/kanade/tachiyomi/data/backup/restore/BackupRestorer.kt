@@ -99,6 +99,7 @@ class BackupRestorer(
             // Restore individual manga
             if (options.libraryEntries) {
                 backup.backupManga.chunked(RESTORE_CHUNK_SIZE).forEach { chunk ->
+                    var lastTitle = ""
                     handler.await(inTransaction = true) {
                         chunk.forEach {
                             ensureActive()
@@ -107,7 +108,7 @@ class BackupRestorer(
                                 backup.backupCategories,
                                 onComplete = { manga ->
                                     restoreProgress += 1
-                                    showRestoreProgress(restoreProgress, restoreAmount, manga.title)
+                                    lastTitle = manga.title
                                 },
                                 onError = { manga, e ->
                                     val sourceName = sourceMapping[manga.source] ?: manga.source.toString()
@@ -116,6 +117,10 @@ class BackupRestorer(
                             )
                         }
                     }
+                    // Only post one notification update per chunk instead of per manga: repeatedly
+                    // hitting NotificationManager (a Binder IPC, rate-limited by the OS) dominates
+                    // restore time once the manga themselves are restored in batched transactions.
+                    showRestoreProgress(restoreProgress, restoreAmount, lastTitle)
                 }
             }
         }

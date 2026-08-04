@@ -13,6 +13,7 @@ import eu.kanade.tachiyomi.domain.manga.models.Manga
 import eu.kanade.tachiyomi.source.model.SChapter
 import eu.kanade.tachiyomi.util.chapter.ChapterUtil
 import eu.kanade.tachiyomi.util.manga.MangaUtil
+import eu.kanade.tachiyomi.data.database.models.Category
 import eu.kanade.tachiyomi.util.system.launchNow
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
@@ -48,6 +49,14 @@ class MangaBackupRestorer(
     private val getTrack: GetTrack = Injekt.get(),
     private val insertTrack: InsertTrack = Injekt.get(),
 ) {
+    // Categories don't change while a restore is running (they're restored up-front, before any
+    // manga), so fetch them once per restore instead of once per manga.
+    private var dbCategoriesCache: List<Category>? = null
+
+    private suspend fun getDbCategories(): List<Category> {
+        return dbCategoriesCache ?: getCategories.await().also { dbCategoriesCache = it }
+    }
+
     suspend fun restoreManga(
         backupManga: BackupManga,
         backupCategories: List<BackupCategory>,
@@ -200,7 +209,7 @@ class MangaBackupRestorer(
      * @param categories the categories to restore.
      */
     private suspend fun restoreCategories(manga: Manga, categories: List<Int>, backupCategories: List<BackupCategory>) {
-        val dbCategories = getCategories.await()
+        val dbCategories = getDbCategories()
         val mangaCategoriesToUpdate = ArrayList<MangaCategory>(categories.size)
         categories.forEach { backupCategoryOrder ->
             backupCategories.firstOrNull {
