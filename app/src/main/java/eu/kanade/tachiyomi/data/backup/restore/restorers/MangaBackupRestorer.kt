@@ -159,7 +159,15 @@ class MangaBackupRestorer(
     private suspend fun restoreChapters(manga: Manga, chapters: List<Chapter>): List<Chapter> {
         val dbChapters = getChapter.awaitAll(manga)
 
-        chapters.forEach { chapter ->
+        // Backups can contain the same chapter url more than once (e.g. re-exported after a
+        // partial restore). Without deduping, every duplicate that doesn't match an existing
+        // db chapter gets inserted as its own row, so the manga ends up with duplicate chapters.
+        val distinctChapters = chapters
+            .asReversed()
+            .distinctBy { it.url }
+            .asReversed()
+
+        distinctChapters.forEach { chapter ->
             val dbChapter = dbChapters.find { it.url == chapter.url }
             if (dbChapter != null) {
                 chapter.id = dbChapter.id
@@ -178,7 +186,7 @@ class MangaBackupRestorer(
             chapter.manga_id = manga.id
         }
 
-        val newChapters = chapters.groupBy { it.id != null }
+        val newChapters = distinctChapters.groupBy { it.id != null }
         val updatedChapters = newChapters[true] ?: emptyList()
         updatedChapters.let { updateChapter.awaitAll(it.map(Chapter::toProgressUpdate)) }
         // insertChapter.awaitBulk returns copies of the inserted chapters with their real ids,
