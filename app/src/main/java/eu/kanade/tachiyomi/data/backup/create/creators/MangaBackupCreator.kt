@@ -24,9 +24,18 @@ class MangaBackupCreator(
     private val getTrack: GetTrack = Injekt.get(),
 ) {
     suspend operator fun invoke(mangas: List<Manga>, options: BackupOptions): List<BackupManga> {
-        return mangas.map {
-            backupManga(it, options)
+        // Wrapping each chunk in a transaction keeps every query in it on the same transaction
+        // thread instead of dispatching (and context-switching) to the query dispatcher one
+        // query at a time, which otherwise dominates backup creation time for large libraries.
+        return mangas.chunked(BACKUP_CHUNK_SIZE).flatMap { chunk ->
+            handler.await(inTransaction = true) {
+                chunk.map { backupManga(it, options) }
+            }
         }
+    }
+
+    private companion object {
+        private const val BACKUP_CHUNK_SIZE = 100
     }
 
     /**
