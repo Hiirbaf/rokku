@@ -12,6 +12,7 @@ import eu.kanade.tachiyomi.source.Source
 import eu.kanade.tachiyomi.source.SourceManager
 import eu.kanade.tachiyomi.source.model.MangasPage
 import eu.kanade.tachiyomi.source.model.SManga
+import eu.kanade.tachiyomi.source.online.HttpSource
 import eu.kanade.tachiyomi.ui.base.presenter.BaseCoroutinePresenter
 import eu.kanade.tachiyomi.util.system.launchIO
 import eu.kanade.tachiyomi.util.system.launchUI
@@ -232,6 +233,42 @@ open class GlobalSearchPresenter(
                 }
             }
         }
+    }
+
+    /**
+     * Finds an installed [HttpSource] whose base URL is a prefix of [query], meaning the pasted
+     * text is a manga URL for a source the user already has installed.
+     *
+     * @return the matching source and the remaining manga path, or null if none match.
+     */
+    private fun getUrlSourcePair(query: String): Pair<HttpSource, String>? {
+        if (!query.startsWith("http://", true) && !query.startsWith("https://", true)) return null
+        return sourceManager.getCatalogueSources()
+            .filterIsInstance<HttpSource>()
+            .firstOrNull { query.startsWith(it.baseUrl, ignoreCase = true) }
+            ?.let { it to query.removePrefix(it.baseUrl) }
+    }
+
+    /**
+     * If [query] is a manga URL matching an installed source, fetches that manga directly and
+     * asks the view to open it, skipping the per-source search entirely.
+     *
+     * @return true if [query] matched an installed source and is being resolved.
+     */
+    fun trySearchMangaByUrl(query: String): Boolean {
+        val (source, path) = getUrlSourcePair(query) ?: return false
+        this.query = query
+        presenterScope.launch {
+            try {
+                val sManga = SManga.create().apply { url = path; title = query }
+                var manga = networkToLocalManga(sManga, source.id) ?: return@launch
+                manga = getMangaDetails(manga, source)
+                withUIContext { view?.openMangaFromUrl(manga) }
+            } catch (e: Exception) {
+                withUIContext { view?.onUrlSearchFailed(query) }
+            }
+        }
+        return true
     }
 
     /**

@@ -196,11 +196,16 @@ open class GlobalSearchController(
             onlyOnSubmit = true,
             hideKbOnSubmit = true,
         ) {
-            // try to handle the query as a manga URL
-            applicationContext?.extensionIntentForText(it ?: "")?.let { intent ->
-                safeStartActivity(intent)
+            val query = it ?: ""
+            // If the query is a manga URL from an already-installed source, open it directly
+            // instead of running a full search across every enabled source.
+            if (!presenter.trySearchMangaByUrl(query)) {
+                // Otherwise, try to hand the URL off to the extension's own deep link
+                applicationContext?.extensionIntentForText(query)?.let { intent ->
+                    safeStartActivity(intent)
+                }
+                presenter.search(query)
             }
-            presenter.search(it ?: "")
             setTitle() // Update toolbar title
             true
         }
@@ -262,7 +267,7 @@ open class GlobalSearchController(
 
         // try to handle the query as a manga URL
         // Prevent infinite loop: only launch deep link if this is the first controller creation
-        if (initialQuery == null) {
+        if (initialQuery == null && !presenter.trySearchMangaByUrl(presenter.query)) {
             applicationContext?.extensionIntentForText(presenter.query)?.let { intent ->
                 safeStartActivity(intent)
             }
@@ -336,5 +341,28 @@ open class GlobalSearchController(
      */
     fun onMangaInitialized(source: CatalogueSource, manga: Manga) {
         getHolder(source)?.setImage(manga)
+    }
+
+    /**
+     * Called from the presenter when the searched query resolved to a manga URL from an
+     * already-installed source. Opens the manga directly, skipping the search results list.
+     */
+    fun openMangaFromUrl(manga: Manga) {
+        router.replaceTopController(
+            MangaDetailsController(manga, true, shouldLockIfNeeded = activity is SearchActivity)
+                .withFadeTransaction(),
+        )
+    }
+
+    /**
+     * Called from the presenter when resolving a manga URL failed, so the query falls back to a
+     * regular search instead of leaving the user on a blank screen.
+     */
+    fun onUrlSearchFailed(query: String) {
+        // presenter.query was already set to `query` by trySearchMangaByUrl, so search() would
+        // no-op on its "nothing changed" guard unless reset first.
+        presenter.query = ""
+        presenter.search(query)
+        setTitle()
     }
 }
