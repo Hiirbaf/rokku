@@ -130,6 +130,7 @@ import eu.kanade.tachiyomi.util.view.snack
 import eu.kanade.tachiyomi.util.view.text
 import eu.kanade.tachiyomi.util.view.withFadeTransaction
 import eu.kanade.tachiyomi.widget.EmptyView
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.launchIn
@@ -147,6 +148,8 @@ import kotlin.math.roundToInt
 import kotlin.random.Random
 import kotlin.random.nextInt
 import android.R as AR
+
+private const val SEARCH_DEBOUNCE_MS = 250L
 
 open class LibraryController(
     bundle: Bundle? = null,
@@ -191,6 +194,8 @@ open class LibraryController(
      * Library search query.
      */
     private var query = ""
+
+    private var searchDebounceJob: Job? = null
 
     val isSubClass: Boolean
         get() = this is FilteredLibraryController
@@ -2031,7 +2036,17 @@ open class LibraryController(
             if (!it.isNullOrEmpty() && binding.recyclerCover.isClickable) {
                 showCategories(false)
             }
-            search(it)
+            searchDebounceJob?.cancel()
+            if (it.isNullOrEmpty()) {
+                // Clearing the query should feel instant, not debounced
+                search(it)
+            } else {
+                searchDebounceJob = viewScope.launchUI {
+                    delay(SEARCH_DEBOUNCE_MS)
+                    search(it)
+                }
+                true
+            }
         }
     }
 
