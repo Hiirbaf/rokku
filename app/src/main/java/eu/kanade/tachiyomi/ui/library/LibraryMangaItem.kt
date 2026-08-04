@@ -15,7 +15,6 @@ import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.items.IFlexible
 import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.data.database.models.LibraryManga
-import eu.kanade.tachiyomi.data.database.models.seriesType
 import eu.kanade.tachiyomi.databinding.MangaGridItemBinding
 import eu.kanade.tachiyomi.util.system.dpToPx
 import eu.kanade.tachiyomi.util.view.compatToolTipText
@@ -139,39 +138,8 @@ class LibraryMangaItem(
         if (manga.manga.title.isBlank()) {
             return constraint.isEmpty()
         }
-        val sourceName by lazy { sourceManager.getOrStub(manga.manga.source).name }
-        if (constraint.startsWith("src:", true)) {
-            val querySource = constraint.substringAfter(':').trim()
-            return querySource.toLongOrNull()?.let { it == manga.manga.source }
-                ?: sourceName.contains(querySource, true)
-        }
-        return manga.manga.title.contains(constraint, true) ||
-            (manga.manga.author?.contains(constraint, true) ?: false) ||
-            (manga.manga.artist?.contains(constraint, true) ?: false) ||
-            sourceName.contains(constraint, true) ||
-            if (constraint.contains(",")) {
-                val genres = manga.manga.genre?.split(", ")
-                constraint.split(",").all { containsGenre(it.trim(), genres) }
-            } else {
-                containsGenre(constraint, manga.manga.genre?.split(", "))
-            }
-    }
-
-    private fun containsGenre(tag: String, genres: List<String>?): Boolean {
-        if (tag.trim().isEmpty()) return true
-        context ?: return false
-
-        val seriesType by lazy { manga.manga.seriesType(context, sourceManager) }
-        return if (tag.startsWith("-")) {
-            val realTag = tag.substringAfter("-")
-            genres?.find {
-                it.trim().equals(realTag, ignoreCase = true) || seriesType.equals(realTag, true)
-            } == null
-        } else {
-            genres?.find {
-                it.trim().equals(tag, ignoreCase = true) || seriesType.equals(tag, true)
-            } != null
-        }
+        val expr = LibrarySearchQuery.parse(constraint)
+        return LibrarySearchQuery.matches(expr, manga, context, sourceManager)
     }
 
     override fun equals(other: Any?): Boolean {
