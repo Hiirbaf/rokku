@@ -47,14 +47,14 @@ class MaterialSpinnerView constructor(context: Context, attrs: AttributeSet?) :
         }
 
     private val blendedAccent = ColorUtils.blendARGB(
-        context.getResourceColor(R.attr.colorSecondary),
+        context.getResourceColor(R.attr.colorPrimary),
         context.getResourceColor(R.attr.colorOnBackground),
         0.5f,
     )
 
     private val slightAccent by lazy {
         ColorUtils.blendARGB(
-            context.getResourceColor(R.attr.colorSecondary),
+            context.getResourceColor(R.attr.colorPrimary),
             context.getResourceColor(R.attr.colorOnBackground),
             0.9f,
         )
