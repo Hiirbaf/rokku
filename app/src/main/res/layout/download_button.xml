@@ -27,7 +27,7 @@
         android:paddingBottom="0.5dp"
         android:indeterminate="true"
         android:indeterminateTint="@color/material_on_surface_disabled"
-        app:indicatorColor="?attr/colorSecondary"
+        app:indicatorColor="?attr/colorPrimary"
         app:indicatorSize="24dp"
         app:trackThickness="2dp"
         tools:visibility="gone" />
@@ -49,7 +49,7 @@
 
     <ImageView
         android:id="@+id/download_icon"
-        app:tint="?attr/colorSecondary"
+        app:tint="?attr/colorPrimary"
         android:layout_gravity="center"
         android:layout_width="30dp"
         android:contentDescription="@string/download"
