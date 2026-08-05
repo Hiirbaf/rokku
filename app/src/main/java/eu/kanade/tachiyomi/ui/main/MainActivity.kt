@@ -997,12 +997,12 @@ open class MainActivity : BaseActivity<MainActivityBinding>() {
                     recentsItem,
                     getString(MR.strings.manage_whats_downloading),
                     getString(MR.strings.visit_recents_for_download_queue),
-                ).outerCircleColorInt(getResourceColor(R.attr.colorSecondary)).outerCircleAlpha(0.95f)
+                ).outerCircleColorInt(getResourceColor(R.attr.colorPrimary)).outerCircleAlpha(0.95f)
                     .titleTextSize(
                         20,
                     )
-                    .titleTextColorInt(getResourceColor(R.attr.colorOnSecondary)).descriptionTextSize(16)
-                    .descriptionTextColorInt(getResourceColor(R.attr.colorOnSecondary))
+                    .titleTextColorInt(getResourceColor(R.attr.colorOnPrimary)).descriptionTextSize(16)
+                    .descriptionTextColorInt(getResourceColor(R.attr.colorOnPrimary))
                     .icon(contextCompatDrawable(R.drawable.ic_recent_read_32dp))
                     .targetCircleColor(AR.color.white)
                     .targetRadius(45),
