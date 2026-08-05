@@ -74,13 +74,13 @@ class LibraryHeaderHolder(val view: View, val adapter: LibraryCategoryAdapter) :
         runningDrawable.setStyle(CircularProgressDrawable.DEFAULT)
         runningDrawable.centerRadius = 6f.dpToPx
         runningDrawable.strokeWidth = 2f.dpToPx
-        runningDrawable.setColorSchemeColors(itemView.context.getResourceColor(R.attr.colorSecondary))
+        runningDrawable.setColorSchemeColors(itemView.context.getResourceColor(R.attr.colorPrimary))
 
         binding.endRefresh.setImageDrawable(progressDrawableEnd)
         binding.startRefresh.setImageDrawable(progressDrawableStart)
         binding.startRefresh.scaleX = -1f
         listOf(progressDrawableStart, progressDrawableEnd).forEach {
-            it.setColorSchemeColors(itemView.context.getResourceColor(R.attr.colorOnSecondary))
+            it.setColorSchemeColors(itemView.context.getResourceColor(R.attr.colorOnPrimary))
             it.centerRadius = 1f
             it.arrowEnabled = true
             it.setStyle(CircularProgressDrawable.DEFAULT)
@@ -145,7 +145,7 @@ class LibraryHeaderHolder(val view: View, val adapter: LibraryCategoryAdapter) :
             ViewTooltip.on(itemView.context as? Activity, binding.categoryTitle).autoHide(true, 5000L)
                 .align(ViewTooltip.ALIGN.START).position(ViewTooltip.Position.TOP)
                 .text(MR.strings.long_press_category)
-                .color(itemView.context.getResourceColor(R.attr.colorSecondary))
+                .color(itemView.context.getResourceColor(R.attr.colorPrimary))
                 .textSize(TypedValue.COMPLEX_UNIT_SP, 15f).textColor(Color.WHITE)
                 .withShadow(false).corner(30).arrowWidth(15).arrowHeight(15).distanceWithView(0)
                 .show()
@@ -367,7 +367,7 @@ class LibraryHeaderHolder(val view: View, val adapter: LibraryCategoryAdapter) :
         val tintedDrawable = drawable?.mutate()
         tintedDrawable?.setTint(
             if (allSelected) {
-                contentView.context.getResourceColor(R.attr.colorSecondary)
+                contentView.context.getResourceColor(R.attr.colorPrimary)
             } else {
                 ContextCompat.getColor(contentView.context, R.color.gray_button)
             },
