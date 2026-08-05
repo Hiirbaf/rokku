@@ -31,9 +31,10 @@ class AppUpdateChecker(
         }
 
         return withIOContext {
+            val repo = if (BuildConfig.NIGHTLY) NIGHTLY_GITHUB_REPO else GITHUB_REPO
             val result = if (preferences.checkForBetas().get()) {
                 networkService.client
-                    .newCall(GET("https://api.github.com/repos/$GITHUB_REPO/releases"))
+                    .newCall(GET("https://api.github.com/repos/$repo/releases"))
                     .await()
                     .parseAs<List<GithubRelease>>()
                     .let { githubReleases ->
@@ -58,7 +59,7 @@ class AppUpdateChecker(
                     }
             } else {
                 networkService.client
-                    .newCall(GET("https://api.github.com/repos/$GITHUB_REPO/releases/latest"))
+                    .newCall(GET("https://api.github.com/repos/$repo/releases/latest"))
                     .await()
                     .parseAs<GithubRelease>()
                     .let {
@@ -103,7 +104,11 @@ val RELEASE_TAG: String by lazy {
 }
 
 val GITHUB_REPO: String by lazy {
-    "thiago8rocha/Rokku"
+    "rokku-app/rokku"
 }
 
-val RELEASE_URL = "https://github.com/$GITHUB_REPO/releases/tag/$RELEASE_TAG"
+val NIGHTLY_GITHUB_REPO: String by lazy {
+    "rokku-app/rokku-nightly"
+}
+
+val RELEASE_URL = "https://github.com/${if (BuildConfig.NIGHTLY) NIGHTLY_GITHUB_REPO else GITHUB_REPO}/releases/tag/$RELEASE_TAG"
