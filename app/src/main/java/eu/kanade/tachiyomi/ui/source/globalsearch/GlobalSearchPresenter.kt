@@ -260,7 +260,10 @@ open class GlobalSearchPresenter(
         this.query = query
         presenterScope.launch {
             try {
-                val sManga = SManga.create().apply { url = path; title = query }
+                val sManga = SManga.create().apply {
+                    url = path
+                    title = query
+                }
                 var manga = networkToLocalManga(sManga, source.id) ?: return@launch
                 manga = getMangaDetails(manga, source)
                 withUIContext { view?.openMangaFromUrl(manga) }
