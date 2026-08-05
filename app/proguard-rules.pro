@@ -19,6 +19,7 @@
 -keep,allowoptimization class uy.kohesive.injekt.** { public protected *; }
 -keep,allowoptimization class org.koin.** { public protected *; }
 -keep,allowoptimization class eu.davidea.flexibleadapter.** { public protected *; }
+-keep,allowoptimization class com.squareup.zstd.** { public protected *; }
 -keep class io.requery.android.database.** { public protected *; }
 
 # From extensions-lib
