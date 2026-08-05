@@ -43,7 +43,7 @@ class LibraryBadge @JvmOverloads constructor(context: Context, attrs: AttributeS
         val unreadBadgeBackground = if (showTotalChapters) {
             context.contextCompatColor(R.color.total_badge)
         } else {
-            context.getResourceColor(R.attr.colorSecondary)
+            context.getResourceColor(R.attr.colorPrimary)
         }
 
         with(binding.unreadText) {
@@ -57,7 +57,7 @@ class LibraryBadge @JvmOverloads constructor(context: Context, attrs: AttributeS
                 when {
                     unread == -1 && !showTotalChapters -> unreadBadgeBackground
                     showTotalChapters -> context.contextCompatColor(R.color.total_badge_text)
-                    else -> context.getResourceColor(R.attr.colorOnSecondary)
+                    else -> context.getResourceColor(R.attr.colorOnPrimary)
                 },
             )
             setBackgroundColor(unreadBadgeBackground)
