@@ -573,7 +573,7 @@ class MangaHeaderHolder(
 
             ColorUtils.colorToHSL(baseTagColor, bgArray)
             ColorUtils.colorToHSL(
-                adapter.delegate.accentColor() ?: context.getResourceColor(R.attr.colorSecondary),
+                adapter.delegate.accentColor() ?: context.getResourceColor(R.attr.colorPrimary),
                 accentArray,
             )
             val downloadedColor = ColorUtils.setAlphaComponent(
