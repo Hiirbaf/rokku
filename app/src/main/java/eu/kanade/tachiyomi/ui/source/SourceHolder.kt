@@ -51,7 +51,7 @@ class SourceHolder(view: View, val adapter: SourceAdapter) :
             imageTintList = ColorStateList.valueOf(
                 context.getResourceColor(
                     if (isPinned) {
-                        R.attr.colorSecondary
+                        R.attr.colorPrimary
                     } else {
                         AR.attr.textColorSecondary
                     },
