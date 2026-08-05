@@ -78,7 +78,7 @@ class TriStateCheckBox constructor(context: Context, attrs: AttributeSet?) :
     }
     private var mOnCheckedChangeListener: OnCheckedChangeListener? = null
     private val uncheckedColor = ColorStateList.valueOf(context.getResourceColor(R.attr.colorControlNormal))
-    private val checkedColor = ColorStateList.valueOf(context.getResourceColor(R.attr.colorSecondary))
+    private val checkedColor = ColorStateList.valueOf(context.getResourceColor(R.attr.colorPrimary))
     private val inverseColor = ColorStateList.valueOf(context.getResourceColor(R.attr.colorSecondaryVariant))
     private val indeterColor = ColorStateList.valueOf(context.getResourceColor(R.attr.colorPrimary))
     private val ignoreColor get() = if (useIndeterminateForIgnore) indeterColor else inverseColor
