@@ -349,7 +349,7 @@ class MangaDetailsController :
                     (colorToUse ?: manga?.vibrantCoverColor)
                 } else {
                     ColorUtils.blendARGB(
-                        context.getResourceColor(R.attr.colorSecondary),
+                        context.getResourceColor(R.attr.colorPrimary),
                         colorBack,
                         0.5f,
                     )
