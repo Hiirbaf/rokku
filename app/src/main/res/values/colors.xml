@@ -32,14 +32,16 @@
     <color name="tachiyomi_inverseSurface">#303033</color>
     <color name="tachiyomi_primaryInverse">#AEC6FF</color>
 
+    <color name="cover_placeholder">#1F888888</color>
+
     <!-- Application Colors -->
     <color name="primaryVariantTachiyomi">#E5ECF4</color>
     <color name="colorPrimaryInactive">#C2424242</color>
-    <color name="primaryTachiyomi">#54759E</color>
+    <color name="primaryTachiyomi">@color/md_blue_A400</color>
     <color name="onPrimaryTachiyomi">@color/md_white_1000</color>
     <color name="primaryInverseTachiyomi">#78bcff</color>
-    <color name="splashBackground">@color/yokai_background</color>
-    <color name="secondaryTachiyomi">@color/md_blue_A400</color>
+    <color name="splashBackground">@color/primaryTachiyomi</color>
+    <color name="secondaryTachiyomi">#54759E</color>
     <color name="rippleColorTachiyomi">#1F2979FF</color>
     <color name="secondaryVariantTachiyomi">#0d2f68</color>
     <color name="actionModeShadow">@color/md_black_1000_38</color>
@@ -53,7 +55,8 @@
     <color name="download_badge_text">@color/md_black_1000</color>
     <color name="download_badge_light">@color/strong_green</color>
     <color name="download_badge_light_text">@color/md_white_1000</color>
-    <color name="total_badge">@color/md_deep_purple_500</color>
+    <color name="material_red_500">#e51c23</color>
+    <color name="total_badge">#673ab7</color>
     <color name="total_badge_text">@color/md_white_1000</color>
 
     <color name="colorAmoledPrimary">@color/md_black_1000</color>
@@ -66,9 +69,9 @@
 
     <color name="strong_divider">@color/md_black_1000_38</color>
     <color name="divider">@color/md_black_1000_12</color>
-    <color name="download">@color/md_green_800</color>
+    <color name="download">#056f00</color>
 
-    <color name="background">@color/md_grey_50</color>
+    <color name="background">#F2F2F2</color>
     <color name="dialog">@color/md_white_1000</color>
     <color name="splashIcon">@color/md_black_1000</color>
     <color name="colorOnSurface">@color/md_black_1000</color>
@@ -94,39 +97,24 @@
     <!-- Material Design Colors -->
     <color name="md_black_1000">#000000</color>
 
-    <color name="md_grey_50">#FAFAFA</color>
-    <color name="md_grey_700">#616161</color>
-
     <color name="md_blue_A400">#2979FF</color>
 
-    <color name="md_red_400">#EF5350</color>
     <color name="md_red_500">#F44336</color>
-
-    <color name="md_green_700">#388E3C</color>
-    <color name="md_green_800">#2E7D32</color>
-
-    <color name="md_deep_purple_500">#673AB7</color>
-
     <color name="holo_red">#AA2200</color>
     <color name="primaryRed">#C14033</color>
 
     <color name="pale_green">#99CC99</color>
     <color name="strong_green">#106010</color>
 
-    <color name="black">#000</color>
-
     <!-- Navigation overlay colors -->
     <color name="navigation_menu">#CC95818D</color>
     <color name="navigation_next">#CCA6CFD5</color>
     <color name="navigation_prev">#CC7D1128</color>
 
-    <!-- Yokai -->
-    <color name="yokai_background">#0E1418</color>
-
     <!-- Spring Blossom -->
-    <color name="primaryDuskDawn">#a149bf</color>
+    <color name="primaryDuskDawn">#c43c97</color>
     <color name="primaryInverseDuskDawn">#cd95e0</color>
-    <color name="secondaryDuskDawn">#c43c97</color>
+    <color name="secondaryDuskDawn">#a149bf</color>
     <color name="rippleColorDuskDawn">#1Fc43c97</color>
     <color name="secondaryVariantDuskDawn">#4c163a</color>
     <color name="backgroundDuskDawn">#f7f4f8</color>
@@ -138,21 +126,21 @@
     <color name="surfaceContainerHighDuskDawn">#FCF3F8</color>
     <color name="surfaceContainerHighestDuskDawn">#FEF9FC</color>
     <color name="outlineDuskDawn">#847376</color>
-    <color name="onPrimaryContainerDuskDawn">#3F0017</color>
-    <color name="onSecondaryContainerDuskDawn">#D1377C</color>
+    <color name="onPrimaryContainerDuskDawn">#D1377C</color>
+    <color name="onSecondaryContainerDuskDawn">#3F0017</color>
     <color name="onTertiaryContainerDuskDawn">#2D1600</color>
     <color name="surfaceContainerLowDuskDawn">#E8D1DD</color>
     <color name="surfaceContainerLowestDuskDawn">#DAC0CD</color>
 
     <!-- Teal/Sapphire Theme -->
-    <color name="secondaryTealSapphire">#05B1A4</color>
+    <color name="secondaryTealSapphire">#5f9c96</color>
     <color name="rippleColorTealSapphire">#1F05B1A4</color>
     <color name="secondaryVariantTealSapphire">#12524b</color>
-    <color name="primaryTealSapphire">#5f9c96</color>
+    <color name="primaryTealSapphire">#05B1A4</color>
     <color name="primaryInverseTealSapphire">#a1e1db</color>
     <color name="primaryVariantTealSapphire">#d4f1e6</color>
     <color name="onPrimaryTealSapphire">@color/onPrimaryTachiyomi</color>
-    <color name="backgroundTealSapphire">#f0f7f7</color>
+    <color name="backgroundTealSapphire">#E8F2F2</color>
     <color name="colorOnBackgroundTealSapphire">#DE072926</color>
     <color name="tabBarIconColorTealSapphire">#DE072927</color>
     <color name="appBarTextTealSapphire">#DE0a302e</color>
@@ -160,18 +148,18 @@
     <color name="surfaceContainerHighTealSapphire">#F0F8F6</color>
     <color name="surfaceContainerHighestTealSapphire">#F7FFFD</color>
     <color name="outlineTealSapphire">#6F7977</color>
-    <color name="onPrimaryContainerTealSapphire">#FFFFFF</color>
-    <color name="onSecondaryContainerTealSapphire">#008080</color>
+    <color name="onPrimaryContainerTealSapphire">#008080</color>
+    <color name="onSecondaryContainerTealSapphire">#FFFFFF</color>
     <color name="onTertiaryContainerTealSapphire">#FF7F7F</color>
     <color name="surfaceContainerLowTealSapphire">#E6EEEC</color>
     <color name="surfaceContainerLowestTealSapphire">#E1E9E7</color>
 
     <!-- Flat Lime Theme -->
-    <color name="primaryLime">#57BD79</color>
+    <color name="primaryLime">#1DA750</color>
     <color name="primaryVariantLime">#D9ECE0</color>
     <color name="primaryInverseLime">#AEDFC0</color>
     <color name="onPrimaryLime">@color/onPrimaryTachiyomi</color>
-    <color name="secondaryLime">#1DA750</color>
+    <color name="secondaryLime">#57BD79</color>
     <color name="secondaryVariantLime">#065124</color>
     <color name="rippleColorLime">#1F4AF88A</color>
     <color name="backgroundLime">#E9EFEB</color>
@@ -181,8 +169,8 @@
     <color name="surfaceContainerHighestLime">#DFE4DB</color>
     <color name="outlineLime">#6F7A6E</color>
     <color name="outlineVariantLime">#BECABC</color>
-    <color name="onPrimaryContainerLime">#FFFFFF</color>
-    <color name="onSecondaryContainerLime">#000000</color>
+    <color name="onPrimaryContainerLime">#000000</color>
+    <color name="onSecondaryContainerLime">#FFFFFF</color>
     <color name="onTertiaryContainerLime">#FFFFFF</color>
     <color name="surfaceContainerLowLime">#F0F5EC</color>
     <color name="surfaceContainerLowestLime">#FFFFFF</color>
@@ -190,11 +178,11 @@
     <color name="surfaceBrightLime">#F6FBF2</color>
 
     <!-- Strawberry Daiquiri Theme -->
-    <color name="primaryStrawberry">#d31d3b</color>
+    <color name="primaryStrawberry">#ED4A65</color>
     <color name="primaryVariantStrawberry">#F3E7E7</color>
     <color name="onPrimaryStrawberry">@color/onPrimaryTachiyomi</color>
     <color name="primaryInverseStrawberry">#ef8e9e</color>
-    <color name="secondaryStrawberry">#ED4A65</color>
+    <color name="secondaryStrawberry">#d31d3b</color>
     <color name="rippleColorStrawberry">#1FED4A65</color>
     <color name="secondaryVariantStrawberry">#68101f</color>
     <color name="onSurfaceVariantStrawberry">#594042</color>
@@ -202,8 +190,8 @@
     <color name="surfaceContainerHighestStrawberry">#FFFFFF</color>
     <color name="outlineStrawberry">#8D7071</color>
     <color name="outlineVariantStrawberry">#E1BEC0</color>
-    <color name="onPrimaryContainerStrawberry">#FFFFFF</color>
-    <color name="onSecondaryContainerStrawberry">#F6EAED</color>
+    <color name="onPrimaryContainerStrawberry">#F6EAED</color>
+    <color name="onSecondaryContainerStrawberry">#FFFFFF</color>
     <color name="onTertiaryContainerStrawberry">#FFFFFF</color>
     <color name="surfaceContainerLowStrawberry">#FDE2E3</color>
     <color name="surfaceContainerLowestStrawberry">#F7DCDD</color>
@@ -212,12 +200,12 @@
     <color name="backgroundStrawberries">@color/background</color>
 
     <!-- Tako Theme -->
-    <color name="primaryTako">#463561</color>
+    <color name="primaryTako">#66577E</color>
     <color name="primaryVariantTako">#E5DCF4</color>
     <color name="primaryInverseTako">#ac8fd9</color>
-    <color name="onPrimaryTako">@color/onPrimaryTachiyomi</color>
-    <color name="secondaryTako">#66577E</color>
-    <color name="onSecondaryTako">#F3B375</color>
+    <color name="onPrimaryTako">#F3B375</color>
+    <color name="secondaryTako">#463561</color>
+    <color name="onSecondaryTako">@color/onPrimaryTachiyomi</color>
     <color name="secondaryVariantTako">#3f2b49</color>
     <color name="tabBarIconColorTako">#574360</color>
     <color name="rippleColorTako">#1F66577E</color>
@@ -229,18 +217,18 @@
     <color name="surfaceContainerHighTako">#EEE6F1</color>
     <color name="surfaceContainerHighestTako">#F7EEFA</color>
     <color name="outlineTako">#7A757E</color>
-    <color name="onPrimaryContainerTako">#F3B375</color>
-    <color name="onSecondaryContainerTako">#66577E</color>
+    <color name="onPrimaryContainerTako">#66577E</color>
+    <color name="onSecondaryContainerTako">#F3B375</color>
     <color name="onTertiaryContainerTako">#221437</color>
     <color name="surfaceContainerLowTako">#DFD8E2</color>
     <color name="surfaceContainerLowestTako">#D7D0DA</color>
 
     <!-- Yotsuba Theme -->
-    <color name="primaryYotsuba">#ba5427</color>
+    <color name="primaryYotsuba">#dc6d3d</color>
     <color name="primaryVariantYotsuba">#F6EBE7</color>
     <color name="onPrimaryYotsuba">@color/onPrimaryTachiyomi</color>
     <color name="primaryInverseYotsuba">#efaa8d</color>
-    <color name="secondaryYotsuba">#dc6d3d</color>
+    <color name="secondaryYotsuba">#ba5427</color>
     <color name="rippleColorYotsuba">#1Fdc6d3d</color>
     <color name="secondaryVariantYotsuba">#4e1e0a</color>
     <color name="onSurfaceVariantYotsuba">#53433F</color>
@@ -255,10 +243,10 @@
 
     <!-- Yin Yang Theme -->
     <color name="primaryVariantYinYang">#FFFFFF</color>
-    <color name="primaryYinYang">#333333</color>
+    <color name="primaryYinYang">#000000</color>
     <color name="primaryInverseYinYang">#FFFFFF</color>
     <color name="onPrimaryYinYang">@color/onPrimaryTachiyomi</color>
-    <color name="secondaryYinYang">#000000</color>
+    <color name="secondaryYinYang">#333333</color>
     <color name="rippleColorYinYang">#1F000000</color>
     <color name="secondaryVariantYinYang">#000000</color>
     <color name="onSecondaryYinYang">@color/md_white_1000</color>
@@ -266,8 +254,8 @@
     <color name="surfaceContainerHighYinYang">#ECECEC</color>
     <color name="surfaceContainerHighestYinYang">#EFEFEF</color>
     <color name="outlineYinYang">#838383</color>
-    <color name="onPrimaryContainerYinYang">#FFFFFF</color>
-    <color name="onSecondaryContainerYinYang">#0C0C0C</color>
+    <color name="onPrimaryContainerYinYang">#0C0C0C</color>
+    <color name="onSecondaryContainerYinYang">#FFFFFF</color>
     <color name="onTertiaryContainerYinYang">#001947</color>
     <color name="surfaceContainerLowYinYang">#DADADA</color>
     <color name="surfaceContainerLowestYinYang">#CFCFCF</color>
