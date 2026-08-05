@@ -189,7 +189,7 @@
     <style name="Theme.Widget.Yokai.AlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
         <item name="alertDialogStyle">@style/Widget.Yokai.AlertDialog</item>
         <item name="elevationOverlayEnabled">true</item>
-        <item name="elevationOverlayColor">?colorSecondary</item>
+        <item name="elevationOverlayColor">?colorPrimary</item>
     </style>
 
     <style name="Widget.Yokai.AlertDialog" parent="MaterialAlertDialog.Material3">
