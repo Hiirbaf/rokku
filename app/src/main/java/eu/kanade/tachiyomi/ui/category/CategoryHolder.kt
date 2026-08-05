@@ -85,7 +85,7 @@ class CategoryHolder(view: View, val adapter: CategoryAdapter) : BaseFlexibleVie
             binding.editText.requestFocus()
             binding.editText.selectAll()
             binding.editButton.setImageDrawable(ContextCompat.getDrawable(itemView.context, R.drawable.ic_check_24dp))
-            binding.editButton.drawable.mutate().setTint(itemView.context.getResourceColor(R.attr.colorSecondary))
+            binding.editButton.drawable.mutate().setTint(itemView.context.getResourceColor(R.attr.colorPrimary))
             showKeyboard()
             if (!createCategory) {
                 binding.reorder.setImageDrawable(
