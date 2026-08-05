@@ -40,7 +40,7 @@ class SettingsMainController : SettingsLegacyController(), FloatingSearchInterfa
     override fun setupPreferenceScreen(screen: PreferenceScreen) = with(screen) {
         titleRes = MR.strings.settings
 
-        val tintColor = context.getResourceColor(R.attr.colorSecondary)
+        val tintColor = context.getResourceColor(R.attr.colorPrimary)
 
         preference {
             iconRes = R.drawable.ic_tune_24dp
