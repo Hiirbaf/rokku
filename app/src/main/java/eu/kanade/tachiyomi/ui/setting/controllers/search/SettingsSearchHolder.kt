@@ -43,7 +43,7 @@ class SettingsSearchHolder(view: View, val adapter: SettingsSearchAdapter) :
      * @param item item of card.
      */
     fun bind(item: SettingsSearchItem) {
-        val color = ColorUtils.setAlphaComponent(itemView.context.getResourceColor(R.attr.colorSecondary), 75)
+        val color = ColorUtils.setAlphaComponent(itemView.context.getResourceColor(R.attr.colorPrimary), 75)
         binding.searchResultPrefTitle.text = item.settingsSearchResult.title.highlightText(item.searchResult, color)
         binding.searchResultPrefSummary.text = item.settingsSearchResult.summary.highlightText(item.searchResult, color)
         binding.searchResultPrefBreadcrumb.text =
