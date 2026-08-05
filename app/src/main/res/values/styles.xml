@@ -27,6 +27,14 @@
         <item name="android:textColor">?android:attr/textColorSecondary</item>
     </style>
 
+    <style name="TextAppearance.Tachiyomi.ListItem" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:textColor">?attr/colorOnBackground</item>
+    </style>
+
+    <style name="TextAppearance.Tachiyomi.ListItemSecondary" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textColor">?android:attr/textColorSecondary</item>
+    </style>
+
     <style name="TextAppearance.Tachiyomi.Button" parent="TextAppearance.Material3.LabelLarge">
         <item name="android:textColor">?colorSecondary</item>
     </style>
@@ -69,6 +77,8 @@
 
     <style name="Tachiyomi.PreferenceTheme" parent="@style/PreferenceThemeOverlay">
         <item name="switchPreferenceCompatStyle">@style/Widget.Tachiyomi.SwitchPreferenceCompat</item>
+        <item name="android:textAppearanceListItem">@style/TextAppearance.Tachiyomi.ListItem</item>
+        <item name="android:textAppearanceListItemSecondary">@style/TextAppearance.Tachiyomi.ListItemSecondary</item>
     </style>
 
     <style name="Widget.Tachiyomi.SwitchPreferenceCompat" parent="Preference.SwitchPreferenceCompat.Material">
@@ -273,6 +283,7 @@
         <item name="thumbTint">@color/switch_thumb_tint</item>
         <item name="trackTint">@null</item>
     </style>
+
     <style name="Widget.Tachiyomi.CompoundButton.CheckBox" parent="Base.Widget.Material3.CompoundButton.CheckBox">
         <item name="buttonTint">@null</item>
         <item name="buttonIconTint">@null</item>
