@@ -184,7 +184,7 @@ fun String.withSubtitle(context: Context, subtitle: String): Spanned {
 
 fun String.addBetaTag(context: Context, useSuperScript: Boolean = true): Spanned {
     val betaText = context.getString(MR.strings.beta)
-    val colorS = context.getResourceColor(R.attr.colorSecondary)
+    val colorS = context.getResourceColor(R.attr.colorPrimary)
     return buildSpannedString {
         append(this@addBetaTag)
         val buttonSpan: SpannableStringBuilder.() -> Unit = {
