@@ -74,7 +74,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:progressBackgroundTint="?attr/colorSurface"
-                android:progressTint="?attr/colorSecondary" />
+                android:progressTint="?attr/colorPrimary" />
         </WebView>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
