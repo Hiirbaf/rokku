@@ -344,6 +344,11 @@
         <item name="rippleColor">@color/on_primary_highlight</item>
     </style>
 
+    <style name="Theme.Widget.ImageBorderlessExpressive.Standard" parent="Widget.Material3Expressive.Button.IconButton.Standard">
+        <item name="iconTint">?attr/colorOnPrimary</item>
+        <item name="rippleColor">@color/on_primary_highlight</item>
+    </style>
+
     <style name="Theme.Widget.CustomImageButton">
         <item name="android:background">@drawable/round_ripple</item>
         <item name="android:clickable">true</item>
