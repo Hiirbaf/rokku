@@ -11,16 +11,6 @@
 .kotlin/
 kls_database.db
 weblate.conf
-
-# Signing keystores must never be committed
 *.jks
 *.keystore
-
-# Local scratch APKs used for manual testing
 /build-output/
-
-# Local notes/analysis, not part of the repo
-/.claude-notes/
-
-# Graphify local cache/output
-/graphify-out/
