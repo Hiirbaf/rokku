@@ -258,7 +258,7 @@ class ThemePreference @JvmOverloads constructor(context: Context, attrs: Attribu
                 val colorSecondary = themeContext.getResourceColor(R.attr.colorPrimary)
                 val appBar = themeContext.getResourceColor(R.attr.colorSurface)
                 val appBarText = themeContext.getResourceColor(R.attr.actionBarTintColor)
-                val bottomBar = themeContext.getResourceColor(R.attr.colorPrimaryVariant)
+                val bottomBar = themeContext.getResourceColor(R.attr.colorSurfaceContainer)
                 val inactiveTab = themeContext.getResourceColor(R.attr.tabBarIconInactive)
                 val activeTab = themeContext.getResourceColor(R.attr.tabBarIconColor)
                 binding.themeToolbar.setBackgroundColor(appBar)
