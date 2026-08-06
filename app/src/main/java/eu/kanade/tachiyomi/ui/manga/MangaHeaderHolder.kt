@@ -711,7 +711,7 @@ class MangaHeaderHolder(
 
             val textColors = intArrayOf(
                 ColorUtils.setAlphaComponent(root.context.getResourceColor(R.attr.colorOnSurface), 97),
-                root.context.getResourceColor(AR.attr.colorOnPrimary),
+                root.context.getResourceColor(AR.attr.textColorPrimaryInverse),
             )
             startReadingButton.setTextColor(ColorStateList(states, textColors))
             trackButton.iconTint = ColorStateList.valueOf(accentColor)
