@@ -57,17 +57,17 @@ open class BaseWebViewActivity : BaseActivity<ViewBinding>() {
         val attrs = theme.obtainStyledAttributes(
             intArrayOf(
                 R.attr.colorSurface,
-                R.attr.colorPrimaryVariant,
+                R.attr.colorSurfaceContainer,
             ),
         )
         val colorSurface = attrs.getColor(0, 0)
-        val colorPrimaryVariant = attrs.getColor(1, 0)
+        val colorSurfaceContainer = attrs.getColor(1, 0)
         attrs.recycle()
 
         window.statusBarColor = ColorUtils.setAlphaComponent(colorSurface, 255)
         window.navigationBarColor =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O || !lightMode) {
-                colorPrimaryVariant
+                colorSurfaceContainer
             } else {
                 Color.BLACK
             }
