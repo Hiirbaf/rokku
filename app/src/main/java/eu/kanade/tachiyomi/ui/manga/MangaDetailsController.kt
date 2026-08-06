@@ -388,7 +388,7 @@ class MangaDetailsController :
         headerColor = if (presenter.preferences.themeMangaDetails().get()) {
             (colorToUse ?: manga?.vibrantCoverColor)?.let { color ->
                 val newColor =
-                    makeColorFrom(color, context.getResourceColor(R.attr.colorPrimaryVariant))
+                    makeColorFrom(color, context.getResourceColor(R.attr.colorSurfaceContainer))
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1 || context.isInNightMode()) {
                     activity?.window?.navigationBarColor = ColorUtils.setAlphaComponent(
                         newColor,
@@ -615,7 +615,7 @@ class MangaDetailsController :
         if (actionMode != null) {
             return
         }
-        val scrollingColor = headerColor ?: activity.getResourceColor(R.attr.colorPrimaryVariant)
+        val scrollingColor = headerColor ?: activity.getResourceColor(R.attr.colorSurfaceContainer)
         val topColor = ColorUtils.setAlphaComponent(scrollingColor, 0)
         val scrollingStatusColor =
             ColorUtils.setAlphaComponent(scrollingColor, (0.87f * 255).roundToInt())
@@ -713,7 +713,7 @@ class MangaDetailsController :
 
     private fun setStatusBarAndToolbar() {
         val topColor = Color.TRANSPARENT
-        val scrollingColor = headerColor ?: activity!!.getResourceColor(R.attr.colorPrimaryVariant)
+        val scrollingColor = headerColor ?: activity!!.getResourceColor(R.attr.colorSurfaceContainer)
         val scrollingStatusColor =
             ColorUtils.setAlphaComponent(scrollingColor, (0.87f * 255).roundToInt())
         activity?.window?.statusBarColor = if (toolbarIsColored) scrollingStatusColor else topColor
