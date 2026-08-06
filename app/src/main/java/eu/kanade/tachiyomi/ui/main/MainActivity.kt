@@ -912,13 +912,13 @@ open class MainActivity : BaseActivity<MainActivityBinding>() {
 
             // if in landscape with 2/3 button mode, fully opaque nav bar
             insets.hasSideNavBar() -> {
-                getResourceColor(R.attr.colorPrimaryVariant)
+                getResourceColor(R.attr.colorSurfaceContainer)
             }
 
             // if in portrait with 2/3 button mode, translucent nav bar
             else -> {
                 ColorUtils.setAlphaComponent(
-                    getResourceColor(R.attr.colorPrimaryVariant),
+                    getResourceColor(R.attr.colorSurfaceContainer),
                     179,
                 )
             }
@@ -926,7 +926,7 @@ open class MainActivity : BaseActivity<MainActivityBinding>() {
     }
 
     override fun startSupportActionMode(callback: ActionMode.Callback): ActionMode? {
-        window?.statusBarColor = getResourceColor(R.attr.colorPrimaryVariant)
+        window?.statusBarColor = getResourceColor(R.attr.colorSurfaceContainer)
         actionMode = super.startSupportActionMode(callback)
         reEnableBackPressedCallBack()
         return actionMode
