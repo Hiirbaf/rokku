@@ -152,7 +152,7 @@ class ChapterHolder(
         adapter.delegate.accentColor()?.let {
             binding.startView.backgroundTintList = ColorStateList.valueOf(it)
             binding.bookmark.imageTintList = ColorStateList.valueOf(
-                context.getResourceColor(AR.attr.colorOnPrimary),
+                context.getResourceColor(AR.attr.textColorPrimaryInverse),
             )
             TextViewCompat.setCompoundDrawableTintList(
                 binding.chapterTitle,
