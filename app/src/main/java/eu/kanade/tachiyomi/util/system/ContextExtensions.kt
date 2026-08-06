@@ -294,7 +294,7 @@ fun Context.openInBrowser(uri: Uri, @ColorInt toolbarColor: Int? = null, forceBr
         val intent = CustomTabsIntent.Builder()
             .setDefaultColorSchemeParams(
                 CustomTabColorSchemeParams.Builder()
-                    .setToolbarColor(toolbarColor ?: getResourceColor(R.attr.colorPrimaryVariant))
+                    .setToolbarColor(toolbarColor ?: getResourceColor(R.attr.colorSurfaceContainer))
                     .build(),
             )
             .build()
@@ -326,7 +326,7 @@ fun Context.openInBrowser(url: String, forceBrowser: Boolean, fullBrowser: Boole
             val intent = CustomTabsIntent.Builder()
                 .setDefaultColorSchemeParams(
                     CustomTabColorSchemeParams.Builder()
-                        .setToolbarColor(getResourceColor(R.attr.colorPrimaryVariant))
+                        .setToolbarColor(getResourceColor(R.attr.colorSurfaceContainer))
                         .build(),
                 )
                 .build()
