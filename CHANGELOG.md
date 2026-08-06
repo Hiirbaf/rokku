@@ -10,6 +10,12 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 
 ## [Unreleased]
 
+### Fixes
+- Fix memory leaks on theme/night-mode/side-nav changes and when refreshing app shortcuts (ported from upstream tachiyomiJ2K)
+
+### Other
+- Sync with upstream (yokai): add proguard rules to keep `Serializable` `writeReplace`/`readResolve`, and bump `okio` to 3.18.1
+
 ## [1.5.0]
 
 ### Additions
