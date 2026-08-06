@@ -1254,8 +1254,8 @@ class ReaderActivity : BaseActivity<ReaderActivityBinding>() {
     fun setNavColor(insets: WindowInsetsCompat) {
         sheetManageNavColor = when {
             isSplitScreen -> {
-                window.statusBarColor = getResourceColor(R.attr.colorPrimaryVariant)
-                window.navigationBarColor = getResourceColor(R.attr.colorPrimaryVariant)
+                window.statusBarColor = getResourceColor(R.attr.colorSurfaceContainer)
+                window.navigationBarColor = getResourceColor(R.attr.colorSurfaceContainer)
                 false
             }
 
