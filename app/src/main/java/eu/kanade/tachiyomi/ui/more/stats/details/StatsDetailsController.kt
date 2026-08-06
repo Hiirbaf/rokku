@@ -248,14 +248,14 @@ class StatsDetailsController :
         val activity = activity ?: return
         toolbarIsColored = isColor
         if (isControllerVisible) setTitle()
-        val scrollingColor = activity.getResourceColor(R.attr.colorPrimaryVariant)
+        val scrollingColor = activity.getResourceColor(R.attr.colorSurfaceContainer)
         val topColor = activity.getResourceColor(R.attr.colorSurface)
         colorAnimator?.cancel()
         val view = binding.filterConstraintLayout ?: binding.statsHorizontalScroll
         val percent = ImageUtil.getPercentOfColor(
             view.backgroundColor ?: Color.TRANSPARENT,
             activity.getResourceColor(R.attr.colorSurface),
-            activity.getResourceColor(R.attr.colorPrimaryVariant),
+            activity.getResourceColor(R.attr.colorSurfaceContainer),
         )
         val cA = ValueAnimator.ofFloat(
             percent,
