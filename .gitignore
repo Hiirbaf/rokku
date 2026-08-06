@@ -18,3 +18,9 @@ weblate.conf
 
 # Local scratch APKs used for manual testing
 /build-output/
+
+# Local notes/analysis, not part of the repo
+/.claude-notes/
+
+# Graphify local cache/output
+/graphify-out/
