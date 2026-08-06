@@ -25,6 +25,7 @@ import eu.kanade.tachiyomi.ui.main.SearchActivity
 import eu.kanade.tachiyomi.ui.recents.RecentsPresenter
 import eu.kanade.tachiyomi.ui.source.browse.BrowseSourceController
 import eu.kanade.tachiyomi.util.system.launchIO
+import kotlinx.coroutines.Job
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 import yokai.domain.manga.models.cover
@@ -37,9 +38,12 @@ class MangaShortcutManager(
     val coverCache: CoverCache = Injekt.get(),
     val sourceManager: SourceManager = Injekt.get(),
 ) {
+    private var updateShortcutsJob: Job? = null
 
-    fun updateShortcuts(context: Context) {
-        launchIO {
+    fun updateShortcuts(activityContext: Context) {
+        val context = activityContext.applicationContext
+        updateShortcutsJob?.cancel()
+        updateShortcutsJob = launchIO {
             with(TachiyomiWidgetManager()) { context.init() }
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N_MR1) {
                 if (!preferences.showSeriesInShortcuts().get() && !preferences.showSourcesInShortcuts().get()) {

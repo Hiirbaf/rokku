@@ -8,6 +8,7 @@ import androidx.core.view.doOnNextLayout
 import androidx.core.view.isVisible
 import androidx.preference.PreferenceScreen
 import eu.kanade.tachiyomi.data.preference.changesIn
+import eu.kanade.tachiyomi.ui.main.MainActivity
 import eu.kanade.tachiyomi.ui.setting.SettingsLegacyController
 import eu.kanade.tachiyomi.ui.setting.ThemePreference
 import eu.kanade.tachiyomi.ui.setting.bindTo
@@ -66,7 +67,7 @@ class SettingsAppearanceController : SettingsLegacyController() {
                 onChange {
                     if (it == true) {
                         preferences.nightMode().set(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-                        activity?.recreate()
+                        (activity as? MainActivity)?.recreateFully() ?: activity?.recreate()
                     } else {
                         preferences.nightMode().set(context.appDelegateNightMode())
                         themePreference?.fastAdapterLight?.notifyDataSetChanged()
@@ -90,7 +91,7 @@ class SettingsAppearanceController : SettingsLegacyController() {
 
                 onChange {
                     if (context.isInNightMode()) {
-                        activity?.recreate()
+                        (activity as? MainActivity)?.recreateFully() ?: activity?.recreate()
                     } else {
                         themePreference?.fastAdapterDark?.notifyDataSetChanged()
                     }
@@ -173,7 +174,7 @@ class SettingsAppearanceController : SettingsLegacyController() {
                 defaultValue = SideNavMode.DEFAULT.prefValue
 
                 onChange {
-                    activity?.recreate()
+                    (activity as? MainActivity)?.recreateFully() ?: activity?.recreate()
                     true
                 }
             }

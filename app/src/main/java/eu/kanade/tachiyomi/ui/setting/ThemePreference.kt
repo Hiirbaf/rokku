@@ -28,6 +28,7 @@ import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.data.preference.PreferencesHelper
 import eu.kanade.tachiyomi.databinding.ThemeItemBinding
 import eu.kanade.tachiyomi.databinding.ThemesPreferenceBinding
+import eu.kanade.tachiyomi.ui.main.MainActivity
 import eu.kanade.tachiyomi.util.system.ThemeUtil
 import eu.kanade.tachiyomi.util.system.Themes
 import eu.kanade.tachiyomi.util.system.appDelegateNightMode
@@ -52,6 +53,7 @@ class ThemePreference @JvmOverloads constructor(context: Context, attrs: Attribu
     private var selectExtensionDark: SelectExtension<ThemeItem>
     private val preferences: PreferencesHelper by injectLazy()
     var activity: Activity? = null
+    private var isRecreating = false
     var lastScrollPostionLight: Int? = null
     var lastScrollPostionDark: Int? = null
     lateinit var binding: ThemesPreferenceBinding
@@ -112,8 +114,9 @@ class ThemePreference @JvmOverloads constructor(context: Context, attrs: Attribu
                 ) {
                     fastAdapterLight.notifyDataSetChanged()
                     fastAdapterDark.notifyDataSetChanged()
-                } else {
-                    activity?.recreate()
+                } else if (!isRecreating) {
+                    isRecreating = true
+                    (activity as? MainActivity)?.recreateFully() ?: activity?.recreate()
                 }
             }
         }
