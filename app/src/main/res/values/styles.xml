@@ -62,7 +62,7 @@
 
     <style name="Widget.Tachiyomi.ActionMode" parent="Widget.Material3.ActionMode">
         <item name="colorControlHighlight">?colorControlHighlight</item>
-        <item name="background">?colorPrimaryVariant</item>
+        <item name="background">?colorSurfaceContainer</item>
         <item name="height">?attr/mainActionBarSize</item>
         <item name="android:minHeight">?attr/mainActionBarSize</item>
     </style>
@@ -291,7 +291,6 @@
         <item name="itemRippleColor">@color/ripple_nav</item>
         <item name="itemTextColor">@color/bottom_nav_text_selector</item>
         <item name="labelVisibilityMode">labeled</item>
-        <item name="android:background">?colorPrimaryVariant</item>
         <item name="tabBarIconColor">?tabBarIconColor</item>
         <item name="tabRippleColor">?colorControlHighlight</item>
     </style>
@@ -302,7 +301,6 @@
         <item name="itemRippleColor">@color/ripple_nav</item>
         <item name="itemTextColor">@color/bottom_nav_text_selector</item>
         <item name="labelVisibilityMode">labeled</item>
-        <item name="android:background">?colorPrimaryVariant</item>
         <item name="tabBarIconColor">?tabBarIconColor</item>
         <item name="tabRippleColor">?colorControlHighlight</item>
     </style>
@@ -347,6 +345,11 @@
     <style name="Theme.Widget.ImageBorderlessExpressive.Standard" parent="Widget.Material3Expressive.Button.IconButton.Standard">
         <item name="iconTint">?attr/colorOnPrimary</item>
         <item name="rippleColor">@color/on_primary_highlight</item>
+    </style>
+
+    <style name="Widget.Tachiyomi.Button.IconButton.Standard" parent="Widget.Material3Expressive.Button.IconButton.Standard">
+        <item name="iconTint">?attr/colorPrimary</item>
+        <item name="iconGravity">textStart</item>
     </style>
 
     <style name="Theme.Widget.CustomImageButton">
