@@ -322,7 +322,7 @@
         <item name="colorSecondary">@color/secondaryDoki</item>
         <item name="colorOnSecondary">@color/textColorPrimaryInverse</item>
         <item name="colorControlHighlight">@color/rippleColorDoki</item>
-        <item name="colorSecondaryVariant">@color/secondaryVariantDoki</item>
+        <item name="colorPrimaryVariant">@color/primaryVariantDoki</item>
         <item name="colorSurface">@color/backgroundDoki</item>
         <item name="background">@color/backgroundDoki</item>
         <item name="colorOnTertiary">@color/colorOnDownloadBadgeDayNight</item>
