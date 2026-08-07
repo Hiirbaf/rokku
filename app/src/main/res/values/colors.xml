@@ -264,6 +264,7 @@
     <color name="primaryInverseDoki">#EBBA6C</color>
     <color name="onPrimaryDoki">#070F2C</color>
     <color name="secondaryDoki">#EABD62</color>
+    <color name="onSecondaryDoki">@color/onPrimaryTachiyomi</color>
     <color name="primaryVariantDoki">#F4CC8A</color>
     <color name="tabBarIconColorDoki">@color/secondaryDoki</color>
     <color name="rippleColorDoki">#1FEABD62</color>
