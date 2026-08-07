@@ -141,6 +141,7 @@ class BrowseController :
         binding.sourceRecycler.layoutManager = LinearLayoutManagerAccurateOffset(view.context)
 
         binding.sourceRecycler.adapter = adapter
+        binding.sourceRecycler.addItemDecoration(SourceDividerItemDecoration(view.context))
         binding.sourceRecycler.onAnimationsFinished {
             (activity as? MainActivity)?.splashState?.ready = true
         }
