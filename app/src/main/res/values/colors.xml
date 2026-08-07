@@ -76,7 +76,7 @@
     <color name="colorOnBackground">@color/md_black_1000_87</color>
     <color name="downloadBadgeDayNight">@color/download_badge</color>
     <color name="downloadBadgeDayNightInverse">@color/download_badge_light</color>
-    <color name="colorOnDownloadBadgeDayNight">@color/black</color>
+    <color name="colorOnDownloadBadgeDayNight">#000000</color>
 
     <!-- Text Colors -->
     <color name="md_black_1000_87">#DE000000</color>
