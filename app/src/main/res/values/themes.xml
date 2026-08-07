@@ -168,7 +168,7 @@
         <item name="colorPrimaryVariant">@color/primaryVariantTealSapphire</item>
         <item name="colorSurfaceContainer">@color/surfaceContainerTealSapphire</item>
         <item name="colorTertiary">@color/downloadBadgeDayNightInverse</item>
-        <item name="colorOnTertiary">?android:textColorPrimaryInverse</item>
+        <item name="colorOnTertiary">@color/download_badge_light_text</item>
         <item name="colorControlHighlight">@color/rippleColorTealSapphire</item>
         <item name="tabBarIconColor">@color/tabBarIconColorTealSapphire</item>
         <item name="background">@color/backgroundTealSapphire</item>
@@ -319,7 +319,7 @@
         <item name="colorOnPrimary">@color/onPrimaryDoki</item>
         <item name="colorPrimaryInverse">@color/primaryInverseDoki</item>
         <item name="colorSecondary">@color/secondaryDoki</item>
-        <item name="colorOnSecondary">@color/textColorPrimaryInverse</item>
+        <item name="colorOnSecondary">@color/onSecondaryDoki</item>
         <item name="colorControlHighlight">@color/rippleColorDoki</item>
         <item name="colorPrimaryVariant">@color/primaryVariantDoki</item>
         <item name="colorSurfaceContainer">@color/surfaceContainerDoki</item>
