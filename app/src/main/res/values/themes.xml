@@ -316,13 +316,13 @@
     <!--== Doki Theme ==-->
     <style name="Theme.Tachiyomi.Doki">
         <item name="colorPrimary">@color/primaryDoki</item>
-        <item name="colorPrimaryVariant">@color/primaryVariantDoki</item>
         <item name="colorOnPrimary">@color/onPrimaryDoki</item>
         <item name="colorPrimaryInverse">@color/primaryInverseDoki</item>
         <item name="colorSecondary">@color/secondaryDoki</item>
         <item name="colorOnSecondary">@color/textColorPrimaryInverse</item>
         <item name="colorControlHighlight">@color/rippleColorDoki</item>
         <item name="colorPrimaryVariant">@color/primaryVariantDoki</item>
+        <item name="colorSurfaceContainer">@color/surfaceContainerDoki</item>
         <item name="colorSurface">@color/backgroundDoki</item>
         <item name="background">@color/backgroundDoki</item>
         <item name="colorOnTertiary">@color/colorOnDownloadBadgeDayNight</item>
