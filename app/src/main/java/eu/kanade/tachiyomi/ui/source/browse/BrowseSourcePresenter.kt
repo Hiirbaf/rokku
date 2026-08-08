@@ -379,9 +379,7 @@ open class BrowseSourcePresenter(
 
                 is Filter.Group<*> -> {
                     val group = GroupItem(filter)
-                    val subItems = filter.toFlattenedSubItems()
-                    subItems.forEach { it.header = group }
-                    group.subItems = subItems
+                    group.subItems = filter.toFlattenedSubItems(group)
                     group
                 }
 
@@ -398,19 +396,29 @@ open class BrowseSourcePresenter(
     }
 
     /**
-     * Nested [Filter.Group]s are flattened into their parent's sub-items (with a non-expandable
-     * label row standing in for the nested group's name) rather than being made expandable
-     * themselves, since FlexibleAdapter doesn't reliably display sub-items that are both
-     * expandable and sectionable at the same time.
+     * Builds a [Filter.Group]'s direct sub-items. A nested [Filter.Group] becomes an expandable
+     * [GroupLabelItem] whose own sub-items are built recursively the same way - every descendant,
+     * at any depth, gets its [ISectionable] header set to the single top-level [header] rather
+     * than to its own immediate nested group, matching FlexibleAdapter's own single-level section
+     * model.
      */
-    private fun Filter.Group<*>.toFlattenedSubItems(): List<ISectionable<*, GroupItem>> {
+    private fun Filter.Group<*>.toFlattenedSubItems(header: GroupItem): List<ISectionable<*, GroupItem>> {
         return state.flatMap { type ->
             when (type) {
-                is Filter.CheckBox -> listOf(CheckboxSectionItem(type))
-                is Filter.TriState -> listOf(TriStateSectionItem(type))
-                is Filter.Text -> listOf(TextSectionItem(type))
-                is Filter.Select<*> -> listOf(SelectSectionItem(type))
-                is Filter.Group<*> -> listOf(GroupLabelItem(type)) + type.toFlattenedSubItems()
+                is Filter.CheckBox -> listOf(CheckboxSectionItem(type).apply { setHeader(header) })
+
+                is Filter.TriState -> listOf(TriStateSectionItem(type).apply { setHeader(header) })
+
+                is Filter.Text -> listOf(TextSectionItem(type).apply { setHeader(header) })
+
+                is Filter.Select<*> -> listOf(SelectSectionItem(type).apply { setHeader(header) })
+
+                is Filter.Group<*> -> {
+                    val nestedGroup = GroupLabelItem(type).apply { setHeader(header) }
+                    nestedGroup.subItems = type.toFlattenedSubItems(header)
+                    listOf(nestedGroup)
+                }
+
                 else -> emptyList()
             }
         }

@@ -50,7 +50,20 @@ class SourceFilterSheet(
         onDeleteSavedSearchClicked = onDeleteSavedSearchClicked,
     )
 
+    /**
+     * True once the card has been sized for real (title height + window insets known). Guards
+     * [revealCardOnce] so the sheet's content is only unhidden a single time.
+     */
+    private var cardSized = false
+
     init {
+        // The card's max height depends on the title's measured height and on window insets,
+        // both resolved asynchronously below (checkHeightThen / doOnApplyWindowInsetsCompat).
+        // Until then it would lay out at an unbounded/default height and visibly snap to the
+        // correct one right as the sheet reveals - which reads as the filter list flickering
+        // before it "actually" loads. Stay hidden until that first real measurement lands.
+        binding.cardView.visibility = View.INVISIBLE
+
         binding.searchBtn.setOnClickListener { dismiss() }
         binding.resetBtn.setOnClickListener { onResetClicked() }
         binding.saveBtn.setOnClickListener { onSaveClicked() }
@@ -60,6 +73,7 @@ class SourceFilterSheet(
 
         binding.titleLayout.checkHeightThen {
             activity.window.decorView.rootWindowInsetsCompat?.let { setCardViewMax(it) }
+            revealCardOnce()
         }
 
         binding.cardView.doOnApplyWindowInsetsCompat { _, insets, _ ->
@@ -68,6 +82,7 @@ class SourceFilterSheet(
                 matchConstraintMaxHeight =
                     fullHeight - insets.getInsets(systemBars()).top - binding.titleLayout.height - 75.dpToPx
             }
+            revealCardOnce()
         }
 
         val attrsArray = intArrayOf(AR.attr.actionBarSize)
@@ -82,6 +97,7 @@ class SourceFilterSheet(
                 height = headerHeight + binding.titleLayout.paddingBottom
             }
             setCardViewMax(insets)
+            revealCardOnce()
         }
 
         (binding.root.parent.parent as? View)?.viewTreeObserver?.addOnGlobalLayoutListener(
@@ -124,6 +140,12 @@ class SourceFilterSheet(
         )
     }
 
+    private fun revealCardOnce() {
+        if (cardSized) return
+        cardSized = true
+        binding.cardView.visibility = View.VISIBLE
+    }
+
     private fun setCardViewMax(insets: WindowInsetsCompat) {
         val fullHeight = activity.window.decorView.height
         val newHeight = fullHeight - insets.getInsets(systemBars()).top -
@@ -143,6 +165,8 @@ class SourceFilterSheet(
         binding.root.post {
             scrollToTop() // Force the sheet to scroll to the very top when it shows up
             updateBottomButtons()
+            // Safety net: reveal the card even if no inset/height callback ever fired.
+            revealCardOnce()
         }
     }
 

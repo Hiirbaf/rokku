@@ -1,27 +1,38 @@
 package eu.kanade.tachiyomi.ui.source.filter
 
-import android.annotation.SuppressLint
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import eu.davidea.flexibleadapter.FlexibleAdapter
-import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
+import eu.davidea.flexibleadapter.items.AbstractExpandableItem
 import eu.davidea.flexibleadapter.items.IFlexible
 import eu.davidea.flexibleadapter.items.ISectionable
-import eu.davidea.viewholders.FlexibleViewHolder
+import eu.davidea.viewholders.ExpandableViewHolder
 import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.source.model.Filter
-import eu.kanade.tachiyomi.util.system.getResourceColor
+import eu.kanade.tachiyomi.util.view.setAnimVectorCompat
 
 /**
- * Label for a [Filter.Group] nested within another [Filter.Group]. Unlike [GroupItem], this is a
- * plain (non-expandable) row: nested groups are flattened into their parent's sub-items instead
- * of being expandable themselves, since FlexibleAdapter doesn't reliably display sub-items that
- * are both expandable and sectionable at the same time.
+ * Label for a [Filter.Group] nested within another [Filter.Group]. Uses FlexibleAdapter's own
+ * expandable-item mechanism (like [GroupItem]/[SortGroup]) rather than manually inserting or
+ * removing rows, so expand/collapse gets the same smooth, well-tested animation as those - a
+ * hand-rolled toggle animated noticeably worse and was prone to library-internal bugs
+ * (see the (now removed) `addItems`/`removeItems`/`updateDataSet`-based approaches this replaced).
+ *
+ * [ISectionable.getHeader] always points at the top-level ancestor [GroupItem], never at this (or
+ * any other intermediate) label: a prior attempt at this same expandable+sectionable combo pointed
+ * each level's children at its *own* nested group as header, which left them invisible until the
+ * whole filter sheet was rebuilt (e.g. by tapping Reset). Keeping every descendant's header on the
+ * single top-level group avoids that.
  */
 class GroupLabelItem(val filter: Filter.Group<*>) :
-    AbstractFlexibleItem<GroupLabelItem.Holder>(),
+    AbstractExpandableItem<GroupLabelItem.Holder, ISectionable<*, GroupItem>>(),
     ISectionable<GroupLabelItem.Holder, GroupItem> {
+
+    init {
+        isExpanded = false
+    }
 
     private var head: GroupItem? = null
 
@@ -31,9 +42,8 @@ class GroupLabelItem(val filter: Filter.Group<*>) :
         head = header
     }
 
-    @SuppressLint("PrivateResource")
     override fun getLayoutRes(): Int {
-        return com.google.android.material.R.layout.design_navigation_item_subheader
+        return R.layout.navigation_view_group
     }
 
     override fun getItemViewType(): Int {
@@ -45,9 +55,17 @@ class GroupLabelItem(val filter: Filter.Group<*>) :
     }
 
     override fun bindViewHolder(adapter: FlexibleAdapter<IFlexible<RecyclerView.ViewHolder>>, holder: Holder, position: Int, payloads: MutableList<Any?>?) {
-        val view = holder.itemView as TextView
-        view.text = filter.name
-        view.setTextColor(view.context.getResourceColor(R.attr.colorOnBackground))
+        holder.title.text = filter.name
+
+        holder.icon.setAnimVectorCompat(
+            if (isExpanded) {
+                R.drawable.anim_expand_more_to_less
+            } else {
+                R.drawable.anim_expand_less_to_more
+            },
+        )
+
+        holder.itemView.setOnClickListener(holder)
     }
 
     override fun equals(other: Any?): Boolean {
@@ -60,8 +78,17 @@ class GroupLabelItem(val filter: Filter.Group<*>) :
         return filter.hashCode()
     }
 
-    class Holder(view: View, adapter: FlexibleAdapter<IFlexible<RecyclerView.ViewHolder>>) : FlexibleViewHolder(
+    open class Holder(view: View, adapter: FlexibleAdapter<IFlexible<RecyclerView.ViewHolder>>) : ExpandableViewHolder(
         view,
         adapter,
-    )
+        true,
+    ) {
+
+        val title: TextView = itemView.findViewById(R.id.title)
+        val icon: ImageView = itemView.findViewById(R.id.expand_icon)
+
+        override fun shouldNotifyParentOnClick(): Boolean {
+            return true
+        }
+    }
 }
