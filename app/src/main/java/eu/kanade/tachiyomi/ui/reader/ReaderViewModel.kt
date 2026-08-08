@@ -186,6 +186,23 @@ class ReaderViewModel(
     }
 
     /**
+     * Initializes the reader with the manga/chapter ids the activity was launched with. Launched
+     * from [viewModelScope] rather than the activity's own lifecycleScope, so it isn't cancelled
+     * if the activity is destroyed/recreated before the coroutine gets a chance to start (which
+     * left the reader stuck loading indefinitely). Failures are reported through [State.initError].
+     */
+    fun initFromIntent(mangaId: Long, initialChapterId: Long) {
+        if (!needsInit()) return
+        viewModelScope.launch {
+            val initResult = init(mangaId, initialChapterId)
+            if (!initResult.getOrDefault(false)) {
+                val exception = initResult.exceptionOrNull() ?: IllegalStateException("Unknown err")
+                mutableState.update { it.copy(initError = exception) }
+            }
+        }
+    }
+
+    /**
      * Called when the user pressed the back button and is going to leave the reader. Used to
      * trigger deletion of the downloaded chapters.
      */
@@ -1076,6 +1093,7 @@ class ReaderViewModel(
 
     data class State(
         val manga: Manga? = null,
+        val initError: Throwable? = null,
         val viewerChapters: ViewerChapters? = null,
         val isLoadingAdjacentChapter: Boolean = false,
         val lastPage: Int? = null,

@@ -131,14 +131,12 @@ import eu.kanade.tachiyomi.util.system.isInNightMode
 import eu.kanade.tachiyomi.util.system.isLTR
 import eu.kanade.tachiyomi.util.system.isTablet
 import eu.kanade.tachiyomi.util.system.launchIO
-import eu.kanade.tachiyomi.util.system.launchNonCancellableIO
 import eu.kanade.tachiyomi.util.system.launchUI
 import eu.kanade.tachiyomi.util.system.materialAlertDialog
 import eu.kanade.tachiyomi.util.system.openInBrowser
 import eu.kanade.tachiyomi.util.system.rootWindowInsetsCompat
 import eu.kanade.tachiyomi.util.system.spToPx
 import eu.kanade.tachiyomi.util.system.toast
-import eu.kanade.tachiyomi.util.system.withUIContext
 import eu.kanade.tachiyomi.util.view.collapse
 import eu.kanade.tachiyomi.util.view.compatToolTipText
 import eu.kanade.tachiyomi.util.view.doOnApplyWindowInsetsCompat
@@ -368,19 +366,18 @@ class ReaderActivity : BaseActivity<ReaderActivityBinding>() {
                     finish()
                     return
                 }
-                lifecycleScope.launchNonCancellableIO {
-                    val initResult = viewModel.init(manga, chapter)
-                    if (!initResult.getOrDefault(false)) {
-                        val exception = initResult.exceptionOrNull() ?: IllegalStateException("Unknown err")
-                        withUIContext {
-                            setInitialChapterError(exception)
-                        }
-                    }
-                }
+                viewModel.initFromIntent(manga, chapter)
             } else {
                 binding.pleaseWait.isVisible = true
             }
         }
+
+        viewModel.state
+            .map { it.initError }
+            .distinctUntilChanged()
+            .filterNotNull()
+            .onEach(::setInitialChapterError)
+            .launchIn(lifecycleScope)
 
         if (savedInstanceState != null) {
             menuVisible = savedInstanceState.getBoolean(::menuVisible.name)
