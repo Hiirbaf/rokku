@@ -15,7 +15,7 @@
         app:cardPreventCornerOverlap="false"
         app:strokeWidth="0dp"
         android:elevation="0dp"
-        app:cardBackgroundColor="@color/material_red_500"
+        app:cardBackgroundColor="@color/md_red_500"
         app:cardElevation="0dp"
         app:cardCornerRadius="12dp">
 
@@ -42,7 +42,7 @@
         app:cardPreventCornerOverlap="false"
         app:strokeWidth="0dp"
         android:elevation="0dp"
-        app:cardBackgroundColor="@color/material_red_500"
+        app:cardBackgroundColor="@color/md_red_500"
         app:cardElevation="0dp"
         app:cardCornerRadius="12dp">
 
