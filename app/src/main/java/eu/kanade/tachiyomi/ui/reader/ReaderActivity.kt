@@ -966,7 +966,6 @@ class ReaderActivity : BaseActivity<ReaderActivityBinding>() {
 
         with(binding.chaptersSheet) {
             with(doublePage) {
-                compatToolTipText = getString(MR.strings.page_layout)
                 setOnClickListener {
                     if (preferences.pageLayout().get() == PageLayout.AUTOMATIC.value) {
                         (viewer as? PagerViewer)?.config?.let { config ->
@@ -1511,7 +1510,7 @@ class ReaderActivity : BaseActivity<ReaderActivityBinding>() {
         updateCropBordersShortcut()
         updateBottomShortcuts()
         val viewerMode = ReadingModeType.fromPreference(viewModel.state.value.manga?.readingModeType ?: 0)
-        binding.chaptersSheet.readingMode.setImageResource(viewerMode.iconRes)
+        binding.chaptersSheet.readingMode.setIconResource(viewerMode.iconRes)
         startPostponedEnterTransition()
     }
 
