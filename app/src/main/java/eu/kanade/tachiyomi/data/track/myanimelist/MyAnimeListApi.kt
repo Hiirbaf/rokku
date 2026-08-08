@@ -200,7 +200,13 @@ class MyAnimeListApi(private val client: OkHttpClient, interceptor: MyAnimeListI
 
     private fun parseDate(isoDate: String): Long {
         return try {
-            SimpleDateFormat("yyyy-MM-dd", Locale.US).parse(isoDate)?.time ?: 0L
+            val pattern = when (isoDate.length) {
+                10 -> "yyyy-MM-dd"
+                7 -> "yyyy-MM"
+                4 -> "yyyy"
+                else -> return 0L
+            }
+            SimpleDateFormat(pattern, Locale.US).parse(isoDate)?.time ?: 0L
         } catch (_: Exception) {
             0L
         }
