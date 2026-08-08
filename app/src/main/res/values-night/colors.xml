@@ -113,8 +113,8 @@
     <color name="colorOnBackgroundDuskDawn">@color/md_white_1000</color>
     <color name="appBarTextDuskDawn">@color/md_white_1000</color>
     <color name="onSurfaceVariantDuskDawn">#D6C1C4</color>
-    <color name="surfaceContainerHighDuskDawn">#2D1C2A</color>
-    <color name="surfaceContainerHighestDuskDawn">#2F1F2C</color>
+    <color name="surfaceContainerHighDuskDawn">#352B34</color>
+    <color name="surfaceContainerHighestDuskDawn">#433741</color>
     <color name="outlineDuskDawn">#9F8C8F</color>
 
     <!-- Teal/Sapphire Theme -->
