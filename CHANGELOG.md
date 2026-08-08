@@ -13,8 +13,8 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 ### Fixes
 - Fix memory leaks on theme/night-mode/side-nav changes and when refreshing app shortcuts (ported from upstream tachiyomiJ2K)
 - Fix nested `Filter.Group`s (e.g. Publisher inside another group) rendering all expanded and unable to collapse individually
-- Fix MyAnimeList erroring on list entries with partial start/finish reading dates by falling back to January 1st or the 1st of the month (ported from upstream Mihon)
-- Fix the reader getting stuck loading indefinitely in some scenarios by initializing it from the view model's own scope instead of the activity's (ported from upstream Mihon)
+- Fix MyAnimeList erroring on list entries with partial start/finish reading dates by falling back to January 1st or the 1st of the month
+- Fix the reader getting stuck loading indefinitely in some scenarios by initializing it from the view model's own scope instead of the activity's
 
 ### Other
 - Sync with upstream (yokai): add proguard rules to keep `Serializable` `writeReplace`/`readResolve`, and bump `okio` to 3.18.1
