@@ -542,6 +542,7 @@ class ReaderActivity : BaseActivity<ReaderActivityBinding>() {
         splitItem?.isVisible = ((viewer as? PagerViewer)?.config?.doublePages ?: false) && !canShowSplitAtBottom()
         binding.chaptersSheet.shiftPageButton.isVisible =
             ((viewer as? PagerViewer)?.config?.doublePages ?: false) && canShowSplitAtBottom()
+        updateSums()
         (viewer as? PagerViewer)?.config?.let { config ->
             val icon = ContextCompat.getDrawable(
                 this,
@@ -555,7 +556,7 @@ class ReaderActivity : BaseActivity<ReaderActivityBinding>() {
                 },
             )
             splitItem?.icon = icon
-            binding.chaptersSheet.shiftPageButton.setImageDrawable(icon)
+            binding.chaptersSheet.shiftPageButton.icon = icon
         }
         setBottomNavButtons(preferences.pageLayout().get())
         (binding.toolbar.background as? LayerDrawable)?.let { layerDrawable ->
@@ -578,7 +579,7 @@ class ReaderActivity : BaseActivity<ReaderActivityBinding>() {
     fun setBottomNavButtons(pageLayout: Int) {
         val isDoublePage = pageLayout == PageLayout.DOUBLE_PAGES.value ||
             (pageLayout == PageLayout.AUTOMATIC.value && (viewer as? PagerViewer)?.config?.doublePages ?: false)
-        binding.chaptersSheet.doublePage.setImageDrawable(
+        binding.chaptersSheet.doublePage.icon =
             ContextCompat.getDrawable(
                 this,
                 when {
@@ -586,8 +587,7 @@ class ReaderActivity : BaseActivity<ReaderActivityBinding>() {
                     (viewer as? PagerViewer)?.config?.splitPages == true -> R.drawable.ic_book_open_split_24dp
                     else -> R.drawable.ic_single_page_24dp
                 },
-            ),
-        )
+            )
         with(binding.readerNav) {
             listOf(leftPageText, rightPageText).forEach {
                 it.updateLayoutParams<ViewGroup.MarginLayoutParams> {
@@ -715,7 +715,7 @@ class ReaderActivity : BaseActivity<ReaderActivityBinding>() {
 
     private fun updateOrientationShortcut(preference: Int) {
         val orientation = OrientationType.fromPreference(preference)
-        binding.chaptersSheet.rotationSheetButton.setImageResource(orientation.iconRes)
+        binding.chaptersSheet.rotationSheetButton.setIconResource(orientation.iconRes)
     }
 
     private fun updateCropBordersShortcut() {
@@ -734,7 +734,7 @@ class ReaderActivity : BaseActivity<ReaderActivityBinding>() {
             }
             if (lastCropRes != drawableRes) {
                 val drawable = AnimatedVectorDrawableCompat.create(context, drawableRes)
-                setImageDrawable(drawable)
+                icon = drawable
                 drawable?.start()
                 lastCropRes = drawableRes
             }
@@ -769,8 +769,35 @@ class ReaderActivity : BaseActivity<ReaderActivityBinding>() {
                 ReaderBottomButton.ViewChapters.isIn(enabledButtons)
             shiftPageButton.isVisible =
                 ((viewer as? PagerViewer)?.config?.doublePages ?: false) && canShowSplitAtBottom()
-            binding.toolbar.menu.findItem(R.id.action_shift_double_page)?.isVisible =
-                ((viewer as? PagerViewer)?.config?.doublePages ?: false) && !canShowSplitAtBottom()
+            updateSums()
+        }
+        binding.toolbar.menu
+            .findItem(R.id.action_shift_double_page)
+            ?.isVisible =
+            ((viewer as? PagerViewer)?.config?.doublePages ?: false) &&
+            !canShowSplitAtBottom()
+    }
+
+    private fun updateSums() {
+        with(binding.chaptersSheet) {
+            var sum = 1f
+            listOf(
+                chaptersButton,
+                webviewButton,
+                readingMode,
+                rotationSheetButton,
+                cropBordersSheetButton,
+                doublePage,
+                shiftPageButton,
+            ).forEachIndexed { index, button ->
+//                if (button.isVisible && button.parent == null) {
+//                    buttonGroup.addView(button, index)
+//                } else if (!button.isVisible) {
+//                    buttonGroup.removeView(button)
+//                }
+                sum += if (button.isVisible) 1f else 0f
+            }
+            buttonGroup.weightSum = sum
         }
     }
 
