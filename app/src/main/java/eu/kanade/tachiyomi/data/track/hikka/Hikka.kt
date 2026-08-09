@@ -14,6 +14,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import timber.log.Timber
 import uy.kohesive.injekt.injectLazy
+import yokai.i18n.MR
 
 class Hikka(
     private val context: Context,
@@ -32,7 +33,7 @@ class Hikka(
     }
 
     @StringRes
-    override fun nameRes() = R.string.hikka
+    override fun nameRes() = MR.strings.hikka
 
     private val json: Json by injectLazy()
 
@@ -61,12 +62,12 @@ class Hikka(
     override fun getStatus(status: Int): String =
         with(context) {
             when (status) {
-                READING -> getString(R.string.reading)
-                PLAN_TO_READ -> getString(R.string.plan_to_read)
-                COMPLETED -> getString(R.string.completed)
-                ON_HOLD -> getString(R.string.on_hold)
-                DROPPED -> getString(R.string.dropped)
-                REREADING -> getString(R.string.rereading)
+                READING -> getString(MR.strings.reading)
+                PLAN_TO_READ -> getString(MR.strings.plan_to_read)
+                COMPLETED -> getString(MR.strings.completed)
+                ON_HOLD -> getString(MR.strings.on_hold)
+                DROPPED -> getString(MR.strings.dropped)
+                REREADING -> getString(MR.strings.rereading)
                 else -> ""
             }
         }
