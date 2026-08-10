@@ -3,6 +3,7 @@
   "extends": ["config:recommended"],
   "labels": ["Dependencies"],
   "semanticCommits": "enabled",
+  "rebaseWhen": "conflicted",
   "packageRules": [
     {
       "groupName": "GitHub Actions",
