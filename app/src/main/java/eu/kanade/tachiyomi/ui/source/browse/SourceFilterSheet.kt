@@ -126,6 +126,12 @@ class SourceFilterSheet(
             adapter,
         )
         recyclerView?.setHasFixedSize(false)
+        // The default ItemAnimator fades in every newly inserted row. That's unnoticeable for a
+        // handful of items (e.g. expanding Sort or a short Genre list), but a group with dozens
+        // of nested sub-groups (e.g. Publisher's per-letter groups) inserts them all in one batch,
+        // and having that many rows fade in at once reads as the whole sheet flickering. This is a
+        // plain filter list, not worth animating at all.
+        recyclerView?.itemAnimator = null
 
         sheetBehavior.addBottomSheetCallback(
             object : BottomSheetBehavior.BottomSheetCallback() {

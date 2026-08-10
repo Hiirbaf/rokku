@@ -429,6 +429,19 @@ open class BrowseSourceController(bundle: Bundle) :
 
     private fun showFilters() {
         if (filterSheet != null) return
+
+        // Some sources (e.g. Keiyoushi's KeiSource "filter fetching") fetch their filter options
+        // from the network on a background coroutine and disk-cache the result, so the very first
+        // getFilterList() call can return a placeholder ("Tap Reset to load filters") until that
+        // completes. getFilterList() itself only ever reads that disk cache synchronously - it's
+        // as cheap as onResetClicked's own call below - so re-check it here too: the presenter's
+        // own background poll only covers a fixed window after the source loads, and the user may
+        // open this sheet well after that window closed but before (or after) the source's own
+        // fetch finished.
+        if (!presenter.filtersChanged) {
+            presenter.sourceFilters = presenter.source.getFilterList()
+        }
+
         val oldFilters = presenter.sourceFilters.map { it.snapshotFilterState() }
 
         filterSheet = SourceFilterSheet(
