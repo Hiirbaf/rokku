@@ -658,6 +658,15 @@ open class BrowseSourceController(bundle: Bundle) :
     }
 
     /**
+     * Called from the presenter after [BrowseSourcePresenter.filterItems] was rebuilt following
+     * the source's first search response (some sources only populate certain filter groups, e.g.
+     * genre/publisher, after that first fetch). Refresh the sheet's rows if it's currently open.
+     */
+    fun onFilterItemsRefreshed() {
+        filterSheet?.setFilters(presenter.filterItems)
+    }
+
+    /**
      * Called from the presenter when the network request is received.
      *
      * @param page the current page.

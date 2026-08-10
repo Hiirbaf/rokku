@@ -229,6 +229,7 @@ open class BrowseSourcePresenter(
                     Logger.e(error) { "Unable to prepare a page" }
                 }
                 .collectLatest { (page, mangas) ->
+                    if (page == 1) refreshFilterItemsIfUntouched()
                     if (mangas.isEmpty() && page == 1) {
                         withUIContext { view?.onAddPageError(NoResultsException()) }
                         return@collectLatest
@@ -239,6 +240,21 @@ open class BrowseSourcePresenter(
 
         // Request first page.
         requestNext()
+    }
+
+    /**
+     * Some sources only populate certain nested [Filter.Group]s (e.g. genre/publisher lists
+     * fetched from the site) after their first search request completes, mutating the same
+     * [Filter.Group] instances handed out by [CatalogueSource.getFilterList] in place. Since
+     * [sourceFilters] is captured once in [onCreate] - before that first request - those groups
+     * can be built empty. Rebuild [filterItems] from the (possibly now-populated) [sourceFilters]
+     * once the first page lands, but only if the user hasn't started interacting with the filter
+     * sheet yet ([filtersChanged]), so we never clobber in-progress edits.
+     */
+    private suspend fun refreshFilterItemsIfUntouched() {
+        if (filtersChanged || !sourceIsInitialized) return
+        filterItems = sourceFilters.toItems()
+        withUIContext { view?.onFilterItemsRefreshed() }
     }
 
     /**
