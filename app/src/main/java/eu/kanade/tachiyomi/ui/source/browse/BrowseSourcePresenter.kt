@@ -244,16 +244,16 @@ open class BrowseSourcePresenter(
 
     /**
      * Some sources only populate certain nested [Filter.Group]s (e.g. genre/publisher lists
-     * fetched from the site) after their first search request completes, mutating the same
-     * [Filter.Group] instances handed out by [CatalogueSource.getFilterList] in place. Since
-     * [sourceFilters] is captured once in [onCreate] - before that first request - those groups
-     * can be built empty. Rebuild [filterItems] from the (possibly now-populated) [sourceFilters]
-     * once the first page lands, but only if the user hasn't started interacting with the filter
-     * sheet yet ([filtersChanged]), so we never clobber in-progress edits.
+     * fetched from the site) after their first search request completes. [sourceFilters] is
+     * captured once in [onCreate] via [CatalogueSource.getFilterList] - before that first
+     * request - so those groups can come back empty. Re-fetch [CatalogueSource.getFilterList]
+     * once the first page lands, exactly like `onResetClicked` does, but only if the user hasn't
+     * started interacting with the filter sheet yet ([filtersChanged]), so we never clobber
+     * in-progress edits.
      */
     private suspend fun refreshFilterItemsIfUntouched() {
         if (filtersChanged || !sourceIsInitialized) return
-        filterItems = sourceFilters.toItems()
+        sourceFilters = source.getFilterList()
         withUIContext { view?.onFilterItemsRefreshed() }
     }
 
