@@ -30,7 +30,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import uy.kohesive.injekt.injectLazy
 
 class HikkaApi(
-    private val trackId: Int,
+    private val trackId: Long,
     private val client: OkHttpClient,
     interceptor: HikkaInterceptor,
 ) {
