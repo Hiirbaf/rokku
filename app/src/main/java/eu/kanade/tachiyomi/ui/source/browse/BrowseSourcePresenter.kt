@@ -33,6 +33,7 @@ import eu.kanade.tachiyomi.util.system.launchIO
 import eu.kanade.tachiyomi.util.system.launchNonCancellableIO
 import eu.kanade.tachiyomi.util.system.withUIContext
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
@@ -125,6 +126,8 @@ open class BrowseSourcePresenter(
 
     private val oldFilters = mutableListOf<Any?>()
 
+    private var filterPollJob: Job? = null
+
     override fun onCreate() {
         super.onCreate()
         if (!::pager.isInitialized) {
@@ -139,6 +142,8 @@ open class BrowseSourcePresenter(
             }
             filtersChanged = false
 
+            pollForFilterUpdates()
+
             runBlocking { view?.savedSearches = loadSearches() }
 
             getSavedSearch.subscribeAllBySourceId(sourceId)
@@ -147,6 +152,35 @@ open class BrowseSourcePresenter(
                     withUIContext { view?.savedSearches = it }
                 }
                 .launchIn(presenterScope)
+        }
+    }
+
+    /**
+     * Some sources (e.g. Keiyoushi's `KeiSource` "filter fetching") don't have every nested
+     * [Filter.Group]'s options (e.g. genre/publisher lists) ready on the very first
+     * [CatalogueSource.getFilterList] call: that call kicks off a background network fetch and
+     * returns a placeholder (e.g. a "Tap Reset to load filters" header) until it completes,
+     * caching the result to disk for next time. Poll a few times with a delay so the sheet picks
+     * up the real filters once they land, instead of requiring the user to manually hit Reset -
+     * but bail as soon as the user starts interacting with the sheet ([filtersChanged]), so we
+     * never clobber in-progress edits.
+     */
+    private fun pollForFilterUpdates() {
+        filterPollJob?.cancel()
+        filterPollJob = presenterScope.launchIO {
+            var lastSnapshot = sourceFilters.map { it.snapshotState() }
+            repeat(6) {
+                delay(3000)
+                if (filtersChanged || !sourceIsInitialized) return@launchIO
+                val newFilters = source.getFilterList()
+                val newSnapshot = newFilters.map { it.snapshotState() }
+                if (newSnapshot != lastSnapshot) {
+                    lastSnapshot = newSnapshot
+                    sourceFilters = newFilters
+                    filtersChanged = false
+                    withUIContext { view?.onFilterItemsRefreshed() }
+                }
+            }
         }
     }
 
@@ -229,7 +263,6 @@ open class BrowseSourcePresenter(
                     Logger.e(error) { "Unable to prepare a page" }
                 }
                 .collectLatest { (page, mangas) ->
-                    if (page == 1) refreshFilterItemsIfUntouched()
                     if (mangas.isEmpty() && page == 1) {
                         withUIContext { view?.onAddPageError(NoResultsException()) }
                         return@collectLatest
@@ -240,21 +273,6 @@ open class BrowseSourcePresenter(
 
         // Request first page.
         requestNext()
-    }
-
-    /**
-     * Some sources only populate certain nested [Filter.Group]s (e.g. genre/publisher lists
-     * fetched from the site) after their first search request completes. [sourceFilters] is
-     * captured once in [onCreate] via [CatalogueSource.getFilterList] - before that first
-     * request - so those groups can come back empty. Re-fetch [CatalogueSource.getFilterList]
-     * once the first page lands, exactly like `onResetClicked` does, but only if the user hasn't
-     * started interacting with the filter sheet yet ([filtersChanged]), so we never clobber
-     * in-progress edits.
-     */
-    private suspend fun refreshFilterItemsIfUntouched() {
-        if (filtersChanged || !sourceIsInitialized) return
-        sourceFilters = source.getFilterList()
-        withUIContext { view?.onFilterItemsRefreshed() }
     }
 
     /**

@@ -13,6 +13,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 ### Fixes
 - Fix memory leaks on theme/night-mode/side-nav changes and when refreshing app shortcuts (ported from upstream tachiyomiJ2K)
 - Fix nested `Filter.Group`s (e.g. Publisher/Genre inside another group) not rendering at all: FlexibleAdapter doesn't reliably display sub-items of an item that is both expandable and sectionable, so a nested group's label row is now a plain (non-expandable) item that manually splices its children into the list on tap instead of relying on the adapter's own expand mechanism - keeping per-group collapse without the display bug
+- Fix genre/publisher filters staying empty (or stuck on a "Tap Reset to load filters" placeholder) for sources that fetch their filter options from the network in the background (Keiyoushi's `KeiSource` filter-fetching sources, e.g. BatCave): poll for updated filters for a few seconds after opening a source instead of only checking once, since the background fetch can still be in flight at that point
 - Fix MyAnimeList erroring on list entries with partial start/finish reading dates by falling back to January 1st or the 1st of the month
 - Fix the reader getting stuck loading indefinitely in some scenarios by initializing it from the view model's own scope instead of the activity's
 
