@@ -313,3 +313,16 @@ jobs:
             rokku-x86_64-${{ env.VERSION_TAG }}.apk
           draft: false
           prerelease: true
+
+      # Nightly releases are published immediately (not drafts), so the site can be
+      # rebuilt right away. Stable/beta releases are drafts (see "Create Release" above)
+      # and are dispatched separately from release_published.yml when a maintainer
+      # actually publishes them.
+      - name: Notify website of new nightly
+        if: startsWith(env.VERSION_TAG, 'r')
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.WEBSITE_DISPATCH_TOKEN }}
+          repository: rokku-app/rokku-app.github.io
+          event-type: app_release
+          client-payload: '{"tag": "${{ env.VERSION_TAG }}", "stage": "nightly"}'

@@ -1,0 +1,30 @@
+name: Notify website of published release
+
+# Stable/beta releases are created as drafts by build_push.yml, so they only really
+# "go out" once a maintainer publishes the draft on GitHub. That publish action fires
+# this event, which we use to trigger a rebuild of the download page.
+on:
+  release:
+    types: [published]
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Determine stage
+        id: stage
+        shell: bash
+        run: |
+          if [ "${{ github.event.release.prerelease }}" = "true" ]; then
+            echo "STAGE=beta" >> "$GITHUB_OUTPUT"
+          else
+            echo "STAGE=stable" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Notify website
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.WEBSITE_DISPATCH_TOKEN }}
+          repository: rokku-app/rokku-app.github.io
+          event-type: app_release
+          client-payload: '{"tag": "${{ github.event.release.tag_name }}", "stage": "${{ steps.stage.outputs.STAGE }}"}'
