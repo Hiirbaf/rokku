@@ -36,11 +36,11 @@ data class HKManga(
     val startDate: Long? = null,
     val read: List<HKRead>? = emptyList(),
 ) {
-    fun toTrack(trackId: Int): TrackSearch =
+    fun toTrack(trackId: Long): TrackSearch =
         TrackSearch.create(trackId).apply {
             media_id = stringToNumber(this@HKManga.slug)
             title = this@HKManga.titleUa ?: this@HKManga.titleEn ?: this@HKManga.titleOriginal
-            total_chapters = this@HKManga.chapters ?: 0
+            total_chapters = (this@HKManga.chapters ?: 0).toLong()
             cover_url = this@HKManga.image
             score = this@HKManga.score.toFloat()
             tracking_url = "${HikkaApi.BASE_URL}/manga/${this@HKManga.slug}"
