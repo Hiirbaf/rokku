@@ -3,12 +3,15 @@ package eu.kanade.tachiyomi.data.track.mangabaka
 import android.content.Context
 import android.graphics.Color
 import androidx.annotation.StringRes
+import co.touchlab.kermit.Logger
 import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.data.database.models.Track
 import eu.kanade.tachiyomi.data.track.TrackService
 import eu.kanade.tachiyomi.data.track.mangabaka.dto.MangaBakaOAuth
 import eu.kanade.tachiyomi.data.track.model.TrackSearch
 import eu.kanade.tachiyomi.data.track.updateNewTrackInfo
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -19,7 +22,7 @@ import yokai.util.lang.getString
 
 class MangaBaka(
     private val context: Context,
-    id: Int,
+    id: Long,
 ) : TrackService(id) {
     companion object {
         const val READING = 1
@@ -52,7 +55,7 @@ class MangaBaka(
 
     override val supportsReadingDates: Boolean = true
 
-    override val supportsPrivateTracking: Boolean = true
+    val supportsPrivateTracking: Boolean = true
 
     private val scorePreference = trackPreferences.mangabakaScoreType()
 
@@ -88,7 +91,7 @@ class MangaBaka(
 
     override fun getGlobalStatus(status: Int): String = getStatus(status)
 
-    override fun getScoreList(): List<String> =
+    override fun getScoreList(): ImmutableList<String> =
         when (scorePreference.get()) {
             // 1, 2, ..., 99, 100
             STEP_1 -> IntRange(0, 100).map(Int::toString)
@@ -101,7 +104,7 @@ class MangaBaka(
             // 25, 50, 75, 100
             STEP_25 -> IntRange(0, 100).step(25).map(Int::toString)
             else -> throw Exception("Unknown score type")
-        }
+        }.toImmutableList()
 
     override fun displayScore(track: Track): String = track.score.toInt().toString()
 
@@ -138,7 +141,7 @@ class MangaBaka(
             api.deleteLibManga(track)
             true
         } catch (e: Exception) {
-            Timber.w(e)
+            Logger.e(e) { "Unable to remove from MangaBaka" }
             false
         }
 
@@ -162,10 +165,10 @@ class MangaBaka(
     override suspend fun login(
         username: String,
         password: String,
-    ) = login(password)
+    ): Boolean = login(password)
 
-    suspend fun login(code: String) {
-        try {
+    suspend fun login(code: String): Boolean {
+        return try {
             val oauth = api.getAccessToken(code)
             interceptor.setAuth(oauth)
             val currentUser = api.getCurrentUser()
@@ -183,9 +186,11 @@ class MangaBaka(
                 currentUser.nickname ?: currentUser.preferredUsername ?: currentUser.id,
                 oauth.accessToken,
             )
+            true
         } catch (e: Exception) {
+            Logger.e(e) { "Unable to login" }
             logout()
-            throw e
+            false
         }
     }
 
