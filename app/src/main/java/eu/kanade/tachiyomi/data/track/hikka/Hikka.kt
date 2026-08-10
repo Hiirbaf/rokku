@@ -3,6 +3,7 @@ package eu.kanade.tachiyomi.data.track.hikka
 import android.content.Context
 import android.graphics.Color
 import androidx.annotation.StringRes
+import co.touchlab.kermit.Logger
 import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.data.database.models.Track
 import eu.kanade.tachiyomi.data.track.TrackService
@@ -14,8 +15,6 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import logcat.LogPriority
-import logcat.logcat
 import uy.kohesive.injekt.injectLazy
 import yokai.i18n.MR
 import yokai.util.lang.getString
@@ -123,7 +122,7 @@ class Hikka(
             api.deleteUserManga(track)
             true
         } catch (e: Exception) {
-            logcat(LogPriority.WARN, e)
+            Logger.e(e) { "Unable to remove from Hikka" }
             false
         }
 
@@ -158,6 +157,7 @@ class Hikka(
             saveCredentials(user.username, oauth.accessToken)
             true
         } catch (e: Exception) {
+            Logger.e(e) { "Unable to login to Hikka" }
             logout()
             false
         }
