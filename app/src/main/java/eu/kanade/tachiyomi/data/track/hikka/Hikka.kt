@@ -9,17 +9,20 @@ import eu.kanade.tachiyomi.data.track.TrackService
 import eu.kanade.tachiyomi.data.track.hikka.dto.HKOAuth
 import eu.kanade.tachiyomi.data.track.model.TrackSearch
 import eu.kanade.tachiyomi.data.track.updateNewTrackInfo
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import timber.log.Timber
+import logcat.LogPriority
+import logcat.logcat
 import uy.kohesive.injekt.injectLazy
 import yokai.i18n.MR
 import yokai.util.lang.getString
 
 class Hikka(
     private val context: Context,
-    id: Int,
+    id: Long,
 ) : TrackService(id) {
     companion object {
         const val READING = 0
@@ -75,7 +78,7 @@ class Hikka(
 
     override fun getGlobalStatus(status: Int): String = getStatus(status)
 
-    override fun getScoreList(): List<String> = IntRange(0, 10).map(Int::toString)
+    override fun getScoreList(): ImmutableList<String> = IntRange(0, 10).map(Int::toString).toImmutableList()
 
     override fun displayScore(track: Track): String = track.score.toInt().toString()
 
@@ -120,7 +123,7 @@ class Hikka(
             api.deleteUserManga(track)
             true
         } catch (e: Exception) {
-            Timber.w(e)
+            logcat(LogPriority.WARN, e)
             false
         }
 
@@ -145,17 +148,18 @@ class Hikka(
     override suspend fun login(
         username: String,
         password: String,
-    ) = login(password)
+    ): Boolean = login(password)
 
-    suspend fun login(reference: String) {
-        try {
+    suspend fun login(reference: String): Boolean {
+        return try {
             val oauth = api.accessToken(reference)
             interceptor.setAuth(oauth)
             val user = api.getCurrentUser()
             saveCredentials(user.username, oauth.accessToken)
+            true
         } catch (e: Exception) {
             logout()
-            throw e
+            false
         }
     }
 
