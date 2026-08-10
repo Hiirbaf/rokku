@@ -225,7 +225,7 @@ class AboutScreen : Screen() {
 
     private fun getVersionName(): String = when {
         BuildConfig.DEBUG -> "Debug ${BuildConfig.COMMIT_SHA}"
-        BuildConfig.NIGHTLY -> "Nightly ${BuildConfig.COMMIT_COUNT} (${BuildConfig.COMMIT_SHA})"
+        BuildConfig.NIGHTLY -> "r${BuildConfig.COMMIT_COUNT}"
         else -> BuildConfig.VERSION_NAME
     }
 

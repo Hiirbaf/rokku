@@ -98,7 +98,11 @@ class OverflowDialog(activity: MainActivity) : Dialog(activity, R.style.Overflow
             dismiss()
         }
 
-        val vName = "v${BuildConfig.VERSION_NAME}".substringBefore("-")
+        val vName = if (BuildConfig.NIGHTLY) {
+            "r${BuildConfig.COMMIT_COUNT}"
+        } else {
+            "v${BuildConfig.VERSION_NAME}".substringBefore("-")
+        }
         val newVName = buildSpannedString {
             color(context.getResourceColor(AR.attr.textColorSecondary)) {
                 append(vName)

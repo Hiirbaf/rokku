@@ -1622,7 +1622,11 @@ open class MainActivity : BaseActivity<MainActivityBinding>() {
                 drawable = R.drawable.ic_close_24dp,
             ),
         ),
-        title = getString(MR.strings.updated_to_, BuildConfig.VERSION_NAME),
+        title = if (BuildConfig.NIGHTLY) {
+            getString(MR.strings.version_, "r${BuildConfig.COMMIT_COUNT}")
+        } else {
+            getString(MR.strings.updated_to_, BuildConfig.VERSION_NAME)
+        },
         showDivider = true,
         selectedId = 0,
         onMenuItemClicked = { _, item ->
