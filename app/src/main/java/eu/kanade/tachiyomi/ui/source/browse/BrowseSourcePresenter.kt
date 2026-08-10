@@ -441,13 +441,18 @@ open class BrowseSourcePresenter(
         return state.mapNotNull { type ->
             when (type) {
                 is Filter.CheckBox -> CheckboxSectionItem(type).apply { setHeader(header) }
+
                 is Filter.TriState -> TriStateSectionItem(type).apply { setHeader(header) }
+
                 is Filter.Text -> TextSectionItem(type).apply { setHeader(header) }
+
                 is Filter.Select<*> -> SelectSectionItem(type).apply { setHeader(header) }
+
                 is Filter.Group<*> -> GroupLabelItem(type).apply {
                     setHeader(header)
                     children = type.toVisibleSubItems(header)
                 }
+
                 else -> null
             }
         }
