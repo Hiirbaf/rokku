@@ -522,44 +522,58 @@ open class BrowseSourceController(bundle: Bundle) :
      *
      * @param genreName the name of the genre
      */
-    fun searchWithGenre(genreName: String, useContains: Boolean = false) {
+    fun searchWithGenre(genreName: String, useContains: Boolean = false) = searchGenres(listOf(genreName), useContains)
+
+    /**
+     * Attempts to restart the request with a new genre-filtered query, matching as many of the
+     * given genre names as can be found in the source's filters at once.
+     * If none of the genre names can be found in the filters, the standard searchWithQuery
+     * search method is used instead (only when a single genre name was given).
+     *
+     * @param names the names of the genres/tags
+     * @param useContains if true checks if any of the filter names contains, rather than be an
+     * exact match
+     */
+    fun searchGenres(names: List<String>, useContains: Boolean = false) {
         presenter.sourceFilters = presenter.source.getFilterList()
 
         var filterList: FilterList? = null
 
-        filter@ for (sourceFilter in presenter.sourceFilters) {
-            if (sourceFilter is Filter.Group<*>) {
-                for (filter in sourceFilter.state) {
-                    if (filter is Filter<*> &&
-                        if (useContains) {
-                            filter.name.contains(genreName, true)
-                        } else {
-                            filter.name.equals(genreName, true)
-                        }
-                    ) {
-                        when (filter) {
-                            is Filter.TriState -> filter.state = 1
-                            is Filter.CheckBox -> filter.state = true
-                            else -> break
-                        }
-                        filterList = presenter.sourceFilters
-                        break@filter
-                    }
-                }
-            } else if (sourceFilter is Filter.Select<*>) {
-                val index = sourceFilter.values.filterIsInstance<String>()
-                    .indexOfFirst {
-                        if (useContains) {
-                            it.contains(genreName, true)
-                        } else {
-                            it.equals(genreName, true)
+        genres@ for (genreName in names) {
+            filter@ for (sourceFilter in presenter.sourceFilters) {
+                if (sourceFilter is Filter.Group<*>) {
+                    for (filter in sourceFilter.state) {
+                        if (filter is Filter<*> &&
+                            if (useContains) {
+                                filter.name.contains(genreName, true)
+                            } else {
+                                filter.name.equals(genreName, true)
+                            }
+                        ) {
+                            when (filter) {
+                                is Filter.TriState -> filter.state = 1
+                                is Filter.CheckBox -> filter.state = true
+                                else -> break
+                            }
+                            filterList = presenter.sourceFilters
+                            break@filter
                         }
                     }
+                } else if (sourceFilter is Filter.Select<*>) {
+                    val index = sourceFilter.values.filterIsInstance<String>()
+                        .indexOfFirst {
+                            if (useContains) {
+                                it.contains(genreName, true)
+                            } else {
+                                it.equals(genreName, true)
+                            }
+                        }
 
-                if (index != -1) {
-                    sourceFilter.state = index
-                    filterList = presenter.sourceFilters
-                    break
+                    if (index != -1) {
+                        sourceFilter.state = index
+                        filterList = presenter.sourceFilters
+                        break
+                    }
                 }
             }
         }
@@ -573,10 +587,12 @@ open class BrowseSourceController(bundle: Bundle) :
             presenter.restartPager("", filterList)
         } else {
             if (!useContains) {
-                searchWithGenre(genreName, true)
+                searchGenres(names, true)
                 return
             }
-            searchWithQuery(genreName)
+            if (names.size == 1) {
+                searchWithQuery(names.first())
+            }
         }
         updatePopLatestIcons()
     }

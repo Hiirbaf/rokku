@@ -12,6 +12,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 
 ### Additions
 - Show a "Missing N chapters" separator directly in the chapter list wherever chapter numbering has a gap, matching the existing missing-chapter detection already used in the reader; toggle it off in Settings > Library > Behavior (closes #25)
+- Add a "Select all" option to a manga's genre/tag chips (ported from upstream tachiyomiJ2K), letting you search the library or the current source using every tag at once instead of one at a time
 
 ### Fixes
 - Fix memory leaks on theme/night-mode/side-nav changes and when refreshing app shortcuts (ported from upstream tachiyomiJ2K)

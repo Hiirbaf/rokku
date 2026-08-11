@@ -40,6 +40,7 @@ import androidx.core.net.toFile
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsCompat.Type.systemBars
+import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePaddingRelative
@@ -1683,7 +1684,18 @@ class MangaDetailsController :
         )
     }
 
-    fun sourceSearch(text: String) {
+    fun localSearch(tags: List<String>) {
+        router.pushController(
+            FilteredLibraryController(
+                tags.joinToString(", "),
+                filterTags = tags.toTypedArray(),
+            ).withFadeTransaction(),
+        )
+    }
+
+    fun sourceSearch(text: String) = sourceSearch(listOf(text))
+
+    fun sourceSearch(tags: List<String>) {
         when (
             val previousController =
                 router.backstack.getOrNull(router.backstackSize - 2)?.controller
@@ -1691,7 +1703,7 @@ class MangaDetailsController :
             is BrowseSourceController -> {
                 if (presenter.source is HttpSource) {
                     router.handleBack()
-                    previousController.searchWithGenre(text)
+                    previousController.searchGenres(tags)
                 }
             }
 
@@ -1699,7 +1711,7 @@ class MangaDetailsController :
                 if (presenter.source is CatalogueSource) {
                     val controller = BrowseSourceController(presenter.source as CatalogueSource)
                     router.pushController(controller.withFadeTransaction())
-                    controller.searchWithGenre(text)
+                    controller.searchGenres(tags)
                 }
             }
         }
@@ -1746,6 +1758,18 @@ class MangaDetailsController :
 
     override fun customActionMode(view: TextView): android.view.ActionMode.Callback {
         return FloatingMangaDetailsActionModeCallback(view, false, closeMode = false)
+    }
+
+    fun showFloatingActionModeForAllTags() {
+        val chipGroup = getHeader()?.binding?.mangaGenresTags ?: return
+        finishFloatingActionMode()
+        val actionModeCallback = FloatingMangaDetailsAllActionModeCallback(chipGroup)
+        val chips = chipGroup.children.mapNotNull { it as? Chip }
+        chips.forEach {
+            it.isActivated = true
+        }
+        floatingActionMode =
+            chipGroup.startActionMode(actionModeCallback, android.view.ActionMode.TYPE_FLOATING)
     }
 
     override fun showChapterFilter() {
@@ -2250,6 +2274,11 @@ class MangaDetailsController :
                     }
                 }
 
+                R.id.action_select_all_tags -> {
+                    showFloatingActionModeForAllTags()
+                    return true
+                }
+
                 else -> return false
             }
             if (closeMode) {
@@ -2264,6 +2293,49 @@ class MangaDetailsController :
             }
             if (textView is Chip) {
                 textView.isActivated = false
+            }
+        }
+    }
+
+    inner class FloatingMangaDetailsAllActionModeCallback(
+        chipGroup: com.google.android.material.chip.ChipGroup,
+    ) : android.view.ActionMode.Callback {
+        private val chips = chipGroup.children.mapNotNull { it as? Chip }.toList()
+
+        override fun onCreateActionMode(mode: android.view.ActionMode?, menu: Menu?): Boolean {
+            mode?.menuInflater?.inflate(R.menu.manga_details_tag, menu)
+            menu?.findItem(R.id.action_copy)?.isVisible = true
+            menu?.findItem(R.id.action_global_search)?.isVisible = false
+            menu?.findItem(R.id.action_select_all_tags)?.isVisible = false
+            val sourceMenuItem = menu?.findItem(R.id.action_source_search)
+            sourceMenuItem?.isVisible = presenter.source is CatalogueSource
+            val context = view?.context ?: return false
+            sourceMenuItem?.title = context.getString(MR.strings.search_, presenter.source.name)
+            val localItem = menu?.findItem(R.id.action_local_search) ?: return true
+            localItem.isVisible = previousController !is FilteredLibraryController
+            val library = context.getString(MR.strings.library).lowercase(Locale.getDefault())
+            localItem.title = context.getString(MR.strings.search_, library)
+            return true
+        }
+
+        override fun onPrepareActionMode(mode: android.view.ActionMode?, menu: Menu?): Boolean = false
+
+        override fun onActionItemClicked(mode: android.view.ActionMode?, item: MenuItem?): Boolean {
+            val tags by lazy { chips.map { it.text.toString() } }
+            when (item?.itemId) {
+                R.id.action_copy -> copyContentToClipboard(tags.joinToString(", "), null)
+                R.id.action_local_search -> localSearch(tags)
+                R.id.action_source_search -> sourceSearch(tags)
+                else -> return false
+            }
+            mode?.finish()
+            return true
+        }
+
+        override fun onDestroyActionMode(mode: android.view.ActionMode?) {
+            floatingActionMode = null
+            chips.forEach {
+                it.isActivated = false
             }
         }
     }
