@@ -45,6 +45,8 @@ class Anilist(private val context: Context, id: Long) : TrackService(id) {
 
     override val supportsReadingDates: Boolean = true
 
+    override val supportsPrivateTracking: Boolean = true
+
     private val scorePreference = trackPreferences.anilistScoreType()
 
     init {
