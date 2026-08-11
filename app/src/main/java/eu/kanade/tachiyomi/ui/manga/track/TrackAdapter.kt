@@ -52,6 +52,7 @@ class TrackAdapter(controller: OnClickListener) : RecyclerView.Adapter<TrackHold
         fun onScoreClick(position: Int)
         fun onRemoveClick(position: Int)
         fun onTogglePrivateClick(position: Int)
+        fun onAddPrivatelyClick(position: Int)
         fun onStartDateClick(view: View, position: Int)
         fun onFinishDateClick(view: View, position: Int)
     }

@@ -76,6 +76,7 @@ class TrackingBottomSheet(private val controller: MangaDetailsController) :
 
     val presenter = controller.presenter
     private var searchingItem: TrackItem? = null
+    private var searchPrivately = false
 
     private var adapter: TrackAdapter? = null
     private val searchItemAdapter = ItemAdapter<TrackSearchItem>()
@@ -216,6 +217,16 @@ class TrackingBottomSheet(private val controller: MangaDetailsController) :
         }
     }
 
+    override fun onAddPrivatelyClick(position: Int) {
+        val item = adapter?.getItem(position) ?: return
+        if (controller.isNotOnline()) {
+            dismiss()
+            return
+        }
+        searchPrivately = true
+        showSearchView(item)
+    }
+
     override fun onTitleClick(position: Int) {
         val item = adapter?.getItem(position) ?: return
         if (controller.isNotOnline()) {
@@ -284,6 +295,7 @@ class TrackingBottomSheet(private val controller: MangaDetailsController) :
         binding.trackRecycler.isVisible = true
         binding.trackSearchConstraintLayout.isVisible = false
         searchingItem = null
+        searchPrivately = false
         backCallback.isEnabled = false
     }
 
@@ -349,6 +361,7 @@ class TrackingBottomSheet(private val controller: MangaDetailsController) :
     private fun trackItem(position: Int) {
         val searchingItem = searchingItem
         val selectedItem = searchItemAdapter.getAdapterItem(position).trackSearch
+        selectedItem.private = searchPrivately
         if (searchingItem != null) {
             if (searchingItem.track != null && searchingItem.service.canRemoveFromService() &&
                 searchingItem.track.tracking_url != selectedItem.tracking_url
