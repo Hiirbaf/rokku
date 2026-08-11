@@ -65,13 +65,13 @@ class TrackHolder(view: View, adapter: TrackAdapter) : BaseViewHolder(view) {
         binding.addTracking.isVisible = track == null
         binding.addTrackingPrivate.isVisible = track == null && item.service.supportsPrivateTracking
         binding.addTrackingPrivate.setImageResource(
-            if (item.wantPrivate) R.drawable.ic_lock_24dp else R.drawable.ic_lock_open_24dp,
+            if (item.wantPrivate) R.drawable.ic_eye_off_24dp else R.drawable.ic_eye_24dp,
         )
         if (track != null) {
             binding.trackTitle.text = track.title
             binding.trackPrivateToggle.isVisible = item.service.supportsPrivateTracking
             binding.trackPrivateToggle.setImageResource(
-                if (track.private) R.drawable.ic_lock_24dp else R.drawable.ic_lock_open_24dp,
+                if (track.private) R.drawable.ic_eye_off_24dp else R.drawable.ic_eye_24dp,
             )
             binding.trackTitle.updatePaddingRelative(
                 end = if (item.service.supportsPrivateTracking) 76.dpToPx else 44.dpToPx,
