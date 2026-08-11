@@ -94,6 +94,20 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <ImageView
+                android:id="@+id/track_private_toggle"
+                style="@style/Theme.Widget.CustomImageButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="6dp"
+                android:contentDescription="@string/track_privately"
+                android:src="@drawable/ic_lock_open_24dp"
+                android:visibility="gone"
+                app:tint="@color/text_color_secondary"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/track_remove"
+                app:layout_constraintTop_toTopOf="parent" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <View

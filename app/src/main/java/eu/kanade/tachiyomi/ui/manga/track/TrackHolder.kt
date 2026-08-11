@@ -7,12 +7,14 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.graphics.ColorUtils
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePaddingRelative
 import androidx.core.widget.TextViewCompat
 import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.data.database.models.Track
 import eu.kanade.tachiyomi.data.preference.PreferencesHelper
 import eu.kanade.tachiyomi.databinding.TrackItemBinding
 import eu.kanade.tachiyomi.ui.base.holder.BaseViewHolder
+import eu.kanade.tachiyomi.util.system.dpToPx
 import eu.kanade.tachiyomi.util.system.getResourceColor
 import eu.kanade.tachiyomi.util.view.setText
 import uy.kohesive.injekt.injectLazy
@@ -39,6 +41,7 @@ class TrackHolder(view: View, adapter: TrackAdapter) : BaseViewHolder(view) {
             true
         }
         binding.trackRemove.setOnClickListener { listener.onRemoveClick(bindingAdapterPosition) }
+        binding.trackPrivateToggle.setOnClickListener { listener.onTogglePrivateClick(bindingAdapterPosition) }
         binding.trackStatus.setOnClickListener { listener.onStatusClick(bindingAdapterPosition) }
         binding.trackChapters.setOnClickListener { listener.onChaptersClick(bindingAdapterPosition) }
         binding.scoreContainer.setOnClickListener { listener.onScoreClick(bindingAdapterPosition) }
@@ -61,6 +64,13 @@ class TrackHolder(view: View, adapter: TrackAdapter) : BaseViewHolder(view) {
         binding.addTracking.isVisible = track == null
         if (track != null) {
             binding.trackTitle.text = track.title
+            binding.trackPrivateToggle.isVisible = item.service.supportsPrivateTracking
+            binding.trackPrivateToggle.setImageResource(
+                if (track.private) R.drawable.ic_lock_24dp else R.drawable.ic_lock_open_24dp,
+            )
+            binding.trackTitle.updatePaddingRelative(
+                end = if (item.service.supportsPrivateTracking) 76.dpToPx else 44.dpToPx,
+            )
             with(binding.trackChapters) {
                 text = when {
                     track.total_chapters > 0L && track.last_chapter_read.toLong() == track.total_chapters -> context.getString(

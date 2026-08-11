@@ -1305,6 +1305,12 @@ class MangaDetailsPresenter(
         updateRemote(track, item.service)
     }
 
+    fun setPrivate(item: TrackItem) {
+        val track = item.track!!
+        track.private = !track.private
+        updateRemote(track, item.service)
+    }
+
     suspend fun getSuggestedDate(readingDate: TrackingBottomSheet.ReadingDate): Long? {
         val chapters = getHistory.awaitAllByMangaId(manga.id ?: 0L)
         val date = when (readingDate) {

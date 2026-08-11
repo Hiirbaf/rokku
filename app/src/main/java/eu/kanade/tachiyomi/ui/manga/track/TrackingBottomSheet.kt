@@ -443,6 +443,17 @@ class TrackingBottomSheet(private val controller: MangaDetailsController) :
             .show()
     }
 
+    override fun onTogglePrivateClick(position: Int) {
+        val item = adapter?.getItem(position) ?: return
+        if (item.track == null) return
+        if (controller.isNotOnline()) {
+            dismiss()
+            return
+        }
+
+        presenter.setPrivate(item)
+    }
+
     override fun onRemoveClick(position: Int) {
         val item = adapter?.getItem(position) ?: return
         if (item.track == null) return
