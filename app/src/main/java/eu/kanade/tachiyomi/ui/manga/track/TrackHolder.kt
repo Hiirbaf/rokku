@@ -35,7 +35,7 @@ class TrackHolder(view: View, adapter: TrackAdapter) : BaseViewHolder(view) {
         val listener = adapter.rowClickListener
         binding.logoContainer.setOnClickListener { listener.onLogoClick(bindingAdapterPosition) }
         binding.addTracking.setOnClickListener { listener.onTitleClick(bindingAdapterPosition) }
-        binding.addTrackingPrivate.setOnClickListener { listener.onAddPrivatelyClick(bindingAdapterPosition) }
+        binding.addTrackingPrivate.setOnClickListener { listener.onWantPrivateToggleClick(bindingAdapterPosition) }
         binding.trackTitle.setOnClickListener { listener.onTitleClick(bindingAdapterPosition) }
         binding.trackTitle.setOnLongClickListener {
             listener.onTitleLongClick(bindingAdapterPosition)
@@ -63,8 +63,10 @@ class TrackHolder(view: View, adapter: TrackAdapter) : BaseViewHolder(view) {
         binding.trackLogo.contentDescription = serviceName
         binding.trackGroup.isVisible = track != null
         binding.addTracking.isVisible = track == null
-        binding.addTrackingPrivateDivider.isVisible = track == null && item.service.supportsPrivateTracking
         binding.addTrackingPrivate.isVisible = track == null && item.service.supportsPrivateTracking
+        binding.addTrackingPrivate.setImageResource(
+            if (item.wantPrivate) R.drawable.ic_lock_24dp else R.drawable.ic_lock_open_24dp,
+        )
         if (track != null) {
             binding.trackTitle.text = track.title
             binding.trackPrivateToggle.isVisible = item.service.supportsPrivateTracking

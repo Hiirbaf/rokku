@@ -217,14 +217,11 @@ class TrackingBottomSheet(private val controller: MangaDetailsController) :
         }
     }
 
-    override fun onAddPrivatelyClick(position: Int) {
+    override fun onWantPrivateToggleClick(position: Int) {
         val item = adapter?.getItem(position) ?: return
-        if (controller.isNotOnline()) {
-            dismiss()
-            return
-        }
-        searchPrivately = true
-        showSearchView(item)
+        if (item.track != null) return
+        item.wantPrivate = !item.wantPrivate
+        (binding.trackRecycler.findViewHolderForAdapterPosition(position) as? TrackHolder)?.bind(item)
     }
 
     override fun onTitleClick(position: Int) {
@@ -248,6 +245,7 @@ class TrackingBottomSheet(private val controller: MangaDetailsController) :
             launchIO {
                 try {
                     item.service.match(controller.presenter.manga)?.let { track ->
+                        track.private = item.wantPrivate
                         controller.presenter.registerTracking(track, item.service)
                     }
                         ?: withUIContext { controller.view?.context?.toast(MR.strings.no_match_found) }
@@ -256,6 +254,7 @@ class TrackingBottomSheet(private val controller: MangaDetailsController) :
                 }
             }
         } else {
+            searchPrivately = item.wantPrivate
             showSearchView(item)
         }
     }

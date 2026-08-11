@@ -297,21 +297,8 @@
             android:textAlignment="textStart"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/add_tracking_private_divider"
-            app:layout_constraintStart_toEndOf="@id/logo_container"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <View
-            android:id="@+id/add_tracking_private_divider"
-            android:layout_width="1dp"
-            android:layout_height="0dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
-            android:alpha="0.25"
-            android:background="@color/strong_divider"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/add_tracking_private"
+            app:layout_constraintStart_toEndOf="@id/logo_container"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
@@ -320,9 +307,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="12dp"
-            android:contentDescription="@string/add_tracking_privately"
-            android:src="@drawable/ic_lock_24dp"
-            android:tooltipText="@string/add_tracking_privately"
+            android:contentDescription="@string/track_privately"
+            android:src="@drawable/ic_lock_open_24dp"
+            android:tooltipText="@string/track_privately"
             android:visibility="gone"
             app:tint="@color/text_color_secondary"
             app:layout_constraintBottom_toBottomOf="parent"
