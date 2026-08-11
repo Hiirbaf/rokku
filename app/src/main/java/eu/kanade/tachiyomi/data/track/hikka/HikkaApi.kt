@@ -212,9 +212,11 @@ class HikkaApi(
         const val BASE_API_URL = "https://api.hikka.io"
         const val BASE_URL = "https://hikka.io"
         private const val SCOPE = "readlist,read:user-details"
-        private const val CLIENT_REFERENCE = "8bd64e1b-4d93-4c41-a9a7-9149c437131f"
-        private const val CLIENT_SECRET =
-            "ZQR9eSZiYg_T1-xlVQcfXRMzCeEmBj9GLfEwlM5ASEwVh6d2T_KBuXCKx9A818vKT155Bot6NpB61yIx8S_CaEJxDLh4L7xw5oxuOjAs8QFw7THwY-lS8uYfdVLE4zZ6"
+        // Using Mihon's for now
+        private const val CLIENT_REFERENCE = "598ef1f5-b9d2-4e66-8b65-06949d5e14fc"
+        private const val CLIENT_SECRET = "OKwzrNOZxq40psFgfcCUYddnvaeZWDnd34rt7fdcB5GmHoBBQuNTWX" +
+            "61sZs8KECEWVXtMUDtq8QC4t9WX4DwWWYLXEVlgnlUXGT1fWCb-18c" +
+            "Zd2m8Co-8HN6JQcjoP-B"
 
         fun authUrl(): Uri =
             "$BASE_URL/oauth"
@@ -225,11 +227,9 @@ class HikkaApi(
                 .build()
 
         fun refreshTokenRequest(accessToken: String): Request {
-            val headers =
-                Headers
-                    .Builder()
-                    .add("auth", accessToken)
-                    .build()
+            val headers = Headers.Builder()
+                .add("auth", accessToken)
+                .build()
 
             return GET("$BASE_API_URL/user/me", headers = headers) // Any request with auth
         }
