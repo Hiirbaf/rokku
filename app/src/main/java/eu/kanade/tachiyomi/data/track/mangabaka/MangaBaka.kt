@@ -48,6 +48,8 @@ class MangaBaka(private val context: Context, id: Long) : TrackService(id) {
 
     override val supportsReadingDates: Boolean = true
 
+    override val supportsPrivateTracking: Boolean = true
+
     private val scorePreference = trackPreferences.mangabakaScoreType()
 
     override fun nameRes() = MR.strings.mangabaka

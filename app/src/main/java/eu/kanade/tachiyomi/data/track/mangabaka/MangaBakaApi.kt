@@ -74,6 +74,7 @@ class MangaBakaApi(
             if (track.finished_reading_date > 0) {
                 put("finish_date", formatIsoDate(track.finished_reading_date))
             }
+            put("is_private", track.private)
         }.toString()
             .toRequestBody(jsonMime)
 
@@ -119,6 +120,7 @@ class MangaBakaApi(
                     started_reading_date = parseIsoDate(userData.startDate)
                     finished_reading_date = parseIsoDate(userData.finishDate)
                     last_chapter_read = userData.progressChapter?.toFloat() ?: 0f
+                    private = userData.isPrivate
                 }
             } catch (e: HttpException) {
                 if (e.code == 404) {
@@ -154,6 +156,7 @@ class MangaBakaApi(
             } else {
                 put("finish_date", null)
             }
+            put("is_private", track.private)
         }.toString()
             .toRequestBody(jsonMime)
 
