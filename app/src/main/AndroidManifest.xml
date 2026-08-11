@@ -226,7 +226,7 @@
 
                 <data
                     android:host="myanimelist-auth"
-                    android:scheme="yokai" />
+                    android:scheme="rokku" />
             </intent-filter>
         </activity>
         <activity
@@ -241,7 +241,7 @@
 
                 <data
                     android:host="anilist-auth"
-                    android:scheme="yokai" />
+                    android:scheme="rokku" />
             </intent-filter>
         </activity>
         <activity
@@ -256,7 +256,7 @@
 
                 <data
                     android:host="shikimori-auth"
-                    android:scheme="yokai" />
+                    android:scheme="rokku" />
             </intent-filter>
         </activity>
         <activity
@@ -271,7 +271,37 @@
 
                 <data
                     android:host="bangumi-auth"
-                    android:scheme="yokai" />
+                    android:scheme="rokku" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ui.setting.track.MangaBakaLoginActivity"
+            android:label="MangaBaka"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="mangabaka-auth"
+                    android:scheme="rokku" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ui.setting.track.HikkaLoginActivity"
+            android:label="Hikka"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="hikka-auth"
+                    android:scheme="rokku" />
             </intent-filter>
         </activity>
 
