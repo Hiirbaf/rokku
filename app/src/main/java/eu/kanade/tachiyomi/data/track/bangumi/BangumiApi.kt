@@ -37,6 +37,7 @@ class BangumiApi(
             val body = FormBody.Builder()
                 .add("rating", track.score.toInt().toString())
                 .add("status", track.toApiStatus())
+                .add("private", if (track.private) "1" else "0")
                 .build()
             authClient.newCall(POST("$API_URL/collection/${track.media_id}/update", body = body))
                 .awaitSuccess()
@@ -50,6 +51,7 @@ class BangumiApi(
             val sbody = FormBody.Builder()
                 .add("rating", track.score.toInt().toString())
                 .add("status", track.toApiStatus())
+                .add("private", if (track.private) "1" else "0")
                 .build()
             authClient.newCall(POST("$API_URL/collection/${track.media_id}/update", body = sbody))
                 .awaitSuccess()
@@ -116,6 +118,7 @@ class BangumiApi(
                     track.status = it.status?.id?.toInt() ?: Bangumi.DEFAULT_STATUS
                     track.last_chapter_read = it.epStatus!!.toFloat()
                     track.score = it.rating!!.toFloat()
+                    track.private = it.private == 1
                     track
                 }
         }

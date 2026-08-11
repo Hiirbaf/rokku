@@ -28,6 +28,8 @@ class Bangumi(private val context: Context, id: Long) : TrackService(id) {
 
     private val api by lazy { BangumiApi(id, client, interceptor) }
 
+    override val supportsPrivateTracking: Boolean = true
+
     override fun getScoreList(): ImmutableList<String> {
         return IntRange(0, 10).map(Int::toString).toImmutableList()
     }
