@@ -278,7 +278,8 @@ class MangaBakaApi(
     fun verifyOAuthState(state: String): Boolean = state == oauthStateParam
 
     companion object {
-        private const val CLIENT_ID = "ppVWLKHpvCXGgHnuCMBPqnbGTrVRmpqh"
+        // Using Mihon's for now
+        private const val CLIENT_ID = "zEZYMHXLWsLsafgbvJHXqzGvqQNOdkpo"
 
         private const val BASE_URL = "https://mangabaka.org"
         private const val API_BASE_URL = "https://api.mangabaka.org"
@@ -286,7 +287,7 @@ class MangaBakaApi(
         private const val OAUTH_URL = "$BASE_URL/auth/oauth2"
         private const val SCOPES = "library.read library.write offline_access openid"
 
-        private const val REDIRECT_URI = "tachiyomij2k://mangabaka-auth"
+        private const val REDIRECT_URI = "rokku://mangabaka-auth"
 
         private var codeVerifier: String = ""
         private var oauthStateParam: String = ""
