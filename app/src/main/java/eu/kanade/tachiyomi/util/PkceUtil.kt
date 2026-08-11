@@ -5,7 +5,6 @@ import java.security.MessageDigest
 import java.security.SecureRandom
 
 object PkceUtil {
-
     private const val PKCE_BASE64_ENCODE_SETTINGS = Base64.NO_WRAP or Base64.NO_PADDING or Base64.URL_SAFE
 
     fun generateCodeVerifier(): String {
