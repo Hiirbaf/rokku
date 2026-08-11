@@ -50,6 +50,8 @@ class Hikka(
 
     override fun getTrackerColor() = Color.rgb(0xD6, 0x91, 0xF7)
 
+    override fun getLogoColor() = Color.rgb(0x22, 0x6C, 0xBB)
+
     override fun getStatusList(): List<Int> = listOf(PLAN_TO_READ, COMPLETED, ON_HOLD, READING, DROPPED, REREADING)
 
     override fun isCompletedStatus(index: Int) = getStatusList()[index] == COMPLETED
