@@ -289,6 +289,19 @@ class SettingsReaderController : SettingsLegacyController() {
                 titleRes = MR.strings.navigate_pan
             }
             intListPreference(activity) {
+                bindTo(preferences.pageFlashMode())
+                titleRes = MR.strings.page_flash
+                summaryRes = MR.strings.page_flash_summary
+                entriesRes = arrayOf(
+                    MR.strings.disabled,
+                    MR.strings.page_flash_white,
+                    MR.strings.page_flash_black,
+                    MR.strings.page_flash_white_then_black,
+                )
+                entryValues = listOf(0, 1, 2, 3)
+                defaultValue = 0
+            }
+            intListPreference(activity) {
                 key = Keys.pageLayout
                 title = context.getString(MR.strings.page_layout).addBetaTag(context)
                 dialogTitleRes = MR.strings.page_layout

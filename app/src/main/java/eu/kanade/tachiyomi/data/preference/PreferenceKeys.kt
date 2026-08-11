@@ -38,6 +38,8 @@ object PreferenceKeys {
 
     const val colorFilterMode = "color_filter_mode"
 
+    const val pageFlashMode = "page_flash_mode"
+
     const val defaultReadingMode = "pref_default_reading_mode_key"
 
     const val defaultOrientationType = "pref_default_orientation_type_key"

@@ -15,6 +15,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Add a "Select all" option to a manga's genre/tag chips (ported from upstream tachiyomiJ2K), letting you search the library or the current source using every tag at once instead of one at a time
 - Add MangaBaka and Hikka tracker support, including OAuth login (ref #26) ([@Hiirbaf](https://github.com/Hiirbaf))
 - Add private tracking: mark a tracked entry as private (hidden from your public profile) on services that support it (AniList, Bangumi, Kitsu, MangaBaka), toggled via the lock icon on the tracking card (ported from J2K)
+- Add a "Flash the screen on page turn" reader option (white, black, or white then black) to clear ghosting on e-ink displays in paged reading mode
 
 ### Fixes
 - Fix memory leaks on theme/night-mode/side-nav changes and when refreshing app shortcuts (ported from upstream tachiyomiJ2K)

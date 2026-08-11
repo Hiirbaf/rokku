@@ -428,6 +428,11 @@
     <string name="invert_double_pages">Invert double pages</string>
     <string name="zoom_double_page_spreads">Zoom into double page spreads</string>
     <string name="navigate_pan">Navigate to pan</string>
+    <string name="page_flash">Flash the screen on page turn</string>
+    <string name="page_flash_summary">Clears ghosting on e-ink displays in paged reading mode</string>
+    <string name="page_flash_white">White</string>
+    <string name="page_flash_black">Black</string>
+    <string name="page_flash_white_then_black">White then black</string>
     <string name="split_double_pages_portrait">Split double pages in portrait</string>
     <string name="crop_borders">Crop borders</string>
     <string name="crop_borders_paged">Crop borders (Paged)</string>

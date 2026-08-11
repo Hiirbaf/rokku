@@ -95,6 +95,9 @@ class PreferencesHelper(val context: Context, val preferenceStore: PreferenceSto
 
     fun colorFilterMode() = preferenceStore.getInt(Keys.colorFilterMode, 0)
 
+    /** 0 off, 1 white, 2 black, 3 white then black. Clears e-ink ghosting between pages. */
+    fun pageFlashMode() = preferenceStore.getInt(Keys.pageFlashMode, 0)
+
     fun defaultReadingMode() = preferenceStore.getInt(Keys.defaultReadingMode, ReadingModeType.RIGHT_TO_LEFT.flagValue)
 
     fun defaultOrientationType() = preferenceStore.getInt(Keys.defaultOrientationType, OrientationType.FREE.flagValue)
