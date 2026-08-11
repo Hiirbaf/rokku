@@ -19,8 +19,6 @@ data class MangaBakaListEntry(
     @SerialName("progress_chapter")
     val progressChapter: Double?,
     val rating: Int?,
-    @SerialName("is_private")
-    val isPrivate: Boolean = false,
 ) {
     fun getStatus(): Int =
         when (state) {
