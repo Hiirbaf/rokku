@@ -212,7 +212,7 @@ class HikkaApi(
         const val BASE_API_URL = "https://api.hikka.io"
         const val BASE_URL = "https://hikka.io"
         private const val SCOPE = "readlist,read:user-details"
-        // Using Mihon's for now
+        // temporary
         private const val CLIENT_REFERENCE = "b6703bab-d822-4b72-9b8a-5fabf62dc354"
         private const val CLIENT_SECRET = "oSPMHT9mK56KiqBT2c08cGaiAll7e261STUeHXzw8n1cnhbGvEvtLgoNhfDXRlLp7gvw85WJ2lYgGqxUVvtnbTjOK0tKh7hqqTOy0yvEg8ys_9x9LRHcGHvEJvuf6BkJ"
 
