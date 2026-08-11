@@ -27,6 +27,7 @@ class TrackRepositoryImpl(private val handler: DatabaseHandler) : TrackRepositor
                 remoteUrl = track.tracking_url,
                 startDate = track.started_reading_date,
                 finishDate = track.finished_reading_date,
+                private = track.private,
             )
         }
     }
@@ -47,6 +48,7 @@ class TrackRepositoryImpl(private val handler: DatabaseHandler) : TrackRepositor
                     remoteUrl = track.tracking_url,
                     startDate = track.started_reading_date,
                     finishDate = track.finished_reading_date,
+                    private = track.private,
                 )
             }
         }

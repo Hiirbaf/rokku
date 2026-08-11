@@ -30,12 +30,15 @@ interface Track : Serializable {
 
     var tracking_url: String
 
+    var private: Boolean
+
     fun copyPersonalFrom(other: Track) {
         last_chapter_read = other.last_chapter_read
         score = other.score
         status = other.status
         started_reading_date = other.started_reading_date
         finished_reading_date = other.finished_reading_date
+        private = other.private
     }
 
     companion object {
@@ -57,6 +60,7 @@ interface Track : Serializable {
             remoteUrl: String,
             startDate: Long,
             finishDate: Long,
+            private: Boolean,
         ) = TrackImpl().apply {
             this.id = id
             this.manga_id = mangaId
@@ -71,6 +75,7 @@ interface Track : Serializable {
             this.started_reading_date = startDate
             this.finished_reading_date = finishDate
             this.tracking_url = remoteUrl
+            this.private = private
         }
     }
 }
