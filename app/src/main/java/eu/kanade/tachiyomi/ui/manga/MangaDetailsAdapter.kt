@@ -11,9 +11,12 @@ import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.data.preference.PreferencesHelper
 import eu.kanade.tachiyomi.ui.manga.chapter.BaseChapterAdapter
 import eu.kanade.tachiyomi.ui.manga.chapter.ChapterItem
+import eu.kanade.tachiyomi.ui.manga.chapter.MissingChaptersItem
+import eu.kanade.tachiyomi.ui.reader.viewer.calculateChapterDifference
 import eu.kanade.tachiyomi.util.chapter.ChapterUtil
 import eu.kanade.tachiyomi.util.system.isLTR
 import uy.kohesive.injekt.injectLazy
+import yokai.domain.ui.UiPreferences
 import yokai.i18n.MR
 import yokai.util.lang.getString
 import java.text.DecimalFormat
@@ -24,6 +27,7 @@ class MangaDetailsAdapter(
 ) : BaseChapterAdapter<IFlexible<*>>(controller) {
 
     val preferences: PreferencesHelper by injectLazy()
+    val uiPreferences: UiPreferences by injectLazy()
 
     val hasShownSwipeTut
         get() = preferences.shownChapterSwipeTutorial()
@@ -55,13 +59,39 @@ class MangaDetailsAdapter(
 
     fun performFilter() {
         val s = getFilter(String::class.java)
-        if (s.isNullOrBlank()) {
-            updateDataSet(items)
+        val filteredItems = if (s.isNullOrBlank()) {
+            items
         } else {
-            updateDataSet(
-                items.filter { it.name.contains(s, true) },
-            )
+            items.filter { it.name.contains(s, true) }
         }
+        updateDataSet(withMissingChapterSeparators(filteredItems))
+    }
+
+    private fun withMissingChapterSeparators(chapterList: List<ChapterItem>): List<IFlexible<*>> {
+        if (uiPreferences.hideChapterMissingCount().get() || chapterList.size < 2) {
+            return chapterList
+        }
+        val result = ArrayList<IFlexible<*>>(chapterList.size)
+        chapterList.forEachIndexed { index, chapterItem ->
+            if (index > 0) {
+                val previousChapterItem = chapterList[index - 1]
+                val (higherChapterItem, lowerChapterItem) =
+                    if (chapterItem.chapter_number >= previousChapterItem.chapter_number) {
+                        chapterItem to previousChapterItem
+                    } else {
+                        previousChapterItem to chapterItem
+                    }
+                val missingCount = calculateChapterDifference(
+                    higherChapterItem.chapter_number,
+                    lowerChapterItem.chapter_number,
+                ).toInt()
+                if (missingCount > 0) {
+                    result.add(MissingChaptersItem(missingCount))
+                }
+            }
+            result.add(chapterItem)
+        }
+        return result
     }
 
     override fun onItemSwiped(position: Int, direction: Int) {

@@ -10,6 +10,9 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 
 ## [Unreleased]
 
+### Additions
+- Show a "Missing N chapters" separator directly in the chapter list wherever chapter numbering has a gap, matching the existing missing-chapter detection already used in the reader; toggle it off in Settings > Library > Behavior (closes #25)
+
 ### Fixes
 - Fix memory leaks on theme/night-mode/side-nav changes and when refreshing app shortcuts (ported from upstream tachiyomiJ2K)
 - Fix nested `Filter.Group`s (e.g. Publisher/Genre inside another group) not rendering at all: FlexibleAdapter doesn't reliably display sub-items of an item that is both expandable and sectionable, so a nested group's label row is now a plain (non-expandable) item that manually splices its children into the list on tap instead of relying on the adapter's own expand mechanism - keeping per-group collapse without the display bug

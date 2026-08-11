@@ -232,6 +232,11 @@ class SettingsLibraryController : SettingsLegacyController() {
                 bindTo(uiPreferences.enableChapterSwipeAction())
                 titleRes = MR.strings.enable_chapter_swipe_action
             }
+            switchPreference {
+                bindTo(uiPreferences.hideChapterMissingCount())
+                titleRes = MR.strings.hide_missing_chapter_indicators
+                summaryRes = MR.strings.hide_missing_chapter_indicators_summary
+            }
             multiSelectListPreferenceMat(activity) {
                 bindTo(libraryPreferences.markDuplicateReadChapterAsRead())
                 titleRes = MR.strings.pref_mark_as_read_duplicate_read_chapter
