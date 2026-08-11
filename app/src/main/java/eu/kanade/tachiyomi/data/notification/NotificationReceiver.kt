@@ -550,7 +550,12 @@ class NotificationReceiver : BroadcastReceiver() {
                 setDataAndType(uri, "text/plain")
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_GRANT_READ_URI_PERMISSION
             }
-            return PendingIntent.getActivity(context, 0, Intent.createChooser(intent, null), PendingIntent.FLAG_IMMUTABLE)
+            return PendingIntent.getActivity(
+                context,
+                0,
+                Intent.createChooser(intent, null),
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+            )
         }
 
         /**
