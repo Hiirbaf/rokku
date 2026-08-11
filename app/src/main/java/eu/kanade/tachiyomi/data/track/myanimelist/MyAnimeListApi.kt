@@ -241,7 +241,7 @@ class MyAnimeListApi(private val client: OkHttpClient, interceptor: MyAnimeListI
     }
 
     companion object {
-        private const val CLIENT_ID = "9e6656c53d1910999cc3c537e0e6256a"
+        private const val CLIENT_ID = "89043a03a6516db2f9fae38edc2941a6"
 
         private const val BASE_OAUTH_URL = "https://myanimelist.net/v1/oauth2"
         private const val BASE_API_URL = "https://api.myanimelist.net/v2"

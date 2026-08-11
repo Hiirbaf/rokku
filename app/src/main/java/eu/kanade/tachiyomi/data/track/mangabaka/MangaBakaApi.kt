@@ -258,7 +258,7 @@ class MangaBakaApi(
     companion object {
         private val trackPreferences: TrackPreferences by injectLazy()
 
-        private const val CLIENT_ID = "ppVWLKHpvCXGgHnuCMBPqnbGTrVRmpqh"
+        private const val CLIENT_ID = "WvSxqefLtTzFlbLVaDLRspjWiuKjKvJv"
 
         private const val BASE_URL = "https://mangabaka.org"
         private const val API_BASE_URL = "https://api.mangabaka.org"
