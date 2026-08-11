@@ -54,8 +54,6 @@ class MangaBaka(
 
     override val supportsReadingDates: Boolean = true
 
-    val supportsPrivateTracking: Boolean = true
-
     private val scorePreference = trackPreferences.mangabakaScoreType()
 
     override fun getLogo() = R.drawable.ic_tracker_mangabaka
