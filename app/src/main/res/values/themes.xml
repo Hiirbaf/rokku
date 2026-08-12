@@ -184,7 +184,7 @@
         <item name="colorOnTertiary">@color/tokyonight_on_tertiary</item>
         <item name="background">@color/tokyonight_background</item>
         <item name="colorOnBackground">@color/tokyonight_on_background</item>
-        <item name="colorSurface">@color/tokyonight_surface</item>
+        <item name="colorSurface">@color/tokyonight_secondary_container</item>
         <item name="colorSurfaceContainer">@color/tokyonight_surface_container</item>
         <item name="tabBarIconInactive">@color/tokyonight_inactive</item>
         <item name="tabBarTextColor">@color/tokyonight_primary</item>
