@@ -330,8 +330,18 @@ class Downloader(
     private suspend fun downloadChapter(download: Download) {
         val mangaDir = provider.getMangaDir(download.manga, download.source)
 
-        val availSpace = DiskUtil.getAvailableStorageSpace(mangaDir)
+        val availSpace = DiskUtil.getAvailableStorageSpace(context, mangaDir)
         val chapName = download.chapter.preferredChapterName(context, download.manga, preferences)
+
+        // Stopping the whole queue beats erroring every chapter in turn, which is what filling the
+        // disk to zero used to look like from the outside.
+        val pauseThreshold = downloadPreferences.pauseBelowFreeSpaceMb().get().toLong() * 1024 * 1024
+        if (pauseThreshold > 0L && availSpace != -1L && availSpace < pauseThreshold) {
+            pause()
+            notifier.onWarning(context.getString(MR.strings.download_paused_low_space))
+            return
+        }
+
         if (availSpace != -1L && availSpace < MIN_DISK_SPACE) {
             download.status = Download.State.ERROR
             notifier.onError(context.getString(MR.strings.couldnt_download_low_space), chapName)
