@@ -5,6 +5,7 @@ import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Environment
 import android.os.StatFs
+import android.provider.DocumentsContract
 import androidx.core.os.EnvironmentCompat
 import com.hippo.unifile.UniFile
 import eu.kanade.tachiyomi.util.lang.Hash
@@ -43,8 +44,21 @@ object DiskUtil {
         }
     }
 
-    fun getAvailableStorageSpace(file: UniFile): Long = getAvailableStorageSpace(file.uri.path)
     fun getAvailableStorageSpace(file: File): Long = getAvailableStorageSpace(file.absolutePath)
+
+    /**
+     * Gets the available space for the disk that a file path points to, in bytes.
+     *
+     * [file]'s URI may be a SAF tree/document URI (e.g. when downloads are stored under a
+     * user-picked directory), which has no real filesystem path for `StatFs` to stat directly.
+     * In that case, resolve the underlying storage volume's root and stat that instead.
+     */
+    fun getAvailableStorageSpace(context: Context, file: UniFile): Long {
+        val direct = getAvailableStorageSpace(file.uri.path)
+        if (direct != -1L) return direct
+        val root = resolveFilesystemRoot(context, file.uri) ?: return -1L
+        return getAvailableStorageSpace(root)
+    }
 
     /**
      * Gets the available space for the disk that a file path points to, in bytes.
@@ -56,6 +70,24 @@ object DiskUtil {
         } catch (_: Exception) {
             -1L
         }
+    }
+
+    /**
+     * Maps a `com.android.externalstorage.documents` tree/document URI back to the root
+     * directory of the storage volume it lives on, so its free space can be statted directly.
+     * Returns null for URIs from other providers, where no such mapping is possible.
+     */
+    private fun resolveFilesystemRoot(context: Context, uri: Uri): File? {
+        if (uri.authority != "com.android.externalstorage.documents") return null
+        val docId = try {
+            DocumentsContract.getDocumentId(uri)
+        } catch (_: Exception) {
+            return null
+        }
+        val volumeId = docId.substringBefore(':', missingDelimiterValue = "")
+        if (volumeId.isEmpty()) return null
+        if (volumeId == "primary") return Environment.getExternalStorageDirectory()
+        return getExternalStorages(context).firstOrNull { it.absolutePath.contains(volumeId) }
     }
 
     fun File.isMounted(): Boolean {
