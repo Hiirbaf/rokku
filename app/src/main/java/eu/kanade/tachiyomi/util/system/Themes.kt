@@ -52,6 +52,12 @@ enum class Themes(
         MR.strings.lavender,
         MR.strings.violet,
     ),
+    TOKYO_NIGHT(
+        R.style.Theme_Tachiyomi_TokyoNight,
+        AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM,
+        R.string.tokyo_light,
+        R.string.tokyo_night,
+    ),
     TAKO(
         R.style.Theme_Tachiyomi_Tako,
         AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM,
