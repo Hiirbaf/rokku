@@ -11,23 +11,26 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 ## [Unreleased]
 
 ### Additions
-- Show a "Missing N chapters" separator directly in the chapter list wherever chapter numbering has a gap, matching the existing missing-chapter detection already used in the reader; toggle it off in Settings > Library > Behavior (closes #25)
-- Add a "Select all" option to a manga's genre/tag chips (ported from upstream tachiyomiJ2K), letting you search the library or the current source using every tag at once instead of one at a time
-- Add MangaBaka and Hikka tracker support, including OAuth login (ref #26) ([@Hiirbaf](https://github.com/Hiirbaf))
-- Add private tracking: mark a tracked entry as private (hidden from your public profile) on services that support it (AniList, Bangumi, Kitsu, MangaBaka), toggled via the lock icon on the tracking card (ported from J2K)
-- Add a "Flash the screen on page turn" reader option (white, black, or white then black) to clear ghosting on e-ink displays in paged reading mode
-- Add a "Custom" option to Settings > Library > Global updates, letting you anchor automatic library updates to a specific time of day instead of a rolling interval (the actual fire time is still approximate, subject to system battery optimizations)
+- Showed a "Missing N chapters" separator directly in the chapter list wherever chapter numbering has a gap, matching the existing missing-chapter detection already used in the reader; toggle it off in Settings > Library > Behavior (closes #25)
+- Added a "Select all" option to a manga's genre/tag chips (ported from upstream tachiyomiJ2K), letting you search the library or the current source using every tag at once instead of one at a time
+- Added MangaBaka and Hikka tracker support, including OAuth login (ref #26) ([@Hiirbaf](https://github.com/Hiirbaf))
+- Added private tracking: mark a tracked entry as private (hidden from your public profile) on services that support it (AniList, Bangumi, Kitsu, MangaBaka), toggled via the lock icon on the tracking card (ported from J2K)
+- Added a "Flash the screen on page turn" reader option (white, black, or white then black) to clear ghosting on e-ink displays in paged reading mode
+- Added a "Custom" option to Settings > Library > Global updates, letting you anchor automatic library updates to a specific time of day instead of a rolling interval (the actual fire time is still approximate, subject to system battery optimizations)
+- Added an inline edit action to extension repo items so a repo's URL can be changed without deleting and re-adding it; long-pressing a repo now copies its URL to the clipboard
+- Added a configurable free-space floor (Settings > Downloads) that pauses the download queue and notifies instead of erroring chapter-by-chapter when storage runs critically low
 
 ### Fixes
-- Fix memory leaks on theme/night-mode/side-nav changes and when refreshing app shortcuts (ported from upstream tachiyomiJ2K)
-- Fix nested `Filter.Group`s (e.g. Publisher/Genre inside another group) not rendering at all: FlexibleAdapter doesn't reliably display sub-items of an item that is both expandable and sectionable, so a nested group's label row is now a plain (non-expandable) item that manually splices its children into the list on tap instead of relying on the adapter's own expand mechanism - keeping per-group collapse without the display bug
-- Fix genre/publisher filters staying empty (or stuck on a "Tap Reset to load filters" placeholder) for sources that fetch their filter options from the network in the background (Keiyoushi's `KeiSource` filter-fetching sources, e.g. BatCave): poll for updated filters for a few seconds after opening a source, and re-check once more when the filter sheet is actually opened, instead of only checking once right after the source loads
-- Fix the filter sheet flickering when expanding a group with many nested sub-groups (e.g. Publisher's per-letter groups): the default item animator faded in every newly inserted row at once, which reads as a flash with a large batch; this is a plain filter list, not worth animating
-- Fix MyAnimeList erroring on list entries with partial start/finish reading dates by falling back to January 1st or the 1st of the month
-- Fix the reader getting stuck loading indefinitely in some scenarios by initializing it from the view model's own scope instead of the activity's
+- Fixed memory leaks on theme/night-mode/side-nav changes and when refreshing app shortcuts (ported from upstream tachiyomiJ2K)
+- Fixed nested `Filter.Group`s (e.g. Publisher/Genre inside another group) not rendering at all: FlexibleAdapter doesn't reliably display sub-items of an item that is both expandable and sectionable, so a nested group's label row is now a plain (non-expandable) item that manually splices its children into the list on tap instead of relying on the adapter's own expand mechanism - keeping per-group collapse without the display bug
+- Fixed genre/publisher filters staying empty (or stuck on a "Tap Reset to load filters" placeholder) for sources that fetch their filter options from the network in the background (Keiyoushi's `KeiSource` filter-fetching sources, e.g. BatCave): poll for updated filters for a few seconds after opening a source, and re-check once more when the filter sheet is actually opened, instead of only checking once right after the source loads
+- Fixed the filter sheet flickering when expanding a group with many nested sub-groups (e.g. Publisher's per-letter groups): the default item animator faded in every newly inserted row at once, which reads as a flash with a large batch; this is a plain filter list, not worth animating
+- Fixed MyAnimeList erroring on list entries with partial start/finish reading dates by falling back to January 1st or the 1st of the month
+- Fixed the reader getting stuck loading indefinitely in some scenarios by initializing it from the view model's own scope instead of the activity's
+- Fixed free-space checks (including the low-disk-space download guard) silently never triggering when the download directory is a SAF tree/document URI instead of a plain filesystem path
 
 ### Other
-- Sync with upstream (yokai): add proguard rules to keep `Serializable` `writeReplace`/`readResolve`, and bump `okio` to 3.18.1
+- Synced with upstream (yokai): added proguard rules to keep `Serializable` `writeReplace`/`readResolve`, and bumped `okio` to 3.18.1
 
 ## [1.5.0]
 
