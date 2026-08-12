@@ -20,7 +20,7 @@
     <color name="tokyonight_inactive">#828BB8</color>
     <color name="tokyonight_ripple">#1F86E1FC</color>
     <color name="tokyonight_tertiary">#9854F1</color>
-    <color name="tokyonight_on_tertiary">#FFFFFF</color>
+    <color name="tokyonight_on_tertiary">#00FF35</color>
     <color name="tokyonight_background">#222436</color>
     <color name="tokyonight_on_background">#C8D3F5</color>
     <color name="tokyonight_surface">#222436</color>
