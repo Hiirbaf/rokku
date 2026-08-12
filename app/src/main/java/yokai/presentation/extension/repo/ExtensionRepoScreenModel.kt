@@ -74,6 +74,31 @@ class ExtensionRepoScreenModel : StateScreenModel<ExtensionRepoScreenModel.State
         }
     }
 
+    fun editRepo(oldUrl: String, newUrl: String) {
+        screenModelScope.launchIO {
+            when (val result = createExtensionRepo.await(newUrl)) {
+                is CreateExtensionRepo.Result.Success -> {
+                    deleteExtensionRepo.await(oldUrl)
+                    eventChannel.send(ExtensionRepoEvent.Success)
+                    extensionManager.findAvailableExtensions()
+                }
+
+                is CreateExtensionRepo.Result.InvalidUrl,
+                is CreateExtensionRepo.Result.Error,
+                -> eventChannel.send(ExtensionRepoEvent.InvalidUrl)
+
+                is CreateExtensionRepo.Result.RepoAlreadyExists ->
+                    eventChannel.send(ExtensionRepoEvent.RepoAlreadyExists)
+
+                is CreateExtensionRepo.Result.DuplicateFingerprint -> {
+                    eventChannel.send(
+                        ExtensionRepoEvent.ShowDialog(RepoDialog.Conflict(result.oldRepo, result.newRepo)),
+                    )
+                }
+            }
+        }
+    }
+
     fun refreshRepos() {
         val status = state.value
 

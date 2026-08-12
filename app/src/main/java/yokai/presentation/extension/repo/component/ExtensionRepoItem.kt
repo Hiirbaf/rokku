@@ -1,7 +1,9 @@
 package yokai.presentation.extension.repo.component
 
 import android.content.res.Configuration
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.basicMarquee
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,7 +13,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Label
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -22,7 +26,10 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TextFieldDefaults.indicatorLine
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,16 +42,39 @@ import yokai.domain.extension.repo.model.ExtensionRepo
 import yokai.presentation.component.Gap
 import yokai.presentation.theme.Size
 
-// TODO: Redesign
-// - Edit
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ExtensionRepoItem(
     modifier: Modifier = Modifier,
     extensionRepo: ExtensionRepo,
     onDeleteClick: (String) -> Unit = {},
+    onEditClick: (String, String) -> Unit = { _, _ -> },
+    onCopyUrl: (String) -> Unit = {},
 ) {
+    var isEditing by remember(extensionRepo.baseUrl) { mutableStateOf(false) }
+    var editedUrl by remember(extensionRepo.baseUrl) { mutableStateOf(extensionRepo.baseUrl) }
+
+    fun submitEdit() {
+        val newUrl = editedUrl.trim()
+        if (newUrl.isEmpty() || newUrl == extensionRepo.baseUrl) {
+            isEditing = false
+            return
+        }
+        onEditClick(extensionRepo.baseUrl, newUrl)
+    }
+
+    fun cancelEdit() {
+        editedUrl = extensionRepo.baseUrl
+        isEditing = false
+    }
+
     Row(
-        modifier = modifier.padding(16.dp),
+        modifier = modifier
+            .combinedClickable(
+                onClick = {},
+                onLongClick = { onCopyUrl(extensionRepo.baseUrl) },
+            )
+            .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
@@ -65,21 +95,56 @@ fun ExtensionRepoItem(
                 fontSize = 16.sp,
             )
             Gap(Size.tiny)
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .basicMarquee(),
-                text = extensionRepo.baseUrl,
-                color = MaterialTheme.colorScheme.onBackground,
-                fontSize = 16.sp,
-            )
+            if (isEditing) {
+                TextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = editedUrl,
+                    onValueChange = { editedUrl = it },
+                    textStyle = TextStyle(fontSize = 16.sp),
+                    singleLine = true,
+                    colors = TextFieldDefaults.colors(),
+                )
+            } else {
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .basicMarquee(),
+                    text = extensionRepo.baseUrl,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    fontSize = 16.sp,
+                )
+            }
         }
-        IconButton(onClick = { onDeleteClick(extensionRepo.baseUrl) }) {
-            Icon(
-                imageVector = Icons.Filled.Delete,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onBackground,
-            )
+        if (isEditing) {
+            IconButton(onClick = { cancelEdit() }) {
+                Icon(
+                    imageVector = Icons.Filled.Close,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onBackground,
+                )
+            }
+            IconButton(onClick = { submitEdit() }) {
+                Icon(
+                    imageVector = Icons.Filled.Check,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.secondary,
+                )
+            }
+        } else {
+            IconButton(onClick = { isEditing = true }) {
+                Icon(
+                    imageVector = Icons.Filled.Edit,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onBackground,
+                )
+            }
+            IconButton(onClick = { onDeleteClick(extensionRepo.baseUrl) }) {
+                Icon(
+                    imageVector = Icons.Filled.Delete,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onBackground,
+                )
+            }
         }
     }
 }
