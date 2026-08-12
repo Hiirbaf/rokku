@@ -240,7 +240,7 @@ class PreferencesHelper(val context: Context, val preferenceStore: PreferenceSto
 
     fun libraryUpdateMangaRestriction() = preferenceStore.getStringSet(
         "library_update_manga_restriction",
-        setOf(MANGA_HAS_UNREAD, MANGA_NON_COMPLETED, MANGA_NON_READ),
+        setOf(MANGA_HAS_UNREAD, MANGA_NON_COMPLETED, MANGA_NON_READ, MANGA_CANCELLED),
     )
 
     fun libraryUpdateCategories() = preferenceStore.getStringSet("library_update_categories", emptySet())

@@ -19,6 +19,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Added a "Custom" option to Settings > Library > Global updates, letting you anchor automatic library updates to a specific time of day instead of a rolling interval (the actual fire time is still approximate, subject to system battery optimizations)
 - Added an inline edit action to extension repo items so a repo's URL can be changed without deleting and re-adding it; long-pressing a repo now copies its URL to the clipboard
 - Added a configurable free-space floor (Settings > Downloads) that pauses the download queue and notifies instead of erroring chapter-by-chapter when storage runs critically low
+- Added a "With 'Cancelled' status" library update restriction (Settings > Library), alongside the existing "With 'Completed' status" one
 
 ### Fixes
 - Fixed library updates re-downloading and re-listing as unread a chapter a source re-released under a new URL when "mark duplicate read chapters as read" is on: chapters that come back already read from that sync are now skipped by the downloader and the update notification too

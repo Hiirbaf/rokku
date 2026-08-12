@@ -11,6 +11,7 @@ import yokai.util.lang.getString
 const val MANGA_NON_COMPLETED = "manga_ongoing"
 const val MANGA_HAS_UNREAD = "manga_fully_read"
 const val MANGA_NON_READ = "manga_started"
+const val MANGA_CANCELLED = "manga_cancelled"
 
 // Sentinel value for `libraryUpdateInterval`: update once every 24 hours at a user-picked
 // time of day (`libraryUpdateCustomTimeOfDay`) instead of a fixed hour interval.

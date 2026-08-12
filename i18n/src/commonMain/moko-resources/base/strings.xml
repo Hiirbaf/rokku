@@ -217,6 +217,7 @@
     <string name="notification_update_error">%1$d update(s) failed</string>
     <string name="notification_update_skipped">%1$d update(s) skipped</string>
     <string name="skipped_reason_completed">Skipped because series is complete</string>
+    <string name="skipped_reason_cancelled">Skipped because series is cancelled</string>
     <string name="skipped_reason_not_caught_up">Skipped because there are unread chapters</string>
     <string name="skipped_reason_not_started">Skipped because no chapters are read</string>
     <string name="skipped_reason_not_always_update">Skipped because series does not require updates</string>
@@ -230,6 +231,7 @@
     <string name="pref_library_update_manga_restriction">Skip updating titles</string>
     <string name="pref_update_only_completely_read">With unread chapter(s)</string>
     <string name="pref_update_only_non_completed">With \"Completed\" status</string>
+    <string name="pref_update_only_cancelled">With \"Cancelled\" status</string>
     <string name="pref_update_only_started">That haven\'t been started</string>
     <string name="pref_update_only_completely_read_summary">Only update series if there is no unread chapter (completely read)</string>
     <string name="library_update_restriction">Device restrictions</string>

@@ -11,6 +11,7 @@ import eu.kanade.tachiyomi.data.preference.DEVICE_ONLY_ON_WIFI
 import eu.kanade.tachiyomi.data.preference.DelayedLibrarySuggestionsJob
 import eu.kanade.tachiyomi.data.preference.LIBRARY_UPDATE_INTERVAL_CUSTOM
 import eu.kanade.tachiyomi.data.preference.MANGA_HAS_UNREAD
+import eu.kanade.tachiyomi.data.preference.MANGA_CANCELLED
 import eu.kanade.tachiyomi.data.preference.MANGA_NON_COMPLETED
 import eu.kanade.tachiyomi.data.preference.MANGA_NON_READ
 import eu.kanade.tachiyomi.data.preference.changesIn
@@ -228,8 +229,9 @@ class SettingsLibraryController : SettingsLegacyController() {
                     MR.strings.pref_update_only_completely_read,
                     MR.strings.pref_update_only_started,
                     MR.strings.pref_update_only_non_completed,
+                    MR.strings.pref_update_only_cancelled,
                 )
-                entryValues = listOf(MANGA_HAS_UNREAD, MANGA_NON_READ, MANGA_NON_COMPLETED)
+                entryValues = listOf(MANGA_HAS_UNREAD, MANGA_NON_READ, MANGA_NON_COMPLETED, MANGA_CANCELLED)
                 noSelectionRes = MR.strings.none
             }
 

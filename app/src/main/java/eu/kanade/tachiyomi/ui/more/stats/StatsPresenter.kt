@@ -4,6 +4,7 @@ import eu.kanade.tachiyomi.data.database.models.LibraryManga
 import eu.kanade.tachiyomi.data.database.models.Track
 import eu.kanade.tachiyomi.data.download.DownloadManager
 import eu.kanade.tachiyomi.data.preference.MANGA_HAS_UNREAD
+import eu.kanade.tachiyomi.data.preference.MANGA_CANCELLED
 import eu.kanade.tachiyomi.data.preference.MANGA_NON_COMPLETED
 import eu.kanade.tachiyomi.data.preference.MANGA_NON_READ
 import eu.kanade.tachiyomi.data.preference.PreferencesHelper
@@ -71,6 +72,7 @@ class StatsPresenter(
             .filterNot {
                 val manga = it.value.first()
                 (MANGA_NON_COMPLETED in restrictions && manga.manga.status == SManga.COMPLETED) ||
+                    (MANGA_CANCELLED in restrictions && manga.manga.status == SManga.CANCELLED) ||
                     (MANGA_HAS_UNREAD in restrictions && manga.unread != 0) ||
                     (MANGA_NON_READ in restrictions && manga.totalChapters > 0 && !manga.hasRead)
             }

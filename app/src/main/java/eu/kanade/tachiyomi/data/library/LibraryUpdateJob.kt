@@ -33,6 +33,7 @@ import eu.kanade.tachiyomi.data.preference.DEVICE_CHARGING
 import eu.kanade.tachiyomi.data.preference.DEVICE_ONLY_ON_WIFI
 import eu.kanade.tachiyomi.data.preference.LIBRARY_UPDATE_INTERVAL_CUSTOM
 import eu.kanade.tachiyomi.data.preference.MANGA_HAS_UNREAD
+import eu.kanade.tachiyomi.data.preference.MANGA_CANCELLED
 import eu.kanade.tachiyomi.data.preference.MANGA_NON_COMPLETED
 import eu.kanade.tachiyomi.data.preference.MANGA_NON_READ
 import eu.kanade.tachiyomi.data.preference.PreferencesHelper
@@ -528,6 +529,10 @@ class LibraryUpdateJob(private val context: Context, workerParams: WorkerParamet
             when {
                 MANGA_NON_COMPLETED in restrictions && manga.manga.status == SManga.COMPLETED -> {
                     skippedUpdates[manga.manga] = context.getString(MR.strings.skipped_reason_completed)
+                }
+
+                MANGA_CANCELLED in restrictions && manga.manga.status == SManga.CANCELLED -> {
+                    skippedUpdates[manga.manga] = context.getString(MR.strings.skipped_reason_cancelled)
                 }
 
                 MANGA_HAS_UNREAD in restrictions && manga.unread != 0 -> {
