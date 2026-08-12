@@ -21,6 +21,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Added a configurable free-space floor (Settings > Downloads) that pauses the download queue and notifies instead of erroring chapter-by-chapter when storage runs critically low
 
 ### Fixes
+- Fixed the started/finished reading dates never being set on trackers when reading through the app: they're now stamped locally on the first chapter read and on reaching the last chapter, without overwriting a date already set by the reader or returned by the tracker
 - Fixed memory leaks on theme/night-mode/side-nav changes and when refreshing app shortcuts (ported from upstream tachiyomiJ2K)
 - Fixed nested `Filter.Group`s (e.g. Publisher/Genre inside another group) not rendering at all: FlexibleAdapter doesn't reliably display sub-items of an item that is both expandable and sectionable, so a nested group's label row is now a plain (non-expandable) item that manually splices its children into the list on tap instead of relying on the adapter's own expand mechanism - keeping per-group collapse without the display bug
 - Fixed genre/publisher filters staying empty (or stuck on a "Tap Reset to load filters" placeholder) for sources that fetch their filter options from the network in the background (Keiyoushi's `KeiSource` filter-fetching sources, e.g. BatCave): poll for updated filters for a few seconds after opening a source, and re-check once more when the filter sheet is actually opened, instead of only checking once right after the source loads

@@ -11,6 +11,7 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import co.touchlab.kermit.Logger
 import eu.kanade.tachiyomi.data.preference.PreferencesHelper
+import eu.kanade.tachiyomi.util.chapter.stampReadingDates
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import uy.kohesive.injekt.Injekt
@@ -54,6 +55,7 @@ class DelayedTrackingUpdateJob(context: Context, workerParams: WorkerParameters)
                     if (service != null && track != null) {
                         try {
                             track.last_chapter_read = trackChapter.second
+                            stampReadingDates(track)
                             service.update(track, true)
                             insertTrack.await(track)
                         } catch (e: Exception) {
