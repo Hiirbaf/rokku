@@ -8,6 +8,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import androidx.core.view.WindowInsetsCompat.Type.systemBars
+import androidx.core.view.isVisible
 import androidx.core.view.updatePaddingRelative
 import com.bluelinelabs.conductor.ControllerChangeHandler
 import com.bluelinelabs.conductor.ControllerChangeType
@@ -344,6 +345,14 @@ open class GlobalSearchController(
     }
 
     /**
+     * Called from the presenter right before it starts resolving a pasted manga URL, so the user
+     * sees a spinner instead of a blank list while the fetch is in flight.
+     */
+    fun showUrlSearchLoading() {
+        binding.progress.isVisible = true
+    }
+
+    /**
      * Called from the presenter when the searched query resolved to a manga URL from an
      * already-installed source. Opens the manga directly, skipping the search results list.
      */
@@ -359,6 +368,7 @@ open class GlobalSearchController(
      * regular search instead of leaving the user on a blank screen.
      */
     fun onUrlSearchFailed(query: String) {
+        binding.progress.isVisible = false
         // presenter.query was already set to `query` by trySearchMangaByUrl, so search() would
         // no-op on its "nothing changed" guard unless reset first.
         presenter.query = ""

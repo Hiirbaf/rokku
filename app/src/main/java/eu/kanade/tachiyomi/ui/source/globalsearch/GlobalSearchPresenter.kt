@@ -13,6 +13,8 @@ import eu.kanade.tachiyomi.source.SourceManager
 import eu.kanade.tachiyomi.source.model.MangasPage
 import eu.kanade.tachiyomi.source.model.SManga
 import eu.kanade.tachiyomi.source.online.HttpSource
+import eu.kanade.tachiyomi.source.online.ResolvableSource
+import eu.kanade.tachiyomi.source.online.UriType
 import eu.kanade.tachiyomi.ui.base.presenter.BaseCoroutinePresenter
 import eu.kanade.tachiyomi.util.system.launchIO
 import eu.kanade.tachiyomi.util.system.launchUI
@@ -88,8 +90,12 @@ open class GlobalSearchPresenter(
         extensionFilter = initialExtensionFilter
 
         if (items.isEmpty()) {
-            // Perform a search with previous or initial state
-            search(initialQuery.orEmpty())
+            // Perform a search with previous or initial state, unless the query is a manga URL
+            // that trySearchMangaByUrl can resolve directly (see its kdoc).
+            val query = initialQuery.orEmpty()
+            if (!trySearchMangaByUrl(query)) {
+                search(query)
+            }
         }
         presenterScope.launchUI {
             view?.setItems(items)
@@ -236,36 +242,90 @@ open class GlobalSearchPresenter(
     }
 
     /**
-     * Finds an installed [HttpSource] whose base URL is a prefix of [query], meaning the pasted
-     * text is a manga URL for a source the user already has installed.
+     * Finds an installed [CatalogueSource] whose base URL is a prefix of [query], meaning the
+     * pasted text is likely a manga URL for a source the user already has installed.
      *
-     * @return the matching source and the remaining manga path, or null if none match.
+     * Sources with the same base URL (e.g. one HttpSource extension registered per language, like
+     * MangaDex) are disambiguated by preferring an English source, then any other of the user's
+     * enabled sources -- otherwise chapters can come back empty for a language the manga doesn't
+     * have translations in, even though the user has multiple languages enabled.
+     *
+     * @return the matching source, or null if none match.
      */
-    private fun getUrlSourcePair(query: String): Pair<HttpSource, String>? {
+    private fun getUrlMatchingSource(query: String): CatalogueSource? {
         if (!query.startsWith("http://", true) && !query.startsWith("https://", true)) return null
-        return sourceManager.getCatalogueSources()
+        val matches = sourceManager.getCatalogueSources()
             .filterIsInstance<HttpSource>()
-            .firstOrNull { query.startsWith(it.baseUrl, ignoreCase = true) }
-            ?.let { it to query.removePrefix(it.baseUrl) }
+            .filter { query.startsWith(it.baseUrl, ignoreCase = true) }
+        val enabledMatches = matches.filter { it in sources }
+        return enabledMatches.firstOrNull { it.lang == "en" }
+            ?: enabledMatches.firstOrNull()
+            ?: matches.firstOrNull()
     }
+
+    /**
+     * Finds an installed [ResolvableSource] that recognizes [query] as a manga URL, letting the
+     * source itself resolve it instead of assuming the URL path maps to `manga.url`.
+     *
+     * @return the matching source, or null if none recognize [query] as a manga URL.
+     */
+    private fun getResolvableMangaSource(query: String): ResolvableSource? {
+        return sourceManager.getCatalogueSources()
+            .filterIsInstance<ResolvableSource>()
+            .firstOrNull { it.getUriType(query) == UriType.Manga }
+    }
+
+    private var urlSearchJob: Job? = null
+    private var urlSearchQuery: String? = null
 
     /**
      * If [query] is a manga URL matching an installed source, fetches that manga directly and
      * asks the view to open it, skipping the per-source search entirely.
      *
+     * Sources implementing [ResolvableSource] (extensions-lib 1.5+) resolve the URL themselves.
+     * Otherwise, [query] is run through the matching source's own [CatalogueSource.getSearchManga]
+     * as a normal search query -- many sources (MangaDex, Madara-based templates, etc.) detect
+     * URL-shaped queries there and resolve straight to the matching manga. `manga.url` can't be
+     * reliably derived by stripping the source's base URL off the pasted URL, since many sources
+     * only store an id or slug there, so the app never constructs it itself.
+     *
      * @return true if [query] matched an installed source and is being resolved.
      */
     fun trySearchMangaByUrl(query: String): Boolean {
-        val (source, path) = getUrlSourcePair(query) ?: return false
+        // This exact query was already matched and is being (or was already) resolved -- e.g. the
+        // presenter's initial resolution in onCreate() and the controller's onViewCreated()
+        // fallback both call this for the same initial query. Report it as handled again without
+        // starting a second, redundant resolution that could re-navigate and undo the first one.
+        if (query.isNotEmpty() && query == urlSearchQuery) return true
+
+        val resolvableSource = getResolvableMangaSource(query)
+        val urlMatchingSource = if (resolvableSource == null) getUrlMatchingSource(query) else null
+        if (resolvableSource == null && urlMatchingSource == null) return false
+
         this.query = query
-        presenterScope.launch {
+        urlSearchQuery = query
+        view?.showUrlSearchLoading()
+        urlSearchJob = presenterScope.launch {
             try {
-                val sManga = SManga.create().apply {
-                    url = path
-                    title = query
+                val (source, sManga) = if (resolvableSource != null) {
+                    val resolvedManga = resolvableSource.getManga(query) ?: run {
+                        withUIContext { view?.onUrlSearchFailed(query) }
+                        return@launch
+                    }
+                    resolvableSource to resolvedManga
+                } else {
+                    val source = urlMatchingSource!!
+                    val results = source.getSearchManga(1, query, source.getFilterList()).mangas
+                    val resolvedManga = results.singleOrNull() ?: run {
+                        withUIContext { view?.onUrlSearchFailed(query) }
+                        return@launch
+                    }
+                    source to resolvedManga
                 }
-                var manga = networkToLocalManga(sManga, source.id) ?: return@launch
-                manga = getMangaDetails(manga, source)
+                val manga = networkToLocalManga(sManga, source.id) ?: return@launch
+                // Leave manga.initialized as-is (don't fetch details/chapters here) -- same as
+                // the normal single-result-search shortcut below, so MangaDetailsController's own
+                // presenter does the full fetch (including chapters) when it opens.
                 withUIContext { view?.openMangaFromUrl(manga) }
             } catch (e: Exception) {
                 withUIContext { view?.onUrlSearchFailed(query) }
