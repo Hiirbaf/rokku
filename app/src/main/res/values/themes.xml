@@ -173,8 +173,8 @@
     <!--== Tokyo Night Theme ==-->
     <style name="Theme.Tachiyomi.TokyoNight">
         <item name="colorPrimary">@color/tokyonight_primary</item>
+        <item name="colorPrimaryContainer">@color/tokyonight_primary_container</item>
         <item name="colorPrimaryInverse">@color/tokyonight_primary_inverse</item>
-        <item name="colorPrimaryVariant">@color/tokyonight_primary_variant</item>
         <item name="colorOnPrimary">@color/tokyonight_on_primary</item>
         <item name="colorSecondary">@color/tokyonight_secondary</item>
         <item name="colorOnSecondary">@color/tokyonight_on_secondary</item>
@@ -187,7 +187,7 @@
         <item name="colorSurface">@color/tokyonight_surface</item>
         <item name="colorSurfaceContainer">@color/tokyonight_surface_container</item>
         <item name="tabBarIconInactive">@color/tokyonight_inactive</item>
-        <item name="tabBarTextColor">@color/tokyonight_primary_variant</item>
+        <item name="tabBarTextColor">@color/tokyonight_secondary</item>
         <item name="colorOnSurfaceVariant">@color/tokyonight_on_surface_variant</item>
         <item name="colorSurfaceContainerHigh">@color/tokyonight_surface_container_high</item>
         <item name="colorSurfaceContainerHighest">@color/tokyonight_surface_container_highest</item>
