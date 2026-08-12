@@ -228,6 +228,9 @@ class PreferencesHelper(val context: Context, val preferenceStore: PreferenceSto
 
     fun libraryUpdateInterval() = preferenceStore.getInt(Keys.libraryUpdateInterval, 24)
 
+    /** Minutes since midnight (0..1439) used as the target time when [libraryUpdateInterval] is [LIBRARY_UPDATE_INTERVAL_CUSTOM]. */
+    fun libraryUpdateCustomTimeOfDay() = preferenceStore.getInt(Keys.libraryUpdateCustomTimeOfDay, 7 * 60)
+
     fun libraryUpdateLastTimestamp() = preferenceStore.getLong("library_update_last_timestamp", 0L)
 
     fun libraryUpdateDeviceRestriction() = preferenceStore.getStringSet(

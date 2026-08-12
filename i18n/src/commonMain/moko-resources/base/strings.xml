@@ -225,6 +225,8 @@
 
     <!-- Library settings -->
     <string name="library_update_frequency">Library update frequency</string>
+    <string name="library_update_custom_time">Update time</string>
+    <string name="library_update_custom_time_summary">Approximate time of day the library will update, once every 24 hours</string>
     <string name="pref_library_update_manga_restriction">Skip updating titles</string>
     <string name="pref_update_only_completely_read">With unread chapter(s)</string>
     <string name="pref_update_only_non_completed">With \"Completed\" status</string>
@@ -1069,6 +1071,7 @@
     <string name="every_2_days">Every 2 days</string>
     <string name="every_3_days">Every 3 days</string>
     <string name="weekly">Weekly</string>
+    <string name="custom">Custom</string>
 
     <!-- File Picker Titles -->
     <string name="select_cover_image">Select cover image</string>

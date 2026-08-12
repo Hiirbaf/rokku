@@ -1,5 +1,7 @@
 package eu.kanade.tachiyomi.ui.setting.controllers
 
+import android.app.TimePickerDialog
+import android.text.format.DateFormat
 import androidx.preference.PreferenceScreen
 import eu.kanade.tachiyomi.data.database.models.Category
 import eu.kanade.tachiyomi.data.library.LibraryUpdateJob
@@ -7,6 +9,7 @@ import eu.kanade.tachiyomi.data.preference.DEVICE_BATTERY_NOT_LOW
 import eu.kanade.tachiyomi.data.preference.DEVICE_CHARGING
 import eu.kanade.tachiyomi.data.preference.DEVICE_ONLY_ON_WIFI
 import eu.kanade.tachiyomi.data.preference.DelayedLibrarySuggestionsJob
+import eu.kanade.tachiyomi.data.preference.LIBRARY_UPDATE_INTERVAL_CUSTOM
 import eu.kanade.tachiyomi.data.preference.MANGA_HAS_UNREAD
 import eu.kanade.tachiyomi.data.preference.MANGA_NON_COMPLETED
 import eu.kanade.tachiyomi.data.preference.MANGA_NON_READ
@@ -39,6 +42,7 @@ import yokai.domain.manga.interactor.GetLibraryManga
 import yokai.domain.ui.UiPreferences
 import yokai.i18n.MR
 import yokai.util.lang.getString
+import java.util.Calendar
 import eu.kanade.tachiyomi.data.preference.PreferenceKeys as Keys
 import eu.kanade.tachiyomi.ui.setting.summaryMRes as summaryRes
 import eu.kanade.tachiyomi.ui.setting.titleMRes as titleRes
@@ -147,8 +151,9 @@ class SettingsLibraryController : SettingsLegacyController() {
                     MR.strings.every_2_days,
                     MR.strings.every_3_days,
                     MR.strings.weekly,
+                    MR.strings.custom,
                 )
-                entryValues = listOf(0, 12, 24, 48, 72, 168)
+                entryValues = listOf(0, 12, 24, 48, 72, 168, LIBRARY_UPDATE_INTERVAL_CUSTOM)
                 defaultValue = 24
 
                 onChange { newValue ->
@@ -156,11 +161,45 @@ class SettingsLibraryController : SettingsLegacyController() {
                     LibraryUpdateJob.setupTask(context, 0)
 
                     val interval = newValue as Int
-                    if (interval > 0) {
+                    if (interval != 0) {
                         (activity as? MainActivity)?.showNotificationPermissionPrompt(true)
                         LibraryUpdateJob.setupTask(context, interval)
                     }
                     true
+                }
+            }
+            preference {
+                val pref = this
+                titleRes = MR.strings.library_update_custom_time
+                summaryRes = MR.strings.library_update_custom_time_summary
+
+                fun updateSummary(minutesOfDay: Int) {
+                    val cal = Calendar.getInstance().apply {
+                        set(Calendar.HOUR_OF_DAY, minutesOfDay / 60)
+                        set(Calendar.MINUTE, minutesOfDay % 60)
+                    }
+                    pref.summary = DateFormat.getTimeFormat(context).format(cal.time)
+                }
+                updateSummary(preferences.libraryUpdateCustomTimeOfDay().get())
+
+                preferences.libraryUpdateInterval().changesIn(viewScope) {
+                    isVisible = it == LIBRARY_UPDATE_INTERVAL_CUSTOM
+                }
+
+                onClick {
+                    val current = preferences.libraryUpdateCustomTimeOfDay().get()
+                    TimePickerDialog(
+                        activity,
+                        { _, hourOfDay, minute ->
+                            val minutesOfDay = hourOfDay * 60 + minute
+                            preferences.libraryUpdateCustomTimeOfDay().set(minutesOfDay)
+                            updateSummary(minutesOfDay)
+                            LibraryUpdateJob.setupTask(context)
+                        },
+                        current / 60,
+                        current % 60,
+                        DateFormat.is24HourFormat(context),
+                    ).show()
                 }
             }
             multiSelectListPreferenceMat(activity) {
@@ -172,7 +211,7 @@ class SettingsLibraryController : SettingsLegacyController() {
                 noSelectionRes = MR.strings.none
 
                 preferences.libraryUpdateInterval().changesIn(viewScope) {
-                    isVisible = it > 0
+                    isVisible = it != 0
                 }
 
                 onChange {

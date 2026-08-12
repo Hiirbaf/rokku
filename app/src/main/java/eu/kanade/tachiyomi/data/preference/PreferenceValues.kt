@@ -12,6 +12,10 @@ const val MANGA_NON_COMPLETED = "manga_ongoing"
 const val MANGA_HAS_UNREAD = "manga_fully_read"
 const val MANGA_NON_READ = "manga_started"
 
+// Sentinel value for `libraryUpdateInterval`: update once every 24 hours at a user-picked
+// time of day (`libraryUpdateCustomTimeOfDay`) instead of a fixed hour interval.
+const val LIBRARY_UPDATE_INTERVAL_CUSTOM = -1
+
 // Device
 const val DEVICE_ONLY_ON_WIFI = "wifi"
 const val DEVICE_CHARGING = "ac"

@@ -16,6 +16,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Add MangaBaka and Hikka tracker support, including OAuth login (ref #26) ([@Hiirbaf](https://github.com/Hiirbaf))
 - Add private tracking: mark a tracked entry as private (hidden from your public profile) on services that support it (AniList, Bangumi, Kitsu, MangaBaka), toggled via the lock icon on the tracking card (ported from J2K)
 - Add a "Flash the screen on page turn" reader option (white, black, or white then black) to clear ghosting on e-ink displays in paged reading mode
+- Add a "Custom" option to Settings > Library > Global updates, letting you anchor automatic library updates to a specific time of day instead of a rolling interval (the actual fire time is still approximate, subject to system battery optimizations)
 
 ### Fixes
 - Fix memory leaks on theme/night-mode/side-nav changes and when refreshing app shortcuts (ported from upstream tachiyomiJ2K)

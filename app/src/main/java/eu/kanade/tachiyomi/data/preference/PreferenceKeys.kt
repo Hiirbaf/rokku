@@ -127,6 +127,8 @@ object PreferenceKeys {
 
     const val libraryUpdateInterval = "pref_library_update_interval_key"
 
+    const val libraryUpdateCustomTimeOfDay = "pref_library_update_custom_time_of_day_key"
+
     const val filterDownloaded = "pref_filter_downloaded_key"
 
     const val filterUnread = "pref_filter_unread_key"

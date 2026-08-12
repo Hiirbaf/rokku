@@ -31,6 +31,7 @@ import eu.kanade.tachiyomi.data.notification.Notifications
 import eu.kanade.tachiyomi.data.preference.DEVICE_BATTERY_NOT_LOW
 import eu.kanade.tachiyomi.data.preference.DEVICE_CHARGING
 import eu.kanade.tachiyomi.data.preference.DEVICE_ONLY_ON_WIFI
+import eu.kanade.tachiyomi.data.preference.LIBRARY_UPDATE_INTERVAL_CUSTOM
 import eu.kanade.tachiyomi.data.preference.MANGA_HAS_UNREAD
 import eu.kanade.tachiyomi.data.preference.MANGA_NON_COMPLETED
 import eu.kanade.tachiyomi.data.preference.MANGA_NON_READ
@@ -89,6 +90,7 @@ import yokai.i18n.MR
 import yokai.util.lang.getString
 import java.io.File
 import java.lang.ref.WeakReference
+import java.util.Calendar
 import java.util.Date
 import java.util.concurrent.CancellationException
 import java.util.concurrent.TimeUnit
@@ -148,6 +150,20 @@ class LibraryUpdateJob(private val context: Context, workerParams: WorkerParamet
     private val notifier = LibraryUpdateNotifier(context.localeContext)
 
     override suspend fun doWork(): Result {
+        try {
+            return performWork()
+        } finally {
+            // A custom time-of-day schedule is a self-rescheduling chain of OneTimeWorkRequests
+            // (see setupTask()), not a WorkManager PeriodicWorkRequest - unlike the periodic case,
+            // nothing else re-arms the next run. This must fire on every exit path (success,
+            // failure, retry, or an exception) or the chain silently stops.
+            if (tags.contains(WORK_NAME_AUTO) && preferences.libraryUpdateInterval().get() == LIBRARY_UPDATE_INTERVAL_CUSTOM) {
+                setupTask(context)
+            }
+        }
+    }
+
+    private suspend fun performWork(): Result {
         if (tags.contains(WORK_NAME_AUTO)) {
             val preferences = Injekt.get<PreferencesHelper>()
             val restrictions = preferences.libraryUpdateDeviceRestriction().get()
@@ -717,7 +733,32 @@ class LibraryUpdateJob(private val context: Context, workerParams: WorkerParamet
         fun setupTask(context: Context, prefInterval: Int? = null) {
             val preferences = Injekt.get<PreferencesHelper>()
             val interval = prefInterval ?: preferences.libraryUpdateInterval().get()
-            if (interval > 0) {
+            if (interval == LIBRARY_UPDATE_INTERVAL_CUSTOM) {
+                val restrictions = preferences.libraryUpdateDeviceRestriction().get()
+
+                val constraints = Constraints.Builder()
+                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                    .setRequiresCharging(DEVICE_CHARGING in restrictions)
+                    .setRequiresBatteryNotLow(DEVICE_BATTERY_NOT_LOW in restrictions)
+                    .build()
+
+                val delayMillis = millisUntilNextTimeOfDay(preferences.libraryUpdateCustomTimeOfDay().get())
+                val request = OneTimeWorkRequestBuilder<LibraryUpdateJob>()
+                    .addTag(TAG)
+                    .addTag(WORK_NAME_AUTO)
+                    .setInitialDelay(delayMillis, TimeUnit.MILLISECONDS)
+                    .setConstraints(constraints)
+                    .build()
+
+                // REPLACE (not KEEP) so that changing the custom time in settings, or the
+                // self-reschedule in doWork()'s finally block, always takes effect immediately
+                // instead of waiting behind a stale pending run.
+                WorkManager.getInstance(context).enqueueUniqueWork(
+                    WORK_NAME_AUTO,
+                    ExistingWorkPolicy.REPLACE,
+                    request,
+                )
+            } else if (interval > 0) {
                 val restrictions = preferences.libraryUpdateDeviceRestriction().get()
 
                 val constraints = Constraints.Builder()
@@ -745,6 +786,24 @@ class LibraryUpdateJob(private val context: Context, workerParams: WorkerParamet
             } else {
                 WorkManager.getInstance(context).cancelAllWorkByTag(WORK_NAME_AUTO)
             }
+        }
+
+        /**
+         * Milliseconds from now until the next occurrence of [minutesOfDay] (minutes since
+         * midnight, local time), rolling over to tomorrow if that time has already passed today.
+         */
+        private fun millisUntilNextTimeOfDay(minutesOfDay: Int): Long {
+            val now = Calendar.getInstance()
+            val target = (now.clone() as Calendar).apply {
+                set(Calendar.HOUR_OF_DAY, minutesOfDay / 60)
+                set(Calendar.MINUTE, minutesOfDay % 60)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MILLISECOND, 0)
+            }
+            if (target.timeInMillis <= now.timeInMillis) {
+                target.add(Calendar.DAY_OF_YEAR, 1)
+            }
+            return target.timeInMillis - now.timeInMillis
         }
 
         fun cancelAllWorks(context: Context) {
