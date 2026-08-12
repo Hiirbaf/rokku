@@ -32,6 +32,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Fixed MyAnimeList erroring on list entries with partial start/finish reading dates by falling back to January 1st or the 1st of the month
 - Fixed the reader getting stuck loading indefinitely in some scenarios by initializing it from the view model's own scope instead of the activity's
 - Fixed free-space checks (including the low-disk-space download guard) silently never triggering when the download directory is a SAF tree/document URI instead of a plain filesystem path
+- Fixed pasting a manga URL into Global Search failing (or falling back to an often-empty text search) for sources that don't store the full URL path as `manga.url`: the pasted URL is now resolved through the matching source's own search instead of the app guessing the URL itself
 
 ### Other
 - Synced with upstream (yokai): added proguard rules to keep `Serializable` `writeReplace`/`readResolve`, and bumped `okio` to 3.18.1
