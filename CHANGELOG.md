@@ -22,6 +22,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Added a "With 'Cancelled' status" library update restriction (Settings > Library), alongside the existing "With 'Completed' status" one
 
 ### Fixes
+- Fixed MangaBaka and Hikka tracker sync IDs being swapped relative to other apps in the same family, which caused MangaBaka tracking to be lost when restoring a backup created elsewhere
 - Fixed library updates re-downloading and re-listing as unread a chapter a source re-released under a new URL when "mark duplicate read chapters as read" is on: chapters that come back already read from that sync are now skipped by the downloader and the update notification too
 - Fixed the started/finished reading dates never being set on trackers when reading through the app: they're now stamped locally on the first chapter read and on reaching the last chapter, without overwriting a date already set by the reader or returned by the tracker
 - Fixed memory leaks on theme/night-mode/side-nav changes and when refreshing app shortcuts (ported from upstream tachiyomiJ2K)

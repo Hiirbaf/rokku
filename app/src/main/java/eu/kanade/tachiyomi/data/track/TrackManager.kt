@@ -25,8 +25,8 @@ class TrackManager(context: Context) {
         const val MANGA_UPDATES = 7L
         const val KAVITA = 8L
         const val SUWAYOMI = 9L
-        const val MANGABAKA = 10L
-        const val HIKKA = 11L
+        const val HIKKA = 10L
+        const val MANGABAKA = 11L
     }
 
     val myAnimeList = MyAnimeList(context, MYANIMELIST)
@@ -38,10 +38,10 @@ class TrackManager(context: Context) {
     val mangaUpdates = MangaUpdates(context, MANGA_UPDATES)
     val kavita = Kavita(context, KAVITA)
     val suwayomi = Suwayomi(context, SUWAYOMI)
-    val mangaBaka = MangaBaka(context, MANGABAKA)
     val hikka = Hikka(context, HIKKA)
+    val mangaBaka = MangaBaka(context, MANGABAKA)
 
-    val services = listOf(myAnimeList, aniList, kitsu, shikimori, bangumi, komga, mangaUpdates, kavita, suwayomi, mangaBaka, hikka)
+    val services = listOf(myAnimeList, aniList, kitsu, shikimori, bangumi, komga, mangaUpdates, kavita, suwayomi, hikka, mangaBaka)
 
     fun getService(id: Long) = services.find { it.id == id }
 
