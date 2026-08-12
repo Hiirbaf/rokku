@@ -228,9 +228,12 @@ class ExtensionDetailsController(bundle: Bundle? = null) :
                     ) {
                         setAction(MR.strings.enable) {
                             preferences.enabledLanguages() += source.lang
-                            isChecked = true
-                            toggleSource(source, true)
-                            prefs.forEach { it.isVisible = true }
+                            // Re-trigger the switch's own click flow now that the language is
+                            // enabled, instead of patching isChecked/toggleSource manually here -
+                            // that manual patch races with the hiddenSources().changes() listener
+                            // below and can leave the switch visually unchecked despite the
+                            // preference being enabled correctly.
+                            performClick()
                         }
                     }
                     false

@@ -31,8 +31,10 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Fixed the filter sheet flickering when expanding a group with many nested sub-groups (e.g. Publisher's per-letter groups): the default item animator faded in every newly inserted row at once, which reads as a flash with a large batch; this is a plain filter list, not worth animating
 - Fixed MyAnimeList erroring on list entries with partial start/finish reading dates by falling back to January 1st or the 1st of the month
 - Fixed the reader getting stuck loading indefinitely in some scenarios by initializing it from the view model's own scope instead of the activity's
+- Fixed a manga's memo not being saved to or restored from backups, and not being merged back in when restoring onto a manga already in the library
 - Fixed free-space checks (including the low-disk-space download guard) silently never triggering when the download directory is a SAF tree/document URI instead of a plain filesystem path
 - Fixed pasting a manga URL into Global Search failing (or falling back to an often-empty text search) for sources that don't store the full URL path as `manga.url`: the pasted URL is now resolved through the matching source's own search instead of the app guessing the URL itself
+- Fixed a source's toggle in extension settings sometimes staying visually off after enabling its language from the "must be enabled first" prompt, even though the language was actually enabled (the manual UI patch raced with the source-visibility listener); the toggle now replays its own click instead
 
 ### Other
 - Synced with upstream (yokai): added proguard rules to keep `Serializable` `writeReplace`/`readResolve`, and bumped `okio` to 3.18.1
