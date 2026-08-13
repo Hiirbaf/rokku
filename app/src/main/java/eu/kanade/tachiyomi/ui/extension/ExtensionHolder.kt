@@ -202,7 +202,10 @@ class ExtensionHolder(view: View, val adapter: ExtensionAdapter) :
             setText(MR.strings.trust)
         } else {
             resetStrokeColor()
-            setText(if (adapter.installPrivately) MR.strings.add else MR.strings.install)
+            text = null
+            icon = context.contextCompatDrawable(
+                if (adapter.installPrivately) R.drawable.ic_add_24dp else R.drawable.ic_get_app_24dp,
+            )
         }
     }
 }
