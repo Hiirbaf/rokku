@@ -10,7 +10,13 @@ class ExtensionReposBackupRestorer(
 ) {
     suspend fun restoreExtensionRepos(backupExtensionRepos: List<BackupExtensionRepo>) {
         backupExtensionRepos.forEach {
-            extensionRepoRepository.upsertRepository(it.getExtensionRepo())
+            // upsertRepository() only resolves conflicts on base_url (its primary key), but
+            // signing_key_fingerprint is unique too, so restoring a repo whose fingerprint
+            // already exists under a different base_url throws SQLiteConstraintException.
+            // replaceRepository() resolves conflicts on the fingerprint instead, which is what
+            // we want here: the fingerprint is the repo's trust anchor, and a backup should win
+            // over whatever base_url a same-fingerprint repo is currently registered under.
+            extensionRepoRepository.replaceRepository(it.getExtensionRepo())
         }
     }
 }
