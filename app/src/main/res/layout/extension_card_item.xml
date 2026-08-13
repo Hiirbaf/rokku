@@ -137,7 +137,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/ext_button" />
 
-           <com.google.android.material.button.MaterialButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/ext_button"
                 style="@style/Widget.Tachiyomi.Button.OutlinedButton"
                 app:strokeColor="@android:color/transparent"
@@ -145,6 +145,7 @@
                 android:insetBottom="0dp"
                 app:iconGravity="textStart"
                 app:iconPadding="0dp"
+                app:iconSize="24dp"
                 android:minWidth="0dp"
                 android:paddingStart="12dp"
                 android:paddingEnd="12dp"
@@ -179,4 +180,3 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>
-
