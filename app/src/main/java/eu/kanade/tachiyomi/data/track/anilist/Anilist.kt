@@ -47,6 +47,10 @@ class Anilist(private val context: Context, id: Long) : TrackService(id) {
 
     override val supportsPrivateTracking: Boolean = true
 
+    override val supportsCustomLists: Boolean = true
+
+    override suspend fun getCustomLists(): List<String> = api.getCustomListNames()
+
     private val scorePreference = trackPreferences.anilistScoreType()
 
     init {

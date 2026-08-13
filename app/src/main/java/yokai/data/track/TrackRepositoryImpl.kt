@@ -28,6 +28,7 @@ class TrackRepositoryImpl(private val handler: DatabaseHandler) : TrackRepositor
                 startDate = track.started_reading_date,
                 finishDate = track.finished_reading_date,
                 private = track.private,
+                customLists = track.custom_lists,
             )
         }
     }
@@ -49,6 +50,7 @@ class TrackRepositoryImpl(private val handler: DatabaseHandler) : TrackRepositor
                     startDate = track.started_reading_date,
                     finishDate = track.finished_reading_date,
                     private = track.private,
+                    customLists = track.custom_lists,
                 )
             }
         }

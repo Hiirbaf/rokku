@@ -33,6 +33,7 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.adapters.ItemAdapter
 import com.mikepenz.fastadapter.listeners.addClickListener
+import eu.kanade.tachiyomi.data.database.models.customListsSet
 import eu.kanade.tachiyomi.data.track.EnhancedTrackService
 import eu.kanade.tachiyomi.data.track.TrackService
 import eu.kanade.tachiyomi.data.track.model.TrackSearch
@@ -585,6 +586,36 @@ class TrackingBottomSheet(private val controller: MangaDetailsController) :
         showMenuPicker(view, item, ReadingDate.Finish, suggestedFinishDate)
     }
 
+    override fun onCustomListsClick(position: Int) {
+        val item = adapter?.getItem(position) ?: return
+        val track = item.track ?: return
+        if (controller.isNotOnline()) {
+            dismiss()
+            return
+        }
+
+        launchIO {
+            val availableLists = item.service.getCustomLists()
+            val currentLists = track.customListsSet()
+            val checked = availableLists.map { it in currentLists }.toBooleanArray()
+            val selected = currentLists.toMutableSet()
+
+            withUIContext {
+                activity.materialAlertDialog()
+                    .setTitle(MR.strings.custom_lists)
+                    .setNegativeButton(AR.string.cancel, null)
+                    .setMultiChoiceItems(availableLists.toTypedArray(), checked) { _, itemPosition, isChecked ->
+                        val name = availableLists[itemPosition]
+                        if (isChecked) selected.add(name) else selected.remove(name)
+                    }
+                    .setPositiveButton(AR.string.ok) { _, _ ->
+                        setCustomLists(item, selected)
+                    }
+                    .show()
+            }
+        }
+    }
+
     private fun showMenuPicker(view: View, trackItem: TrackItem, readingDate: ReadingDate, suggestedDate: Long?) {
         val date = if (readingDate == ReadingDate.Start) {
             trackItem.track?.started_reading_date
@@ -713,6 +744,11 @@ class TrackingBottomSheet(private val controller: MangaDetailsController) :
 
     fun setScore(item: TrackItem, score: Int) {
         presenter.setScore(item, score)
+        refreshItem(item)
+    }
+
+    fun setCustomLists(item: TrackItem, lists: Set<String>) {
+        presenter.setCustomLists(item, lists)
         refreshItem(item)
     }
 

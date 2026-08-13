@@ -32,6 +32,8 @@ class TrackSearch : Track {
 
     override var private: Boolean = false
 
+    override var custom_lists: String = ""
+
     var cover_url: String = ""
 
     var summary: String = ""

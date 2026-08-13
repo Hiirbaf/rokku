@@ -1,6 +1,7 @@
 package eu.kanade.tachiyomi.data.track.anilist.dto
 
 import eu.kanade.tachiyomi.data.database.models.Track
+import eu.kanade.tachiyomi.data.database.models.setCustomListsSet
 import eu.kanade.tachiyomi.data.track.TrackManager
 import eu.kanade.tachiyomi.data.track.anilist.Anilist
 import eu.kanade.tachiyomi.data.track.anilist.AnilistApi
@@ -49,6 +50,7 @@ data class ALUserManga(
     val startDateFuzzy: Long,
     val completedDateFuzzy: Long,
     val private: Boolean = false,
+    val customLists: Map<String, Boolean> = emptyMap(),
     val manga: ALManga,
 ) {
     fun toTrack() = Track.create(TrackManager.ANILIST).apply {
@@ -62,6 +64,7 @@ data class ALUserManga(
         library_id = libraryId
         total_chapters = manga.totalChapters
         private = this@ALUserManga.private
+        setCustomListsSet(this@ALUserManga.customLists.filterValues { it }.keys)
     }
 
     private fun toTrackStatus() = when (listStatus) {

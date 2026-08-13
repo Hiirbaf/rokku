@@ -283,6 +283,37 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:constraint_referenced_ids="vert_divider_3,bottom_divider,track_start_date,track_finish_date" />
+
+            <View
+                android:id="@+id/custom_lists_divider"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:alpha="0.25"
+                android:background="@color/strong_divider"
+                app:layout_constraintTop_toBottomOf="@id/track_start_date"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <TextView
+                android:id="@+id/track_custom_lists"
+                style="?textAppearanceBodySecondary"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/card_item_selector"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:maxLines="1"
+                android:padding="16dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/custom_lists_divider"
+                tools:text="Custom Lists" />
+
+            <androidx.constraintlayout.widget.Group
+                android:id="@+id/custom_lists_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:constraint_referenced_ids="custom_lists_divider,track_custom_lists" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.button.MaterialButton

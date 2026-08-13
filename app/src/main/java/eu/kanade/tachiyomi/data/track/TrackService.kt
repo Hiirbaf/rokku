@@ -35,6 +35,11 @@ abstract class TrackService(val id: Long) {
     // Whether the remote service supports marking a tracked entry as private
     open val supportsPrivateTracking: Boolean = false
 
+    // Whether the remote service supports organizing entries into user-defined custom lists
+    open val supportsCustomLists: Boolean = false
+
+    open suspend fun getCustomLists(): List<String> = emptyList()
+
     @DrawableRes
     abstract fun getLogo(): Int
 

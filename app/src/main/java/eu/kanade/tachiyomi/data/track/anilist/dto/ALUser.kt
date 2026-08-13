@@ -23,4 +23,10 @@ data class ALUserViewerData(
 @Serializable
 data class ALUserListOptions(
     val scoreFormat: String,
+    val mangaList: ALMediaListTypeOptions? = null,
+)
+
+@Serializable
+data class ALMediaListTypeOptions(
+    val customLists: List<String>? = null,
 )

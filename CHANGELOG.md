@@ -20,6 +20,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Added an inline edit action to extension repo items so a repo's URL can be changed without deleting and re-adding it; long-pressing a repo now copies its URL to the clipboard
 - Added a configurable free-space floor (Settings > Downloads) that pauses the download queue and notifies instead of erroring chapter-by-chapter when storage runs critically low
 - Added a "With 'Cancelled' status" library update restriction (Settings > Library), alongside the existing "With 'Completed' status" one
+- Added AniList custom list support to the tracking sheet: a new row shows which of your AniList custom lists an entry belongs to, tap it to check/uncheck lists and save back to AniList
 
 ### Fixes
 - Fixed MangaBaka and Hikka tracker sync IDs being swapped relative to other apps in the same family, which caused MangaBaka tracking to be lost when restoring a backup created elsewhere

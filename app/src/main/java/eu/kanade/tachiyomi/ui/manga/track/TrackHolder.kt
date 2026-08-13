@@ -11,6 +11,7 @@ import androidx.core.view.updatePaddingRelative
 import androidx.core.widget.TextViewCompat
 import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.data.database.models.Track
+import eu.kanade.tachiyomi.data.database.models.customListsSet
 import eu.kanade.tachiyomi.data.preference.PreferencesHelper
 import eu.kanade.tachiyomi.databinding.TrackItemBinding
 import eu.kanade.tachiyomi.ui.base.holder.BaseViewHolder
@@ -48,6 +49,7 @@ class TrackHolder(view: View, adapter: TrackAdapter) : BaseViewHolder(view) {
         binding.scoreContainer.setOnClickListener { listener.onScoreClick(bindingAdapterPosition) }
         binding.trackStartDate.setOnClickListener { listener.onStartDateClick(it, bindingAdapterPosition) }
         binding.trackFinishDate.setOnClickListener { listener.onFinishDateClick(it, bindingAdapterPosition) }
+        binding.trackCustomLists.setOnClickListener { listener.onCustomListsClick(bindingAdapterPosition) }
     }
 
     @SuppressLint("SetTextI18n")
@@ -150,6 +152,19 @@ class TrackHolder(view: View, adapter: TrackAdapter) : BaseViewHolder(view) {
                             context.getString(MR.strings.finished_reading_date)
                         }
                     setTextColor(enabledTextColor(track.finished_reading_date != 0L))
+                }
+            }
+
+            binding.customListsGroup.isVisible = item.service.supportsCustomLists
+            if (item.service.supportsCustomLists) {
+                val lists = track.customListsSet()
+                with(binding.trackCustomLists) {
+                    text = if (lists.isNotEmpty()) {
+                        lists.joinToString(", ")
+                    } else {
+                        context.getString(MR.strings.custom_lists)
+                    }
+                    setTextColor(enabledTextColor(lists.isNotEmpty()))
                 }
             }
         }

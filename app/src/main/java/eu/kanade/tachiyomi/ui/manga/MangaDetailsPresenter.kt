@@ -23,6 +23,7 @@ import eu.kanade.tachiyomi.data.database.models.downloadedFilter
 import eu.kanade.tachiyomi.data.database.models.prepareCoverUpdate
 import eu.kanade.tachiyomi.data.database.models.readFilter
 import eu.kanade.tachiyomi.data.database.models.removeCover
+import eu.kanade.tachiyomi.data.database.models.setCustomListsSet
 import eu.kanade.tachiyomi.data.database.models.sortDescending
 import eu.kanade.tachiyomi.data.database.models.updateCoverLastModified
 import eu.kanade.tachiyomi.data.download.DownloadManager
@@ -1308,6 +1309,12 @@ class MangaDetailsPresenter(
     fun setPrivate(item: TrackItem) {
         val track = item.track!!
         track.private = !track.private
+        updateRemote(track, item.service)
+    }
+
+    fun setCustomLists(item: TrackItem, lists: Set<String>) {
+        val track = item.track!!
+        track.setCustomListsSet(lists)
         updateRemote(track, item.service)
     }
 
