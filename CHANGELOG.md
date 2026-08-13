@@ -10,6 +10,8 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 
 ## [Unreleased]
 
+## [1.6.0]
+
 ### Additions
 - Added a "Missing N chapters" separator in the chapter list, plus a summary below the chapter count (Settings > Library > Behavior)
 - Added a "Select all" option to a manga's genre/tag chips, to search by every tag at once
