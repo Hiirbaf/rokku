@@ -109,6 +109,12 @@ class ExtensionHolder(view: View, val adapter: ExtensionAdapter) :
         binding.cancelButton.isVisible = item.sessionProgress != null
 
         binding.sourceImage.dispose()
+        // dispose() only cancels the in-flight request; it doesn't clear whatever this
+        // recycled ImageView was last showing. Without this, a view that just displayed an
+        // installed extension's icon keeps showing it while an available extension's network
+        // icon is still loading (or never finishes), making the wrong icon appear to "belong"
+        // to the wrong row.
+        binding.sourceImage.setImageDrawable(null)
 
         when (extension) {
             is Extension.Available -> {

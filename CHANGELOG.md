@@ -37,6 +37,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Fixed free-space checks (including the low-disk-space download guard) silently never triggering when the download directory is a SAF tree/document URI instead of a plain filesystem path
 - Fixed pasting a manga URL into Global Search failing (or falling back to an often-empty text search) for sources that don't store the full URL path as `manga.url`: the pasted URL is now resolved through the matching source's own search instead of the app guessing the URL itself
 - Fixed a source's toggle in extension settings sometimes staying visually off after enabling its language from the "must be enabled first" prompt, even though the language was actually enabled (the manual UI patch raced with the source-visibility listener); the toggle now replays its own click instead
+- Fixed extension icons in the browse list sometimes showing the wrong icon (or none at all): a recycled row kept displaying whatever icon it last had (e.g. from an installed extension) while a slower/failed network icon for the newly bound extension loaded, since disposing the old image request didn't clear the image itself
 
 ### Other
 - Synced with upstream (yokai): added proguard rules to keep `Serializable` `writeReplace`/`readResolve`, and bumped `okio` to 3.18.1
