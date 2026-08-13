@@ -40,7 +40,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Fixed free-space checks never triggering when the download directory is a SAF tree/document URI
 - Fixed pasting a manga URL into Global Search failing for some sources
 - Fixed a source's toggle in extension settings sometimes staying visually off after enabling its language
-- Fixed extension icons in the browse list showing the wrong icon, staying blank, or stuck mid-fade
+- Fixed extension icons in the browse list showing the wrong icon, staying blank, or stuck mid-fade ([@Hiirbaf](https://github.com/Hiirbaf))
 
 ### Other
 - Synced with upstream (yokai): added proguard rules to keep `Serializable` `writeReplace`/`readResolve`, and bumped `okio` to 3.18.1
