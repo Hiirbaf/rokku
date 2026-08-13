@@ -12,6 +12,7 @@ import androidx.core.view.isVisible
 import coil3.dispose
 import coil3.load
 import coil3.request.crossfade
+import coil3.size.SizeResolver
 import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.data.coil.CoverViewTarget
 import eu.kanade.tachiyomi.databinding.ExtensionCardItemBinding
@@ -141,6 +142,9 @@ class ExtensionHolder(view: View, val adapter: ExtensionAdapter) :
                         // the row only paints again once it's rebound, e.g. by scrolling back
                         // over it a second time. These are small static icons; skip the fade.
                         crossfade(false)
+                        // Icons are tiny; decode at their real size instead of letting Coil
+                        // constrain them to the (much larger) measured ImageView size.
+                        size(SizeResolver.ORIGINAL)
                     }
                 }
 
