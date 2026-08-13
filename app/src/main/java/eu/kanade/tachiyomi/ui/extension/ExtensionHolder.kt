@@ -118,16 +118,19 @@ class ExtensionHolder(view: View, val adapter: ExtensionAdapter) :
 
         when (extension) {
             is Extension.Available -> {
+                binding.webButton.isVisible = extension.sources.isNotEmpty()
                 binding.sourceImage.load(extension.iconUrl) {
                     target(CoverViewTarget(binding.sourceImage))
                 }
             }
 
             is Extension.Installed -> {
+                binding.webButton.isVisible = false
                 binding.sourceImage.load(extension.icon)
             }
 
             is Extension.Untrusted -> {
+                binding.webButton.isVisible = false
                 binding.sourceImage.setImageDrawable(
                     context.contextCompatDrawable(R.drawable.ic_report_24dp),
                 )
