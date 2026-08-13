@@ -11,6 +11,7 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import coil3.dispose
 import coil3.load
+import coil3.request.crossfade
 import coil3.size.SizeResolver
 import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.data.coil.CoverViewTarget
