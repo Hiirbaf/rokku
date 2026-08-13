@@ -8,6 +8,7 @@ import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.data.notification.NotificationReceiver
 import eu.kanade.tachiyomi.data.notification.Notifications
 import eu.kanade.tachiyomi.extension.ExtensionManager
+import eu.kanade.tachiyomi.network.NetworkPreferences
 import eu.kanade.tachiyomi.util.storage.getUriCompat
 import eu.kanade.tachiyomi.util.system.createFileInCacheDir
 import eu.kanade.tachiyomi.util.system.notificationBuilder
@@ -17,6 +18,7 @@ import eu.kanade.tachiyomi.util.system.withNonCancellableContext
 import eu.kanade.tachiyomi.util.system.withUIContext
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
+import uy.kohesive.injekt.injectLazy
 import yokai.i18n.MR
 import yokai.util.lang.getString
 import java.io.IOException
@@ -27,6 +29,8 @@ class CrashLogUtil(private val context: Context) {
         setSmallIcon(R.drawable.ic_rokku)
     }
 
+    private val networkPreferences: NetworkPreferences by injectLazy()
+
     suspend fun dumpLogs(exception: Throwable? = null) = withNonCancellableContext {
         try {
             val file = context.createFileInCacheDir("yokai_crash_logs.txt")
@@ -34,7 +38,11 @@ class CrashLogUtil(private val context: Context) {
             file.appendText(getExtensionsInfo() + "\n\n")
             exception?.let { file.appendText("$it\n\n") }
 
-            Runtime.getRuntime().exec("logcat *:E -d -f ${file.absolutePath}")
+            // With verbose logging on, dump everything (info/debug included, e.g. Coil's
+            // RealImageLoader trace) instead of just errors - that's the whole point of turning
+            // it on, and it lets someone reporting a bug attach one file without needing adb.
+            val filterSpec = if (networkPreferences.verboseLogging().get()) "*:V" else "*:E"
+            Runtime.getRuntime().exec("logcat $filterSpec -d -f ${file.absolutePath}")
 
             showNotification(file.getUriCompat(context))
         } catch (e: IOException) {
