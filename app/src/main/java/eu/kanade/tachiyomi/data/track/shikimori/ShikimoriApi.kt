@@ -153,8 +153,8 @@ class ShikimoriApi(
     )
 
     companion object {
-        private const val CLIENT_ID = "zU0wHfXbpx2GwVBK7jILx6druyPdmp0J8bLUSH9NBFc"
-        private const val CLIENT_SECRET = "t-I_sBzlWAbJPjkO9EYnqBpXYdPhAxjxRuoTSZgiJPg"
+        private const val CLIENT_ID = "ZF-VUHBx768z71rMK1_x38VjaSPx_8lLIT--IwVjolY"
+        private const val CLIENT_SECRET = "a_gyqEfbfEeCWb3sOqevU7oFDnxvYKNJWfrWHNCGpHY"
 
         const val BASE_URL = "https://shikimori.io"
         private const val API_URL = "$BASE_URL/api"
