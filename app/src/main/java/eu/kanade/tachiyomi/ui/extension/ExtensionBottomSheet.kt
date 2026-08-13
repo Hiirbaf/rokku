@@ -237,7 +237,7 @@ class ExtensionBottomSheet @JvmOverloads constructor(context: Context, attrs: At
     override fun onWebsiteClick(position: Int) {
         val extension = (extAdapter?.getItem(position) as? ExtensionItem)?.extension as? Extension.Available ?: return
         val url = extension.sources.firstOrNull()?.baseUrl ?: return
-        context.openInBrowser(url)
+        controller.openInBrowser(url)
     }
 
     override fun onUpdateAllClicked(position: Int) {
