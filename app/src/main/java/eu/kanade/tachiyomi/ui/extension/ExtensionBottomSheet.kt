@@ -233,6 +233,12 @@ class ExtensionBottomSheet @JvmOverloads constructor(context: Context, attrs: At
         presenter.cancelExtensionInstall(extension)
     }
 
+    override fun onWebsiteClick(position: Int) {
+        val extension = (extAdapter?.getItem(position) as? ExtensionItem)?.extension as? Extension.Available ?: return
+        val url = extension.sources.firstOrNull()?.baseUrl ?: return
+        context.openInBrowser(url)
+    }
+
     override fun onUpdateAllClicked(position: Int) {
         (controller.activity as? MainActivity)?.showNotificationPermissionPrompt()
         if (basePreferences.extensionInstaller().get() != ExtensionInstaller.SHIZUKU &&
