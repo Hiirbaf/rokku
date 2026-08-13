@@ -3,6 +3,7 @@ package eu.kanade.tachiyomi.data.backup.models
 import eu.kanade.tachiyomi.data.database.models.ChapterImpl
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.protobuf.ProtoNumber
+import yokai.data.memoAdapter
 
 @Serializable
 data class BackupChapter(
@@ -21,6 +22,9 @@ data class BackupChapter(
     @ProtoNumber(9) var chapterNumber: Float = 0F,
     @ProtoNumber(10) var sourceOrder: Int = 0,
 
+    // Same field number as Mihon's chapter `memo` so backups are interchangeable
+    @ProtoNumber(13) var memo: String? = null,
+
     // J2K specific values
     @ProtoNumber(800) var pagesLeft: Int = 0,
 ) {
@@ -37,6 +41,7 @@ data class BackupChapter(
             date_upload = this@BackupChapter.dateUpload
             source_order = this@BackupChapter.sourceOrder
             pages_left = this@BackupChapter.pagesLeft
+            memo = memoAdapter.decode(this@BackupChapter.memo ?: "")
         }
     }
 
@@ -55,7 +60,7 @@ data class BackupChapter(
             sourceOrder: Long,
             dateFetch: Long,
             dateUpload: Long,
-            @Suppress("UNUSED_PARAMETER") memo: String,
+            memo: String,
         ) = BackupChapter(
             url = url,
             name = name,
@@ -68,6 +73,7 @@ data class BackupChapter(
             sourceOrder = sourceOrder.toInt(),
             dateFetch = dateFetch,
             dateUpload = dateUpload,
+            memo = memoAdapter.decode(memo).takeIf { it.isNotEmpty() }?.let(memoAdapter::encode),
         )
     }
 }
