@@ -11,6 +11,7 @@ import androidx.core.view.isVisible
 import androidx.core.view.marginBottom
 import androidx.core.view.updateLayoutParams
 import coil3.dispose
+import coil3.request.crossfade
 import coil3.size.Scale
 import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.data.database.models.dominantCoverColors
@@ -142,6 +143,10 @@ class LibraryGridHolder(
     private fun setCover(manga: Manga) {
         if ((adapter.recyclerView.context as? Activity)?.isDestroyed == true) return
         binding.coverThumbnail.loadManga(manga) {
+            // The default crossfade can get stuck mid-fade (showing nothing) when the result
+            // lands while this row is off-screen during a fast scroll - the row only paints
+            // again once it's rebound, e.g. by scrolling back over it a second time.
+            crossfade(false)
             val hasRatio = binding.coverThumbnail.layoutParams.height != ViewGroup.LayoutParams.WRAP_CONTENT
             if (!fixedSize && !hasRatio) {
                 scale(Scale.FIT)

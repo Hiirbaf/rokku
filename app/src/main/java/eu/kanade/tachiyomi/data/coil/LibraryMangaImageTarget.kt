@@ -4,6 +4,7 @@ import android.graphics.BitmapFactory
 import android.widget.ImageView
 import androidx.palette.graphics.Palette
 import coil3.Image
+import coil3.asDrawable
 import coil3.target.ImageViewTarget
 import eu.kanade.tachiyomi.data.cache.CoverCache
 import eu.kanade.tachiyomi.data.database.models.updateCoverLastModified
@@ -17,6 +18,10 @@ class LibraryMangaImageTarget(
 ) : ImageViewTarget(view) {
 
     private val coverCache: CoverCache by injectLazy()
+
+    override fun onSuccess(result: Image) {
+        view.setImageDrawable(result.asDrawable(view.context.resources))
+    }
 
     override fun onError(error: Image?) {
         super.onError(error)

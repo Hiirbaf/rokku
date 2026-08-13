@@ -5,6 +5,7 @@ import android.widget.ImageView
 import androidx.core.view.isVisible
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import coil3.Image
+import coil3.asDrawable
 import coil3.target.ImageViewTarget
 import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.util.system.getResourceColor
@@ -39,10 +40,8 @@ class CoverViewTarget(
     }
 
     override fun onSuccess(result: Image) {
-        // val drawable = result?.asDrawable(view.context.resources)
-
         progress?.isVisible = false
         view.scaleType = scaleType
-        super.onSuccess(result)
+        view.setImageDrawable(result.asDrawable(view.context.resources))
     }
 }

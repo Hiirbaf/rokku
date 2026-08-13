@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import coil3.dispose
+import coil3.request.crossfade
 import eu.kanade.tachiyomi.databinding.MangaListItemBinding
 import eu.kanade.tachiyomi.util.lang.highlightText
 import eu.kanade.tachiyomi.util.system.dpToPx
@@ -28,6 +29,11 @@ class LibraryListHolder(
 ) : LibraryHolder(view, adapter) {
 
     private val binding = MangaListItemBinding.bind(view)
+
+    // Identifies whatever cover this view is currently bound to, so a re-bind that doesn't
+    // actually change the manga (e.g. library flow re-emissions) doesn't dispose a perfectly
+    // fine cover and restart loading it from scratch.
+    private var boundCoverKey: String? = null
 
     /**
      * Method called from [LibraryCategoryAdapter.onBindViewHolder]. It updates the data for this
@@ -101,8 +107,19 @@ class LibraryListHolder(
         }
 
         // Update the cover.
-        binding.coverThumbnail.dispose()
-        binding.coverThumbnail.loadManga(item.manga.manga)
+        val coverKey = "${item.manga.manga.id}:${item.manga.manga.thumbnail_url}:${item.manga.manga.cover_last_modified}"
+        if (coverKey != boundCoverKey) {
+            boundCoverKey = coverKey
+            binding.coverThumbnail.dispose()
+            binding.coverThumbnail.setImageDrawable(null)
+            binding.coverThumbnail.loadManga(item.manga.manga) {
+                // The default crossfade can get stuck mid-fade (showing nothing) when the
+                // result lands while this row is off-screen during a fast scroll - the row
+                // only paints again once it's rebound, e.g. by scrolling back over it a
+                // second time.
+                crossfade(false)
+            }
+        }
     }
 
     override fun onActionStateChanged(position: Int, actionState: Int) {

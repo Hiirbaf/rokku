@@ -4,6 +4,7 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import coil3.dispose
+import coil3.request.crossfade
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.items.IFlexible
 import eu.kanade.tachiyomi.databinding.MangaListItemBinding
@@ -29,6 +30,11 @@ class BrowseSourceListHolder(
 
     private val binding = MangaListItemBinding.bind(view)
 
+    // Identifies whatever cover this view is currently bound to, so a re-bind that doesn't
+    // actually change the manga (e.g. list refreshes) doesn't dispose a perfectly fine cover
+    // and restart loading it from scratch.
+    private var boundCoverKey: String? = null
+
     init {
         setCards(showOutline, binding.card, binding.unreadDownloadBadge.badgeView)
     }
@@ -49,11 +55,25 @@ class BrowseSourceListHolder(
     override fun setImage(manga: Manga) {
         // Update the cover.
         if (manga.thumbnail_url == null) {
+            boundCoverKey = null
             binding.coverThumbnail.dispose()
+            binding.coverThumbnail.setImageDrawable(null)
         } else {
             manga.id ?: return
-            binding.coverThumbnail.loadManga(manga.cover())
+            val coverKey = "${manga.id}:${manga.thumbnail_url}:${manga.cover_last_modified}"
             binding.coverThumbnail.alpha = if (manga.favorite) 0.34f else 1.0f
+            if (coverKey == boundCoverKey) return
+            boundCoverKey = coverKey
+
+            binding.coverThumbnail.dispose()
+            binding.coverThumbnail.setImageDrawable(null)
+            binding.coverThumbnail.loadManga(manga.cover()) {
+                // The default crossfade can get stuck mid-fade (showing nothing) when the
+                // result lands while this row is off-screen during a fast scroll - the row
+                // only paints again once it's rebound, e.g. by scrolling back over it a
+                // second time.
+                crossfade(false)
+            }
         }
     }
 }
