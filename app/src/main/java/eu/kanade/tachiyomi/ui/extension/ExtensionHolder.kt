@@ -11,6 +11,8 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import coil3.dispose
 import coil3.load
+import coil3.request.crossfade
+import coil3.size.SizeResolver
 import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.data.coil.CoverViewTarget
 import eu.kanade.tachiyomi.databinding.ExtensionCardItemBinding
@@ -119,6 +121,8 @@ class ExtensionHolder(view: View, val adapter: ExtensionAdapter) :
         when (extension) {
             is Extension.Available -> {
                 binding.sourceImage.load(extension.iconUrl) {
+                    crossfade(false)
+                    size(SizeResolver.ORIGINAL)
                     target(CoverViewTarget(binding.sourceImage))
                 }
             }
