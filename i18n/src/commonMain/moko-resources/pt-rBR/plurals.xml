@@ -123,4 +123,9 @@
         <item quantity="many">%d estados</item>
         <item quantity="other">%d outros estados</item>
     </plurals>
+    <plurals name="missing_chapters_count">
+        <item quantity="one">Faltando %1$d capítulo</item>
+        <item quantity="many">Faltando %1$d capítulos</item>
+        <item quantity="other">Faltando %1$d capítulos</item>
+    </plurals>
 </resources>

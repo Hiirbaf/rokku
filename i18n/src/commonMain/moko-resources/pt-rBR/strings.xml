@@ -781,7 +781,7 @@
     <string name="automatic_removal">Remoção automática</string>
     <string name="show_on_long_press">Mostrar no toque longo</string>
     <string name="actions">Ações</string>
-    <string name="search_tips_show_periodically">Dicas de pesquisa aparecerão periodicamente. Pressione e segure para pesquisá-la.</string>
+    <string name="search_tips_show_periodically">Dicas de pesquisa aparecerão periodicamente. Pressione e segure para pesquisar.</string>
     <string name="search_suggestions">Sugestões de pesquisa</string>
     <string name="release_page">Página de lançamento</string>
     <string name="mark_range_as_unread">Marcar um intervalo de capítulos como não lido</string>
@@ -920,7 +920,7 @@
     <string name="channel_skipped">Puladas</string>
     <string name="pref_library_update_manga_restriction">Pular a atualização de títulos</string>
     <string name="pref_update_only_completely_read">Com capítulos não lidos</string>
-    <string name="pref_update_only_non_completed">Com o estado \"Completo\"</string>
+    <string name="pref_update_only_non_completed">Com o status \"Concluído\"</string>
     <string name="pref_update_only_started">Que não tiveram a leitura iniciada</string>
     <string name="pref_clear_webview_data">Limpar os dados da WebView</string>
     <string name="webview_data_deleted">Dados da WebView limpos</string>
@@ -1049,7 +1049,7 @@
     <string name="save_pages_separately">Salvar páginas em pastas separadas</string>
     <string name="confirm_revoke_all_extensions">Revogar todas as extensões confiáveis?</string>
     <string name="pref_legacy_cutout_info">Em dispositivos mais antigos que o Android 9, não há como modificar a configuração do recorte, exceto configurando manualmente nas configurações do sistema</string>
-    <string name="untrusted_extension_message">Extensões maliciosas podem ler qualquer credencial de login armazenada ou executar código arbitrário. Ao confiar nesta extensão, você aceita esses riscos.</string>
+    <string name="untrusted_extension_message">Extensões maliciosas podem ler qualquer credencial de login armazenada ou executar código arbitrário.\n\nAo confiar nesta extensão, você aceita esses riscos.</string>
     <string name="browse_long_tap">Comportamento do toque longo em \'Navegar\'</string>
     <string name="crash_screen_title">Ocorreu um erro inesperado</string>
     <string name="download_with_id_details">Pode corrigir problemas com conflitos de capítulos baixados quando eles têm o mesmo nome</string>
@@ -1070,7 +1070,7 @@
     <string name="page_x_of_y">Página %1$d de %2$d</string>
     <string name="not_selected">Não selecionado</string>
     <string name="selected">Selecionado</string>
-    <string name="open_random_series_global">Abrir uma série aleatória</string>
+    <string name="open_random_series_global">Abrir uma série aleatória (Global)</string>
     <string name="pref_use_compose_library">Usar composição experimental de biblioteca</string>
     <string name="pref_behavior">Comportamento</string>
     <string name="pref_mark_as_read_duplicate_read_chapter">Marcar capítulo duplicado como lido</string>
@@ -1117,7 +1117,7 @@
     <string name="vertical_seekbar_dock_left">Posicionar a barra vertical no lado esquerdo</string>
     <string name="vertical_seekbar_height">Altura da barra vertical</string>
     <string name="pref_always_decode_long_strip_with_ssiv">Usar o decodificador legado para leitura de tiras longas</string>
-    <string name="pref_always_decode_long_strip_with_ssiv_summary">Afeta o desempenho. Ative apenas se reduzir o limite de bitmap não resolver os problemas de imagens em branco.</string>
+    <string name="pref_always_decode_long_strip_with_ssiv_summary">Afeta o desempenho. Ative apenas se reduzir o limite de bitmap não resolver os problemas de imagens em branco</string>
     <string name="render_description_images">Renderizar imagens nas descrições dos mangás</string>
     <string name="render_description_images_summary">Algumas fontes incluem prévias da capa ou imagens promocionais na descrição do mangá</string>
     <string name="pref_related_mangas">Mostrar Sugestões</string>
@@ -1137,4 +1137,22 @@
     <string name="pref_download_concurrent_sources">Downloads simultâneos de capítulos</string>
     <string name="pref_download_concurrent_pages">Downloads simultâneos de páginas</string>
     <string name="pref_download_concurrent_pages_summary">Valores mais altos podem acelerar os downloads, mas usam mais largura de banda e memória simultaneamente</string>
+    <string name="skipped_reason_cancelled">Pulado porque a série está cancelada</string>
+    <string name="library_update_custom_time">Horário da atualização</string>
+    <string name="library_update_custom_time_summary">Horário aproximado do dia em que a biblioteca irá atualizar, a cada 24 horas</string>
+    <string name="pref_update_only_cancelled">Com o status \"Cancelado\"</string>
+    <string name="hide_missing_chapter_indicators">Ocultar os indicadores de capítulos faltantes</string>
+    <string name="hide_missing_chapter_indicators_summary">Oculta o separador na lista de capítulos quando há capítulos faltando</string>
+    <string name="page_flash">Piscar a tela ao virar a página</string>
+    <string name="page_flash_summary">Remove o efeito fantasma em telas e-ink no modo de leitura paginado</string>
+    <string name="page_flash_white">Branco</string>
+    <string name="page_flash_black">Preto</string>
+    <string name="page_flash_white_then_black">Branco depois preto</string>
+    <string name="considering">Considerando</string>
+    <string name="track_privately">Monitoramento privado</string>
+    <string name="track_publicly">Monitoramento público</string>
+    <string name="custom_lists">Listas Customizadas</string>
+    <string name="download_paused_low_space">Downloads pausados, pouco espaço de armazenamento disponível</string>
+    <string name="pause_downloads_low_space">Pausa os downloads quando o espaço de armazenamento estiver baixo</string>
+    <string name="custom">Customizado</string>
 </resources>
