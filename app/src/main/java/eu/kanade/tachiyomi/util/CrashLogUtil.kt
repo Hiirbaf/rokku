@@ -41,8 +41,15 @@ class CrashLogUtil(private val context: Context) {
             // With verbose logging on, dump everything (info/debug included, e.g. Coil's
             // RealImageLoader trace) instead of just errors - that's the whole point of turning
             // it on, and it lets someone reporting a bug attach one file without needing adb.
+            // Scoped to this process's own pid (--pid, API 24+) so the dump can't leak other
+            // apps' log lines.
             val filterSpec = if (networkPreferences.verboseLogging().get()) "*:V" else "*:E"
-            Runtime.getRuntime().exec("logcat $filterSpec -d -f ${file.absolutePath}")
+            val pidArg = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                "--pid=${android.os.Process.myPid()} "
+            } else {
+                ""
+            }
+            Runtime.getRuntime().exec("logcat $pidArg$filterSpec -d -f ${file.absolutePath}")
 
             showNotification(file.getUriCompat(context))
         } catch (e: IOException) {
