@@ -27,6 +27,7 @@ import co.touchlab.kermit.Logger
 import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.SingletonImageLoader
+import coil3.disk.DiskCache
 import coil3.gif.AnimatedImageDecoder
 import coil3.gif.GifDecoder
 import coil3.memory.MemoryCache
@@ -66,6 +67,7 @@ import eu.kanade.tachiyomi.util.system.setToDefault
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import okio.Path.Companion.toOkioPath
 import org.conscrypt.Conscrypt
 import org.koin.core.context.startKoin
 import uy.kohesive.injekt.Injekt
@@ -306,6 +308,16 @@ open class App : Application(), DefaultLifecycleObserver, SingletonImageLoader.F
             memoryCache(
                 MemoryCache.Builder()
                     .maxSizePercent(context)
+                    .build(),
+            )
+            // Without this, Coil falls back to its own default disk cache, which lives under
+            // the system temp directory rather than this app's cache dir and isn't guaranteed
+            // to survive the app's process being killed - every cold start would re-fetch every
+            // image (extension icons, chapter/manga covers) from network again.
+            diskCache(
+                DiskCache.Builder()
+                    .directory(this@App.cacheDir.resolve("image_cache").toOkioPath())
+                    .maxSizePercent(0.02)
                     .build(),
             )
 

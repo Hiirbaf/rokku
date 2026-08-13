@@ -37,6 +37,13 @@ class ExtensionHolder(view: View, val adapter: ExtensionAdapter) :
 
     private val context = view.context
     private val binding = ExtensionCardItemBinding.bind(view)
+
+    // Identifies whatever this view is currently showing as an icon, so a bind() that doesn't
+    // actually change the icon (e.g. every list refresh triggered by onActivityResumed, which
+    // fires on any app resume - some OEM battery/background managers do this very frequently)
+    // doesn't dispose a perfectly fine icon and restart loading it from scratch.
+    private var boundIconKey: String? = null
+
     init {
         binding.extButton.setOnClickListener {
             adapter.buttonClickListener.onButtonClick(flexibleAdapterPosition)
@@ -110,31 +117,48 @@ class ExtensionHolder(view: View, val adapter: ExtensionAdapter) :
         binding.installProgress.isVisible = item.sessionProgress != null
         binding.cancelButton.isVisible = item.sessionProgress != null
 
-        binding.sourceImage.dispose()
-        // dispose() only cancels the in-flight request; it doesn't clear whatever this
-        // recycled ImageView was last showing. Without this, a view that just displayed an
-        // installed extension's icon keeps showing it while an available extension's network
-        // icon is still loading (or never finishes), making the wrong icon appear to "belong"
-        // to the wrong row.
-        binding.sourceImage.setImageDrawable(null)
+        val iconKey = when (extension) {
+            is Extension.Available -> "available:${extension.pkgName}:${extension.iconUrl}"
+            is Extension.Installed -> "installed:${extension.pkgName}:${extension.versionCode}"
+            is Extension.Untrusted -> "untrusted:${extension.pkgName}"
+        }
+        if (iconKey != boundIconKey) {
+            boundIconKey = iconKey
 
-        when (extension) {
-            is Extension.Available -> {
-                binding.sourceImage.load(extension.iconUrl) {
-                    crossfade(false)
-                    size(SizeResolver.ORIGINAL)
-                    target(CoverViewTarget(binding.sourceImage))
+            binding.sourceImage.dispose()
+            // dispose() only cancels the in-flight request; it doesn't clear whatever this
+            // recycled ImageView was last showing. Without this, a view that just displayed an
+            // installed extension's icon keeps showing it while an available extension's network
+            // icon is still loading (or never finishes), making the wrong icon appear to "belong"
+            // to the wrong row.
+            binding.sourceImage.setImageDrawable(null)
+
+            when (extension) {
+                is Extension.Available -> {
+                    binding.sourceImage.load(extension.iconUrl) {
+                        target(CoverViewTarget(binding.sourceImage))
+                        // The default crossfade can get stuck mid-fade (showing nothing) when
+                        // the result lands while this row is off-screen during a fast scroll -
+                        // the row only paints again once it's rebound, e.g. by scrolling back
+                        // over it a second time. These are small static icons; skip the fade.
+                        crossfade(false)
+                        // Icons are tiny; decode at their real size instead of letting Coil
+                        // constrain them to the (much larger) measured ImageView size.
+                        size(SizeResolver.ORIGINAL)
+                    }
                 }
-            }
 
-            is Extension.Installed -> {
-                binding.sourceImage.load(extension.icon)
-            }
+                is Extension.Installed -> {
+                    binding.sourceImage.load(extension.icon) {
+                        crossfade(false)
+                    }
+                }
 
-            is Extension.Untrusted -> {
-                binding.sourceImage.setImageDrawable(
-                    context.contextCompatDrawable(R.drawable.ic_report_24dp),
-                )
+                is Extension.Untrusted -> {
+                    binding.sourceImage.setImageDrawable(
+                        context.contextCompatDrawable(R.drawable.ic_report_24dp),
+                    )
+                }
             }
         }
         bindButton(item)

@@ -5,6 +5,8 @@ import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Parcelable
 import co.touchlab.kermit.Logger
+import coil3.imageLoader
+import coil3.request.ImageRequest
 import eu.kanade.tachiyomi.data.preference.PreferencesHelper
 import eu.kanade.tachiyomi.extension.api.ExtensionApi
 import eu.kanade.tachiyomi.extension.installer.ShizukuInstaller
@@ -16,10 +18,12 @@ import eu.kanade.tachiyomi.extension.util.ExtensionInstaller
 import eu.kanade.tachiyomi.extension.util.ExtensionLoader
 import eu.kanade.tachiyomi.source.Source
 import eu.kanade.tachiyomi.ui.extension.ExtensionIntallInfo
+import eu.kanade.tachiyomi.util.system.launchIO
 import eu.kanade.tachiyomi.util.system.launchNow
 import eu.kanade.tachiyomi.util.system.withIOContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -170,6 +174,28 @@ class ExtensionManager(
         updatedInstalledExtensionsStatuses(extensions)
         setupAvailableSourcesMap()
         emitToInstaller("Finished/Available/${extensions.size}", (InstallStep.Done to null))
+        prefetchIcons(extensions)
+    }
+
+    /**
+     * Warms Coil's cache with every available extension's icon as soon as the list is known
+     * (typically at app start, see [eu.kanade.tachiyomi.ui.main.MainActivity]), instead of only
+     * starting to fetch them once the user opens the extensions screen - by then they're already
+     * cached and show up immediately instead of loading in one by one.
+     *
+     * Enqueueing all of them in one tight loop caused a very noticeable multi-second stutter
+     * (hundreds of requests landing on the fetcher/decoder pool and memory cache at once,
+     * especially right after adding a repo, when most icons are still uncached), so this is
+     * detached from the caller and paced instead of fired all at once.
+     */
+    private fun prefetchIcons(extensions: List<Extension.Available>) {
+        launchIO {
+            val imageLoader = context.imageLoader
+            for (extension in extensions) {
+                imageLoader.enqueue(ImageRequest.Builder(context).data(extension.iconUrl).build())
+                delay(50)
+            }
+        }
     }
 
     /**
