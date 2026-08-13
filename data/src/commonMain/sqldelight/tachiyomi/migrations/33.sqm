@@ -1,0 +1,20 @@
+CREATE TABLE excluded_scanlators(
+    manga_id INTEGER NOT NULL,
+    scanlator TEXT NOT NULL,
+    FOREIGN KEY(manga_id) REFERENCES mangas (_id)
+    ON DELETE CASCADE
+);
+
+CREATE INDEX excluded_scanlators_manga_id_index ON excluded_scanlators(manga_id);
+
+INSERT INTO excluded_scanlators(manga_id, scanlator)
+WITH RECURSIVE split(seq, _id, name, str) AS (
+    SELECT 0, mangas._id, NULL, mangas.filtered_scanlators||' [.] ' FROM mangas WHERE mangas.filtered_scanlators IS NOT NULL AND mangas.filtered_scanlators != ''
+    UNION ALL SELECT
+        seq+1,
+        _id,
+        substr(str, 0, instr(str, ' [.] ')),
+        substr(str, instr(str, ' [.] ')+5)
+    FROM split WHERE str != ''
+)
+SELECT _id, name FROM split WHERE name != '' ORDER BY _id, split.seq ASC;
