@@ -60,10 +60,9 @@ class MangaBackupCreator(
         // Check if user wants chapter information in backup
         if (options.chapters) {
             // Backup all the chapters. Uses getAllChaptersByMangaId instead of
-            // getChaptersByMangaId(..., apply_filter = 0, ...): the latter still joins
-            // scanlators_view even with the filter disabled, and that join is expensive (see
-            // the query's own comment), so skip it entirely here since we always want every
-            // chapter regardless of the scanlator filter.
+            // getChaptersByMangaId(..., apply_filter = 0, ...) to skip the excluded_scanlators
+            // join entirely, since we always want every chapter regardless of the scanlator
+            // filter here.
             val chapters = manga.id?.let {
                 handler.awaitList {
                     chaptersQueries.getAllChaptersByMangaId(it, BackupChapter::mapper)
