@@ -33,7 +33,7 @@ class CrashLogUtil(private val context: Context) {
 
     suspend fun dumpLogs(exception: Throwable? = null) = withNonCancellableContext {
         try {
-            val file = context.createFileInCacheDir("yokai_crash_logs.txt")
+            val file = context.createFileInCacheDir("rokku_crash_logs.txt")
             file.appendText(getDebugInfo() + "\n\n")
             file.appendText(getExtensionsInfo() + "\n\n")
             exception?.let { file.appendText("$it\n\n") }
