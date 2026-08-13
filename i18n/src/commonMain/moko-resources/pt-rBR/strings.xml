@@ -1129,4 +1129,12 @@
     <string name="replace">Substituir</string>
     <string name="clear_selection">Limpar seleção</string>
     <string name="information_no_library_update_errors">Nenhum erro na atualização da biblioteca</string>
+    <string name="no_categories">Você não tem categorias</string>
+    <string name="fetch_metadata_on_add">Buscar metadados ao adicionar à biblioteca</string>
+    <string name="fetch_metadata_on_add_summary">Buscar imediatamente informações atualizadas (capa, descrição etc.) da fonte, em vez de esperar pela próxima atualização da biblioteca</string>
+    <string name="fetch_chapters_on_add">Buscar capítulos ao adicionar à biblioteca</string>
+    <string name="fetch_chapters_on_add_summary">Buscar imediatamente a lista de capítulos da fonte, em vez de esperar pela próxima atualização da biblioteca</string>
+    <string name="pref_download_concurrent_sources">Downloads simultâneos de capítulos</string>
+    <string name="pref_download_concurrent_pages">Downloads simultâneos de páginas</string>
+    <string name="pref_download_concurrent_pages_summary">Valores mais altos podem acelerar os downloads, mas usam mais largura de banda e memória simultaneamente</string>
 </resources>
