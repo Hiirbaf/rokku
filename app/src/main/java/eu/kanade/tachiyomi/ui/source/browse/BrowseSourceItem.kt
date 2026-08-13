@@ -70,6 +70,16 @@ class BrowseSourceItem(
         holder.onSetValues(manga)
     }
 
+    /**
+     * Updates the item's data without a bound holder, e.g. when the item is currently
+     * scrolled off-screen and recycled. The next [bindViewHolder] call will pick up the change.
+     */
+    fun updateMangaSilently(manga: Manga) {
+        if (manga.id != mangaId) return
+
+        this.manga = manga
+    }
+
     override fun bindViewHolder(
         adapter: FlexibleAdapter<IFlexible<RecyclerView.ViewHolder>>,
         holder: BrowseSourceHolder,

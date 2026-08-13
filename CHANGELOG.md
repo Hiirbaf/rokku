@@ -23,6 +23,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Added AniList custom list support to the tracking sheet: a new row shows which of your AniList custom lists an entry belongs to, tap it to check/uncheck lists and save back to AniList
 
 ### Fixes
+- Fixed source browse covers sometimes staying blank in list view: a cover fetched after the initial listing (no thumbnail yet) only updated the on-screen row, not the underlying item, so scrolling the row off-screen and back showed a blank cover again
 - Fixed MangaBaka and Hikka tracker sync IDs being swapped relative to other apps in the same family, which caused MangaBaka tracking to be lost when restoring a backup created elsewhere
 - Fixed library updates re-downloading and re-listing as unread a chapter a source re-released under a new URL when "mark duplicate read chapters as read" is on: chapters that come back already read from that sync are now skipped by the downloader and the update notification too
 - Fixed the started/finished reading dates never being set on trackers when reading through the app: they're now stamped locally on the first chapter read and on reaching the last chapter, without overwriting a date already set by the reader or returned by the tracker

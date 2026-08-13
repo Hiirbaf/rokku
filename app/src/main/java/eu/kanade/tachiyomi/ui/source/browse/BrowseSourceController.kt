@@ -820,7 +820,15 @@ open class BrowseSourceController(bundle: Bundle) :
      * @param manga the manga initialized
      */
     fun onMangaInitialized(manga: Manga) {
-        getHolder(manga.id!!)?.setImage(manga)
+        val item = adapter?.currentItems
+            ?.filterIsInstance<BrowseSourceItem>()
+            ?.find { it.mangaId == manga.id } ?: return
+        val holder = getHolder(manga.id!!)
+        if (holder != null) {
+            item.updateManga(holder, manga)
+        } else {
+            item.updateMangaSilently(manga)
+        }
     }
 
     /**
