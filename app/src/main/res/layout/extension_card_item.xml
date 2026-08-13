@@ -130,7 +130,7 @@
                 android:background="?selectableItemBackgroundBorderless"
                 android:contentDescription="@string/action_open_in_web_view"
                 android:padding="12dp"
-                app:srcCompat="@drawable/ic_open_in_webview_24dp.xml"
+                app:srcCompat="@drawable/ic_open_in_webview_24dp"
                 app:tint="?attr/colorSecondary"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
