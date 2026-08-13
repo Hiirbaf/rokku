@@ -29,6 +29,7 @@ import eu.kanade.tachiyomi.ui.migration.SourceAdapter
 import eu.kanade.tachiyomi.ui.migration.SourceItem
 import eu.kanade.tachiyomi.ui.migration.manga.design.PreMigrationController
 import eu.kanade.tachiyomi.ui.source.BrowseController
+import eu.kanade.tachiyomi.ui.webview.WebViewActivity
 import eu.kanade.tachiyomi.util.system.isPackageInstalled
 import eu.kanade.tachiyomi.util.system.materialAlertDialog
 import eu.kanade.tachiyomi.util.system.rootWindowInsetsCompat
@@ -37,6 +38,7 @@ import eu.kanade.tachiyomi.util.view.collapse
 import eu.kanade.tachiyomi.util.view.doOnApplyWindowInsetsCompat
 import eu.kanade.tachiyomi.util.view.expand
 import eu.kanade.tachiyomi.util.view.isExpanded
+import eu.kanade.tachiyomi.util.view.openInBrowser
 import eu.kanade.tachiyomi.util.view.popupMenu
 import eu.kanade.tachiyomi.util.view.setMessage
 import eu.kanade.tachiyomi.util.view.setNegativeButton
@@ -231,6 +233,19 @@ class ExtensionBottomSheet @JvmOverloads constructor(context: Context, attrs: At
     override fun onCancelClick(position: Int) {
         val extension = (extAdapter?.getItem(position) as? ExtensionItem) ?: return
         presenter.cancelExtensionInstall(extension)
+    }
+
+    override fun onWebsiteClick(position: Int) {
+        val extension = (extAdapter?.getItem(position) as? ExtensionItem)?.extension as? Extension.Available ?: return
+        val source = extension.sources.firstOrNull() ?: return
+        val activity = controller.activity ?: return
+        val intent = WebViewActivity.newIntent(
+            activity,
+            source.baseUrl,
+            source.id,
+            source.name,
+        )
+        context.startActivity(intent)
     }
 
     override fun onUpdateAllClicked(position: Int) {

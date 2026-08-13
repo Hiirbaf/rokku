@@ -42,6 +42,9 @@ class ExtensionHolder(view: View, val adapter: ExtensionAdapter) :
         binding.cancelButton.setOnClickListener {
             adapter.buttonClickListener.onCancelClick(flexibleAdapterPosition)
         }
+        binding.webButton.setOnClickListener {
+            adapter.buttonClickListener.onWebsiteClick(flexibleAdapterPosition)
+        }
     }
 
     fun bind(item: ExtensionItem) {
@@ -118,16 +121,19 @@ class ExtensionHolder(view: View, val adapter: ExtensionAdapter) :
 
         when (extension) {
             is Extension.Available -> {
+                binding.webButton.isVisible = extension.sources.isNotEmpty()
                 binding.sourceImage.load(extension.iconUrl) {
                     target(CoverViewTarget(binding.sourceImage))
                 }
             }
 
             is Extension.Installed -> {
+                binding.webButton.isVisible = false
                 binding.sourceImage.load(extension.icon)
             }
 
             is Extension.Untrusted -> {
+                binding.webButton.isVisible = false
                 binding.sourceImage.setImageDrawable(
                     context.contextCompatDrawable(R.drawable.ic_report_24dp),
                 )
@@ -190,19 +196,25 @@ class ExtensionHolder(view: View, val adapter: ExtensionAdapter) :
                     stateListAnimator =
                         AnimatorInflater.loadStateListAnimator(context, R.animator.icon_btn_state_list_anim)
                     rippleColor = ColorStateList.valueOf(context.getColor(R.color.on_secondary_highlight))
-                    setText(MR.strings.update)
+                    text = null
+                    icon = context.contextCompatDrawable(R.drawable.ic_get_app_24dp)
                 }
 
                 else -> {
-                    setText(MR.strings.settings)
+                    text = null
+                    icon = context.contextCompatDrawable(R.drawable.ic_outline_settings_24dp)
                 }
             }
         } else if (extension is Extension.Untrusted) {
             resetStrokeColor()
-            setText(MR.strings.trust)
+            text = null
+            icon = context.contextCompatDrawable(R.drawable.ic_verified_user_24dp)
         } else {
             resetStrokeColor()
-            setText(if (adapter.installPrivately) MR.strings.add else MR.strings.install)
+            text = null
+            icon = context.contextCompatDrawable(
+                if (adapter.installPrivately) R.drawable.ic_add_24dp else R.drawable.ic_get_app_24dp,
+            )
         }
     }
 }
