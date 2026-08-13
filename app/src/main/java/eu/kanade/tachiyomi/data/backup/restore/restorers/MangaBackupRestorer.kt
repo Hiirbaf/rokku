@@ -27,6 +27,7 @@ import yokai.domain.history.interactor.UpsertHistory
 import yokai.domain.library.custom.model.CustomMangaInfo
 import yokai.domain.manga.interactor.GetManga
 import yokai.domain.manga.interactor.InsertManga
+import yokai.domain.manga.interactor.SetExcludedScanlators
 import yokai.domain.manga.interactor.UpdateManga
 import yokai.domain.track.interactor.GetTrack
 import yokai.domain.track.interactor.InsertTrack
@@ -42,6 +43,7 @@ class MangaBackupRestorer(
     private val getManga: GetManga = Injekt.get(),
     private val insertManga: InsertManga = Injekt.get(),
     private val updateManga: UpdateManga = Injekt.get(),
+    private val setExcludedScanlators: SetExcludedScanlators = Injekt.get(),
     private val getHistory: GetHistory = Injekt.get(),
     private val upsertHistory: UpsertHistory = Injekt.get(),
     private val getTrack: GetTrack = Injekt.get(),
@@ -329,6 +331,6 @@ class MangaBackupRestorer(
 
     private suspend fun restoreFilteredScanlatorsForManga(manga: Manga, filteredScanlators: List<String>) {
         val actualList = ChapterUtil.getScanlators(manga.filtered_scanlators) + filteredScanlators
-        MangaUtil.setScanlatorFilter(updateManga, manga, actualList.toSet())
+        MangaUtil.setScanlatorFilter(setExcludedScanlators, manga, actualList.toSet())
     }
 }

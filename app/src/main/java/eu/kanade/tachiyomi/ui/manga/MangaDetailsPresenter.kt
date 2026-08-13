@@ -97,6 +97,7 @@ import yokai.domain.history.interactor.GetHistory
 import yokai.domain.library.custom.model.CustomMangaInfo
 import yokai.domain.manga.interactor.GetManga
 import yokai.domain.manga.interactor.InsertManga
+import yokai.domain.manga.interactor.SetExcludedScanlators
 import yokai.domain.manga.interactor.UpdateManga
 import yokai.domain.manga.models.MangaUpdate
 import yokai.domain.manga.models.cover
@@ -130,6 +131,7 @@ class MangaDetailsPresenter(
     private val insertManga: InsertManga by injectLazy()
     private val updateChapter: UpdateChapter by injectLazy()
     private val updateManga: UpdateManga by injectLazy()
+    private val setExcludedScanlators: SetExcludedScanlators by injectLazy()
     private val sourcePreferences: SourcePreferences by injectLazy()
     private val deleteTrack: DeleteTrack by injectLazy()
     private val getTrack: GetTrack by injectLazy()
@@ -924,7 +926,7 @@ class MangaDetailsPresenter(
         presenterScope.launchNonCancellableIO {
             val manga = manga
             MangaUtil.setScanlatorFilter(
-                updateManga,
+                setExcludedScanlators,
                 manga,
                 if (filteredScanlators.size == allChapterScanlators.size) emptySet() else filteredScanlators,
             )
