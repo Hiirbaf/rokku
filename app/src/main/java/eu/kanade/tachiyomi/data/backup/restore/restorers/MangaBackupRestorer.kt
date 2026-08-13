@@ -89,7 +89,14 @@ class MangaBackupRestorer(
                 // Copy information from manga already in database
                 manga.id = dbManga.id
                 manga.filtered_scanlators = dbManga.filtered_scanlators
+                val backupMemo = manga.memo
                 manga.copyFrom(dbManga)
+                // copyFrom() favors the already-tracked db manga's memo, same as it does for
+                // status/update_strategy, but memo is user data rather than source-refreshed
+                // data: fall back to the backup's memo when the db manga doesn't have one yet.
+                if (dbManga.memo.isEmpty()) {
+                    manga.memo = backupMemo
+                }
                 updateManga.await(manga.toMangaUpdate())
                 // Fetch rest of manga information
                 restoreExistingManga(
