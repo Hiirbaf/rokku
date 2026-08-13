@@ -71,6 +71,7 @@ import yokai.domain.chapter.interactor.UpdateChapter
 import yokai.domain.chapter.models.ChapterUpdate
 import yokai.domain.history.interactor.GetHistory
 import yokai.domain.library.LibraryPreferences
+import yokai.domain.manga.interactor.GetExcludedScanlators
 import yokai.domain.manga.interactor.GetLibraryManga
 import yokai.domain.manga.interactor.GetManga
 import yokai.domain.manga.interactor.UpdateManga
@@ -1654,6 +1655,7 @@ class LibraryPresenter(
             getChapter: GetChapter = Injekt.get(),
             getLibraryManga: GetLibraryManga = Injekt.get(),
             updateManga: UpdateManga = Injekt.get(),
+            getExcludedScanlators: GetExcludedScanlators = Injekt.get(),
         ) {
             val libraryManga = getLibraryManga.await()
             libraryManga.forEach { manga ->
@@ -1661,7 +1663,7 @@ class LibraryPresenter(
                 if (manga.manga.date_added == 0L) {
                     val chapters = getChapter.awaitAll(
                         manga.manga.id!!,
-                        manga.manga.filtered_scanlators?.isNotBlank() == true,
+                        getExcludedScanlators.await(manga.manga.id!!).isNotEmpty(),
                     )
                     manga.manga.date_added = chapters.minByOrNull { it.date_fetch }?.date_fetch ?: 0L
                     updateManga.await(MangaUpdate(manga.manga.id!!, dateAdded = manga.manga.date_added))
