@@ -112,7 +112,7 @@ class LibraryListHolder(
             boundCoverKey = coverKey
             binding.coverThumbnail.dispose()
             binding.coverThumbnail.setImageDrawable(null)
-            binding.coverThumbnail.loadManga(item.manga.manga) {
+            binding.coverThumbnail.loadManga(item.manga.manga, progress = binding.progress) {
                 // The default crossfade can get stuck mid-fade (showing nothing) when the
                 // result lands while this row is off-screen during a fast scroll - the row
                 // only paints again once it's rebound, e.g. by scrolling back over it a

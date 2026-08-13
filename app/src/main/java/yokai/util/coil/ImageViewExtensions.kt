@@ -21,12 +21,13 @@ private const val MAX_BITMAP_SIZE = 2048
 
 fun ImageView.loadManga(
     manga: Manga,
+    progress: View? = null,
     imageLoader: ImageLoader = context.imageLoader,
     builder: ImageRequest.Builder.() -> Unit = {},
 ): Disposable {
     val request = ImageRequest.Builder(context)
         .data(manga.cover())
-        .target(LibraryMangaImageTarget(this, manga))
+        .target(LibraryMangaImageTarget(this, manga, progress))
         .precision(Precision.INEXACT)
         .size(SizeResolver.ORIGINAL)
         .maxBitmapSize(Size(MAX_BITMAP_SIZE, MAX_BITMAP_SIZE))

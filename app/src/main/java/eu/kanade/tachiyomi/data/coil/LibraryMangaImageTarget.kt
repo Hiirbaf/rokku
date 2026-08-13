@@ -1,7 +1,9 @@
 package eu.kanade.tachiyomi.data.coil
 
 import android.graphics.BitmapFactory
+import android.view.View
 import android.widget.ImageView
+import androidx.core.view.isVisible
 import androidx.palette.graphics.Palette
 import coil3.Image
 import coil3.asDrawable
@@ -15,15 +17,23 @@ import uy.kohesive.injekt.injectLazy
 class LibraryMangaImageTarget(
     override val view: ImageView,
     private val libraryManga: Manga,
+    private val progress: View? = null,
 ) : ImageViewTarget(view) {
 
     private val coverCache: CoverCache by injectLazy()
 
+    override fun onStart(placeholder: Image?) {
+        progress?.isVisible = true
+        super.onStart(placeholder)
+    }
+
     override fun onSuccess(result: Image) {
+        progress?.isVisible = false
         view.setImageDrawable(result.asDrawable(view.context.resources))
     }
 
     override fun onError(error: Image?) {
+        progress?.isVisible = false
         super.onError(error)
         if (libraryManga.favorite) {
             launchIO {
