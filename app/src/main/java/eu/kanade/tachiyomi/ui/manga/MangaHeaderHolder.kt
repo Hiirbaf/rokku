@@ -44,6 +44,7 @@ import eu.kanade.tachiyomi.source.nameBasedOnEnabledLanguages
 import eu.kanade.tachiyomi.ui.base.holder.BaseFlexibleViewHolder
 import eu.kanade.tachiyomi.ui.manga.related.RelatedMangaCardAdapter
 import eu.kanade.tachiyomi.ui.manga.related.RelatedMangaCardItem
+import eu.kanade.tachiyomi.ui.reader.viewer.countMissingChapters
 import eu.kanade.tachiyomi.util.isLocal
 import eu.kanade.tachiyomi.util.lang.toNormalized
 import eu.kanade.tachiyomi.util.system.getResourceColor
@@ -326,13 +327,24 @@ class MangaHeaderHolder(
     fun bindChapters() {
         val presenter = adapter.delegate.mangaPresenter()
         val count = presenter.chapters.size
+        val missingCount = if (adapter.uiPreferences.hideChapterMissingCount().get()) {
+            0
+        } else {
+            countMissingChapters(presenter.chapters)
+        }
         if (binding != null) {
             binding.chaptersTitle.text =
                 itemView.context.getString(MR.plurals.chapters_plural, count, count)
+            binding.missingChaptersText.isVisible = missingCount > 0
+            binding.missingChaptersText.text =
+                itemView.context.getString(MR.plurals.missing_chapters_count, missingCount, missingCount)
             binding.filtersText.text = presenter.currentFilters()
         } else if (chapterBinding != null) {
             chapterBinding.chaptersTitle.text =
                 itemView.context.getString(MR.plurals.chapters_plural, count, count)
+            chapterBinding.missingChaptersText.isVisible = missingCount > 0
+            chapterBinding.missingChaptersText.text =
+                itemView.context.getString(MR.plurals.missing_chapters_count, missingCount, missingCount)
             chapterBinding.filtersText.text = presenter.currentFilters()
         }
     }
@@ -378,10 +390,7 @@ class MangaHeaderHolder(
 
         if (binding == null) {
             if (chapterBinding != null) {
-                val count = presenter.chapters.size
-                chapterBinding.chaptersTitle.text =
-                    itemView.context.getString(MR.plurals.chapters_plural, count, count)
-                chapterBinding.filtersText.text = presenter.currentFilters()
+                bindChapters()
                 if (adapter.preferences.themeMangaDetails().get()) {
                     val accentColor = adapter.delegate.accentColor() ?: return
                     chapterBinding.filterButton.imageTintList = ColorStateList.valueOf(accentColor)
@@ -494,8 +503,7 @@ class MangaHeaderHolder(
             }
         }
 
-        val count = presenter.chapters.size
-        binding.chaptersTitle.text = itemView.context.getString(MR.plurals.chapters_plural, count, count)
+        bindChapters()
 
         binding.topView.updateLayoutParams<ConstraintLayout.LayoutParams> {
             height = adapter.delegate.topCoverHeight()

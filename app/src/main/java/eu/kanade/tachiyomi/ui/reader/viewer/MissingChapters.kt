@@ -43,3 +43,10 @@ fun calculateChapterDifference(higherChapterNumber: Float, lowerChapterNumber: F
     if (higherChapterNumber < 0f || lowerChapterNumber < 0f) return 0f
     return floor(higherChapterNumber) - floor(lowerChapterNumber) - 1f
 }
+
+fun countMissingChapters(chapters: List<Chapter>): Int {
+    val sortedChapters = chapters.sortedBy { it.chapter_number }
+    return sortedChapters.zipWithNext { lowerChapter, higherChapter ->
+        calculateChapterDifference(higherChapter, lowerChapter).toInt()
+    }.sum()
+}

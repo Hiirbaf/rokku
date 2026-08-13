@@ -11,7 +11,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 ## [Unreleased]
 
 ### Additions
-- Showed a "Missing N chapters" separator directly in the chapter list wherever chapter numbering has a gap, matching the existing missing-chapter detection already used in the reader; toggle it off in Settings > Library > Behavior (closes #25)
+- Showed a "Missing N chapters" separator directly in the chapter list wherever chapter numbering has a gap, matching the existing missing-chapter detection already used in the reader, plus a total "Missing N chapters" summary below the chapter count; toggle it off in Settings > Library > Behavior (ref #25)
 - Added a "Select all" option to a manga's genre/tag chips (ported from upstream tachiyomiJ2K), letting you search the library or the current source using every tag at once instead of one at a time
 - Added MangaBaka and Hikka tracker support, including OAuth login (ref #26) ([@Hiirbaf](https://github.com/Hiirbaf))
 - Added private tracking: mark a tracked entry as private (hidden from your public profile) on services that support it (AniList, Bangumi, Kitsu, MangaBaka), toggled via the lock icon on the tracking card (ported from J2K)
