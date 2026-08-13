@@ -178,11 +178,6 @@ open class BrowseSourceController(bundle: Bundle) :
         return if (presenter.sourceIsInitialized) searchTitle(presenter.source.name) else null
     }
 
-    // disabling for now, one day maybe it will source icons will good
-//    override fun getBigIcon(): Drawable? {
-//        return presenter.source.icon()
-//    }
-
     override val presenter = BrowseSourcePresenter(
         args.getLong(SOURCE_ID_KEY),
         args.getString(SEARCH_QUERY_KEY),
@@ -194,7 +189,6 @@ open class BrowseSourceController(bundle: Bundle) :
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
 
-        // Initialize adapter, scroll listener and recycler views
         adapter = FlexibleAdapter(null, this, false)
         setupRecycler(view)
 
@@ -329,7 +323,6 @@ open class BrowseSourceController(bundle: Bundle) :
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.browse_source, menu)
 
-        // Initialize search menu
         val searchItem = activityBinding?.searchToolbar?.searchItem
         val searchView = activityBinding?.searchToolbar?.searchView
 
@@ -674,7 +667,6 @@ open class BrowseSourceController(bundle: Bundle) :
      * @param newQuery the new query.
      */
     private fun searchWithQuery(newQuery: String) {
-        // If text didn't change, do nothing
         if (presenter.query == newQuery) {
             return
         }
@@ -729,7 +721,6 @@ open class BrowseSourceController(bundle: Bundle) :
 
         val message = getErrorMessage(error)
         val retryAction = {
-            // If not the first page, show bottom binding.progress bar.
             if (adapter.mainItemCount > 0 && progressItem != null) {
                 adapter.addScrollableFooterWithDelay(progressItem!!, 0, true)
             } else {

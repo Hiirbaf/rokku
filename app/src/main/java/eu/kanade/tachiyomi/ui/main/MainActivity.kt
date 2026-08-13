@@ -466,12 +466,10 @@ open class MainActivity : BaseActivity<MainActivityBinding>() {
         val content: ViewGroup = binding.mainContent
 
         if (savedInstanceState == null && this !is SearchActivity) {
-            // Reset Incognito Mode on relaunch
             preferences.incognitoMode().set(false)
 
             val didMigration = Migrator.awaitAndRelease()
 
-            // Show changelog if needed
             if (didMigration) {
                 if (!BuildConfig.DEBUG) {
                     content.post {
@@ -577,7 +575,6 @@ open class MainActivity : BaseActivity<MainActivityBinding>() {
         }
 
         if (!router.hasRootController()) {
-            // Set start screen
             if (!handleIntentAction(intent)) {
                 goToStartingTab()
                 if (!basePreferences.hasShownOnboarding().get()) {
@@ -1417,7 +1414,6 @@ open class MainActivity : BaseActivity<MainActivityBinding>() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            // Initialize option to open catalogue settings.
             R.id.action_more -> {
                 if (overflowDialog != null) return false
                 val overflowDialog = OverflowDialog(this)

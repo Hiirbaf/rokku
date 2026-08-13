@@ -225,7 +225,6 @@ class MangaDetailsController :
     private var blockFavoriteButtonDrag = false
     private var isPushing = true
 
-    // Tablet Layout
     var isTablet = false
     private var tabletAdapter: MangaDetailsAdapter? = null
 

@@ -126,26 +126,20 @@ class LibraryUpdateJob(private val context: Context, workerParams: WorkerParamet
 
     private val categoryIds = mutableSetOf<Int>()
 
-    // List containing new updates
     private val newUpdates = mutableMapOf<LibraryManga, Array<Chapter>>()
 
-    // List containing failed updates
     private val failedUpdates = mutableMapOf<Manga, String?>()
 
-    // List containing skipped updates
     private val skippedUpdates = mutableMapOf<Manga, String?>()
 
     val count = AtomicInteger(0)
 
-    // Boolean to determine if user wants to automatically download new chapters.
     private val downloadNew: Boolean = preferences.downloadNewChapters().get()
 
-    // Boolean to determine if DownloadManager has downloads
     private var hasDownloads = false
 
     private val requestSemaphore = Semaphore(5)
 
-    // For updates delete removed chapters if not preference is set as well
     private val deleteRemoved by lazy { preferences.deleteRemovedChapters().get() != 1 }
 
     private val notifier = LibraryUpdateNotifier(context.localeContext)
@@ -247,7 +241,6 @@ class LibraryUpdateJob(private val context: Context, workerParams: WorkerParamet
     }
 
     private suspend fun updateChaptersJob(mangaToAdd: List<LibraryManga>) {
-        // Initialize the variables holding the progress of the updates.
         mangaToUpdate.addAll(mangaToAdd)
         mangaToUpdateMap.putAll(mangaToAdd.groupBy { it.manga.source })
         checkIfMassiveUpdate()
@@ -277,7 +270,6 @@ class LibraryUpdateJob(private val context: Context, workerParams: WorkerParamet
      * @param mangaToUpdate the list to update
      */
     private suspend fun updateDetails(mangaToUpdate: List<LibraryManga>) = coroutineScope {
-        // Initialize the variables holding the progress of the updates.
         val count = AtomicInteger(0)
         val asyncList = mangaToUpdate.groupBy { it.manga.source }.values.map { list ->
             async {
@@ -343,7 +335,6 @@ class LibraryUpdateJob(private val context: Context, workerParams: WorkerParamet
      * background thread, so it's safe to do heavy operations or network calls here.
      */
     private suspend fun updateTrackings(mangaToUpdate: List<LibraryManga>) {
-        // Initialize the variables holding the progress of the updates.
         var count = 0
 
         val loggedServices = trackManager.services.filter { it.isLogged }

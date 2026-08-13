@@ -241,7 +241,6 @@ class LibraryPresenter(
 
     private fun subscribeLibrary() {
         presenterScope.launchIO {
-            // Initial setup
             if (categories.isEmpty()) {
                 val dbCategories = getCategories.await()
                 if ((dbCategories + Category.createDefault(context)).distinctBy { it.order }.size !=
@@ -449,7 +448,6 @@ class LibraryPresenter(
         if (filterPrefs.filterUnread == STATE_INCLUDE && item.manga.unread == 0) return false
         if (filterPrefs.filterUnread == STATE_EXCLUDE && item.manga.unread > 0) return false
 
-        // Filter for unread chapters
         if (filterPrefs.filterUnread == 3 && !(item.manga.unread > 0 && !item.manga.hasRead)) return false
         if (filterPrefs.filterUnread == 4 && !(item.manga.unread > 0 && item.manga.hasRead)) return false
 
@@ -468,13 +466,11 @@ class LibraryPresenter(
             }
         }
 
-        // Filter for completed status of manga
         if (filterPrefs.filterCompleted == STATE_INCLUDE && item.manga.manga.status != SManga.COMPLETED) return false
         if (filterPrefs.filterCompleted == STATE_EXCLUDE && item.manga.manga.status == SManga.COMPLETED) return false
 
         if (!matchesFilterTracking(item, filterPrefs.filterTracked, filterTrackers)) return false
 
-        // Filter for downloaded manga
         if (filterPrefs.filterDownloaded != STATE_IGNORE) {
             val isDownloaded = when {
                 item.manga.manga.isLocal() -> true
@@ -484,7 +480,6 @@ class LibraryPresenter(
             return if (filterPrefs.filterDownloaded == STATE_INCLUDE) isDownloaded else !isDownloaded
         }
 
-        // Filter for NSFW/SFW contents
         if (filterPrefs.filterContentType == STATE_INCLUDE) return !item.manga.manga.isLewd()
         if (filterPrefs.filterContentType == STATE_EXCLUDE) return item.manga.manga.isLewd()
         return true
@@ -576,7 +571,6 @@ class LibraryPresenter(
         filterTracked: Int,
         filterTrackers: String,
     ): Boolean {
-        // Filter for tracked (or per tracked service)
         if (filterTracked != STATE_IGNORE) {
             val tracks = getTrack.awaitAllByMangaId(item.manga.manga.id!!)
 
@@ -848,34 +842,6 @@ class LibraryPresenter(
             collapsedDynamicCategories = it[12] as Set<String>,
         )
     }
-
-//    private fun MutableList<LibraryItem>.addRemovedManga(
-//        removedManga: Map<Category, List<LibraryItem>>,
-//    ): MutableList<LibraryItem> {
-//        removedManga.keys.forEach { key ->
-//            val manga = removedManga[key] ?: return@forEach
-//            val headerItem = try {
-//                manga.first().header
-//            } catch (e: NoSuchElementException) {
-//                return@forEach  // No hidden manga to be handled
-//            }
-//            val mergedTitle = manga.joinToString("-") {
-//                it.manga.title + "-" + it.manga.manga.author
-//            }
-//            this.add(
-//                LibraryItem(
-//                    LibraryManga.createHide(
-//                        headerItem.catId,
-//                        mergedTitle,
-//                        manga,
-//                    ),
-//                    headerItem,
-//                    viewContext,
-//                ),
-//            )
-//        }
-//        return this
-//    }
 
     /**
      * Library's flow.

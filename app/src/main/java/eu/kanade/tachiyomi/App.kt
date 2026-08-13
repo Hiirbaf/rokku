@@ -292,11 +292,9 @@ open class App : Application(), DefaultLifecycleObserver, SingletonImageLoader.F
                     add(GifDecoder.Factory())
                 }
 
-                // NetworkFetcher.Factory
                 add(OkHttpNetworkFetcherFactory(callFactoryLazy::value))
-                // Decoder.Factory (Tachiyomi's custom decoder for JXL/AVIF)
+                // Tachiyomi's custom decoder for JXL/AVIF
                 add(TachiyomiImageDecoder.Factory())
-                // Fetcher.Factory
                 add(BufferedSourceFetcher.Factory())
                 add(MangaCoverFetcher.MangaFactory(callFactoryLazy))
                 add(MangaCoverFetcher.MangaCoverFactory(callFactoryLazy))

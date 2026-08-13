@@ -55,28 +55,22 @@ class NotificationReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         when (intent.action) {
-            // Dismiss notification
             ACTION_DISMISS_NOTIFICATION -> dismissNotification(context, intent.getIntExtra(EXTRA_NOTIFICATION_ID, -1))
 
-            // Resume the download service
             ACTION_RESUME_DOWNLOADS -> DownloadJob.start(context)
 
-            // Pause the download service
             ACTION_PAUSE_DOWNLOADS -> {
                 downloadManager.pauseDownloads()
             }
 
-            // Clear the download queue
             ACTION_CLEAR_DOWNLOADS -> downloadManager.clearQueue()
 
-            // Delete image from path and dismiss notification
             ACTION_DELETE_IMAGE -> deleteImage(
                 context,
                 intent.getStringExtra(EXTRA_FILE_LOCATION)!!,
                 intent.getIntExtra(EXTRA_NOTIFICATION_ID, -1),
             )
 
-            // Cancel library update and dismiss notification
             ACTION_CANCEL_LIBRARY_UPDATE -> cancelLibraryUpdate(context)
 
             ACTION_CANCEL_EXTENSION_UPDATE -> cancelExtensionUpdate(context)
@@ -89,7 +83,6 @@ class NotificationReceiver : BroadcastReceiver() {
 
             ACTION_CANCEL_RESTORE -> cancelRestoreUpdate(context)
 
-            // Share backup file
             ACTION_SHARE_BACKUP ->
                 shareBackup(
                     context,
@@ -111,7 +104,6 @@ class NotificationReceiver : BroadcastReceiver() {
                 markAsRead(urls, mangaId)
             }
 
-            // Share crash dump file
             ACTION_SHARE_CRASH_LOG ->
                 shareFile(
                     context,
@@ -144,9 +136,7 @@ class NotificationReceiver : BroadcastReceiver() {
             type = "application/x-protobuf+gzip"
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_GRANT_READ_URI_PERMISSION
         }
-        // Dismiss notification
         dismissNotification(context, notificationId)
-        // Launch share activity
         context.startActivity(Intent.createChooser(sendIntent, null).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
     }
 
@@ -164,9 +154,7 @@ class NotificationReceiver : BroadcastReceiver() {
             type = fileMimeType
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_GRANT_READ_URI_PERMISSION
         }
-        // Dismiss notification
         dismissNotification(context, notificationId)
-        // Launch share activity
         context.startActivity(Intent.createChooser(sendIntent, null).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
     }
 
@@ -177,10 +165,8 @@ class NotificationReceiver : BroadcastReceiver() {
      * @param notificationId id of notification
      */
     private fun deleteImage(context: Context, path: String, notificationId: Int) {
-        // Dismiss notification
         dismissNotification(context, notificationId)
 
-        // Delete file
         val file = File(path)
         file.delete()
 
@@ -267,18 +253,14 @@ class NotificationReceiver : BroadcastReceiver() {
     companion object {
         private const val NAME = "NotificationReceiver"
 
-        // Called to delete image.
         private const val ACTION_DELETE_IMAGE = "$ID.$NAME.DELETE_IMAGE"
 
-        // Called to launch send intent.
         private const val ACTION_SHARE_BACKUP = "$ID.$NAME.SEND_BACKUP"
 
         private const val ACTION_SHARE_CRASH_LOG = "$ID.$NAME.SEND_CRASH_LOG"
 
-        // Called to cancel library update.
         private const val ACTION_CANCEL_LIBRARY_UPDATE = "$ID.$NAME.CANCEL_LIBRARY_UPDATE"
 
-        // Called to cancel extension update.
         private const val ACTION_CANCEL_EXTENSION_UPDATE = "$ID.$NAME.CANCEL_EXTENSION_UPDATE"
 
         private const val ACTION_START_EXTENSION_INSTALL = "$ID.$NAME.START_EXTENSION_INSTALL"
@@ -287,43 +269,30 @@ class NotificationReceiver : BroadcastReceiver() {
 
         private const val ACTION_START_APP_UPDATE = "$ID.$NAME.START_APP_UPDATE"
 
-        // Called to mark as read
         private const val ACTION_MARK_AS_READ = "$ID.$NAME.MARK_AS_READ"
 
-        // Called to cancel restore
         private const val ACTION_CANCEL_RESTORE = "$ID.$NAME.CANCEL_RESTORE"
 
-        // Value containing file location.
         private const val EXTRA_FILE_LOCATION = "$ID.$NAME.FILE_LOCATION"
 
-        // Called to resume downloads.
         private const val ACTION_RESUME_DOWNLOADS = "$ID.$NAME.ACTION_RESUME_DOWNLOADS"
 
-        // Called to pause downloads.
         private const val ACTION_PAUSE_DOWNLOADS = "$ID.$NAME.ACTION_PAUSE_DOWNLOADS"
 
-        // Called to clear downloads.
         private const val ACTION_CLEAR_DOWNLOADS = "$ID.$NAME.ACTION_CLEAR_DOWNLOADS"
 
-        // Called to dismiss notification.
         private const val ACTION_DISMISS_NOTIFICATION = "$ID.$NAME.ACTION_DISMISS_NOTIFICATION"
 
-        // Value containing uri.
         private const val EXTRA_URI = "$ID.$NAME.URI"
 
-        // Value containing notification id.
         private const val EXTRA_NOTIFICATION_ID = "$ID.$NAME.NOTIFICATION_ID"
 
-        // Value containing group id.
         private const val EXTRA_GROUP_ID = "$ID.$NAME.EXTRA_GROUP_ID"
 
-        // Value containing manga id.
         private const val EXTRA_MANGA_ID = "$ID.$NAME.EXTRA_MANGA_ID"
 
-        // Value containing chapter id.
         private const val EXTRA_CHAPTER_ID = "$ID.$NAME.EXTRA_CHAPTER_ID"
 
-        // Value containing chapter url.
         private const val EXTRA_CHAPTER_URL = "$ID.$NAME.EXTRA_CHAPTER_URL"
 
         /**

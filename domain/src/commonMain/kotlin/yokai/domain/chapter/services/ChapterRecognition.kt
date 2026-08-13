@@ -36,14 +36,10 @@ object ChapterRecognition {
             return chapterNumber
         }
 
-        // Get chapter title with lower case
         val cleanChapterName = chapterName.lowercase()
-            // Remove manga title from chapter title.
             .replace(mangaTitle.lowercase(), "").trim()
-            // Remove comma's or hyphens.
             .replace(',', '.')
             .replace('-', '.')
-            // Remove unwanted white spaces.
             .replace(unwantedWhiteSpace, "")
 
         val numberMatch = number.findAll(cleanChapterName)
