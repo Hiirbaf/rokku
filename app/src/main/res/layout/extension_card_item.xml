@@ -128,7 +128,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="?selectableItemBackgroundBorderless"
-                android:contentDescription="@string/action_open_in_web_view"
+                android:contentDescription="@string/open_in_webview"
                 android:padding="12dp"
                 app:srcCompat="@drawable/ic_open_in_webview_24dp"
                 app:tint="?attr/colorSecondary"
