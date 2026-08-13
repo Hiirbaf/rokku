@@ -11,34 +11,34 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 ## [Unreleased]
 
 ### Additions
-- Showed a "Missing N chapters" separator directly in the chapter list wherever chapter numbering has a gap, matching the existing missing-chapter detection already used in the reader, plus a total "Missing N chapters" summary below the chapter count; toggle it off in Settings > Library > Behavior
-- Added a "Select all" option to a manga's genre/tag chips (ported from upstream tachiyomiJ2K), letting you search the library or the current source using every tag at once instead of one at a time
+- Added a "Missing N chapters" separator in the chapter list, plus a summary below the chapter count (Settings > Library > Behavior)
+- Added a "Select all" option to a manga's genre/tag chips, to search by every tag at once
 - Added MangaBaka and Hikka tracker support, including OAuth login ([@Hiirbaf](https://github.com/Hiirbaf))
-- Added private tracking: mark a tracked entry as private (hidden from your public profile) on services that support it (AniList, Bangumi, Kitsu, MangaBaka), toggled via the lock icon on the tracking card
-- Added a "Flash the screen on page turn" reader option (white, black, or white then black) to clear ghosting on e-ink displays in paged reading mode
-- Added a "Custom" option to Settings > Library > Global updates, letting you anchor automatic library updates to a specific time of day instead of a rolling interval (the actual fire time is still approximate, subject to system battery optimizations)
-- Added an inline edit action to extension repo items so a repo's URL can be changed without deleting and re-adding it; long-pressing a repo now copies its URL to the clipboard
-- Added a configurable free-space floor (Settings > Downloads) that pauses the download queue and notifies instead of erroring chapter-by-chapter when storage runs critically low
-- Added a "With 'Cancelled' status" library update restriction (Settings > Library), alongside the existing "With 'Completed' status" one
-- Added AniList custom list support to the tracking sheet: a new row shows which of your AniList custom lists an entry belongs to, tap it to check/uncheck lists and save back to AniList
+- Added private tracking: mark a tracked entry as private on services that support it (AniList, Bangumi, Kitsu, MangaBaka)
+- Added a "Flash the screen on page turn" reader option, for e-ink displays
+- Added a "Custom" option to Settings > Library > Global updates, to anchor updates to a specific time of day
+- Added inline editing for extension repo URLs; long-press a repo to copy its URL
+- Added a configurable free-space floor (Settings > Downloads) that pauses downloads instead of erroring when storage runs low
+- Added a "With 'Cancelled' status" library update restriction (Settings > Library)
+- Added AniList custom list support to the tracking sheet
 
 ### Fixes
-- Fixed manga covers staying blank in list view (library and source browse) on release/nightly builds: Coil's default target wasn't applying the decoded image to the row's `ImageView` under minification, and even after applying it, a crossfade interrupted by fast scrolling could leave a row stuck blank until it was scrolled off-screen and back; covers now render directly and skip the crossfade on these rows, rows also stop needlessly re-fetching a cover that hasn't actually changed, and the existing loading spinner slot in each row is now actually wired up while a cover fetches
-- Fixed source browse covers sometimes staying blank in list view: a cover fetched after the initial listing (no thumbnail yet) only updated the on-screen row, not the underlying item, so scrolling the row off-screen and back showed a blank cover again
-- Fixed MangaBaka and Hikka tracker sync IDs being swapped relative to other apps in the same family, which caused MangaBaka tracking to be lost when restoring a backup created elsewhere
-- Fixed library updates re-downloading and re-listing as unread a chapter a source re-released under a new URL when "mark duplicate read chapters as read" is on: chapters that come back already read from that sync are now skipped by the downloader and the update notification too
-- Fixed the started/finished reading dates never being set on trackers when reading through the app: they're now stamped locally on the first chapter read and on reaching the last chapter, without overwriting a date already set by the reader or returned by the tracker
-- Fixed memory leaks on theme/night-mode/side-nav changes and when refreshing app shortcuts (ported from upstream tachiyomiJ2K)
-- Fixed nested `Filter.Group`s (e.g. Publisher/Genre inside another group) not rendering at all: FlexibleAdapter doesn't reliably display sub-items of an item that is both expandable and sectionable, so a nested group's label row is now a plain (non-expandable) item that manually splices its children into the list on tap instead of relying on the adapter's own expand mechanism - keeping per-group collapse without the display bug
-- Fixed genre/publisher filters staying empty (or stuck on a "Tap Reset to load filters" placeholder) for sources that fetch their filter options from the network in the background (Keiyoushi's `KeiSource` filter-fetching sources, e.g. BatCave): poll for updated filters for a few seconds after opening a source, and re-check once more when the filter sheet is actually opened, instead of only checking once right after the source loads
-- Fixed the filter sheet flickering when expanding a group with many nested sub-groups (e.g. Publisher's per-letter groups): the default item animator faded in every newly inserted row at once, which reads as a flash with a large batch; this is a plain filter list, not worth animating
-- Fixed MyAnimeList erroring on list entries with partial start/finish reading dates by falling back to January 1st or the 1st of the month
-- Fixed the reader getting stuck loading indefinitely in some scenarios by initializing it from the view model's own scope instead of the activity's
-- Fixed a manga's memo not being saved to or restored from backups, and not being merged back in when restoring onto a manga already in the library
-- Fixed free-space checks (including the low-disk-space download guard) silently never triggering when the download directory is a SAF tree/document URI instead of a plain filesystem path
-- Fixed pasting a manga URL into Global Search failing (or falling back to an often-empty text search) for sources that don't store the full URL path as `manga.url`: the pasted URL is now resolved through the matching source's own search instead of the app guessing the URL itself
-- Fixed a source's toggle in extension settings sometimes staying visually off after enabling its language from the "must be enabled first" prompt, even though the language was actually enabled (the manual UI patch raced with the source-visibility listener); the toggle now replays its own click instead
-- Fixed extension icons in the browse list sometimes showing the wrong icon, staying blank, or getting stuck mid-fade until scrolled over twice: a recycled row kept displaying whatever icon it last had while the new one loaded (or never finished); a full-app resume (which some devices trigger far more often than expected, e.g. via aggressive battery/background management) needlessly reloaded every icon in the list from scratch; the default crossfade could get interrupted by fast scrolling and never resolve; and the disk cache wasn't configured to actually persist across app restarts, so every cold start re-fetched every icon over the network. Icons for the whole extension list are now also prefetched as soon as it's known (normally at app start) instead of only once the extensions screen is opened, and that prefetch is paced instead of firing all requests at once (which was itself causing a multi-second stutter right after adding a repo)
+- Fixed manga covers staying blank in list view (library and source browse) on release/nightly builds
+- Fixed source browse covers sometimes staying blank in list view after scrolling
+- Fixed MangaBaka and Hikka tracker sync IDs being swapped, breaking MangaBaka tracking on backup restore
+- Fixed library updates re-downloading a chapter already marked read via "mark duplicate read chapters as read"
+- Fixed started/finished reading dates never being set on trackers
+- Fixed memory leaks on theme/night-mode/side-nav changes and app shortcut refreshes
+- Fixed nested filter groups (e.g. Publisher/Genre) not rendering
+- Fixed genre/publisher filters staying empty for sources that fetch filters in the background
+- Fixed the filter sheet flickering when expanding a group with many sub-groups
+- Fixed MyAnimeList erroring on list entries with partial start/finish reading dates
+- Fixed the reader getting stuck loading indefinitely in some scenarios
+- Fixed a manga's memo not being saved to or restored from backups
+- Fixed free-space checks never triggering when the download directory is a SAF tree/document URI
+- Fixed pasting a manga URL into Global Search failing for some sources
+- Fixed a source's toggle in extension settings sometimes staying visually off after enabling its language
+- Fixed extension icons in the browse list showing the wrong icon, staying blank, or stuck mid-fade
 
 ### Other
 - Synced with upstream (yokai): added proguard rules to keep `Serializable` `writeReplace`/`readResolve`, and bumped `okio` to 3.18.1
