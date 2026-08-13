@@ -190,16 +190,19 @@ class ExtensionHolder(view: View, val adapter: ExtensionAdapter) :
                     stateListAnimator =
                         AnimatorInflater.loadStateListAnimator(context, R.animator.icon_btn_state_list_anim)
                     rippleColor = ColorStateList.valueOf(context.getColor(R.color.on_secondary_highlight))
-                    setText(MR.strings.update)
+                    text = null
+                    icon = context.contextCompatDrawable(R.drawable.ic_get_app_24dp)
                 }
 
                 else -> {
-                    setText(MR.strings.settings)
+                    text = null
+                    icon = context.contextCompatDrawable(R.drawable.ic_outline_settings_24dp)
                 }
             }
         } else if (extension is Extension.Untrusted) {
             resetStrokeColor()
-            setText(MR.strings.trust)
+            text = null
+            icon = context.contextCompatDrawable(R.drawable.ic_verified_user_24dp)
         } else {
             resetStrokeColor()
             text = null
