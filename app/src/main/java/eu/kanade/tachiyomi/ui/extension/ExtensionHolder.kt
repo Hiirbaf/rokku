@@ -42,6 +42,9 @@ class ExtensionHolder(view: View, val adapter: ExtensionAdapter) :
         binding.cancelButton.setOnClickListener {
             adapter.buttonClickListener.onCancelClick(flexibleAdapterPosition)
         }
+        binding.webButton.setOnClickListener {
+            adapter.buttonClickListener.onWebsiteClick(flexibleAdapterPosition)
+        }
     }
 
     fun bind(item: ExtensionItem) {
