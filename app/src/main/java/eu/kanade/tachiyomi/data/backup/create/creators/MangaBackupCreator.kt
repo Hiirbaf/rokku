@@ -13,6 +13,7 @@ import yokai.data.DatabaseHandler
 import yokai.domain.category.interactor.GetCategories
 import yokai.domain.chapter.interactor.GetChapter
 import yokai.domain.history.interactor.GetHistory
+import yokai.domain.manga.interactor.GetExcludedScanlators
 import yokai.domain.track.interactor.GetTrack
 
 class MangaBackupCreator(
@@ -22,6 +23,7 @@ class MangaBackupCreator(
     private val getChapter: GetChapter = Injekt.get(),
     private val getHistory: GetHistory = Injekt.get(),
     private val getTrack: GetTrack = Injekt.get(),
+    private val getExcludedScanlators: GetExcludedScanlators = Injekt.get(),
 ) {
     suspend operator fun invoke(mangas: List<Manga>, options: BackupOptions): List<BackupManga> {
         // Wrapping each chunk in a transaction keeps every query in it on the same transaction
@@ -48,6 +50,12 @@ class MangaBackupCreator(
     private suspend fun backupManga(manga: Manga, options: BackupOptions): BackupManga {
         // Entry for this manga
         val mangaObject = BackupManga.copyFrom(manga, if (options.customInfo) customMangaManager else null)
+
+        // filtered_scanlators is no longer written to; excluded_scanlators is the source of
+        // truth (see #20), so override whatever copyFrom read off the (now stale) column.
+        mangaObject.excludedScanlators = manga.id?.let { getExcludedScanlators.await(it) }
+            ?.toList()
+            .orEmpty()
 
         // Check if user wants chapter information in backup
         if (options.chapters) {

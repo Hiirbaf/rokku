@@ -25,6 +25,7 @@ import yokai.domain.chapter.interactor.UpdateChapter
 import yokai.domain.history.interactor.GetHistory
 import yokai.domain.history.interactor.UpsertHistory
 import yokai.domain.library.custom.model.CustomMangaInfo
+import yokai.domain.manga.interactor.GetExcludedScanlators
 import yokai.domain.manga.interactor.GetManga
 import yokai.domain.manga.interactor.InsertManga
 import yokai.domain.manga.interactor.SetExcludedScanlators
@@ -44,6 +45,7 @@ class MangaBackupRestorer(
     private val insertManga: InsertManga = Injekt.get(),
     private val updateManga: UpdateManga = Injekt.get(),
     private val setExcludedScanlators: SetExcludedScanlators = Injekt.get(),
+    private val getExcludedScanlators: GetExcludedScanlators = Injekt.get(),
     private val getHistory: GetHistory = Injekt.get(),
     private val upsertHistory: UpsertHistory = Injekt.get(),
     private val getTrack: GetTrack = Injekt.get(),
@@ -330,7 +332,11 @@ class MangaBackupRestorer(
     }
 
     private suspend fun restoreFilteredScanlatorsForManga(manga: Manga, filteredScanlators: List<String>) {
-        val actualList = ChapterUtil.getScanlators(manga.filtered_scanlators) + filteredScanlators
+        // Reads current exclusions from excluded_scanlators rather than manga.filtered_scanlators:
+        // the column is no longer kept up to date (see #20), so it can be stale for manga whose
+        // filter changed since the last time this in-memory Manga's DB row was fetched.
+        val currentExcluded = manga.id?.let { getExcludedScanlators.await(it) }.orEmpty()
+        val actualList = currentExcluded + filteredScanlators
         MangaUtil.setScanlatorFilter(setExcludedScanlators, manga, actualList.toSet())
     }
 }
