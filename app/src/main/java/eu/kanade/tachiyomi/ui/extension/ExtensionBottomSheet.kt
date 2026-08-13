@@ -29,6 +29,7 @@ import eu.kanade.tachiyomi.ui.migration.SourceAdapter
 import eu.kanade.tachiyomi.ui.migration.SourceItem
 import eu.kanade.tachiyomi.ui.migration.manga.design.PreMigrationController
 import eu.kanade.tachiyomi.ui.source.BrowseController
+import eu.kanade.tachiyomi.ui.webview.WebViewActivity
 import eu.kanade.tachiyomi.util.system.isPackageInstalled
 import eu.kanade.tachiyomi.util.system.materialAlertDialog
 import eu.kanade.tachiyomi.util.system.rootWindowInsetsCompat
@@ -236,8 +237,15 @@ class ExtensionBottomSheet @JvmOverloads constructor(context: Context, attrs: At
 
     override fun onWebsiteClick(position: Int) {
         val extension = (extAdapter?.getItem(position) as? ExtensionItem)?.extension as? Extension.Available ?: return
-        val url = extension.sources.firstOrNull()?.baseUrl ?: return
-        controller.openInBrowser(url)
+        val source = extension.sources.firstOrNull() ?: return
+        val activity = activity ?: return
+        val intent = WebViewActivity.newIntent(
+            activity,
+            source.baseUrl,
+            source.id,
+            source.name,
+        )
+        startActivity(intent)
     }
 
     override fun onUpdateAllClicked(position: Int) {
