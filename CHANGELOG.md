@@ -10,6 +10,9 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 
 ## [Unreleased]
 
+### Fixes
+- Fixed the "Missing N chapters" chapter-count summary staying hidden when a manga has decimal-numbered chapters (e.g. extras like "296.5"), which could cancel out real gaps in the count
+
 ## [1.6.0]
 
 ### Additions

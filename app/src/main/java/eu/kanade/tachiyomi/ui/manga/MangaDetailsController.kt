@@ -910,6 +910,7 @@ class MangaDetailsController :
     fun updateHeader() {
         binding.swipeRefresh.isRefreshing = presenter.isLoading
         adapter?.setChapters(presenter.chapters)
+        adapter?.notifyItemChanged(0)
         tabletAdapter?.notifyItemChanged(0)
         addMangaHeader()
         updateMenuVisibility(activityBinding?.toolbar?.menu)
@@ -937,6 +938,7 @@ class MangaDetailsController :
         binding.swipeRefresh.isRefreshing = presenter.isLoading
         tabletAdapter?.notifyItemChanged(0)
         adapter?.setChapters(presenter.chapters)
+        adapter?.notifyItemChanged(0)
         addMangaHeader()
         updateFab()
         colorToolbar(binding.recycler.canScrollVertically(-1))
