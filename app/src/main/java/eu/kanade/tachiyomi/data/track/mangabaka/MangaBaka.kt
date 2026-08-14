@@ -103,7 +103,10 @@ class MangaBaka(private val context: Context, id: Long) : TrackService(id) {
     // score preference only dictates step size, scores are always 0-100
     override fun get10PointScore(score: Float): Float = score / 10f
 
-    override fun indexToScore(index: Int): Float = getScoreRange().toList()[index].toFloat()
+    override fun indexToScore(index: Int): Float {
+        val scores = getScoreRange().toList()
+        return scores.getOrElse(index) { scores.last() }.toFloat()
+    }
 
     override fun displayScore(track: Track): String = track.score.toInt().toString()
 
