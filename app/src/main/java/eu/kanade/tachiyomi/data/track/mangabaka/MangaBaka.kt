@@ -38,6 +38,21 @@ class MangaBaka(private val context: Context, id: Long) : TrackService(id) {
         const val STEP_20 = "STEP_20"
         const val STEP_25 = "STEP_25"
 
+        // 1, 2, ..., 99, 100
+        private val STEP_1_SCORES = IntRange(0, 100)
+
+        // 5, 10, ..., 95, 100
+        private val STEP_5_SCORES = IntRange(0, 100).step(5)
+
+        // 10, 20, ..., 90, 100
+        private val STEP_10_SCORES = IntRange(0, 100).step(10)
+
+        // 20, 40, ..., 80, 100
+        private val STEP_20_SCORES = IntRange(0, 100).step(20)
+
+        // 25, 50, 75, 100
+        private val STEP_25_SCORES = IntRange(0, 100).step(25)
+
         private const val SEARCH_ID_PREFIX = "id:"
     }
 
@@ -83,24 +98,12 @@ class MangaBaka(private val context: Context, id: Long) : TrackService(id) {
 
     override fun getGlobalStatus(status: Int): String = getStatus(status)
 
-    override fun getScoreList(): ImmutableList<String> = when (scorePreference.get()) {
-        // 1, 2, ..., 99, 100
-        STEP_1 -> IntRange(0, 100).map(Int::toString).toImmutableList()
+    override fun getScoreList(): ImmutableList<String> = getScoreRange().map(Int::toString).toImmutableList()
 
-        // 5, 10, ..., 95, 100
-        STEP_5 -> IntRange(0, 100).step(5).map(Int::toString).toImmutableList()
+    // score preference only dictates step size, scores are always 0-100
+    override fun get10PointScore(score: Float): Float = score / 10f
 
-        // 10, 20, ..., 90, 100
-        STEP_10 -> IntRange(0, 100).step(10).map(Int::toString).toImmutableList()
-
-        // 20, 40, ..., 80, 100
-        STEP_20 -> IntRange(0, 100).step(20).map(Int::toString).toImmutableList()
-
-        // 25, 50, 75, 100
-        STEP_25 -> IntRange(0, 100).step(25).map(Int::toString).toImmutableList()
-
-        else -> throw Exception("Unknown score type")
-    }
+    override fun indexToScore(index: Int): Float = getScoreRange().toList()[index].toFloat()
 
     override fun displayScore(track: Track): String = track.score.toInt().toString()
 
@@ -137,6 +140,15 @@ class MangaBaka(private val context: Context, id: Long) : TrackService(id) {
             Logger.e(e)
             false
         }
+    }
+
+    private fun getScoreRange(): IntProgression = when (scorePreference.get()) {
+        STEP_1 -> STEP_1_SCORES
+        STEP_5 -> STEP_5_SCORES
+        STEP_10 -> STEP_10_SCORES
+        STEP_20 -> STEP_20_SCORES
+        STEP_25 -> STEP_25_SCORES
+        else -> throw Exception("Unknown score type")
     }
 
     override suspend fun search(query: String): List<TrackSearch> {
