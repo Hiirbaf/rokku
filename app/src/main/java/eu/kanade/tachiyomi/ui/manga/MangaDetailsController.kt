@@ -61,7 +61,7 @@ import com.bluelinelabs.conductor.ControllerChangeType
 import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
-import com.materialkolor.ColorSpec
+import com.materialkolor.dynamiccolor.ColorSpec
 import com.materialkolor.dynamicColorScheme
 import com.materialkolor.PaletteStyle
 import dev.icerock.moko.resources.StringResource
