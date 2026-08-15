@@ -3,6 +3,7 @@ package eu.kanade.tachiyomi.data.preference
 import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
 import com.google.android.material.color.DynamicColors
+import com.materialkolor.PaletteStyle
 import eu.kanade.tachiyomi.BuildConfig
 import eu.kanade.tachiyomi.core.preference.Preference
 import eu.kanade.tachiyomi.core.preference.PreferenceStore
@@ -426,6 +427,7 @@ class PreferencesHelper(val context: Context, val preferenceStore: PreferenceSto
     fun showNsfwSources() = preferenceStore.getBoolean(Keys.showNsfwSource, true)
 
     fun themeMangaDetails() = preferenceStore.getBoolean(Keys.themeMangaDetails, true)
+    fun coverThemeStyle() = preferenceStore.getEnum(Keys.coverThemeStyle, PaletteStyle.TonalSpot)
 
     fun renderDescriptionImages() = preferenceStore.getBoolean(Keys.renderDescriptionImages, true)
 
