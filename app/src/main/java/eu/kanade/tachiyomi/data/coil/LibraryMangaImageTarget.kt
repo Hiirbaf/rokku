@@ -5,6 +5,7 @@ import android.view.View
 import android.widget.ImageView
 import androidx.core.view.isVisible
 import androidx.palette.graphics.Palette
+import co.touchlab.kermit.Logger
 import coil3.Image
 import coil3.asDrawable
 import coil3.target.ImageViewTarget
@@ -24,17 +25,20 @@ class LibraryMangaImageTarget(
 
     override fun onStart(placeholder: Image?) {
         progress?.isVisible = true
+        Logger.d { "LibraryMangaImageTarget onStart for mangaId=${libraryManga.id} title=${libraryManga.title}" }
         super.onStart(placeholder)
     }
 
     override fun onSuccess(result: Image) {
         progress?.isVisible = false
+        Logger.d { "LibraryMangaImageTarget onSuccess for mangaId=${libraryManga.id} title=${libraryManga.title}" }
         view.setImageDrawable(result.asDrawable(view.context.resources))
     }
 
     override fun onError(error: Image?) {
         progress?.isVisible = false
         super.onError(error)
+        Logger.w { "LibraryMangaImageTarget onError for mangaId=${libraryManga.id} title=${libraryManga.title} thumbnail_url=${libraryManga.thumbnail_url}" }
         if (libraryManga.favorite) {
             launchIO {
                 val file = coverCache.getCoverFile(libraryManga.thumbnail_url, false)

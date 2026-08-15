@@ -22,7 +22,9 @@ import eu.kanade.tachiyomi.util.system.toast
 import eu.kanade.tachiyomi.util.system.withUIContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -121,7 +123,7 @@ class RecentsPresenter(
             }
         }
         downloadManager.isDownloaderRunning.onEach(::downloadStatusChanged).launchIn(presenterScope)
-        LibraryUpdateJob.updateFlow.onEach(::onUpdateManga).launchIn(presenterScope)
+        LibraryUpdateJob.updateFlow.debounce(300).onEach(::onUpdateManga).launchIn(presenterScope)
         if (lastRecents != null) {
             if (recentItems.isEmpty()) {
                 recentItems = lastRecents ?: emptyList()
@@ -149,6 +151,8 @@ class RecentsPresenter(
         val oldQuery = query
         recentsJob?.cancel()
         recentsJob = presenterScope.launch {
+            // Coalesces bursts of near-simultaneous calls (several fire during a cold start).
+            delay(100)
             runRecents(oldQuery, updatePageCount)
         }
     }

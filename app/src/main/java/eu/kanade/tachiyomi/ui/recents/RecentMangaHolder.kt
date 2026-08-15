@@ -15,6 +15,9 @@ import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePaddingRelative
 import androidx.transition.TransitionManager
 import androidx.transition.TransitionSet
+import coil3.dispose
+import coil3.request.Disposable
+import coil3.request.crossfade
 import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.data.database.models.Chapter
 import eu.kanade.tachiyomi.data.database.models.ChapterHistory
@@ -45,6 +48,7 @@ class RecentMangaHolder(
 
     private val binding = RecentMangaItemBinding.bind(view)
     var chapterId: Long? = null
+    private var coverDisposable: Disposable? = null
 
     private val isUpdates get() = adapter.viewType.isUpdates
     private val isSmallUpdates get() = isUpdates && !adapter.showUpdatedTime
@@ -220,7 +224,25 @@ class RecentMangaHolder(
             else -> context.timeSpanFromNow(MR.strings.read_, item.mch.history.last_read)
         }
         if ((context as? Activity)?.isDestroyed != true) {
-            binding.coverThumbnail.loadManga(item.mch.manga)
+            val manga = item.mch.manga
+            val mangaId = manga.id
+            val coverModified = manga.cover_last_modified
+            val tagMatches = binding.coverThumbnail.tag == mangaId
+            val coverModifiedMatches = coverModified == (binding.coverThumbnail.getTag(R.id.manga_cover_modified) as? Long)
+            val drawableIsNull = binding.coverThumbnail.drawable == null
+            val fetchIsStuck = drawableIsNull && coverDisposable?.isDisposed != false
+            if (!tagMatches || !coverModifiedMatches || fetchIsStuck) {
+                binding.coverThumbnail.tag = mangaId
+                binding.coverThumbnail.setTag(R.id.manga_cover_modified, coverModified)
+                binding.coverThumbnail.dispose()
+                coverDisposable = binding.coverThumbnail.loadManga(manga) {
+                    // The default crossfade can get stuck mid-fade (showing nothing) when the
+                    // result lands while the row's first draw is delayed (e.g. by a cold-start
+                    // GPU stall) - see LibraryGridHolder/LibraryListHolder, which hit the same
+                    // failure mode on fast scroll and disable crossfade for the same reason.
+                    crossfade(false)
+                }
+            }
         }
         if (!item.mch.manga.isLocal()) {
             notifyStatus(

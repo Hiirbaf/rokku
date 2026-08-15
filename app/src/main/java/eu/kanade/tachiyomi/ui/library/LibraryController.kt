@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.app.Activity
+import co.touchlab.kermit.Logger
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
@@ -1176,6 +1177,10 @@ open class LibraryController(
     }
 
     open fun onNextLibraryUpdate(mangaMap: List<LibraryItem>, freshStart: Boolean = false) {
+        Logger.d {
+            "onNextLibraryUpdate itemCount=${mangaMap.size} freshStart=$freshStart isPoppingIn=$isPoppingIn " +
+                "mangaIds=${mangaMap.filterIsInstance<LibraryMangaItem>().map { it.manga.manga.id }.take(10)}"
+        }
         if (isPoppingIn) {
             tempItems = mangaMap
             return

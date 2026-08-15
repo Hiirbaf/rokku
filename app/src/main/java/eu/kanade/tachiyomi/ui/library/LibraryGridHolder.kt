@@ -11,6 +11,7 @@ import androidx.core.view.isVisible
 import androidx.core.view.marginBottom
 import androidx.core.view.updateLayoutParams
 import coil3.dispose
+import coil3.request.Disposable
 import coil3.request.crossfade
 import coil3.size.Scale
 import eu.kanade.tachiyomi.R
@@ -42,6 +43,7 @@ class LibraryGridHolder(
 ) : LibraryHolder(view, adapter) {
 
     private val binding = MangaGridItemBinding.bind(view)
+    private var coverDisposable: Disposable? = null
     init {
         binding.playLayout.setOnClickListener { playButtonClicked() }
         binding.playLayout.setOnLongClickListener { itemView.performLongClick() }
@@ -103,18 +105,15 @@ class LibraryGridHolder(
         setUnreadBadge(binding.unreadDownloadBadge.badgeView, item)
         setReadingButton(item)
         setSelected(adapter.isSelected(flexibleAdapterPosition))
-        // Only reload cover if it has actually changed, to avoid grey flash on
-        // library flow re-emissions (e.g. when tabbing back into the app). A manga just added
-        // to the library can emit a second re-emission (e.g. from the categories write) while
-        // the first cover fetch is still in flight; skipping the reload then would strand the
-        // thumbnail blank forever since nothing else retries it, so always retry while there's
-        // no drawable to show yet, regardless of whether the tag looks unchanged.
+        // Coil clears the drawable when a fetch starts, so a blank drawable alone doesn't mean
+        // the fetch was dropped - check the disposable too before forcing a retry.
         val mangaId = item.manga.manga.id
         val coverModified = item.manga.manga.cover_last_modified
-        if (binding.coverThumbnail.tag != mangaId ||
-            coverModified != (binding.coverThumbnail.getTag(R.id.manga_cover_modified) as? Long) ||
-            binding.coverThumbnail.drawable == null
-        ) {
+        val tagMatches = binding.coverThumbnail.tag == mangaId
+        val coverModifiedMatches = coverModified == (binding.coverThumbnail.getTag(R.id.manga_cover_modified) as? Long)
+        val drawableIsNull = binding.coverThumbnail.drawable == null
+        val fetchIsStuck = drawableIsNull && coverDisposable?.isDisposed != false
+        if (!tagMatches || !coverModifiedMatches || fetchIsStuck) {
             binding.coverThumbnail.tag = mangaId
             binding.coverThumbnail.setTag(R.id.manga_cover_modified, coverModified)
             binding.coverThumbnail.dispose()
@@ -142,7 +141,7 @@ class LibraryGridHolder(
 
     private fun setCover(manga: Manga) {
         if ((adapter.recyclerView.context as? Activity)?.isDestroyed == true) return
-        binding.coverThumbnail.loadManga(manga) {
+        coverDisposable = binding.coverThumbnail.loadManga(manga) {
             // The default crossfade can get stuck mid-fade (showing nothing) when the result
             // lands while this row is off-screen during a fast scroll - the row only paints
             // again once it's rebound, e.g. by scrolling back over it a second time.

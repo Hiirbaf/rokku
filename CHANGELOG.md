@@ -11,7 +11,10 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 ## [Unreleased]
 
 ### Fixes
-- Fixed the "Missing N chapters" chapter-count summary staying hidden when a manga has decimal-numbered chapters (e.g. extras like "296.5"), which could cancel out real gaps in the count
+- Fixed the "Missing N chapters" chapter-count summary staying hidden when a manga has decimal-numbered chapters
+- Fixed manga covers flickering to the wrong cover, or reloading repeatedly, while scrolling the library or Recents
+- Fixed covers in Recents disappearing when leaving the tab and coming back
+- Fixed manga covers staying blank in Recents when opening the tab, until scrolling
 
 ## [1.6.0]
 

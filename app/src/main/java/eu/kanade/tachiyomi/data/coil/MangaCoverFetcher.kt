@@ -58,6 +58,15 @@ class MangaCoverFetcher(
     private val fileScope = CoroutineScope(Job() + Dispatchers.IO)
 
     override suspend fun fetch(): FetchResult {
+        try {
+            return fetchInternal()
+        } catch (e: Exception) {
+            Logger.e(e) { "MangaCoverFetcher failed for mangaId=$mangaId url=$url isInLibrary=$isInLibrary" }
+            throw e
+        }
+    }
+
+    private suspend fun fetchInternal(): FetchResult {
         if (options.useCustomCover) {
             val customCoverFile = customCoverFileLazy.value
             if (customCoverFile.exists()) {
@@ -111,6 +120,10 @@ class MangaCoverFetcher(
 
     private suspend fun httpLoader(): FetchResult {
         val coverFile = coverFileLazy.value
+        Logger.d {
+            "httpLoader mangaId=$mangaId coverFile=${coverFile?.absolutePath} exists=${coverFile?.exists()} " +
+                "readEnabled=${options.diskCachePolicy.readEnabled}"
+        }
         if (coverFile?.exists() == true && options.diskCachePolicy.readEnabled) {
             if (!isInLibrary) {
                 coverFile.setLastModified(Date().time)
@@ -181,7 +194,7 @@ class MangaCoverFetcher(
         val response = client.newCall(newRequest()).await()
         if (!response.isSuccessful && response.code != HttpURLConnection.HTTP_NOT_MODIFIED) {
             response.close()
-            throw IOException(response.message)
+            throw IOException("HTTP ${response.code} ${response.message} (url=$url)")
         }
         return response
     }
@@ -190,9 +203,14 @@ class MangaCoverFetcher(
         val request = Request.Builder().apply {
             url(url!!)
 
-            val sourceHeaders = sourceLazy.value?.headers
+            val source = sourceLazy.value
+            val sourceHeaders = source?.headers
             if (sourceHeaders != null) {
                 headers(sourceHeaders)
+            }
+            Logger.d {
+                "MangaCoverFetcher newRequest mangaId=$mangaId source=${source?.let { it::class.simpleName } ?: "NULL"} " +
+                    "headerNames=${sourceHeaders?.names() ?: emptySet<String>()}"
             }
         }
 
@@ -300,6 +318,10 @@ class MangaCoverFetcher(
     }
 
     private fun setRatioAndColorsInScope(mangaId: Long?, mangaThumbnailUrl: String?, isInLibrary: Boolean, ogFile: UniFile? = null, force: Boolean = false) {
+        // Browse / search consume neither dominantCoverColors nor vibrantCoverColor; MangaDetails
+        // recomputes its own vibrant color. Speculatively decoding + Palette-extracting every
+        // browsed cover ships the Palette callback to the main looper and stalls cold-entry frames.
+        if (!isInLibrary && !force) return
         fileScope.launch {
             MangaCoverMetadata.setRatioAndColors(mangaId, mangaThumbnailUrl, isInLibrary, ogFile, force)
         }

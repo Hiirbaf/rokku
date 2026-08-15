@@ -52,8 +52,10 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -254,7 +256,10 @@ class LibraryPresenter(
             combine(
                 getLibraryFlow(),
                 downloadCache.changes,
-            ) { data, _ -> data }.collectLatest { data ->
+            ) { data, _ -> data }
+                // Collapses the multi-emission burst combine() produces on cold subscribe.
+                .debounce(100)
+                .collectLatest { data ->
                 categories = data.categories
                 allCategories = data.allCategories
 
@@ -851,7 +856,8 @@ class LibraryPresenter(
     private fun getLibraryFlow(): Flow<LibraryData> {
         val libraryFlow = combine(
             getCategories.subscribe(),
-            getLibraryManga.subscribe(),
+            // FIXME: Remove retry once a real solution is found
+            getLibraryManga.subscribe().debounce(300).retry(1) { e -> e is NullPointerException },
             getPreferencesFlow(),
             forceUpdateEvent.receiveAsFlow(),
         ) { dbCategories, libraryMangaList, prefs, _ ->

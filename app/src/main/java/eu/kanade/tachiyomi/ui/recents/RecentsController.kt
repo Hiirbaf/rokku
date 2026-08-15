@@ -180,9 +180,6 @@ class RecentsController(bundle: Bundle? = null) :
         binding.recycler.setHasFixedSize(true)
         binding.recycler.recycledViewPool.setMaxRecycledViews(0, 0)
         binding.recycler.addItemDecoration(RecentMangaDivider(view.context))
-        binding.recycler.onAnimationsFinished {
-            (activity as? MainActivity)?.splashState?.ready = true
-        }
         adapter.isSwipeEnabled = true
         adapter.itemTouchHelperCallback.setSwipeFlags(
             if (view.resources.isLTR) ItemTouchHelper.LEFT else ItemTouchHelper.RIGHT,
@@ -579,11 +576,15 @@ class RecentsController(bundle: Bundle? = null) :
         hasNewItems: Boolean,
         shouldMoveToTop: Boolean = false,
     ) {
+        co.touchlab.kermit.Logger.d {
+            "showLists itemCount=${recents.size} viewIsNull=${view == null} hasNewItems=$hasNewItems"
+        }
         if (view == null) return
         if (!binding.progress.isVisible && recents.isNotEmpty()) {
             (activity as? MainActivity)?.showNotificationPermissionPrompt()
         }
         binding.progress.isVisible = false
+        (activity as? MainActivity)?.splashState?.ready = true
         binding.recentsFrameLayout.alpha = 1f
         adapter.removeAllScrollableHeaders()
         adapter.updateDataSet(recents)
