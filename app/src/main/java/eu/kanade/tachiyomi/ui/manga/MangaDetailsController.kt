@@ -61,7 +61,6 @@ import com.bluelinelabs.conductor.ControllerChangeType
 import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
-import com.materialkolor.dynamiccolor.ColorSpec
 import com.materialkolor.dynamicColorScheme
 import com.materialkolor.PaletteStyle
 import dev.icerock.moko.resources.StringResource
@@ -675,18 +674,13 @@ class MangaDetailsController :
                         Palette.from(bitmap).generate { palette ->
                             if (presenter.preferences.themeMangaDetails().get()) {
                                 launchUI {
-                                    val primarySeed = palette?.getBestColor() ?: return@launchUI
-                                    val secondarySeed = palette?.vibrantSwatch?.rgb ?: palette?.mutedSwatch?.rgb
-                                    val tertiarySeed = palette?.dominantSwatch?.rgb
+                                    val seed = palette?.getBestColor() ?: return@launchUI
                                     val style = PaletteStyle.entries[presenter.preferences.coverThemeStyle().get()]
                                     val scheme = dynamicColorScheme(
-                                        seedColor = androidx.compose.ui.graphics.Color(primarySeed),
-                                        secondary = secondarySeed?.let { androidx.compose.ui.graphics.Color(it) },
-                                        tertiary = tertiarySeed?.let { androidx.compose.ui.graphics.Color(it) },
+                                        seedColor = androidx.compose.ui.graphics.Color(seed),
                                         isDark = view.context.isInNightMode(),
-                                        isAmoled = presenter.preferences.themeDarkAmoled().get(),
+                                        isAmoled = presenter.preferences.themeDarkAmoled().get(), // ← faltaba
                                         style = style,
-                                        specVersion = ColorSpec.SpecVersion.SPEC_2025,
                                     )
                                     manga?.vibrantCoverColor = scheme.primary.toArgb()
                                     setAccentColorValue(scheme.primary.toArgb(), scheme.onPrimary.toArgb())
