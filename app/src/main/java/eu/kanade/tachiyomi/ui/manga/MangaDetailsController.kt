@@ -62,6 +62,7 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.materialkolor.dynamicColorScheme
+import com.materialkolor.PaletteStyle
 import dev.icerock.moko.resources.StringResource
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.SelectableAdapter
@@ -674,7 +675,7 @@ class MangaDetailsController :
                             if (presenter.preferences.themeMangaDetails().get()) {
                                 launchUI {
                                     val seed = palette?.getBestColor() ?: return@launchUI
-                                    val style = presenter.preferences.coverThemeStyle().get()
+                                    val style = PaletteStyle.entries[presenter.preferences.coverThemeStyle().get()]
                                     val scheme = dynamicColorScheme(
                                         seedColor = androidx.compose.ui.graphics.Color(seed),
                                         isDark = view.context.isInNightMode(),
