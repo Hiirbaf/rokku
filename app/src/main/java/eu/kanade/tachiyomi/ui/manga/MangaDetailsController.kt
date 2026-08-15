@@ -61,9 +61,10 @@ import com.bluelinelabs.conductor.ControllerChangeType
 import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
-import com.materialkolor.dynamiccolor.ColorSpec
-import com.materialkolor.dynamicColorScheme
 import com.materialkolor.PaletteStyle
+import com.materialkolor.dynamicColorScheme
+import com.materialkolor.dynamiccolor.ColorSpec
+import com.materialkolor.hct.Hct
 import dev.icerock.moko.resources.StringResource
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.SelectableAdapter
@@ -675,21 +676,22 @@ class MangaDetailsController :
                         Palette.from(bitmap).generate { palette ->
                             if (presenter.preferences.themeMangaDetails().get()) {
                                 launchUI {
-                                    // val primarySeed = palette?.getBestColor() ?: return@launchUI
-                                    // val secondarySeed = palette?.vibrantSwatch?.rgb ?: palette?.mutedSwatch?.rgb
-                                    // val tertiarySeed = palette?.dominantSwatch?.rgb
                                     val seed = palette?.getBestColor() ?: return@launchUI
                                     val style = PaletteStyle.entries[presenter.preferences.coverThemeStyle().get()]
+                                    val seedColor = androidx.compose.ui.graphics.Color(seed)
+                                    val hue = com.materialkolor.hct.Hct.fromInt(seed).hue // 0-360
+                                    val spec = if (hue in 60.0..270.0) {
+                                        ColorSpec.SpecVersion.SPEC_2021 // verdes/azules/morados
+                                    } else {
+                                        ColorSpec.SpecVersion.SPEC_2025 // rojos/naranjas/amarillos
+                                    }
+
                                     val scheme = dynamicColorScheme(
-                                        seedColor = androidx.compose.ui.graphics.Color(seed),
-                                        // seedColor = androidx.compose.ui.graphics.Color(primarySeed),
-                                        // secondary = secondarySeed?.let { androidx.compose.ui.graphics.Color(it) },
-                                        // tertiary = tertiarySeed?.let { androidx.compose.ui.graphics.Color(it) },
+                                        seedColor = seedColor,
                                         isDark = view.context.isInNightMode(),
-                                        isAmoled = presenter.preferences.themeDarkAmoled().get(), // ← faltaba
+                                        isAmoled = presenter.preferences.themeDarkAmoled().get(),
                                         style = style,
-                                        contrastLevel = 0.5
-                                        // specVersion = ColorSpec.SpecVersion.SPEC_2025,
+                                        specVersion = spec,
                                     )
                                     manga?.vibrantCoverColor = scheme.primary.toArgb()
                                     setAccentColorValue(scheme.primary.toArgb(), scheme.onPrimary.toArgb())
