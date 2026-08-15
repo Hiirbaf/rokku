@@ -685,6 +685,7 @@ class MangaDetailsController :
                                         isDark = view.context.isInNightMode(),
                                         isAmoled = presenter.preferences.themeDarkAmoled().get(),
                                         style = style,
+                                        specVersion = com.materialkolor.dynamicscheme.ColorSpec.SpecVersion.SPEC_2025,
                                     )
                                     manga?.vibrantCoverColor = scheme.primary.toArgb()
                                     setAccentColorValue(scheme.primary.toArgb(), scheme.onPrimary.toArgb())
