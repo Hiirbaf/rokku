@@ -676,8 +676,9 @@ class MangaDetailsController :
                                     val seed = palette?.getBestColor() ?: return@launchUI
                                     val style = presenter.preferences.coverThemeStyle().get()
                                     val scheme = dynamicColorScheme(
-                                        seedColor = ComposeColor(seed),
+                                        seedColor = androidx.compose.ui.graphics.Color(seed),
                                         isDark = view.context.isInNightMode(),
+                                        isAmoled = presenter.preferences.themeDarkAmoled().get(), // ← faltaba
                                         style = style,
                                     )
                                     manga?.vibrantCoverColor = scheme.primary.toArgb()
