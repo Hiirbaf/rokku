@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.doOnNextLayout
 import androidx.core.view.isVisible
 import androidx.preference.PreferenceScreen
+import com.materialkolor.PaletteStyle
 import eu.kanade.tachiyomi.data.preference.changesIn
 import eu.kanade.tachiyomi.ui.main.MainActivity
 import eu.kanade.tachiyomi.ui.setting.SettingsLegacyController
@@ -28,6 +29,7 @@ import eu.kanade.tachiyomi.util.view.activityBinding
 import eu.kanade.tachiyomi.util.view.moveRecyclerViewUp
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import dev.icerock.moko.resources.StringResource
 import yokai.i18n.MR
 import yokai.util.lang.getString
 import kotlin.math.max
@@ -40,6 +42,18 @@ class SettingsAppearanceController : SettingsLegacyController() {
     var lastThemeXLight: Int? = null
     var lastThemeXDark: Int? = null
     var themePreference: ThemePreference? = null
+
+    private fun PaletteStyle.labelRes(): StringResource = when (this) {
+        PaletteStyle.TonalSpot -> MR.strings.palette_style_tonal_spot
+        PaletteStyle.Neutral -> MR.strings.palette_style_neutral
+        PaletteStyle.Vibrant -> MR.strings.palette_style_vibrant
+        PaletteStyle.Expressive -> MR.strings.palette_style_expressive
+        PaletteStyle.Rainbow -> MR.strings.palette_style_rainbow
+        PaletteStyle.FruitSalad -> MR.strings.palette_style_fruit_salad
+        PaletteStyle.Monochrome -> MR.strings.palette_style_monochrome
+        PaletteStyle.Fidelity -> MR.strings.palette_style_fidelity
+        PaletteStyle.Content -> MR.strings.palette_style_content
+    }
 
     @SuppressLint("NotifyDataSetChanged")
     override fun setupPreferenceScreen(screen: PreferenceScreen) = screen.apply {
@@ -134,6 +148,17 @@ class SettingsAppearanceController : SettingsLegacyController() {
                 key = Keys.themeMangaDetails
                 titleRes = MR.strings.theme_buttons_based_on_cover
                 defaultValue = true
+            }
+            intListPreference(activity) {
+                key = Keys.coverThemeStyle
+                titleRes = MR.strings.cover_theme_style
+                val values = PaletteStyle.entries
+                entriesRes = values.map { it.labelRes() }.toTypedArray()
+                entryRange = 0..(values.size - 1)
+                defaultValue = PaletteStyle.TonalSpot.ordinal
+                preferences.themeMangaDetails().changesIn(viewScope) { enabled ->
+                  isVisible = enabled
+                }
             }
             switchPreference {
                 key = Keys.renderDescriptionImages
