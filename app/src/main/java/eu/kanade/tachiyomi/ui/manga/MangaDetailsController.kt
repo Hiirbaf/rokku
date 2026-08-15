@@ -35,6 +35,8 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.compose.ui.graphics.Color as ComposeColor
+import androidx.compose.ui.graphics.toArgb
 import androidx.core.graphics.ColorUtils
 import androidx.core.net.toFile
 import androidx.core.view.ViewCompat
@@ -59,6 +61,8 @@ import com.bluelinelabs.conductor.ControllerChangeType
 import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
+import com.materialkolor.dynamicColorScheme
+import com.materialkolor.PaletteStyle
 import dev.icerock.moko.resources.StringResource
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.SelectableAdapter
@@ -208,6 +212,7 @@ class MangaDetailsController :
     override val presenter: MangaDetailsPresenter
     private var coverColor: Int? = null
     private var accentColor: Int? = null
+    private var accentOnColor: Int? = null
     private var headerColor: Int? = null
     private var toolbarIsColored = false
     private var snack: Snackbar? = null
@@ -318,26 +323,12 @@ class MangaDetailsController :
         }
     }
 
-    private fun setAccentColorValue(colorToUse: Int? = null) {
-        val context = view?.context ?: return
+    private fun setAccentColorValue(colorToUse: Int? = null, onColorToUse: Int? = null) {
         setCoverColorValue(colorToUse)
         accentColor = if (presenter.preferences.themeMangaDetails().get()) {
-            (colorToUse ?: manga?.vibrantCoverColor)?.let {
-                val luminance = ColorUtils.calculateLuminance(it).toFloat()
-                if (if (!context.isInNightMode()) luminance > 0.4 else luminance <= 0.6) {
-                    ColorUtils.blendARGB(
-                        it,
-                        context.contextCompatColor(R.color.colorOnDownloadBadgeDayNight),
-                        (if (!context.isInNightMode()) luminance else -(luminance - 1))
-                            .toFloat() * if (context.isInNightMode()) 0.33f else 0.5f,
-                    )
-                } else {
-                    it
-                }
-            }
-        } else {
-            null
-        }
+            colorToUse ?: manga?.vibrantCoverColor
+        } else null
+        accentOnColor = onColorToUse
     }
 
     private fun setCoverColorValue(colorToUse: Int? = null) {
@@ -387,16 +378,14 @@ class MangaDetailsController :
         val context = view?.context ?: return
         headerColor = if (presenter.preferences.themeMangaDetails().get()) {
             (colorToUse ?: manga?.vibrantCoverColor)?.let { color ->
-                val newColor =
-                    makeColorFrom(color, context.getResourceColor(R.attr.colorPrimaryVariant))
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1 || context.isInNightMode()) {
                     activity?.window?.navigationBarColor = ColorUtils.setAlphaComponent(
-                        newColor,
+                        color,
                         Color.alpha(activity?.window?.navigationBarColor ?: Color.BLACK),
                     )
                 }
-                newColor
-            }
+                color
+           }
         } else {
             null
         }
@@ -452,7 +441,7 @@ class MangaDetailsController :
         binding.fab.backgroundTintList = ColorStateList(states, colors)
         val textColors = intArrayOf(
             ColorUtils.setAlphaComponent(context.getResourceColor(R.attr.colorOnSurface), 97),
-            context.getResourceColor(AR.attr.textColorPrimaryInverse),
+            accentOnColor ?: context.getResourceColor(AR.attr.textColorPrimaryInverse),
         )
         binding.fab.setTextColor(ColorStateList(states, textColors))
     }
@@ -685,10 +674,17 @@ class MangaDetailsController :
                         Palette.from(bitmap).generate { palette ->
                             if (presenter.preferences.themeMangaDetails().get()) {
                                 launchUI {
-                                    val vibrantColor = palette?.getBestColor() ?: return@launchUI
-                                    manga?.vibrantCoverColor = vibrantColor
-                                    setAccentColorValue(vibrantColor)
-                                    setHeaderColorValue(vibrantColor)
+                                    val seed = palette?.getBestColor() ?: return@launchUI
+                                    val style = PaletteStyle.entries[presenter.preferences.coverThemeStyle().get()]
+                                    val scheme = dynamicColorScheme(
+                                        seedColor = androidx.compose.ui.graphics.Color(seed),
+                                        isDark = view.context.isInNightMode(),
+                                        isAmoled = presenter.preferences.themeDarkAmoled().get(), // ← faltaba
+                                        style = style,
+                                    )
+                                    manga?.vibrantCoverColor = scheme.primary.toArgb()
+                                    setAccentColorValue(scheme.primary.toArgb(), scheme.onPrimary.toArgb())
+                                    setHeaderColorValue(scheme.primaryContainer.toArgb())
                                     setItemColors()
                                 }
                             } else {
