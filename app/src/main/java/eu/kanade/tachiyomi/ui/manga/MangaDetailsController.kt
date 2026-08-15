@@ -688,6 +688,7 @@ class MangaDetailsController :
                                         isDark = view.context.isInNightMode(),
                                         isAmoled = presenter.preferences.themeDarkAmoled().get(), // ← faltaba
                                         style = style,
+                                        contrastLevel = 0.5
                                         // specVersion = ColorSpec.SpecVersion.SPEC_2025,
                                     )
                                     manga?.vibrantCoverColor = scheme.primary.toArgb()
