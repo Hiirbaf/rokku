@@ -35,6 +35,8 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.compose.ui.graphics.Color as ComposeColor
+import androidx.compose.ui.graphics.toArgb
 import androidx.core.graphics.ColorUtils
 import androidx.core.net.toFile
 import androidx.core.view.ViewCompat
@@ -59,6 +61,7 @@ import com.bluelinelabs.conductor.ControllerChangeType
 import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
+import com.materialkolor.dynamicColorScheme
 import dev.icerock.moko.resources.StringResource
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.SelectableAdapter
@@ -208,6 +211,7 @@ class MangaDetailsController :
     override val presenter: MangaDetailsPresenter
     private var coverColor: Int? = null
     private var accentColor: Int? = null
+    private var accentOnColor: Int? = null
     private var headerColor: Int? = null
     private var toolbarIsColored = false
     private var snack: Snackbar? = null
@@ -672,7 +676,7 @@ class MangaDetailsController :
                                     val seed = palette?.getBestColor() ?: return@launchUI
                                     val style = presenter.preferences.coverThemeStyle().get()
                                     val scheme = dynamicColorScheme(
-                                        seedColor = androidx.compose.ui.graphics.Color(seed),
+                                        seedColor = ComposeColor(seed),
                                         isDark = view.context.isInNightMode(),
                                         style = style,
                                     )
