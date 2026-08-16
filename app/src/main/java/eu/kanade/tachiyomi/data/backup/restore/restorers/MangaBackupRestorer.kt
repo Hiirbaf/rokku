@@ -25,8 +25,10 @@ import yokai.domain.chapter.interactor.UpdateChapter
 import yokai.domain.history.interactor.GetHistory
 import yokai.domain.history.interactor.UpsertHistory
 import yokai.domain.library.custom.model.CustomMangaInfo
+import yokai.domain.manga.interactor.GetExcludedScanlators
 import yokai.domain.manga.interactor.GetManga
 import yokai.domain.manga.interactor.InsertManga
+import yokai.domain.manga.interactor.SetExcludedScanlators
 import yokai.domain.manga.interactor.UpdateManga
 import yokai.domain.track.interactor.GetTrack
 import yokai.domain.track.interactor.InsertTrack
@@ -42,6 +44,8 @@ class MangaBackupRestorer(
     private val getManga: GetManga = Injekt.get(),
     private val insertManga: InsertManga = Injekt.get(),
     private val updateManga: UpdateManga = Injekt.get(),
+    private val setExcludedScanlators: SetExcludedScanlators = Injekt.get(),
+    private val getExcludedScanlators: GetExcludedScanlators = Injekt.get(),
     private val getHistory: GetHistory = Injekt.get(),
     private val upsertHistory: UpsertHistory = Injekt.get(),
     private val getTrack: GetTrack = Injekt.get(),
@@ -328,7 +332,12 @@ class MangaBackupRestorer(
     }
 
     private suspend fun restoreFilteredScanlatorsForManga(manga: Manga, filteredScanlators: List<String>) {
-        val actualList = ChapterUtil.getScanlators(manga.filtered_scanlators) + filteredScanlators
-        MangaUtil.setScanlatorFilter(updateManga, manga, actualList.toSet())
+        // Reads current exclusions from excluded_scanlators rather than manga.filtered_scanlators:
+        // the latter is just a synced mirror (see MangaUtil.setScanlatorFilter), so it can be
+        // stale for manga whose filter changed since the last time this in-memory Manga's DB
+        // row was fetched.
+        val currentExcluded = manga.id?.let { getExcludedScanlators.await(it) }.orEmpty()
+        val actualList = currentExcluded + filteredScanlators
+        MangaUtil.setScanlatorFilter(setExcludedScanlators, updateManga, manga, actualList.toSet())
     }
 }

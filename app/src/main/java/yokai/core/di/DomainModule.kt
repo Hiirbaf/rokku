@@ -7,6 +7,7 @@ import yokai.data.extension.repo.ExtensionRepoRepositoryImpl
 import yokai.data.history.HistoryRepositoryImpl
 import yokai.data.library.custom.CustomMangaRepositoryImpl
 import yokai.data.libraryUpdateError.LibraryUpdateErrorRepositoryImpl
+import yokai.data.manga.ExcludedScanlatorsRepositoryImpl
 import yokai.data.manga.MangaRepositoryImpl
 import yokai.data.source.browse.filter.SavedSearchRepositoryImpl
 import yokai.data.track.TrackRepositoryImpl
@@ -39,10 +40,13 @@ import yokai.domain.library.custom.interactor.DeleteCustomManga
 import yokai.domain.library.custom.interactor.GetCustomManga
 import yokai.domain.library.custom.interactor.RelinkCustomManga
 import yokai.domain.libraryUpdateError.LibraryUpdateErrorRepository
+import yokai.domain.manga.ExcludedScanlatorsRepository
 import yokai.domain.manga.MangaRepository
+import yokai.domain.manga.interactor.GetExcludedScanlators
 import yokai.domain.manga.interactor.GetLibraryManga
 import yokai.domain.manga.interactor.GetManga
 import yokai.domain.manga.interactor.InsertManga
+import yokai.domain.manga.interactor.SetExcludedScanlators
 import yokai.domain.manga.interactor.UpdateManga
 import yokai.domain.recents.interactor.GetRecents
 import yokai.domain.source.browse.filter.FilterSerializer
@@ -83,6 +87,10 @@ fun domainModule() = module {
     factory { GetLibraryManga(get()) }
     factory { InsertManga(get()) }
     factory { UpdateManga(get()) }
+
+    single<ExcludedScanlatorsRepository> { ExcludedScanlatorsRepositoryImpl(get()) }
+    factory { GetExcludedScanlators(get()) }
+    factory { SetExcludedScanlators(get()) }
 
     factory { SetMangaCategories(get()) }
 
