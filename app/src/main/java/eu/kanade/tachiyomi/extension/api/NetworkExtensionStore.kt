@@ -110,6 +110,7 @@ fun List<NetworkExtensionStore.StoreExtension>.toExtensions(repoUrl: String): Li
                 )
             },
             repoUrl = repoUrl,
+            apkUrl = extension.resources.apkUrl,
         )
     }
 }

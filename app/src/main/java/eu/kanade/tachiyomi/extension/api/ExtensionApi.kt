@@ -188,8 +188,14 @@ internal class ExtensionApi {
     }
 
     fun getApkUrl(extension: ExtensionManager.ExtensionInfo): String {
-        // The newer ExtensionStore index gives a full apk URL directly; the legacy index.min.json
-        // only gives the file name, relative to the repo's /apk/ directory.
+        // apkUrl is only set by the index_v2 store format; prefer it when present since it's an
+        // explicit signal rather than a guess. Otherwise, fall back to sniffing apkName -- the
+        // legacy index.min.json only gives a file name, relative to the repo's /apk/ directory,
+        // but this also keeps existing behavior for anything that already smuggled a full URL
+        // through apkName instead of apkUrl.
+        if (extension.apkUrl != null) {
+            return extension.apkUrl
+        }
         if (extension.apkName.startsWith("http://") || extension.apkName.startsWith("https://")) {
             return extension.apkName
         }

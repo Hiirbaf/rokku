@@ -264,11 +264,13 @@ class ExtensionManager(
                     mutInstalledExtensions[index] = installedExt.copy(
                         hasUpdate = hasUpdate,
                         repoUrl = availableExt.repoUrl,
+                        apkUrl = availableExt.apkUrl,
                     )
                     hasUpdateCount++
                 } else {
                     mutInstalledExtensions[index] = installedExt.copy(
                         repoUrl = availableExt.repoUrl,
+                        apkUrl = availableExt.apkUrl,
                     )
                 }
                 changed = true
@@ -518,6 +520,7 @@ class ExtensionManager(
         val versionCode: Long,
         val libVersion: Double,
         val repoUrl: String? = null,
+        val apkUrl: String? = null,
     ) : Parcelable {
         constructor(extension: Extension.Available) : this(
             apkName = extension.apkName,
@@ -526,6 +529,7 @@ class ExtensionManager(
             versionCode = extension.versionCode,
             libVersion = extension.libVersion,
             repoUrl = extension.repoUrl,
+            apkUrl = extension.apkUrl,
         )
     }
 

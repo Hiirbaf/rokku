@@ -164,6 +164,7 @@ dependencies {
     debugImplementation(compose.ui.tooling)
     implementation(libs.compose.theme.adapter3)
     implementation(compose.webview)
+    implementation(libs.materialkolor)
 
     implementation(libs.flexbox)
 
