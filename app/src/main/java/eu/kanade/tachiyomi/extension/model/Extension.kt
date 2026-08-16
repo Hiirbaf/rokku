@@ -29,6 +29,7 @@ sealed class Extension {
         val isObsolete: Boolean = false,
         val isShared: Boolean,
         val repoUrl: String? = null,
+        val apkUrl: String? = null,
     ) : Extension()
 
     data class Available(
@@ -43,6 +44,9 @@ sealed class Extension {
         val iconUrl: String,
         val sources: List<AvailableSource>,
         val repoUrl: String? = null,
+        // Only set by the index_v2 store format, which gives a full apk download URL directly
+        // instead of a bare file name relative to the repo's /apk/ directory (see getApkUrl()).
+        val apkUrl: String? = null,
     ) : Extension()
 
     @Serializable
