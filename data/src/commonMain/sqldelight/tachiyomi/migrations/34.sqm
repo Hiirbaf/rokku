@@ -1,0 +1,8 @@
+DELETE FROM excluded_scanlators
+WHERE rowid NOT IN (
+    SELECT MIN(rowid)
+    FROM excluded_scanlators
+    GROUP BY manga_id, scanlator
+);
+
+CREATE UNIQUE INDEX excluded_scanlators_manga_id_scanlator_unique_index ON excluded_scanlators(manga_id, scanlator);

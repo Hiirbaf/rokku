@@ -25,18 +25,16 @@ CREATE INDEX chapters_unread_by_manga_index ON chapters(manga_id, read) WHERE re
 getChaptersByMangaId:
 SELECT C.*
 FROM chapters AS C
-LEFT JOIN scanlators_view AS S
-ON C.manga_id = S.manga_id
-AND C.scanlator = S.name
+LEFT JOIN excluded_scanlators AS ES
+ON C.manga_id = ES.manga_id
+AND C.scanlator = ES.scanlator
 WHERE C.manga_id = :manga_id
 AND (
-    :apply_filter = 0 OR S.name IS NULL
+    :apply_filter = 0 OR ES.scanlator IS NULL
 );
 
--- Same as getChaptersByMangaId but without the scanlators_view join, for callers that never
--- want the scanlator filter applied. scanlators_view is a recursive CTE with no predicate
--- pushdown on manga_id, so joining it re-scans the whole mangas table on every call; skipping
--- it here avoids an O(library size) cost per manga (e.g. when backing up a large library).
+-- Same as getChaptersByMangaId but without the excluded_scanlators join, for callers that never
+-- want the scanlator filter applied.
 getAllChaptersByMangaId:
 SELECT * FROM chapters
 WHERE manga_id = :manga_id;
@@ -48,34 +46,34 @@ WHERE _id = :id;
 getChaptersByUrl:
 SELECT C.*
 FROM chapters AS C
-LEFT JOIN scanlators_view AS S
-ON C.manga_id = S.manga_id
-AND C.scanlator = S.name
+LEFT JOIN excluded_scanlators AS ES
+ON C.manga_id = ES.manga_id
+AND C.scanlator = ES.scanlator
 WHERE C.url = :url
 AND (
-    :apply_filter = 0 OR S.name IS NULL
+    :apply_filter = 0 OR ES.scanlator IS NULL
 );
 
 getChaptersByUrlAndMangaId:
 SELECT C.*
 FROM chapters AS C
-LEFT JOIN scanlators_view AS S
-ON C.manga_id = S.manga_id
-AND C.scanlator = S.name
+LEFT JOIN excluded_scanlators AS ES
+ON C.manga_id = ES.manga_id
+AND C.scanlator = ES.scanlator
 WHERE C.url = :url AND C.manga_id = :manga_id
 AND (
-    :apply_filter = 0 OR S.name IS NULL
+    :apply_filter = 0 OR ES.scanlator IS NULL
 );
 
 findUnreadByMangaId:
 SELECT C.*
 FROM chapters AS C
-LEFT JOIN scanlators_view AS S
-ON C.manga_id = S.manga_id
-AND C.scanlator = S.name
+LEFT JOIN excluded_scanlators AS ES
+ON C.manga_id = ES.manga_id
+AND C.scanlator = ES.scanlator
 WHERE C.manga_id = :manga_id AND C.read = 0
 AND (
-    :apply_filter = 0 OR S.name IS NULL
+    :apply_filter = 0 OR ES.scanlator IS NULL
 );
 
 getRecents:
@@ -85,14 +83,14 @@ SELECT
 FROM mangas AS M
 JOIN chapters AS C
 ON M._id = C.manga_id
-LEFT JOIN scanlators_view AS S
-ON C.manga_id = S.manga_id
-AND C.scanlator = S.name
+LEFT JOIN excluded_scanlators AS ES
+ON C.manga_id = ES.manga_id
+AND C.scanlator = ES.scanlator
 WHERE M.favorite = 1
 AND C.date_fetch > M.date_added
 AND lower(M.title) LIKE '%' || :search || '%'
 AND (
-    :apply_filter = 0 OR S.name IS NULL
+    :apply_filter = 0 OR ES.scanlator IS NULL
 )
 AND (
     :apply_category_filter = 0 OR M._id IN (SELECT manga_id FROM mangas_categories WHERE category_id IN :categoryIds)

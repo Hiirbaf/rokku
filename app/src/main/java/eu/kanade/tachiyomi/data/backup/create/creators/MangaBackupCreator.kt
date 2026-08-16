@@ -13,6 +13,7 @@ import yokai.data.DatabaseHandler
 import yokai.domain.category.interactor.GetCategories
 import yokai.domain.chapter.interactor.GetChapter
 import yokai.domain.history.interactor.GetHistory
+import yokai.domain.manga.interactor.GetExcludedScanlators
 import yokai.domain.track.interactor.GetTrack
 
 class MangaBackupCreator(
@@ -22,6 +23,7 @@ class MangaBackupCreator(
     private val getChapter: GetChapter = Injekt.get(),
     private val getHistory: GetHistory = Injekt.get(),
     private val getTrack: GetTrack = Injekt.get(),
+    private val getExcludedScanlators: GetExcludedScanlators = Injekt.get(),
 ) {
     suspend operator fun invoke(mangas: List<Manga>, options: BackupOptions): List<BackupManga> {
         // Wrapping each chunk in a transaction keeps every query in it on the same transaction
@@ -49,13 +51,18 @@ class MangaBackupCreator(
         // Entry for this manga
         val mangaObject = BackupManga.copyFrom(manga, if (options.customInfo) customMangaManager else null)
 
+        // excluded_scanlators is the source of truth for filtering (see #20); read from it
+        // directly rather than relying on copyFrom's manga.filtered_scanlators mirror.
+        mangaObject.excludedScanlators = manga.id?.let { getExcludedScanlators.await(it) }
+            ?.toList()
+            .orEmpty()
+
         // Check if user wants chapter information in backup
         if (options.chapters) {
             // Backup all the chapters. Uses getAllChaptersByMangaId instead of
-            // getChaptersByMangaId(..., apply_filter = 0, ...): the latter still joins
-            // scanlators_view even with the filter disabled, and that join is expensive (see
-            // the query's own comment), so skip it entirely here since we always want every
-            // chapter regardless of the scanlator filter.
+            // getChaptersByMangaId(..., apply_filter = 0, ...) to skip the excluded_scanlators
+            // join entirely, since we always want every chapter regardless of the scanlator
+            // filter here.
             val chapters = manga.id?.let {
                 handler.awaitList {
                     chaptersQueries.getAllChaptersByMangaId(it, BackupChapter::mapper)
