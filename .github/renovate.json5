@@ -10,5 +10,23 @@
       "matchManagers": ["github-actions"],
       "pinDigests": true,
     },
+    {
+      // These are JitPack forks/custom builds pinned to a specific commit or
+      // tag rather than a real release, so Renovate can't resolve/compare
+      // versions for them -- keep it from trying (and failing) to look them up.
+      "matchPackageNames": [
+        "com.github.arkon.FlexibleAdapter:flexible-adapter-ui",
+        "com.github.arkon.FlexibleAdapter:flexible-adapter",
+        "com.github.CarlosEsco:ViewTooltip",
+        "com.github.null2264:subsampling-scale-image-view",
+        "com.github.null2264:injekt-koin",
+        "com.github.tachiyomiorg:image-decoder",
+        "com.github.tachiyomiorg:unifile",
+        "com.github.tachiyomiorg:conductor-support-preference",
+        "com.github.chrisbanes:PhotoView",
+        "com.github.PhilJay:MPAndroidChart",
+      ],
+      "enabled": false,
+    },
   ],
 }
