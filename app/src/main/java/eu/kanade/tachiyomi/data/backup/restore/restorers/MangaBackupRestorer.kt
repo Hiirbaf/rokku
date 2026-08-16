@@ -333,10 +333,11 @@ class MangaBackupRestorer(
 
     private suspend fun restoreFilteredScanlatorsForManga(manga: Manga, filteredScanlators: List<String>) {
         // Reads current exclusions from excluded_scanlators rather than manga.filtered_scanlators:
-        // the column is no longer kept up to date (see #20), so it can be stale for manga whose
-        // filter changed since the last time this in-memory Manga's DB row was fetched.
+        // the latter is just a synced mirror (see MangaUtil.setScanlatorFilter), so it can be
+        // stale for manga whose filter changed since the last time this in-memory Manga's DB
+        // row was fetched.
         val currentExcluded = manga.id?.let { getExcludedScanlators.await(it) }.orEmpty()
         val actualList = currentExcluded + filteredScanlators
-        MangaUtil.setScanlatorFilter(setExcludedScanlators, manga, actualList.toSet())
+        MangaUtil.setScanlatorFilter(setExcludedScanlators, updateManga, manga, actualList.toSet())
     }
 }

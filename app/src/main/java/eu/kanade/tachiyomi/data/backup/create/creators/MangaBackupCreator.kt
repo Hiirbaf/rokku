@@ -51,8 +51,8 @@ class MangaBackupCreator(
         // Entry for this manga
         val mangaObject = BackupManga.copyFrom(manga, if (options.customInfo) customMangaManager else null)
 
-        // filtered_scanlators is no longer written to; excluded_scanlators is the source of
-        // truth (see #20), so override whatever copyFrom read off the (now stale) column.
+        // excluded_scanlators is the source of truth for filtering (see #20); read from it
+        // directly rather than relying on copyFrom's manga.filtered_scanlators mirror.
         mangaObject.excludedScanlators = manga.id?.let { getExcludedScanlators.await(it) }
             ?.toList()
             .orEmpty()

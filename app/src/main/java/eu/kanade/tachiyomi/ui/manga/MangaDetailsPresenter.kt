@@ -927,6 +927,7 @@ class MangaDetailsPresenter(
             val manga = manga
             MangaUtil.setScanlatorFilter(
                 setExcludedScanlators,
+                updateManga,
                 manga,
                 if (filteredScanlators.size == allChapterScanlators.size) emptySet() else filteredScanlators,
             )
