@@ -260,29 +260,29 @@ class LibraryPresenter(
                 // Collapses the multi-emission burst combine() produces on cold subscribe.
                 .debounce(100)
                 .collectLatest { data ->
-                categories = data.categories
-                allCategories = data.allCategories
+                    categories = data.categories
+                    allCategories = data.allCategories
 
-                val library = data.items
-                val hiddenItems = data.hiddenItems
+                    val library = data.items
+                    val hiddenItems = data.hiddenItems
 
-                library.forEach { (_, items) ->
-                    setDownloadCount(items)
-                    setUnreadBadge(items)
-                    setSourceLanguage(items)
+                    library.forEach { (_, items) ->
+                        setDownloadCount(items)
+                        setUnreadBadge(items)
+                        setSourceLanguage(items)
+                    }
+                    setDownloadCount(hiddenItems)
+                    setUnreadBadge(hiddenItems)
+                    setSourceLanguage(hiddenItems)
+
+                    currentLibrary = library
+                    hiddenLibraryItems = hiddenItems
+                    val mangaMap = library
+                        .applyFilters()
+                        .applySort()
+                    val freshStart = libraryToDisplay.isEmpty()
+                    sectionLibrary(mangaMap, freshStart)
                 }
-                setDownloadCount(hiddenItems)
-                setUnreadBadge(hiddenItems)
-                setSourceLanguage(hiddenItems)
-
-                currentLibrary = library
-                hiddenLibraryItems = hiddenItems
-                val mangaMap = library
-                    .applyFilters()
-                    .applySort()
-                val freshStart = libraryToDisplay.isEmpty()
-                sectionLibrary(mangaMap, freshStart)
-            }
         }
     }
 
