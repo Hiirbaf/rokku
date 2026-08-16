@@ -16,6 +16,9 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 ### Fixes
 - Fixed scanlator filtering causing a full library scan on every chapter list/backup/recents query, growing slower as the library grows
 
+### Other
+- Bumped Voyager to 2.2.21-1.10.3
+
 ## [1.6.1]
 
 ### Fixes
