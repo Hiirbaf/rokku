@@ -10,6 +10,9 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 
 ## [Unreleased]
 
+### Additions
+- Added a "Cover theme style" option (Settings > Appearance) to pick the Material You palette style used for a manga's cover-derived accent color ([@Hiirbaf](https://github.com/Hiirbaf))
+
 ## [1.6.1]
 
 ### Fixes

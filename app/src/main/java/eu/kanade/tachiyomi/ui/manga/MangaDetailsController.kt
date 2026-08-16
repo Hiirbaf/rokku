@@ -33,9 +33,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ActionMode
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.SearchView
+import androidx.compose.ui.graphics.toArgb
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.compose.ui.graphics.toArgb
 import androidx.core.graphics.ColorUtils
 import androidx.core.net.toFile
 import androidx.core.view.ViewCompat
@@ -163,6 +163,7 @@ import java.util.Locale
 import kotlin.math.max
 import kotlin.math.roundToInt
 import android.R as AR
+import androidx.compose.ui.graphics.Color as ComposeColor
 
 class MangaDetailsController :
     BaseCoroutineController<MangaDetailsControllerBinding, MangaDetailsPresenter>,
@@ -328,7 +329,9 @@ class MangaDetailsController :
         setCoverColorValue(colorToUse)
         accentColor = if (presenter.preferences.themeMangaDetails().get()) {
             colorToUse ?: manga?.vibrantCoverColor
-        } else null
+        } else {
+            null
+        }
         accentOnColor = onColorToUse
     }
 
@@ -386,7 +389,7 @@ class MangaDetailsController :
                     )
                 }
                 color
-           }
+            }
         } else {
             null
         }
@@ -677,12 +680,16 @@ class MangaDetailsController :
                                 launchUI {
                                     val seed = palette?.getBestColor() ?: return@launchUI
                                     val style = PaletteStyle.entries[presenter.preferences.coverThemeStyle().get()]
-                                    val seedColor = androidx.compose.ui.graphics.Color(seed)
-                                    val hue = com.materialkolor.hct.Hct.fromInt(seed).hue // 0-360
+                                    val seedColor = ComposeColor(seed)
+                                    val hue = Hct.fromInt(seed).hue // 0-360
+                                    // Picks between materialkolor's two color-generation specs (SPEC_2021
+                                    // vs the newer Material3 Expressive SPEC_2025) based on the seed's hue.
+                                    // This range split was chosen empirically in #83, not from documented
+                                    // library guidance -- if a cover's theme looks off, this is where to look.
                                     val spec = if (hue in 60.0..270.0) {
-                                        ColorSpec.SpecVersion.SPEC_2021 // verdes/azules/morados
+                                        ColorSpec.SpecVersion.SPEC_2021
                                     } else {
-                                        ColorSpec.SpecVersion.SPEC_2025 // rojos/naranjas/amarillos
+                                        ColorSpec.SpecVersion.SPEC_2025
                                     }
 
                                     val scheme = dynamicColorScheme(

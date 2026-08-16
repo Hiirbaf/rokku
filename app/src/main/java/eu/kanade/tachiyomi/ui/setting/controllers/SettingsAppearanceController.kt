@@ -8,6 +8,7 @@ import androidx.core.view.doOnNextLayout
 import androidx.core.view.isVisible
 import androidx.preference.PreferenceScreen
 import com.materialkolor.PaletteStyle
+import dev.icerock.moko.resources.StringResource
 import eu.kanade.tachiyomi.data.preference.changesIn
 import eu.kanade.tachiyomi.ui.main.MainActivity
 import eu.kanade.tachiyomi.ui.setting.SettingsLegacyController
@@ -29,7 +30,6 @@ import eu.kanade.tachiyomi.util.view.activityBinding
 import eu.kanade.tachiyomi.util.view.moveRecyclerViewUp
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import dev.icerock.moko.resources.StringResource
 import yokai.i18n.MR
 import yokai.util.lang.getString
 import kotlin.math.max
@@ -157,7 +157,7 @@ class SettingsAppearanceController : SettingsLegacyController() {
                 entryRange = 0..(values.size - 1)
                 defaultValue = PaletteStyle.TonalSpot.ordinal
                 preferences.themeMangaDetails().changesIn(viewScope) { enabled ->
-                  isVisible = enabled
+                    isVisible = enabled
                 }
             }
             switchPreference {
