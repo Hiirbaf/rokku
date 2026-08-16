@@ -757,6 +757,16 @@
     <string name="pure_black_dark_mode">Pure black dark mode</string>
     <string name="details_page">Details page</string>
     <string name="theme_buttons_based_on_cover">Theme buttons based on cover</string>
+    <string name="cover_theme_style">Cover theme style</string>
+    <string name="palette_style_tonal_spot">Tonal Spot</string>
+    <string name="palette_style_neutral">Neutral</string>
+    <string name="palette_style_vibrant">Vibrant</string>
+    <string name="palette_style_expressive">Expressive</string>
+    <string name="palette_style_rainbow">Rainbow</string>
+    <string name="palette_style_fruit_salad">Fruit Salad</string>
+    <string name="palette_style_monochrome">Monochrome</string>
+    <string name="palette_style_fidelity">Fidelity</string>
+    <string name="palette_style_content">Content</string>
     <string name="render_description_images">Render images in manga descriptions</string>
     <string name="render_description_images_summary">Some sources include cover previews or promotional images in the manga description</string>
     <string name="expanded_toolbar">Expanded toolbar</string>
