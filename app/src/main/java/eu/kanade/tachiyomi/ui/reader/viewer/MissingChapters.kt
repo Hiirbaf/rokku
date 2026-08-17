@@ -45,11 +45,19 @@ fun calculateChapterDifference(higherChapterNumber: Float, lowerChapterNumber: F
 }
 
 fun countMissingChapters(chapters: List<Chapter>): Int {
-    val sortedChapters = chapters.sortedBy { it.chapter_number }
-    return sortedChapters.zipWithNext { lowerChapter, higherChapter ->
-        // Adjacent chapters that share the same floor (e.g. 296 and 296.5) yield a
-        // negative difference; those aren't missing chapters, so they shouldn't
-        // cancel out real gaps elsewhere in the sum.
-        calculateChapterDifference(higherChapter, lowerChapter).toInt().coerceAtLeast(0)
-    }.sum()
+    val chapterNumbers = chapters
+        .filter { it.isRecognizedNumber && pattern.containsMatchIn(it.name) }
+        .map { floor(it.chapter_number).toInt() }
+        .distinct()
+        .sorted()
+
+    var missingCount = 0
+    var previousChapter = 0
+    for (chapterNumber in chapterNumbers) {
+        if (chapterNumber > previousChapter + 1) {
+            missingCount += chapterNumber - previousChapter - 1
+        }
+        previousChapter = chapterNumber
+    }
+    return missingCount
 }
