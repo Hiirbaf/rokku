@@ -17,6 +17,7 @@ import androidx.core.graphics.ColorUtils
 import androidx.core.view.children
 import androidx.core.view.isVisible
 import coil3.load
+import coil3.request.crossfade
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import eu.kanade.tachiyomi.R
@@ -105,7 +106,9 @@ class EditMangaDialog : DialogController {
     fun onViewCreated() {
         val context = binding.root.context
 
-        binding.mangaCover.loadManga(manga)
+        binding.mangaCover.loadManga(manga) {
+            crossfade(false)
+        }
         val isLocal = manga.isLocal()
 
         binding.mangaLang.isVisible = isLocal

@@ -32,6 +32,7 @@ class LibraryMangaImageTarget(
     override fun onSuccess(result: Image) {
         progress?.isVisible = false
         Logger.d { "LibraryMangaImageTarget onSuccess for mangaId=${libraryManga.id} title=${libraryManga.title}" }
+        // Bypasses super.onSuccess(), so callers must disable crossfade or the view never repaints.
         view.setImageDrawable(result.asDrawable(view.context.resources))
     }
 
