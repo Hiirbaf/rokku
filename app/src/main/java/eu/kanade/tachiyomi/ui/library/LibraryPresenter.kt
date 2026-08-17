@@ -2,6 +2,7 @@ package eu.kanade.tachiyomi.ui.library
 
 import eu.kanade.tachiyomi.core.preference.minusAssign
 import eu.kanade.tachiyomi.core.preference.plusAssign
+import eu.kanade.tachiyomi.data.backup.restore.BackupRestoreJob
 import eu.kanade.tachiyomi.data.cache.CoverCache
 import eu.kanade.tachiyomi.data.database.models.Category
 import eu.kanade.tachiyomi.data.database.models.Category.Companion.langSplitter
@@ -53,7 +54,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.launch
@@ -257,9 +260,14 @@ class LibraryPresenter(
             combine(
                 getLibraryFlow(),
                 downloadCache.changes,
-            ) { data, _ -> data }
+                BackupRestoreJob.isRunningFlow(context),
+            ) { data, _, restoring -> data to restoring }
                 // Collapses the multi-emission burst combine() produces on cold subscribe.
                 .debounce(100)
+                // Skip re-rendering while a restore is writing manga one by one; the transition
+                // to false re-emits with the final data, so nothing is lost.
+                .filter { (_, restoring) -> !restoring }
+                .map { (data, _) -> data }
                 .collectLatest { data ->
                     categories = data.categories
                     allCategories = data.allCategories

@@ -9,6 +9,8 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.ForegroundInfo
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.OutOfQuotaPolicy
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import co.touchlab.kermit.Logger
@@ -21,6 +23,8 @@ import eu.kanade.tachiyomi.util.system.tryToSetForeground
 import eu.kanade.tachiyomi.util.system.withIOContext
 import eu.kanade.tachiyomi.util.system.workManager
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import yokai.i18n.MR
 import yokai.util.lang.getString
 
@@ -90,5 +94,11 @@ class BackupRestoreJob(val context: Context, workerParams: WorkerParameters) : C
         }
 
         fun isRunning(context: Context) = context.workManager.jobIsRunning(TAG)
+
+        fun isRunningFlow(context: Context): Flow<Boolean> {
+            return WorkManager.getInstance(context).getWorkInfosByTagFlow(TAG).map { list ->
+                list.any { it.state == WorkInfo.State.RUNNING }
+            }
+        }
     }
 }
