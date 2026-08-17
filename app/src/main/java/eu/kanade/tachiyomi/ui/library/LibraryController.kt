@@ -133,6 +133,7 @@ import eu.kanade.tachiyomi.util.view.withFadeTransaction
 import eu.kanade.tachiyomi.widget.EmptyView
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -640,7 +641,7 @@ open class LibraryController(
         setupFilterSheet()
         setUpHopper()
         setPreferenceFlows()
-        LibraryUpdateJob.updateFlow.onEach(::onUpdateManga).launchIn(viewScope)
+        LibraryUpdateJob.updateFlow.debounce(300).onEach(::onUpdateManga).launchIn(viewScope)
         viewScope.launchUI {
             LibraryUpdateJob.isRunningFlow(view.context).collect { isRunning ->
                 if (!isRunning) pendingManualCategoryUpdates.clear()
