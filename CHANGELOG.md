@@ -14,6 +14,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Added a "Cover theme style" option (Settings > Appearance) to pick the Material You palette style used for a manga's cover-derived accent color ([@Hiirbaf](https://github.com/Hiirbaf))
 
 ### Fixes
+- Fixed "Check for updates" failing with a "Fields ... are required" error on nightly builds when the beta-releases preference was off, since GitHub's "latest release" endpoint never resolves for a repo where every release is a prerelease
 - Fixed the "Missing N chapters" chapter-count summary and chapter list divider not counting chapters missing before the earliest available chapter (e.g. a manga starting at chapter 425 instead of 1)
 - Fixed scanlator filtering causing a full library scan on every chapter list/backup/recents query, growing slower as the library grows
 - Fixed the library still flickering to the wrong covers while scrolling during an active backup restore

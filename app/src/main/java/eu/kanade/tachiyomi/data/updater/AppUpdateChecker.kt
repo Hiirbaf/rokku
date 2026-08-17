@@ -7,7 +7,7 @@ import eu.kanade.tachiyomi.BuildConfig
 import eu.kanade.tachiyomi.data.preference.PreferencesHelper
 import eu.kanade.tachiyomi.network.GET
 import eu.kanade.tachiyomi.network.NetworkHelper
-import eu.kanade.tachiyomi.network.await
+import eu.kanade.tachiyomi.network.awaitSuccess
 import eu.kanade.tachiyomi.network.parseAs
 import eu.kanade.tachiyomi.util.system.localeContext
 import eu.kanade.tachiyomi.util.system.withIOContext
@@ -32,10 +32,13 @@ class AppUpdateChecker(
 
         return withIOContext {
             val repo = if (BuildConfig.NIGHTLY) NIGHTLY_GITHUB_REPO else GITHUB_REPO
-            val result = if (preferences.checkForBetas().get()) {
+            // Nightly releases are always published as GitHub prereleases, so
+            // `releases/latest` (which excludes prereleases) 404s for that repo -
+            // always use the list endpoint there regardless of the beta preference.
+            val result = if (preferences.checkForBetas().get() || BuildConfig.NIGHTLY) {
                 networkService.client
                     .newCall(GET("https://api.github.com/repos/$repo/releases"))
-                    .await()
+                    .awaitSuccess()
                     .parseAs<List<GithubRelease>>()
                     .let { githubReleases ->
                         val releases =
@@ -60,7 +63,7 @@ class AppUpdateChecker(
             } else {
                 networkService.client
                     .newCall(GET("https://api.github.com/repos/$repo/releases/latest"))
-                    .await()
+                    .awaitSuccess()
                     .parseAs<GithubRelease>()
                     .let {
                         preferences.lastAppCheck().set(Date().time)
