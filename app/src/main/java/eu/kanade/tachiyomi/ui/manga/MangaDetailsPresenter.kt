@@ -173,7 +173,7 @@ class MangaDetailsPresenter(
     var allHistory: List<History> = emptyList()
         private set
 
-    val headerItem: MangaHeaderItem by lazy { MangaHeaderItem(mangaId, view?.fromCatalogue == true) }
+    val headerItem: MangaHeaderItem by lazy { MangaHeaderItem(mangaId, false) }
     val relatedMangaItem: RelatedMangaHeaderItem by lazy { RelatedMangaHeaderItem(mangaId) }
     var tabletChapterHeaderItem: MangaHeaderItem? = null
         get() {
