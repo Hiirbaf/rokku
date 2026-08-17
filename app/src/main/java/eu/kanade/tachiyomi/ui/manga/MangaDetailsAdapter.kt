@@ -68,10 +68,20 @@ class MangaDetailsAdapter(
     }
 
     private fun withMissingChapterSeparators(chapterList: List<ChapterItem>): List<IFlexible<*>> {
-        if (uiPreferences.hideChapterMissingCount().get() || chapterList.size < 2) {
+        if (uiPreferences.hideChapterMissingCount().get() || chapterList.isEmpty()) {
             return chapterList
         }
-        val result = ArrayList<IFlexible<*>>(chapterList.size)
+
+        // The list may be sorted ascending or descending by chapter number, so the
+        // earliest chapter can be sitting at either end of it.
+        val earliestAtStart = chapterList.first().chapter_number <= chapterList.last().chapter_number
+        val earliestChapterItem = if (earliestAtStart) chapterList.first() else chapterList.last()
+        val leadingMissingCount = calculateChapterDifference(earliestChapterItem.chapter_number, 0f).toInt()
+
+        val result = ArrayList<IFlexible<*>>(chapterList.size + 1)
+        if (earliestAtStart && leadingMissingCount > 0) {
+            result.add(MissingChaptersItem(leadingMissingCount))
+        }
         chapterList.forEachIndexed { index, chapterItem ->
             if (index > 0) {
                 val previousChapterItem = chapterList[index - 1]
@@ -90,6 +100,9 @@ class MangaDetailsAdapter(
                 }
             }
             result.add(chapterItem)
+        }
+        if (!earliestAtStart && leadingMissingCount > 0) {
+            result.add(MissingChaptersItem(leadingMissingCount))
         }
         return result
     }
