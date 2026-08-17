@@ -117,6 +117,7 @@ class LibraryGridHolder(
             binding.coverThumbnail.tag = mangaId
             binding.coverThumbnail.setTag(R.id.manga_cover_modified, coverModified)
             binding.coverThumbnail.dispose()
+            binding.coverThumbnail.setImageDrawable(null)
             setCover(item.manga.manga)
         }
     }

@@ -235,6 +235,7 @@ class RecentMangaHolder(
                 binding.coverThumbnail.tag = mangaId
                 binding.coverThumbnail.setTag(R.id.manga_cover_modified, coverModified)
                 binding.coverThumbnail.dispose()
+                binding.coverThumbnail.setImageDrawable(null)
                 coverDisposable = binding.coverThumbnail.loadManga(manga) {
                     // The default crossfade can get stuck mid-fade (showing nothing) when the
                     // result lands while the row's first draw is delayed (e.g. by a cold-start
