@@ -269,10 +269,12 @@ class MaterialSpinnerView constructor(context: Context, attrs: AttributeSet?) :
         popup.menu.forEach {
             it.icon = ContextCompat.getDrawable(context, R.drawable.ic_blank_24dp)
         }
-        popup.menu.getItem(selectedPosition)?.let { menuItem ->
-            menuItem.icon = tintedCheck()
-            menuItem.title =
-                menuItem.title?.tintText(blendedAccent)
+        if (selectedPosition >= 0 && selectedPosition < popup.menu.size()) {
+            popup.menu.getItem(selectedPosition)?.let { menuItem ->
+                menuItem.icon = tintedCheck()
+                menuItem.title =
+                    menuItem.title?.tintText(blendedAccent)
+            }
         }
         this.popup = popup
         updateOriginalPositionMenu()
