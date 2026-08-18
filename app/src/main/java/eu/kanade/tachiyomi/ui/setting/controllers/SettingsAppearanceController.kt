@@ -144,7 +144,7 @@ class SettingsAppearanceController : SettingsLegacyController() {
                 titleRes = MR.strings.cover_theme_style
                 entriesRes = coverThemeOptions.map { it.labelRes() }.toTypedArray()
                 entryRange = 0..(coverThemeOptions.size - 1)
-                defaultValue = coverThemeOptions.indexOf(PaletteStyle.TonalSpot)
+                defaultValue = coverThemeOptions.indexOf(null)
                 preferences.themeMangaDetails().changesIn(viewScope) { enabled ->
                     isVisible = enabled
                 }
