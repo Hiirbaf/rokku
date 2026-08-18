@@ -312,14 +312,14 @@ private fun BoxScope.DuplicateBadge() {
             .align(Alignment.TopStart)
             .height(18.dp)
             .clip(shape)
-            .background(MaterialTheme.colorScheme.secondary)
+            .background(MaterialTheme.colorScheme.tertiary)
             .border(0.75.dp, MaterialTheme.colorScheme.outline, shape)
             .padding(horizontal = 8.dp),
         contentAlignment = Alignment.Center,
     ) {
         Text(
             text = stringResource(MR.strings.duplicate_in_library),
-            color = MaterialTheme.colorScheme.onSecondary,
+            color = MaterialTheme.colorScheme.onTertiary,
             fontSize = 13.sp,
             style = TextStyle(
                 platformStyle = PlatformTextStyle(includeFontPadding = false),

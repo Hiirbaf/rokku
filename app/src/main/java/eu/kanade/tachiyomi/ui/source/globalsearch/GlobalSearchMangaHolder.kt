@@ -56,11 +56,14 @@ class GlobalSearchMangaHolder(view: View, adapter: GlobalSearchCardAdapter) :
         }
         binding.favoriteButton.shapeAppearanceModel =
             binding.card.makeShapeCorners(binding.card.radius, binding.card.radius)
+        binding.duplicateButton.shapeAppearanceModel =
+            binding.card.makeShapeCorners(binding.card.radius, binding.card.radius)
         itemView.setOnLongClickListener {
             adapter.mangaClickListener.onMangaLongClick(flexibleAdapterPosition, adapter)
             true
         }
         setCards(adapter.showOutlines, binding.card, binding.favoriteButton)
+        setCards(adapter.showOutlines, binding.card, binding.duplicateButton)
     }
 
     fun bind(manga: Manga, isDuplicate: Boolean = false) {
