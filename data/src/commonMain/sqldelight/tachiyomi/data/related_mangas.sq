@@ -1,0 +1,49 @@
+CREATE TABLE related_mangas(
+    manga_id INTEGER NOT NULL,
+    related_manga_id INTEGER NOT NULL,
+    position INTEGER NOT NULL,
+    FOREIGN KEY(manga_id) REFERENCES mangas (_id)
+    ON DELETE CASCADE,
+    FOREIGN KEY(related_manga_id) REFERENCES mangas (_id)
+    ON DELETE CASCADE
+);
+
+CREATE INDEX related_mangas_manga_id_index ON related_mangas(manga_id);
+CREATE UNIQUE INDEX related_mangas_manga_id_related_manga_id_unique_index ON related_mangas(manga_id, related_manga_id);
+
+-- Tracks when a manga's related list was last fetched, independent of how many rows (if any)
+-- ended up in related_mangas above - lets us tell "never fetched" apart from "fetched, found
+-- nothing" so the latter is cached too instead of being retried on every open.
+CREATE TABLE related_mangas_fetch(
+    manga_id INTEGER NOT NULL PRIMARY KEY,
+    fetched_at INTEGER NOT NULL,
+    FOREIGN KEY(manga_id) REFERENCES mangas (_id)
+    ON DELETE CASCADE
+);
+
+getRelatedMangaIds:
+SELECT related_manga_id
+FROM related_mangas
+WHERE manga_id = :mangaId
+ORDER BY position;
+
+deleteForManga:
+DELETE FROM related_mangas
+WHERE manga_id = :mangaId;
+
+insert:
+INSERT OR REPLACE INTO related_mangas(manga_id, related_manga_id, position)
+VALUES (:mangaId, :relatedMangaId, :position);
+
+getFetchedAt:
+SELECT fetched_at
+FROM related_mangas_fetch
+WHERE manga_id = :mangaId;
+
+deleteFetchForManga:
+DELETE FROM related_mangas_fetch
+WHERE manga_id = :mangaId;
+
+upsertFetchedAt:
+INSERT OR REPLACE INTO related_mangas_fetch(manga_id, fetched_at)
+VALUES (:mangaId, :fetchedAt);

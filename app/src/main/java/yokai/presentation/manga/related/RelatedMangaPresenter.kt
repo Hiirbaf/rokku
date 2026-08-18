@@ -13,7 +13,9 @@ import eu.kanade.tachiyomi.util.system.withUIContext
 import kotlinx.coroutines.flow.collectLatest
 import uy.kohesive.injekt.injectLazy
 import yokai.domain.manga.interactor.GetManga
+import yokai.domain.manga.interactor.GetRelatedMangaCache
 import yokai.domain.manga.interactor.InsertManga
+import yokai.domain.manga.interactor.SetRelatedMangaCache
 import yokai.util.isLewd
 
 class RelatedMangaPresenter(
@@ -25,6 +27,8 @@ class RelatedMangaPresenter(
     private val getManga: GetManga by injectLazy()
     private val insertManga: InsertManga by injectLazy()
     private val sourceManager: SourceManager by injectLazy()
+    private val getRelatedMangaCache: GetRelatedMangaCache by injectLazy()
+    private val setRelatedMangaCache: SetRelatedMangaCache by injectLazy()
 
     override fun onCreate() {
         super.onCreate()
@@ -50,6 +54,16 @@ class RelatedMangaPresenter(
      */
     private fun fetchFromSource() {
         presenterScope.launchIO {
+            val cachedIds = getRelatedMangaCache.await(mangaId)
+            if (cachedIds != null) {
+                val cached = cachedIds.mapNotNull { getManga.awaitById(it) }
+                withUIContext {
+                    view?.setMangas(cached)
+                    view?.setNoResultsFound(cached.isEmpty())
+                }
+                return@launchIO
+            }
+
             val manga = getManga.awaitById(mangaId) ?: return@launchIO withUIContext { view?.setLoading(false) }
             val currentSource = sourceManager.getOrStub(manga.source)
 
@@ -74,6 +88,7 @@ class RelatedMangaPresenter(
             } catch (e: Exception) {
                 Logger.e(e)
             } finally {
+                setRelatedMangaCache.await(mangaId, results.mapNotNull { it.id })
                 withUIContext {
                     view?.setLoading(false)
                     view?.setNoResultsFound(results.isEmpty())

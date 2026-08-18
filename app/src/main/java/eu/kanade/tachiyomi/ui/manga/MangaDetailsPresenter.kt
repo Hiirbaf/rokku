@@ -96,8 +96,11 @@ import yokai.domain.chapter.interactor.UpdateChapter
 import yokai.domain.history.interactor.GetHistory
 import yokai.domain.library.custom.model.CustomMangaInfo
 import yokai.domain.manga.interactor.GetManga
+import yokai.domain.manga.interactor.GetRelatedMangaCache
 import yokai.domain.manga.interactor.InsertManga
+import yokai.domain.manga.interactor.InvalidateRelatedMangaCache
 import yokai.domain.manga.interactor.SetExcludedScanlators
+import yokai.domain.manga.interactor.SetRelatedMangaCache
 import yokai.domain.manga.interactor.UpdateManga
 import yokai.domain.manga.models.MangaUpdate
 import yokai.domain.manga.models.cover
@@ -135,6 +138,9 @@ class MangaDetailsPresenter(
     private val setExcludedScanlators: SetExcludedScanlators by injectLazy()
     private val sourcePreferences: SourcePreferences by injectLazy()
     private val uiPreferences: UiPreferences by injectLazy()
+    private val getRelatedMangaCache: GetRelatedMangaCache by injectLazy()
+    private val setRelatedMangaCache: SetRelatedMangaCache by injectLazy()
+    private val invalidateRelatedMangaCache: InvalidateRelatedMangaCache by injectLazy()
     private val deleteTrack: DeleteTrack by injectLazy()
     private val getTrack: GetTrack by injectLazy()
     private val insertTrack: InsertTrack by injectLazy()
@@ -296,12 +302,21 @@ class MangaDetailsPresenter(
     private fun fetchRelatedManga() {
         if (!isRelatedMangaEnabled()) return
         val currentSource = source
+        val currentMangaId = mangaId
 
         relatedMangaItem.isLoading = true
         relatedMangaItem.mangas = emptyList()
         view?.updateRelatedManga()
 
         presenterScope.launchIO {
+            val cachedIds = getRelatedMangaCache.await(currentMangaId)
+            if (cachedIds != null) {
+                relatedMangaItem.mangas = cachedIds.mapNotNull { getManga.awaitById(it) }
+                relatedMangaItem.isLoading = false
+                withUIContext { view?.updateRelatedManga() }
+                return@launchIO
+            }
+
             val seenUrls = HashSet<String>()
             val results = mutableListOf<Manga>()
             try {
@@ -323,6 +338,7 @@ class MangaDetailsPresenter(
                 Logger.e(e)
             } finally {
                 relatedMangaItem.isLoading = false
+                setRelatedMangaCache.await(currentMangaId, results.mapNotNull { it.id })
                 withUIContext { view?.updateRelatedManga() }
             }
         }
@@ -685,6 +701,15 @@ class MangaDetailsPresenter(
             isLoading = false
             withUIContext {
                 view?.updateChapters()
+            }
+        }
+
+        if (isRelatedMangaEnabled()) {
+            // A manual update should treat any cached suggestions as stale - see
+            // InvalidateRelatedMangaCache and the matching LibraryUpdateJob hook.
+            presenterScope.launchIO {
+                invalidateRelatedMangaCache.await(mangaId)
+                if (isRelatedMangaExpanded()) fetchRelatedManga()
             }
         }
     }

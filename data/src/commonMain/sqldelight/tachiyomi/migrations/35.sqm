@@ -1,0 +1,19 @@
+CREATE TABLE related_mangas(
+    manga_id INTEGER NOT NULL,
+    related_manga_id INTEGER NOT NULL,
+    position INTEGER NOT NULL,
+    FOREIGN KEY(manga_id) REFERENCES mangas (_id)
+    ON DELETE CASCADE,
+    FOREIGN KEY(related_manga_id) REFERENCES mangas (_id)
+    ON DELETE CASCADE
+);
+
+CREATE INDEX related_mangas_manga_id_index ON related_mangas(manga_id);
+CREATE UNIQUE INDEX related_mangas_manga_id_related_manga_id_unique_index ON related_mangas(manga_id, related_manga_id);
+
+CREATE TABLE related_mangas_fetch(
+    manga_id INTEGER NOT NULL PRIMARY KEY,
+    fetched_at INTEGER NOT NULL,
+    FOREIGN KEY(manga_id) REFERENCES mangas (_id)
+    ON DELETE CASCADE
+);

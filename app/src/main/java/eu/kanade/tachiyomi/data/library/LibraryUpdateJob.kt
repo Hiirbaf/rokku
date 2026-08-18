@@ -83,6 +83,7 @@ import yokai.domain.category.interactor.GetCategories
 import yokai.domain.chapter.interactor.GetChapter
 import yokai.domain.libraryUpdateError.LibraryUpdateErrorRepository
 import yokai.domain.manga.interactor.GetLibraryManga
+import yokai.domain.manga.interactor.InvalidateRelatedMangaCache
 import yokai.domain.manga.interactor.UpdateManga
 import yokai.domain.manga.models.cover
 import yokai.domain.track.interactor.GetTrack
@@ -112,6 +113,7 @@ class LibraryUpdateJob(private val context: Context, workerParams: WorkerParamet
     private val libraryUpdateErrorRepository: LibraryUpdateErrorRepository = Injekt.get()
     private val getLibraryManga: GetLibraryManga = Injekt.get()
     private val updateManga: UpdateManga = Injekt.get()
+    private val invalidateRelatedMangaCache: InvalidateRelatedMangaCache = Injekt.get()
     private val getTrack: GetTrack = Injekt.get()
     private val insertTrack: InsertTrack by injectLazy()
 
@@ -328,6 +330,7 @@ class LibraryUpdateJob(private val context: Context, workerParams: WorkerParamet
             }
         context.imageLoader.execute(request)
         updateManga.await(manga.manga.toMangaUpdate())
+        manga.manga.id?.let { invalidateRelatedMangaCache.await(it) }
     }
 
     /**
