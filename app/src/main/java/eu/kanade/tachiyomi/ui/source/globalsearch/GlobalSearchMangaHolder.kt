@@ -67,6 +67,7 @@ class GlobalSearchMangaHolder(view: View, adapter: GlobalSearchCardAdapter) :
         binding.title.text = manga.title
         binding.favoriteButton.isVisible = manga.favorite
         binding.duplicateButton.isVisible = !manga.favorite && isDuplicate
+        binding.itemImage.alpha = if (manga.favorite || isDuplicate) 0.34f else 1.0f
         setImage(manga)
     }
 

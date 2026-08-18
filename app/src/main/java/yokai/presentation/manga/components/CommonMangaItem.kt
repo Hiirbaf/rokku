@@ -304,10 +304,6 @@ private fun BoxScope.InLibraryBadge() {
     }
 }
 
-// Same shape/position as InLibraryBadge (the two never show at once - this only shows for a
-// non-favorited entry). Uses the secondaryContainer/onSecondaryContainer tones instead of
-// secondary/onSecondary - same hue family as the rest of the app's badges (so it doesn't stand
-// out as an off-palette color), just a visibly different shade from "In Library".
 @Composable
 private fun BoxScope.DuplicateBadge() {
     val shape = RoundedCornerShape(topStart = 12.dp, topEnd = 4.dp, bottomStart = 4.dp, bottomEnd = 12.dp)
@@ -316,14 +312,14 @@ private fun BoxScope.DuplicateBadge() {
             .align(Alignment.TopStart)
             .height(18.dp)
             .clip(shape)
-            .background(MaterialTheme.colorScheme.secondaryContainer)
+            .background(MaterialTheme.colorScheme.secondary)
             .border(0.75.dp, MaterialTheme.colorScheme.outline, shape)
             .padding(horizontal = 8.dp),
         contentAlignment = Alignment.Center,
     ) {
         Text(
             text = stringResource(MR.strings.duplicate_in_library),
-            color = MaterialTheme.colorScheme.onSecondaryContainer,
+            color = MaterialTheme.colorScheme.onSecondary,
             fontSize = 13.sp,
             style = TextStyle(
                 platformStyle = PlatformTextStyle(includeFontPadding = false),
