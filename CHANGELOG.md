@@ -14,6 +14,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Added a "Cover theme style" option (Settings > Appearance) to pick the Material You palette style used for a manga's cover-derived accent color ([@Hiirbaf](https://github.com/Hiirbaf))
 - Added a "Load suggestions automatically" option (Settings > Browse) to fetch related-manga suggestions on demand, from the dedicated suggestions screen, instead of every time a manga's details page is opened
 - Added a "Show 'Duplicate' badge" option (Settings > Browse) to flag entries in a source's browse list already in your library from a different extension
+- Added a button to open an available extension's website in a WebView before installing it
 
 ### Changes
 - Related-manga suggestions are now cached instead of re-fetched from the source every time they're shown - the cache is only refreshed by a manual manga update or a library update

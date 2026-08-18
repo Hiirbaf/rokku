@@ -29,6 +29,7 @@ import eu.kanade.tachiyomi.ui.migration.SourceAdapter
 import eu.kanade.tachiyomi.ui.migration.SourceItem
 import eu.kanade.tachiyomi.ui.migration.manga.design.PreMigrationController
 import eu.kanade.tachiyomi.ui.source.BrowseController
+import eu.kanade.tachiyomi.ui.webview.WebViewActivity
 import eu.kanade.tachiyomi.util.system.isPackageInstalled
 import eu.kanade.tachiyomi.util.system.materialAlertDialog
 import eu.kanade.tachiyomi.util.system.rootWindowInsetsCompat
@@ -231,6 +232,15 @@ class ExtensionBottomSheet @JvmOverloads constructor(context: Context, attrs: At
     override fun onCancelClick(position: Int) {
         val extension = (extAdapter?.getItem(position) as? ExtensionItem) ?: return
         presenter.cancelExtensionInstall(extension)
+    }
+
+    override fun onWebViewClick(position: Int) {
+        val extension = (extAdapter?.getItem(position) as? ExtensionItem)?.extension as? Extension.Available ?: return
+        val source = extension.sources.firstOrNull { it.baseUrl.isNotBlank() } ?: return
+        val activity = controller.activity ?: return
+        activity.startActivity(
+            WebViewActivity.newIntent(activity, source.baseUrl, source.id, source.name),
+        )
     }
 
     override fun onUpdateAllClicked(position: Int) {

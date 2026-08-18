@@ -51,6 +51,9 @@ class ExtensionHolder(view: View, val adapter: ExtensionAdapter) :
         binding.cancelButton.setOnClickListener {
             adapter.buttonClickListener.onCancelClick(flexibleAdapterPosition)
         }
+        binding.webviewButton.setOnClickListener {
+            adapter.buttonClickListener.onWebViewClick(flexibleAdapterPosition)
+        }
     }
 
     fun bind(item: ExtensionItem) {
@@ -116,6 +119,10 @@ class ExtensionHolder(view: View, val adapter: ExtensionAdapter) :
         binding.installProgress.progress = item.sessionProgress ?: 0
         binding.installProgress.isVisible = item.sessionProgress != null
         binding.cancelButton.isVisible = item.sessionProgress != null
+        binding.webviewButton.isVisible =
+            item.sessionProgress == null &&
+            extension is Extension.Available &&
+            extension.sources.any { it.baseUrl.isNotBlank() }
 
         val iconKey = when (extension) {
             is Extension.Available -> "available:${extension.pkgName}:${extension.iconUrl}"
@@ -192,6 +199,10 @@ class ExtensionHolder(view: View, val adapter: ExtensionAdapter) :
         binding.installProgress.isVisible = item.sessionProgress != null
         val extension = item.extension
         val installStep = item.installStep
+        binding.webviewButton.isVisible =
+            item.sessionProgress == null &&
+            extension is Extension.Available &&
+            extension.sources.any { it.baseUrl.isNotBlank() }
         strokeColor = ColorStateList.valueOf(Color.TRANSPARENT)
         rippleColor = ColorStateList.valueOf(context.getResourceColor(R.attr.colorControlHighlight))
         stateListAnimator = null
