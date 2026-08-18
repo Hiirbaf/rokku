@@ -170,7 +170,9 @@ class ExtensionManager(
 
         enableAdditionalSubLanguages(extensions)
 
-        _availableExtensionsFlow.value = extensions
+        // An extension available from multiple repos would otherwise appear as duplicate entries
+        // with the same pkgName, colliding as RecyclerView stable IDs and crashing.
+        _availableExtensionsFlow.value = extensions.distinctBy { it.pkgName }
         updatedInstalledExtensionsStatuses(extensions)
         setupAvailableSourcesMap()
         emitToInstaller("Finished/Available/${extensions.size}", (InstallStep.Done to null))

@@ -19,6 +19,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 
 ### Fixes
 - Fixed a possible race condition in download notifications when updated from multiple threads at once
+- Fixed a possible crash from duplicate extension entries when the same extension is available from more than one repo
 - Fixed the manga description opening expanded when navigating from the browse/extension source list instead of staying collapsed like it does from the library
 - Fixed "Check for updates" failing with a "Fields ... are required" error on nightly builds when the beta-releases preference was off, since GitHub's "latest release" endpoint never resolves for a repo where every release is a prerelease
 - Fixed the "Missing N chapters" chapter-count summary and chapter list divider not counting chapters missing before the earliest available chapter (e.g. a manga starting at chapter 425 instead of 1)
