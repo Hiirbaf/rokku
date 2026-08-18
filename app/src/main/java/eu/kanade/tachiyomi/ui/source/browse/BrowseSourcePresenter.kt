@@ -250,12 +250,15 @@ open class BrowseSourcePresenter(
                 }
                 .onEach { initializeMangas(it.second) }
                 .map { (first, second) ->
+                    val checkDuplicates = preferences.showDuplicateInLibraryItems().get()
                     first to second.map {
                         BrowseSourceItem(
                             it,
                             browseAsList,
                             sourceListType,
                             outlineCovers,
+                            isDuplicate = checkDuplicates && !it.favorite &&
+                                getManga.awaitDuplicateFavorite(it.title, it.source) != null,
                         )
                     }
                 }

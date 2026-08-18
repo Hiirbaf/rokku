@@ -137,6 +137,7 @@ fun MangaComfortableGridItem(
     isSelected: Boolean = false,
     showOutline: Boolean = false,
     inLibrary: Boolean = false,
+    isDuplicate: Boolean = false,
     onClickContinueReading: (() -> Unit)? = null,
 ) {
     Box {
@@ -186,6 +187,8 @@ fun MangaComfortableGridItem(
         }
         if (inLibrary) {
             InLibraryBadge()
+        } else if (isDuplicate) {
+            DuplicateBadge()
         }
     }
 }
@@ -201,6 +204,7 @@ fun MangaCompactGridItem(
     isSelected: Boolean = false,
     showOutline: Boolean = false,
     inLibrary: Boolean = false,
+    isDuplicate: Boolean = false,
     onClickContinueReading: (() -> Unit)? = null,
 ) {
     Box {
@@ -244,6 +248,8 @@ fun MangaCompactGridItem(
         )
         if (inLibrary) {
             InLibraryBadge()
+        } else if (isDuplicate) {
+            DuplicateBadge()
         }
     }
 }
@@ -288,6 +294,34 @@ private fun BoxScope.InLibraryBadge() {
         Text(
             text = stringResource(MR.strings.in_library),
             color = MaterialTheme.colorScheme.onSecondary,
+            fontSize = 13.sp,
+            style = TextStyle(
+                platformStyle = PlatformTextStyle(includeFontPadding = false),
+            ),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+    }
+}
+
+// Same shape/position as InLibraryBadge (the two never show at once - this only shows for a
+// non-favorited entry), but colorTertiary instead of colorSecondary to read as a distinct state.
+@Composable
+private fun BoxScope.DuplicateBadge() {
+    val shape = RoundedCornerShape(topStart = 12.dp, topEnd = 4.dp, bottomStart = 4.dp, bottomEnd = 12.dp)
+    Box(
+        modifier = Modifier
+            .align(Alignment.TopStart)
+            .height(18.dp)
+            .clip(shape)
+            .background(MaterialTheme.colorScheme.tertiary)
+            .border(0.75.dp, MaterialTheme.colorScheme.outline, shape)
+            .padding(horizontal = 8.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = stringResource(MR.strings.duplicate_in_library),
+            color = MaterialTheme.colorScheme.onTertiary,
             fontSize = 13.sp,
             style = TextStyle(
                 platformStyle = PlatformTextStyle(includeFontPadding = false),

@@ -22,7 +22,7 @@ abstract class BrowseSourceHolder(view: View, adapter: FlexibleAdapter<IFlexible
      *
      * @param manga the manga to bind.
      */
-    abstract fun onSetValues(manga: Manga)
+    abstract fun onSetValues(manga: Manga, isDuplicate: Boolean = false)
 
     /**
      * Updates the image for this holder. Useful to update the image when the manga is initialized

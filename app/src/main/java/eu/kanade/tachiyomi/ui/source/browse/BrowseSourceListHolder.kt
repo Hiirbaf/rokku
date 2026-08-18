@@ -35,6 +35,11 @@ class BrowseSourceListHolder(
     // and restart loading it from scratch.
     private var boundCoverKey: String? = null
 
+    // Whether this manga is favorited under a different source (see BrowseSourcePresenter);
+    // stashed here so setImage(), which is also called standalone once a cover finishes
+    // loading, doesn't need this passed through every call site.
+    private var isDuplicate = false
+
     init {
         setCards(showOutline, binding.card, binding.unreadDownloadBadge.badgeView)
     }
@@ -45,9 +50,10 @@ class BrowseSourceListHolder(
      *
      * @param manga the manga to bind.
      */
-    override fun onSetValues(manga: Manga) {
+    override fun onSetValues(manga: Manga, isDuplicate: Boolean) {
+        this.isDuplicate = isDuplicate
         binding.title.text = manga.title
-        binding.inLibraryBadge.badge.isVisible = manga.favorite
+        binding.inLibraryBadge.badge.isVisible = manga.favorite || isDuplicate
 
         setImage(manga)
     }
@@ -61,7 +67,7 @@ class BrowseSourceListHolder(
         } else {
             manga.id ?: return
             val coverKey = "${manga.id}:${manga.thumbnail_url}:${manga.cover_last_modified}"
-            binding.coverThumbnail.alpha = if (manga.favorite) 0.34f else 1.0f
+            binding.coverThumbnail.alpha = if (manga.favorite || isDuplicate) 0.34f else 1.0f
             if (coverKey == boundCoverKey) return
             boundCoverKey = coverKey
 

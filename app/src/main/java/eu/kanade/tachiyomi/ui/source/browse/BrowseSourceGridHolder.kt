@@ -32,6 +32,7 @@ class BrowseSourceGridHolder(
 
     var title by mutableStateOf("")
     var cover by mutableStateOf(MangaCover(0L, 0L, "", 0L, false))
+    var isDuplicate by mutableStateOf(false)
 
     init {
         view.setContent {
@@ -40,17 +41,19 @@ class BrowseSourceGridHolder(
                     MangaCompactGridItem(
                         coverData = cover,
                         title = title,
-                        isSelected = cover.inLibrary,
+                        isSelected = cover.inLibrary || isDuplicate,
                         showOutline = showOutline,
                         inLibrary = cover.inLibrary,
+                        isDuplicate = isDuplicate,
                     )
                 } else {
                     MangaComfortableGridItem(
                         coverData = cover,
                         title = title,
-                        isSelected = cover.inLibrary,
+                        isSelected = cover.inLibrary || isDuplicate,
                         showOutline = showOutline,
                         inLibrary = cover.inLibrary,
+                        isDuplicate = isDuplicate,
                     )
                 }
             }
@@ -64,10 +67,11 @@ class BrowseSourceGridHolder(
      *
      * @param manga the manga item to bind.
      */
-    override fun onSetValues(manga: Manga) {
+    override fun onSetValues(manga: Manga, isDuplicate: Boolean) {
         // Update the title of the manga.
         title = manga.title
         cover = manga.cover()
+        this.isDuplicate = isDuplicate
 
         // Update the cover.
         setImage(manga)
