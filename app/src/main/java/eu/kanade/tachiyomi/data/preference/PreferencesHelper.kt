@@ -18,10 +18,10 @@ import eu.kanade.tachiyomi.ui.reader.settings.OrientationType
 import eu.kanade.tachiyomi.ui.reader.settings.PageLayout
 import eu.kanade.tachiyomi.ui.reader.settings.ReaderBottomButton
 import eu.kanade.tachiyomi.ui.reader.settings.ReadingModeType
-import eu.kanade.tachiyomi.ui.setting.controllers.coverThemeOptions
 import eu.kanade.tachiyomi.ui.reader.viewer.ViewerNavigation
 import eu.kanade.tachiyomi.ui.recents.RecentsPresenter
 import eu.kanade.tachiyomi.util.system.Themes
+import eu.kanade.tachiyomi.util.system.coverThemeOptions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
