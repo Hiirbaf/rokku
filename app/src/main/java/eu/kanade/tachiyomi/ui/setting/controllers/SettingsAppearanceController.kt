@@ -43,7 +43,10 @@ class SettingsAppearanceController : SettingsLegacyController() {
     var lastThemeXDark: Int? = null
     var themePreference: ThemePreference? = null
 
-    private fun PaletteStyle.labelRes(): StringResource = when (this) {
+    val coverThemeOptions: List<PaletteStyle?> = listOf(null) + PaletteStyle.entries
+
+    fun PaletteStyle?.labelRes(): StringResource = when (this) {
+        null -> MR.strings.legacy_theme
         PaletteStyle.TonalSpot -> MR.strings.palette_style_tonal_spot
         PaletteStyle.Neutral -> MR.strings.palette_style_neutral
         PaletteStyle.Vibrant -> MR.strings.palette_style_vibrant
@@ -152,10 +155,9 @@ class SettingsAppearanceController : SettingsLegacyController() {
             intListPreference(activity) {
                 key = Keys.coverThemeStyle
                 titleRes = MR.strings.cover_theme_style
-                val values = PaletteStyle.entries
-                entriesRes = values.map { it.labelRes() }.toTypedArray()
-                entryRange = 0..(values.size - 1)
-                defaultValue = PaletteStyle.TonalSpot.ordinal
+                entriesRes = coverThemeOptions.map { it.labelRes() }.toTypedArray()
+                entryRange = 0..(coverThemeOptions.size - 1)
+                defaultValue = coverThemeOptions.indexOf(PaletteStyle.TonalSpot)
                 preferences.themeMangaDetails().changesIn(viewScope) { enabled ->
                     isVisible = enabled
                 }
