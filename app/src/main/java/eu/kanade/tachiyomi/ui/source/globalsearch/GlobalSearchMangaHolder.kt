@@ -63,9 +63,10 @@ class GlobalSearchMangaHolder(view: View, adapter: GlobalSearchCardAdapter) :
         setCards(adapter.showOutlines, binding.card, binding.favoriteButton)
     }
 
-    fun bind(manga: Manga) {
+    fun bind(manga: Manga, isDuplicate: Boolean = false) {
         binding.title.text = manga.title
         binding.favoriteButton.isVisible = manga.favorite
+        binding.duplicateButton.isVisible = !manga.favorite && isDuplicate
         setImage(manga)
     }
 

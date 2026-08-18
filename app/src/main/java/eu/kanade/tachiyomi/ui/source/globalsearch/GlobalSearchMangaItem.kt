@@ -17,6 +17,7 @@ import kotlinx.coroutines.launch
 class GlobalSearchMangaItem(
     initialManga: Manga,
     private val mangaFlow: Flow<Manga?>,
+    private val isDuplicate: Boolean = false,
 ) : AbstractFlexibleItem<GlobalSearchMangaHolder>() {
 
     val mangaId: Long? = initialManga.id
@@ -39,12 +40,12 @@ class GlobalSearchMangaItem(
         position: Int,
         payloads: MutableList<Any?>?,
     ) {
-        if (job == null) holder.bind(manga)
+        if (job == null) holder.bind(manga, isDuplicate)
         job?.cancel()
         job = scope.launch {
             mangaFlow.collectLatest {
                 manga = it ?: return@collectLatest
-                holder.bind(manga)
+                holder.bind(manga, isDuplicate)
             }
         }
     }

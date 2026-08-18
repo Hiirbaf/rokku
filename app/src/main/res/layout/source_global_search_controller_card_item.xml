@@ -57,6 +57,34 @@
 
     </com.google.android.material.card.MaterialCardView>
 
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/duplicate_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="10dp"
+        app:cardBackgroundColor="?attr/colorSecondaryContainer"
+        app:cardElevation="2dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginStart="3dp"
+        android:visibility="gone"
+        tools:visibility="visible"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="wrap_content"
+            android:gravity="center"
+            android:maxLines="1"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:textSize="13sp"
+            android:textColor="?attr/colorOnSecondaryContainer"
+            style="?textAppearanceCaption"
+            android:layout_height="wrap_content"
+            android:text="@string/duplicate_in_library"/>
+
+    </com.google.android.material.card.MaterialCardView>
+
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/title"
         style="?textAppearanceBodyMedium"

@@ -213,12 +213,15 @@ open class GlobalSearchPresenter(
                         if (mangas.isNotEmpty() && !loadTime.containsKey(source.id)) {
                             loadTime[source.id] = Date().time
                         }
+                        val checkDuplicates = preferences.showDuplicateInLibraryItems().get()
                         val result = createCatalogueSearchItem(
                             source,
                             mangas.map {
                                 GlobalSearchMangaItem(
                                     it,
                                     getManga.subscribeByUrlAndSource(it.url, it.source),
+                                    isDuplicate = checkDuplicates && !it.favorite &&
+                                        getManga.awaitDuplicateFavorite(it.title, it.source) != null,
                                 )
                             },
                         )
