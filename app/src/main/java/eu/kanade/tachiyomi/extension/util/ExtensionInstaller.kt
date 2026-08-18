@@ -231,8 +231,6 @@ internal class ExtensionInstaller(private val context: Context) {
                 val step = when (downloadState) {
                     DownloadManager.STATUS_PENDING -> InstallStep.Pending
                     DownloadManager.STATUS_RUNNING -> InstallStep.Downloading
-                    // Most commonly the network dropping mid-download; without this the flow
-                    // just stops emitting and the UI is stuck showing "Downloading" forever.
                     DownloadManager.STATUS_PAUSED -> InstallStep.Error
                     else -> return@flatMapConcat emptyFlow()
                 }

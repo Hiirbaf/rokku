@@ -35,9 +35,6 @@ class BrowseSourceListHolder(
     // and restart loading it from scratch.
     private var boundCoverKey: String? = null
 
-    // Whether this manga is favorited under a different source (see BrowseSourcePresenter);
-    // stashed here so setImage(), which is also called standalone once a cover finishes
-    // loading, doesn't need this passed through every call site.
     private var isDuplicate = false
 
     init {
