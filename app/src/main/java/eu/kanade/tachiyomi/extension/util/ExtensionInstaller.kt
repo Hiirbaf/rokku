@@ -19,6 +19,7 @@ import eu.kanade.tachiyomi.extension.model.InstallStep
 import eu.kanade.tachiyomi.ui.extension.ExtensionIntallInfo
 import eu.kanade.tachiyomi.util.storage.getUriCompat
 import eu.kanade.tachiyomi.util.system.e
+import eu.kanade.tachiyomi.util.system.isOnline
 import eu.kanade.tachiyomi.util.system.isPackageInstalled
 import eu.kanade.tachiyomi.util.system.launchUI
 import eu.kanade.tachiyomi.util.system.toast
@@ -128,6 +129,10 @@ internal class ExtensionInstaller(private val context: Context) {
     ): Flow<ExtensionIntallInfo> {
         val pkgName = extension.pkgName
 
+        if (!context.isOnline()) {
+            return flowOf(ExtensionIntallInfo(InstallStep.Error, null))
+        }
+
         val oldDownload = activeDownloads[pkgName]
         if (oldDownload != null) {
             deleteDownload(pkgName)
@@ -226,6 +231,9 @@ internal class ExtensionInstaller(private val context: Context) {
                 val step = when (downloadState) {
                     DownloadManager.STATUS_PENDING -> InstallStep.Pending
                     DownloadManager.STATUS_RUNNING -> InstallStep.Downloading
+                    // Most commonly the network dropping mid-download; without this the flow
+                    // just stops emitting and the UI is stuck showing "Downloading" forever.
+                    DownloadManager.STATUS_PAUSED -> InstallStep.Error
                     else -> return@flatMapConcat emptyFlow()
                 }
                 flowOf(ExtensionIntallInfo(step, null))
