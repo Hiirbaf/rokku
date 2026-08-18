@@ -80,6 +80,7 @@ internal class DownloadNotifier(private val context: Context) {
         context.notificationManager.cancel(Notifications.ID_DOWNLOAD_PAUSED)
     }
 
+    @Synchronized
     fun setPlaceholder(download: Download?): NotificationCompat.Builder {
         val context = context.localeContext
         with(notification) {
@@ -130,6 +131,7 @@ internal class DownloadNotifier(private val context: Context) {
      *
      * @param download download object containing download information.
      */
+    @Synchronized
     fun onProgressChange(download: Download) {
         // Create notification
         with(notification) {
@@ -180,6 +182,7 @@ internal class DownloadNotifier(private val context: Context) {
     /**
      * Show notification when download is paused.
      */
+    @Synchronized
     fun onDownloadPaused() {
         val context = context.localeContext
         with(notification) {
@@ -217,6 +220,7 @@ internal class DownloadNotifier(private val context: Context) {
      *
      * @param reason the text to show.
      */
+    @Synchronized
     fun onWarning(reason: String) {
         val context = context.localeContext
         with(notification) {
@@ -278,6 +282,7 @@ internal class DownloadNotifier(private val context: Context) {
      * @param error string containing error information.
      * @param chapter string containing chapter title.
      */
+    @Synchronized
     fun onError(
         error: String? = null,
         chapter: String? = null,

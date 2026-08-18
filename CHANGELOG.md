@@ -18,6 +18,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Related-manga suggestions are now cached instead of re-fetched from the source every time they're shown - the cache is only refreshed by a manual manga update or a library update
 
 ### Fixes
+- Fixed a possible race condition in download notifications when updated from multiple threads at once
 - Fixed the manga description opening expanded when navigating from the browse/extension source list instead of staying collapsed like it does from the library
 - Fixed "Check for updates" failing with a "Fields ... are required" error on nightly builds when the beta-releases preference was off, since GitHub's "latest release" endpoint never resolves for a repo where every release is a prerelease
 - Fixed the "Missing N chapters" chapter-count summary and chapter list divider not counting chapters missing before the earliest available chapter (e.g. a manga starting at chapter 425 instead of 1)
