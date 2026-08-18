@@ -303,10 +303,7 @@ class MangaDetailsPresenter(
         if (!isRelatedMangaEnabled()) return
         val currentSource = source
         val currentMangaId = mangaId
-
-        relatedMangaItem.isLoading = true
-        relatedMangaItem.mangas = emptyList()
-        view?.updateRelatedManga()
+        val currentMangaUrl = manga.url
 
         presenterScope.launchIO {
             val cachedIds = getRelatedMangaCache.await(currentMangaId)
@@ -317,6 +314,10 @@ class MangaDetailsPresenter(
                 return@launchIO
             }
 
+            relatedMangaItem.isLoading = true
+            relatedMangaItem.mangas = emptyList()
+            withUIContext { view?.updateRelatedManga() }
+
             val seenUrls = HashSet<String>()
             val results = mutableListOf<Manga>()
             try {
@@ -325,7 +326,8 @@ class MangaDetailsPresenter(
                     exceptionHandler = { Logger.e(it) },
                 ) { (_, sMangaList), _ ->
                     if (results.size >= MAX_RELATED_MANGA) return@getRelatedMangaList
-                    val newOnes = sMangaList.filterNot { it.url in seenUrls || it.isLewd(currentSource.id) }
+                    val newOnes = sMangaList
+                        .filterNot { it.url in seenUrls || it.url == currentMangaUrl || it.isLewd(currentSource.id) }
                         .take(MAX_RELATED_MANGA - results.size)
                     if (newOnes.isEmpty()) return@getRelatedMangaList
                     newOnes.forEach { seenUrls.add(it.url) }
@@ -709,7 +711,11 @@ class MangaDetailsPresenter(
             // InvalidateRelatedMangaCache and the matching LibraryUpdateJob hook.
             presenterScope.launchIO {
                 invalidateRelatedMangaCache.await(mangaId)
-                if (isRelatedMangaExpanded()) fetchRelatedManga()
+                if (isRelatedMangaExpanded()) {
+                    // fetchRelatedManga() touches views synchronously before launching its own
+                    // coroutine - it must be called from the main thread, not from here.
+                    withUIContext { fetchRelatedManga() }
+                }
             }
         }
     }
