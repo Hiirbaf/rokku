@@ -161,6 +161,7 @@
     <string name="latest">Recentes</string>
     <string name="browse">Navegar</string>
     <string name="in_library">Na Biblioteca</string>
+    <string name="duplicate_in_library">Duplicado</string>
     <string name="search_extensions">Pesquisar extensões…</string>
     <string name="all_sources">Todas as fontes</string>
     <string name="sources">Fontes</string>
@@ -1016,6 +1017,8 @@
     <string name="popular">Popular</string>
     <string name="skip_dupe_chapters">Pular capítulos duplicados</string>
     <string name="hide_in_library_items">Ocultar títulos que já estão na biblioteca</string>
+    <string name="show_duplicate_in_library_items">Mostrar selo "Duplicado"</string>
+    <string name="show_duplicate_in_library_items_summary">Exibe um selo "Duplicado" em títulos que já estão na biblioteca vindos de outra extensão. Obs.: alguns duplicados podem não ser detectados por diferenças no nome</string>
     <string name="allow_deleting_bookmarked_chapters">Permitir a exclusão de capítulos favoritos</string>
     <string name="appwidget_updates_description">Veja seus itens da biblioteca atualizados recentemente</string>
     <string name="appwidget_unavailable_locked">Widget não disponível quando o bloqueio do aplicativo está habilitado</string>
