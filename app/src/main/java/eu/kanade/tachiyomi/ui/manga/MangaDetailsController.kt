@@ -102,7 +102,6 @@ import eu.kanade.tachiyomi.ui.migration.manga.design.PreMigrationController
 import eu.kanade.tachiyomi.ui.reader.ReaderActivity
 import eu.kanade.tachiyomi.ui.recents.RecentsController
 import eu.kanade.tachiyomi.ui.security.SecureActivityDelegate
-import eu.kanade.tachiyomi.ui.setting.controllers.coverThemeOptions
 import eu.kanade.tachiyomi.ui.source.BrowseController
 import eu.kanade.tachiyomi.ui.source.browse.BrowseSourceController
 import eu.kanade.tachiyomi.ui.source.globalsearch.GlobalSearchController
@@ -116,6 +115,7 @@ import eu.kanade.tachiyomi.util.system.addCheckBoxPrompt
 import eu.kanade.tachiyomi.util.system.clipboardHasImage
 import eu.kanade.tachiyomi.util.system.clipboardManager
 import eu.kanade.tachiyomi.util.system.contextCompatColor
+import eu.kanade.tachiyomi.util.system.coverThemeOptions
 import eu.kanade.tachiyomi.util.system.dpToPx
 import eu.kanade.tachiyomi.util.system.e
 import eu.kanade.tachiyomi.util.system.getClipboardImageUri
