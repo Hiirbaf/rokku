@@ -23,11 +23,20 @@ class RelatedMangaController(bundle: Bundle) :
     RelatedMangaCardAdapter.OnMangaClickListener,
     SmallToolbarInterface {
 
-    constructor(mangaId: Long, mangaTitle: String, mangaIds: List<Long>) : this(
-        bundleOf(MANGA_ID to mangaId, MANGA_TITLE to mangaTitle, MANGA_IDS to mangaIds.toLongArray()),
+    constructor(mangaId: Long, mangaTitle: String, mangaIds: List<Long>, needsFetch: Boolean = false) : this(
+        bundleOf(
+            MANGA_ID to mangaId,
+            MANGA_TITLE to mangaTitle,
+            MANGA_IDS to mangaIds.toLongArray(),
+            NEEDS_FETCH to needsFetch,
+        ),
     )
 
-    override val presenter = RelatedMangaPresenter(args.getLongArray(MANGA_IDS)?.toList().orEmpty())
+    override val presenter = RelatedMangaPresenter(
+        mangaId = args.getLong(MANGA_ID),
+        initialMangaIds = args.getLongArray(MANGA_IDS)?.toList().orEmpty(),
+        needsFetch = args.getBoolean(NEEDS_FETCH),
+    )
 
     private var adapter: RelatedMangaCardAdapter? = null
 
@@ -61,6 +70,14 @@ class RelatedMangaController(bundle: Bundle) :
         adapter?.updateDataSet(mangas.map { RelatedMangaCardItem(it) })
     }
 
+    fun setLoading(isLoading: Boolean) {
+        binding.progress.isVisible = isLoading
+    }
+
+    fun setNoResultsFound(found: Boolean) {
+        binding.noResults.isVisible = found
+    }
+
     override fun onMangaClick(manga: Manga) {
         router.pushController(MangaDetailsController(manga, true).withFadeTransaction())
     }
@@ -69,5 +86,6 @@ class RelatedMangaController(bundle: Bundle) :
         private const val MANGA_ID = "manga_id"
         private const val MANGA_TITLE = "manga_title"
         private const val MANGA_IDS = "manga_ids"
+        private const val NEEDS_FETCH = "needs_fetch"
     }
 }

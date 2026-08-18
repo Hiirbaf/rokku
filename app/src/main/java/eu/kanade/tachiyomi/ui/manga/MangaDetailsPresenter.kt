@@ -106,6 +106,7 @@ import yokai.domain.storage.StorageManager
 import yokai.domain.track.interactor.DeleteTrack
 import yokai.domain.track.interactor.GetTrack
 import yokai.domain.track.interactor.InsertTrack
+import yokai.domain.ui.UiPreferences
 import yokai.i18n.MR
 import yokai.util.isLewd
 import yokai.util.lang.getString
@@ -133,6 +134,7 @@ class MangaDetailsPresenter(
     private val updateManga: UpdateManga by injectLazy()
     private val setExcludedScanlators: SetExcludedScanlators by injectLazy()
     private val sourcePreferences: SourcePreferences by injectLazy()
+    private val uiPreferences: UiPreferences by injectLazy()
     private val deleteTrack: DeleteTrack by injectLazy()
     private val getTrack: GetTrack by injectLazy()
     private val insertTrack: InsertTrack by injectLazy()
@@ -275,9 +277,23 @@ class MangaDetailsPresenter(
     fun isRelatedMangaEnabled(): Boolean = sourcePreferences.relatedMangas().get() && !manga.isLocal()
 
     /**
-     * Fetches related manga for the current manga, if the user has opted into the feature.
+     * Whether related manga should be fetched automatically when the details screen opens. When
+     * off, the inline section stays blank and the fetch instead happens in the dedicated related
+     * manga screen (see [eu.kanade.tachiyomi.ui.manga.related.RelatedMangaController]) once the
+     * user opens it - see [UiPreferences.expandRelatedMangas].
+     */
+    fun isRelatedMangaExpanded(): Boolean = uiPreferences.expandRelatedMangas().get()
+
+    /**
+     * Fetches related manga for the current manga, if the user has opted into the feature and
+     * into auto-loading it. Safe to call unconditionally from the init flow.
      */
     fun fetchRelatedMangaIfEnabled() {
+        if (!isRelatedMangaExpanded()) return
+        fetchRelatedManga()
+    }
+
+    private fun fetchRelatedManga() {
         if (!isRelatedMangaEnabled()) return
         val currentSource = source
 

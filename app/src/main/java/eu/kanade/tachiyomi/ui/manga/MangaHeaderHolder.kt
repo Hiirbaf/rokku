@@ -564,9 +564,13 @@ class MangaHeaderHolder(
         binding.relatedMangaGroup?.isVisible = true
 
         val item = presenter.relatedMangaItem
-        binding.relatedProgress?.isVisible = item.isLoading
-        binding.relatedNoResults?.isVisible = !item.isLoading && item.mangas.isEmpty()
-        binding.relatedCard?.isVisible = item.isLoading || item.mangas.isNotEmpty()
+        // Auto-loading is off - stay blank (just the title) regardless of what was fetched on
+        // demand from the full related-manga screen; tapping the title always opens that screen
+        // (see UiPreferences.expandRelatedMangas).
+        val expanded = presenter.isRelatedMangaExpanded()
+        binding.relatedProgress?.isVisible = expanded && item.isLoading
+        binding.relatedNoResults?.isVisible = expanded && !item.isLoading && item.mangas.isEmpty()
+        binding.relatedCard?.isVisible = expanded && (item.isLoading || item.mangas.isNotEmpty())
         relatedCardAdapter.updateDataSet(item.mangas.map { RelatedMangaCardItem(it) })
     }
 

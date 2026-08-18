@@ -12,6 +12,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 
 ### Additions
 - Added a "Cover theme style" option (Settings > Appearance) to pick the Material You palette style used for a manga's cover-derived accent color ([@Hiirbaf](https://github.com/Hiirbaf))
+- Added a "Load suggestions automatically" option (Settings > Browse) to fetch related-manga suggestions on demand, from the dedicated suggestions screen, instead of every time a manga's details page is opened
 
 ### Fixes
 - Fixed the manga description opening expanded when navigating from the browse/extension source list instead of staying collapsed like it does from the library

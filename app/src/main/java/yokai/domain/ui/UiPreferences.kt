@@ -15,4 +15,6 @@ class UiPreferences(private val preferenceStore: PreferenceStore) {
     fun enableSourceSwipeAction() = preferenceStore.getBoolean("enable_source_swipe_action", true)
 
     fun hideChapterMissingCount() = preferenceStore.getBoolean("hide_chapter_missing_count", false)
+
+    fun expandRelatedMangas() = preferenceStore.getBoolean("expand_related_mangas", true)
 }

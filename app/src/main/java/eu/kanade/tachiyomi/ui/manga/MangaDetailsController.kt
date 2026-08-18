@@ -993,13 +993,17 @@ class MangaDetailsController :
     }
 
     override fun openRelatedMangaScreen() {
-        val mangaIds = presenter.relatedMangaItem.mangas.mapNotNull { it.id }
-        if (mangaIds.isEmpty()) return
+        val expanded = presenter.isRelatedMangaExpanded()
+        val mangaIds = if (expanded) presenter.relatedMangaItem.mangas.mapNotNull { it.id } else emptyList()
+        // If auto-loading is off, nothing has been fetched inline - open the screen anyway and
+        // let it fetch from the source itself instead of bailing out on an empty list.
+        if (expanded && mangaIds.isEmpty()) return
         router.pushController(
             yokai.presentation.manga.related.RelatedMangaController(
                 presenter.mangaId,
                 presenter.manga.title,
                 mangaIds,
+                needsFetch = !expanded,
             ).withFadeTransaction(),
         )
     }

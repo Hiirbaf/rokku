@@ -215,6 +215,13 @@ class SettingsBrowseController : SettingsLegacyController() {
                 titleRes = MR.strings.pref_related_mangas
                 summaryRes = MR.strings.pref_related_mangas_summary
             }
+            switchPreference {
+                bindTo(uiPreferences.expandRelatedMangas())
+                titleRes = MR.strings.pref_expand_related_mangas
+                summaryRes = MR.strings.pref_expand_related_mangas_summary
+
+                visibleIf(sourcePreferences.relatedMangas()) { it }
+            }
         }
 
         preferenceCategory {

@@ -932,6 +932,8 @@
     <string name="enable_source_swipe_action">Enable source swipe action</string>
     <string name="pref_related_mangas">Show Suggestions</string>
     <string name="pref_related_mangas_summary">Show suggested titles on details page</string>
+    <string name="pref_expand_related_mangas">Load suggestions automatically</string>
+    <string name="pref_expand_related_mangas_summary">Fetch suggested titles every time a manga is opened. Turn off to load them on demand instead</string>
     <string name="related_mangas">Suggestions</string>
     <string name="related_mangas_site_suggestions">Site suggestions</string>
     <string name="no_related_mangas_found">No suggestions found</string>
