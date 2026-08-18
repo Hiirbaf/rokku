@@ -16,6 +16,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 
 ### Changes
 - Related-manga suggestions are now cached instead of re-fetched from the source every time they're shown - the cache is only refreshed by a manual manga update or a library update
+- Renamed "Security" settings to "Security and Privacy"
 
 ### Fixes
 - Fixed a possible race condition in download notifications when updated from multiple threads at once
