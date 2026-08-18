@@ -683,7 +683,7 @@ class MangaDetailsController :
                                     val selected = coverThemeOptions[presenter.preferences.coverThemeStyle().get()]
 
                                     if (selected == null) {
-                                        // Legacy: comportamiento viejo, sin material-kolor
+                                        // Legacy
                                         val context = view?.context ?: return@launchUI
                                         manga?.vibrantCoverColor = seed
                                         setAccentColorValueLegacy(seed)
@@ -748,7 +748,7 @@ class MangaDetailsController :
                 it
             }
         }
-        accentOnColor = null // legacy no calcula un "on color" separado
+        accentOnColor = null
     }
 
     private fun setHeaderColorValueLegacy(colorToUse: Int, context: Context) {
