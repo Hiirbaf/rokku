@@ -39,6 +39,8 @@ object Notifications {
     const val ID_DOWNLOAD_CHAPTER_ERROR = -202
     const val ID_DOWNLOAD_SIZE_WARNING = -203
     const val ID_DOWNLOAD_PAUSED = -204
+    const val ID_DOWNLOAD_SUMMARY = -205
+    const val GROUP_DOWNLOADS = "eu.kanade.tachiyomi.DOWNLOADS"
 
     /**
      * Notification channel and ids used by the library updater.

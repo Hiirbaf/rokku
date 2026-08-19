@@ -122,6 +122,7 @@ internal class DownloadNotifier(private val context: Context) {
             }
             setProgress(0, 0, true)
             setStyle(null)
+            setGroup(Notifications.GROUP_DOWNLOADS)
         }
         return notification
     }
@@ -173,10 +174,12 @@ internal class DownloadNotifier(private val context: Context) {
             }
             setStyle(null)
             setProgress(download.pages!!.size, download.downloadedImages, false)
+            setGroup(Notifications.GROUP_DOWNLOADS)
 
             // Displays the progress bar on notification
             show()
         }
+        showGroupSummary()
     }
 
     /**
@@ -208,8 +211,10 @@ internal class DownloadNotifier(private val context: Context) {
                 context.getString(MR.strings.cancel_all),
                 NotificationReceiver.clearDownloadsPendingBroadcast(context),
             )
+            setGroup(Notifications.GROUP_DOWNLOADS)
             show(Notifications.ID_DOWNLOAD_PAUSED)
         }
+        showGroupSummary()
 
         // Reset initial values
         isDownloading = false
@@ -233,9 +238,11 @@ internal class DownloadNotifier(private val context: Context) {
             clearActions()
             setContentIntent(NotificationHandler.openDownloadManagerPendingActivity(context))
             setProgress(0, 0, false)
+            setGroup(Notifications.GROUP_DOWNLOADS)
 
             show(Notifications.ID_DOWNLOAD_CHAPTER_ERROR)
         }
+        showGroupSummary()
 
         // Reset download information
         isDownloading = false
@@ -260,6 +267,7 @@ internal class DownloadNotifier(private val context: Context) {
                 ),
             )
             setTimeoutAfter(30000)
+            setGroup(Notifications.GROUP_DOWNLOADS)
         }
             .build()
 
@@ -268,11 +276,23 @@ internal class DownloadNotifier(private val context: Context) {
             Notifications.ID_DOWNLOAD_SIZE_WARNING,
             notification,
         )
+        showGroupSummary()
     }
 
     private fun Context.hasNotificationPermission(): Boolean {
         return ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
             PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun showGroupSummary() {
+        if (!context.hasNotificationPermission()) return
+        val summary = context.notificationBuilder(Notifications.CHANNEL_DOWNLOADER) {
+            setSmallIcon(R.drawable.ic_rokku)
+            setGroup(Notifications.GROUP_DOWNLOADS)
+            setGroupSummary(true)
+            setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_SUMMARY)
+        }.build()
+        context.notificationManager.notify(Notifications.ID_DOWNLOAD_SUMMARY, summary)
     }
 
     /**
