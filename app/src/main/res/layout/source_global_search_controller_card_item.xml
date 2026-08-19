@@ -62,7 +62,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:cardCornerRadius="10dp"
-        app:cardBackgroundColor="?attr/colorTertiary"
+        app:cardBackgroundColor="?attr/colorSecondaryContainer"
         app:cardElevation="2dp"
         android:layout_marginTop="3dp"
         android:layout_marginStart="3dp"
@@ -78,7 +78,7 @@
             android:paddingStart="5dp"
             android:paddingEnd="5dp"
             android:textSize="13sp"
-            android:textColor="@color/md_black_1000"
+            android:textColor="?attr/colorOnSecondaryContainer"
             style="?textAppearanceCaption"
             android:layout_height="wrap_content"
             android:text="@string/duplicate_in_library"/>
