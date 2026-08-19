@@ -864,7 +864,11 @@ class LibraryUpdateJob(private val context: Context, workerParams: WorkerParamet
                         KEY_MANGAS,
                         mangaToUse.firstOrNull()?.manga?.id?.let { longArrayOf(it) } ?: longArrayOf(),
                     )
-                    extraManga = mangaToUse.subList(1, mangaToUse.size).mapNotNull { it.manga.id }
+                    extraManga = if (mangaToUse.size > 1) {
+                        mangaToUse.subList(1, mangaToUse.size).mapNotNull { it.manga.id }
+                    } else {
+                        emptyList()
+                    }
                 }
             }
             val inputData = builder.build()
