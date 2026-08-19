@@ -115,6 +115,7 @@ import eu.kanade.tachiyomi.util.system.addCheckBoxPrompt
 import eu.kanade.tachiyomi.util.system.clipboardHasImage
 import eu.kanade.tachiyomi.util.system.clipboardManager
 import eu.kanade.tachiyomi.util.system.contextCompatColor
+import eu.kanade.tachiyomi.util.system.coverThemeOptions
 import eu.kanade.tachiyomi.util.system.dpToPx
 import eu.kanade.tachiyomi.util.system.e
 import eu.kanade.tachiyomi.util.system.getClipboardImageUri
@@ -679,29 +680,36 @@ class MangaDetailsController :
                             if (presenter.preferences.themeMangaDetails().get()) {
                                 launchUI {
                                     val seed = palette?.getBestColor() ?: return@launchUI
-                                    val style = PaletteStyle.entries[presenter.preferences.coverThemeStyle().get()]
-                                    val seedColor = ComposeColor(seed)
-                                    val hue = Hct.fromInt(seed).hue // 0-360
-                                    // Picks between materialkolor's two color-generation specs (SPEC_2021
-                                    // vs the newer Material3 Expressive SPEC_2025) based on the seed's hue.
-                                    // This range split was chosen empirically in #83, not from documented
-                                    // library guidance -- if a cover's theme looks off, this is where to look.
-                                    val spec = if (hue in 60.0..270.0) {
-                                        ColorSpec.SpecVersion.SPEC_2021
-                                    } else {
-                                        ColorSpec.SpecVersion.SPEC_2025
-                                    }
+                                    val selected = coverThemeOptions[presenter.preferences.coverThemeStyle().get()]
 
-                                    val scheme = dynamicColorScheme(
-                                        seedColor = seedColor,
-                                        isDark = view.context.isInNightMode(),
-                                        isAmoled = presenter.preferences.themeDarkAmoled().get(),
-                                        style = style,
-                                        specVersion = spec,
-                                    )
-                                    manga?.vibrantCoverColor = scheme.primary.toArgb()
-                                    setAccentColorValue(scheme.primary.toArgb(), scheme.onPrimary.toArgb())
-                                    setHeaderColorValue(scheme.primaryContainer.toArgb())
+                                    if (selected == null) {
+                                        // Legacy
+                                        val context = view?.context ?: return@launchUI
+                                        manga?.vibrantCoverColor = seed
+                                        setAccentColorValueLegacy(seed)
+                                        setHeaderColorValueLegacy(seed, context)
+                                    } else {
+                                        val hue = Hct.fromInt(seed).hue // 0-360
+                                        // Picks between materialkolor's two color-generation specs (SPEC_2021
+                                        // vs the newer Material3 Expressive SPEC_2025) based on the seed's hue.
+                                        // This range split was chosen empirically in #83, not from documented
+                                        // library guidance -- if a cover's theme looks off, this is where to look.
+                                        val spec = if (hue in 60.0..270.0) {
+                                            ColorSpec.SpecVersion.SPEC_2021
+                                        } else {
+                                            ColorSpec.SpecVersion.SPEC_2025
+                                        }
+                                        val scheme = dynamicColorScheme(
+                                            seedColor = ComposeColor(seed),
+                                            isDark = view.context.isInNightMode(),
+                                            isAmoled = presenter.preferences.themeDarkAmoled().get(),
+                                            style = selected,
+                                            specVersion = spec,
+                                        )
+                                        manga?.vibrantCoverColor = scheme.primary.toArgb()
+                                        setAccentColorValue(scheme.primary.toArgb(), scheme.onPrimary.toArgb())
+                                        setHeaderColorValue(scheme.primaryContainer.toArgb())
+                                    }
                                     setItemColors()
                                 }
                             } else {
@@ -722,6 +730,37 @@ class MangaDetailsController :
                 },
             ).build()
         view.context.imageLoader.enqueue(request)
+    }
+
+    private fun setAccentColorValueLegacy(colorToUse: Int?) {
+        val context = view?.context ?: return
+        setCoverColorValue(colorToUse)
+        accentColor = colorToUse?.let {
+            val luminance = ColorUtils.calculateLuminance(it).toFloat()
+            if (if (!context.isInNightMode()) luminance > 0.4 else luminance <= 0.6) {
+                ColorUtils.blendARGB(
+                    it,
+                    context.contextCompatColor(R.color.colorOnDownloadBadgeDayNight),
+                    (if (!context.isInNightMode()) luminance else -(luminance - 1))
+                        .toFloat() * if (context.isInNightMode()) 0.33f else 0.5f,
+                )
+            } else {
+                it
+            }
+        }
+        accentOnColor = null
+    }
+
+    private fun setHeaderColorValueLegacy(colorToUse: Int, context: Context) {
+        val newColor = makeColorFrom(colorToUse, context.getResourceColor(R.attr.colorPrimaryVariant))
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1 || context.isInNightMode()) {
+            activity?.window?.navigationBarColor = ColorUtils.setAlphaComponent(
+                newColor,
+                Color.alpha(activity?.window?.navigationBarColor ?: Color.BLACK),
+            )
+        }
+        headerColor = newColor
+        setRefreshStyle()
     }
 
     private fun setStatusBarAndToolbar() {
