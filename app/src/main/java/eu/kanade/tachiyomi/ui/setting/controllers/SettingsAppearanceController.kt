@@ -7,8 +7,6 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.doOnNextLayout
 import androidx.core.view.isVisible
 import androidx.preference.PreferenceScreen
-import com.materialkolor.PaletteStyle
-import dev.icerock.moko.resources.StringResource
 import eu.kanade.tachiyomi.data.preference.changesIn
 import eu.kanade.tachiyomi.ui.main.MainActivity
 import eu.kanade.tachiyomi.ui.setting.SettingsLegacyController
@@ -24,10 +22,10 @@ import eu.kanade.tachiyomi.ui.setting.themePreference
 import eu.kanade.tachiyomi.util.system.SideNavMode
 import eu.kanade.tachiyomi.util.system.appDelegateNightMode
 import eu.kanade.tachiyomi.util.system.coverThemeOptions
-import eu.kanade.tachiyomi.util.system.labelRes
 import eu.kanade.tachiyomi.util.system.dpToPx
 import eu.kanade.tachiyomi.util.system.getPrefTheme
 import eu.kanade.tachiyomi.util.system.isInNightMode
+import eu.kanade.tachiyomi.util.system.labelRes
 import eu.kanade.tachiyomi.util.view.activityBinding
 import eu.kanade.tachiyomi.util.view.moveRecyclerViewUp
 import kotlinx.coroutines.flow.launchIn

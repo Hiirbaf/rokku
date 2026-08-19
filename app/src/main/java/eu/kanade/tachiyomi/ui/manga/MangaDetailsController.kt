@@ -258,8 +258,15 @@ class MangaDetailsController :
         super.onViewCreated(view)
         coverColor = null
         fullCoverActive = false
-        setAccentColorValue()
-        setHeaderColorValue()
+        val isLegacyTheme = coverThemeOptions[presenter.preferences.coverThemeStyle().get()] == null
+        val cachedColor = manga?.vibrantCoverColor
+        if (isLegacyTheme && cachedColor != null) {
+            setAccentColorValueLegacy(cachedColor)
+            setHeaderColorValueLegacy(cachedColor, view.context)
+        } else {
+            setAccentColorValue()
+            setHeaderColorValue()
+        }
 
         setTabletMode(view)
         setRecycler(view)
