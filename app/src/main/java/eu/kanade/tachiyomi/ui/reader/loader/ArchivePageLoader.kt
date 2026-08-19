@@ -41,6 +41,6 @@ internal class ArchivePageLoader(private val reader: ArchiveReader) : PageLoader
      * No additional action required to load the page
      */
     override suspend fun loadPage(page: ReaderPage) {
-        check(!isRecycled)
+        if (isRecycled) return
     }
 }
