@@ -1,15 +1,19 @@
 package eu.kanade.tachiyomi.ui.source.globalsearch
 
+import android.graphics.Color
 import android.graphics.drawable.RippleDrawable
 import android.view.View
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.core.graphics.ColorUtils
 import androidx.core.view.isVisible
+import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.databinding.SourceGlobalSearchControllerCardItemBinding
 import eu.kanade.tachiyomi.domain.manga.models.Manga
 import eu.kanade.tachiyomi.ui.base.holder.BaseFlexibleViewHolder
 import eu.kanade.tachiyomi.util.system.dpToPx
+import eu.kanade.tachiyomi.util.system.getResourceColor
 import eu.kanade.tachiyomi.util.view.makeShapeCorners
 import eu.kanade.tachiyomi.util.view.setCards
 import yokai.domain.manga.models.MangaCover
@@ -58,6 +62,9 @@ class GlobalSearchMangaHolder(view: View, adapter: GlobalSearchCardAdapter) :
             binding.card.makeShapeCorners(binding.card.radius, binding.card.radius)
         binding.duplicateButton.shapeAppearanceModel =
             binding.card.makeShapeCorners(binding.card.radius, binding.card.radius)
+        binding.duplicateButton.setCardBackgroundColor(
+            ColorUtils.blendARGB(itemView.context.getResourceColor(R.attr.colorSecondary), Color.BLACK, 0.2f),
+        )
         itemView.setOnLongClickListener {
             adapter.mangaClickListener.onMangaLongClick(flexibleAdapterPosition, adapter)
             true

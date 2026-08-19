@@ -39,6 +39,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -312,14 +313,14 @@ private fun BoxScope.DuplicateBadge() {
             .align(Alignment.TopStart)
             .height(18.dp)
             .clip(shape)
-            .background(MaterialTheme.colorScheme.secondaryContainer)
+            .background(lerp(MaterialTheme.colorScheme.secondary, Color.Black, 0.2f))
             .border(0.75.dp, MaterialTheme.colorScheme.outline, shape)
             .padding(horizontal = 8.dp),
         contentAlignment = Alignment.Center,
     ) {
         Text(
             text = stringResource(MR.strings.duplicate_in_library),
-            color = MaterialTheme.colorScheme.onSecondaryContainer,
+            color = MaterialTheme.colorScheme.onSecondary,
             fontSize = 13.sp,
             style = TextStyle(
                 platformStyle = PlatformTextStyle(includeFontPadding = false),

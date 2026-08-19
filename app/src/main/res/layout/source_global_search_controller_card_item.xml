@@ -72,13 +72,14 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/duplicate_text"
             android:layout_width="wrap_content"
             android:gravity="center"
             android:maxLines="1"
             android:paddingStart="5dp"
             android:paddingEnd="5dp"
             android:textSize="13sp"
-            android:textColor="?attr/colorOnSecondaryContainer"
+            android:textColor="?attr/colorOnSecondary"
             style="?textAppearanceCaption"
             android:layout_height="wrap_content"
             android:text="@string/duplicate_in_library"/>
