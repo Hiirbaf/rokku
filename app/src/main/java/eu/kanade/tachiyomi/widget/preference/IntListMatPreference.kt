@@ -30,7 +30,12 @@ class IntListMatPreference @JvmOverloads constructor(
     var customSelectedValue: Int? = null
 
     override var customSummaryProvider: SummaryProvider<MatPreference>? = SummaryProvider<MatPreference> {
-        val index = entryValues.indexOf(sharedPreferences?.getInt(key, defValue) ?: defValue)
+        val storedValue = try {
+            sharedPreferences?.getInt(key, defValue) ?: defValue
+        } catch (_: ClassCastException) {
+            defValue
+        }
+        val index = entryValues.indexOf(storedValue)
         if (entries.isEmpty() || index == -1) {
             ""
         } else {
@@ -45,7 +50,12 @@ class IntListMatPreference @JvmOverloads constructor(
 
     override fun dialog(): MaterialAlertDialogBuilder {
         return super.dialog().apply {
-            val default = entryValues.indexOf(customSelectedValue ?: sharedPreferences?.getInt(key, defValue))
+            val storedValue = try {
+                sharedPreferences?.getInt(key, defValue)
+            } catch (_: ClassCastException) {
+                defValue
+            }
+            val default = entryValues.indexOf(customSelectedValue ?: storedValue)
             setSingleChoiceItems(entries.toTypedArray(), default) { dialog, pos ->
                 val value = entryValues[pos]
                 if (key != null) {
