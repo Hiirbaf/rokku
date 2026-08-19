@@ -23,6 +23,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 ### Fixes
 - Fixed a possible race condition in download notifications when updated from multiple threads at once
 - Fixed download/error notifications collapsing under a generic system icon instead of Rokku's when grouped together in the notification shade
+- Fixed a restored backup's theme not actually being applied until the app was manually restarted, even though it showed as selected in Settings
 - Fixed a crash in the source filter spinner when its entries shrink while a stale selected position was still pointing past the new end
 - Fixed a possible crash from duplicate extension entries when the same extension is available from more than one repo
 - Fixed extension installs hanging indefinitely with no feedback when started offline, or when the network drops mid-download

@@ -68,6 +68,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
 import eu.kanade.tachiyomi.BuildConfig
 import eu.kanade.tachiyomi.R
+import eu.kanade.tachiyomi.data.backup.restore.BackupRestoreJob
 import eu.kanade.tachiyomi.data.download.DownloadManager
 import eu.kanade.tachiyomi.data.library.LibraryUpdateJob
 import eu.kanade.tachiyomi.data.notification.NotificationReceiver
@@ -484,6 +485,16 @@ open class MainActivity : BaseActivity<MainActivityBinding>() {
             downloadManager.queueState,
         ) { isDownloading, queueState -> isDownloading to queueState.size }
             .onEach { downloadStatusChanged(it.first, it.second) }
+            .launchIn(lifecycleScope)
+
+        var wasRestoringBackup = false
+        BackupRestoreJob.isRunningFlow(this)
+            .onEach { isRunning ->
+                if (wasRestoringBackup && !isRunning) {
+                    recreateFully()
+                }
+                wasRestoringBackup = isRunning
+            }
             .launchIn(lifecycleScope)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setSupportActionBar(binding.toolbar)
