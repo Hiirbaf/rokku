@@ -78,7 +78,7 @@
             android:paddingStart="5dp"
             android:paddingEnd="5dp"
             android:textSize="13sp"
-            android:textColor="?attr/colorOnTertiary"
+            android:textColor="@color/md_black_1000"
             style="?textAppearanceCaption"
             android:layout_height="wrap_content"
             android:text="@string/duplicate_in_library"/>

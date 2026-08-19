@@ -319,7 +319,7 @@ private fun BoxScope.DuplicateBadge() {
     ) {
         Text(
             text = stringResource(MR.strings.duplicate_in_library),
-            color = MaterialTheme.colorScheme.onTertiary,
+            color = Color.Black,
             fontSize = 13.sp,
             style = TextStyle(
                 platformStyle = PlatformTextStyle(includeFontPadding = false),
