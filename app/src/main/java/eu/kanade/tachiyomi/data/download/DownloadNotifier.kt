@@ -71,6 +71,7 @@ internal class DownloadNotifier(private val context: Context) {
     fun dismiss() {
         context.notificationManager.cancel(Notifications.ID_DOWNLOAD_CHAPTER)
         context.notificationManager.cancel(Notifications.ID_DOWNLOAD_PAUSED)
+        context.notificationManager.cancel(Notifications.ID_DOWNLOAD_SUMMARY)
     }
 
     /**
