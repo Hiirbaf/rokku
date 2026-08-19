@@ -313,7 +313,7 @@ private fun BoxScope.DuplicateBadge() {
             .align(Alignment.TopStart)
             .height(18.dp)
             .clip(shape)
-            .background(lerp(MaterialTheme.colorScheme.secondary, Color.White, 0.2f))
+            .background(lerp(MaterialTheme.colorScheme.secondary, Color.White, 0.5f))
             .border(0.75.dp, MaterialTheme.colorScheme.outline, shape)
             .padding(horizontal = 8.dp),
         contentAlignment = Alignment.Center,

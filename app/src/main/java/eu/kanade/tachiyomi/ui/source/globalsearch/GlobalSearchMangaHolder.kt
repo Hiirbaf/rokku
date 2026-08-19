@@ -63,7 +63,7 @@ class GlobalSearchMangaHolder(view: View, adapter: GlobalSearchCardAdapter) :
         binding.duplicateButton.shapeAppearanceModel =
             binding.card.makeShapeCorners(binding.card.radius, binding.card.radius)
         binding.duplicateButton.setCardBackgroundColor(
-            ColorUtils.blendARGB(itemView.context.getResourceColor(R.attr.colorSecondary), Color.WHITE, 0.2f),
+            ColorUtils.blendARGB(itemView.context.getResourceColor(R.attr.colorSecondary), Color.WHITE, 0.5f),
         )
         itemView.setOnLongClickListener {
             adapter.mangaClickListener.onMangaLongClick(flexibleAdapterPosition, adapter)
