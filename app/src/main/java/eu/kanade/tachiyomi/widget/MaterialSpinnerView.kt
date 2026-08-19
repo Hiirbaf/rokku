@@ -109,6 +109,9 @@ class MaterialSpinnerView constructor(context: Context, attrs: AttributeSet?) :
 
     fun setEntries(entries: List<String>) {
         this.entries = entries
+        if (selectedPosition >= entries.size) {
+            selectedPosition = 0
+        }
         popup = makeSettingsPopup()
         setOnTouchListener(popup?.dragToOpenListener)
         setOnClickListener {
