@@ -33,6 +33,11 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Fixed scanlator filtering causing a full library scan on every chapter list/backup/recents query, growing slower as the library grows
 - Fixed the library still flickering to the wrong covers while scrolling during an active backup restore
 - Fixed manga covers never loading, then flickering to the wrong one while scrolling, in the migration source list
+- Fixed a crash when updating a single library category whose queued manga list came back empty
+- Fixed a settings crash when a stored preference value had been overwritten with an incompatible type
+- Fixed a rare crash when switching chapters while a local archive page was still loading
+- Fixed a recycled source filter spinner briefly showing the wrong item checked, left over from what it was previously bound to
+- Fixed an empty notification staying in the shade after chapter downloads finished
 
 ### Other
 - Bumped Voyager to 2.2.21-1.10.3
