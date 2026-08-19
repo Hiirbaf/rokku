@@ -74,7 +74,7 @@ object NotificationHandler {
         val notificationIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
         return PendingIntent.getActivity(
             context,
-            0,
+            url.hashCode(),
             Intent.createChooser(notificationIntent, null),
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )

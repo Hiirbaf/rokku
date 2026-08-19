@@ -521,7 +521,7 @@ class NotificationReceiver : BroadcastReceiver() {
             }
             return PendingIntent.getActivity(
                 context,
-                0,
+                uri.hashCode(),
                 Intent.createChooser(intent, null),
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
             )
