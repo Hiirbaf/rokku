@@ -24,6 +24,7 @@ import eu.kanade.tachiyomi.ui.reader.viewer.ViewerNavigation
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import uy.kohesive.injekt.injectLazy
+import kotlin.math.min
 
 /**
  * Implementation of a [BaseViewer] to display pages with a [ViewPager].
@@ -324,7 +325,7 @@ abstract class PagerViewer(val activity: ReaderActivity) : BaseViewer {
         if (!hasMoved) {
             activity.isScrollingThroughPagesOrChapters = true
             chapters.currChapter.pages?.let { pages ->
-                moveToPage(pages[chapters.currChapter.requestedPage], false)
+                moveToPage(pages[min(chapters.currChapter.requestedPage, pages.lastIndex)], false)
             }
             activity.isScrollingThroughPagesOrChapters = false
         }
@@ -366,7 +367,7 @@ abstract class PagerViewer(val activity: ReaderActivity) : BaseViewer {
         if (pager.visibility == View.GONE) {
             Logger.d { "Pager first layout" }
             val pages = chapters.currChapter.pages ?: return
-            moveToPage(pages[chapters.currChapter.requestedPage])
+            moveToPage(pages[min(chapters.currChapter.requestedPage, pages.lastIndex)])
             pager.isVisible = true
         }
         activity.invalidateOptionsMenu()
