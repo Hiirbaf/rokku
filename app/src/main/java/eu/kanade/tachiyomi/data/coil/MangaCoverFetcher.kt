@@ -18,10 +18,6 @@ import eu.kanade.tachiyomi.network.await
 import eu.kanade.tachiyomi.source.SourceManager
 import eu.kanade.tachiyomi.source.online.HttpSource
 import eu.kanade.tachiyomi.util.manga.MangaCoverMetadata
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 import okhttp3.CacheControl
 import okhttp3.Call
 import okhttp3.Request
@@ -54,8 +50,6 @@ class MangaCoverFetcher(
 
     private val diskCacheKey: String
         get() = diskCacheKeyLazy.value
-
-    private val fileScope = CoroutineScope(Job() + Dispatchers.IO)
 
     override suspend fun fetch(): FetchResult {
         try {
@@ -320,11 +314,9 @@ class MangaCoverFetcher(
     private fun setRatioAndColorsInScope(mangaId: Long?, mangaThumbnailUrl: String?, isInLibrary: Boolean, ogFile: UniFile? = null, force: Boolean = false) {
         // Browse / search consume neither dominantCoverColors nor vibrantCoverColor; MangaDetails
         // recomputes its own vibrant color. Speculatively decoding + Palette-extracting every
-        // browsed cover ships the Palette callback to the main looper and stalls cold-entry frames.
+        // browsed cover is wasted CPU work for data nothing reads.
         if (!isInLibrary && !force) return
-        fileScope.launch {
-            MangaCoverMetadata.setRatioAndColors(mangaId, mangaThumbnailUrl, isInLibrary, ogFile, force)
-        }
+        MangaCoverMetadata.setRatioAndColorsAsync(mangaId, mangaThumbnailUrl, isInLibrary, ogFile, force)
     }
 
     /** Modified from [MimeTypeMap.getFileExtensionFromUrl] to be more permissive with special characters. */

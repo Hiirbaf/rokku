@@ -1,6 +1,7 @@
 package eu.kanade.tachiyomi.util.manga
 
 import android.graphics.BitmapFactory
+import android.os.Process
 import androidx.annotation.ColorInt
 import androidx.palette.graphics.Palette
 import com.hippo.unifile.UniFile
@@ -8,8 +9,13 @@ import eu.kanade.tachiyomi.data.cache.CoverCache
 import eu.kanade.tachiyomi.data.coil.getBestColor
 import eu.kanade.tachiyomi.data.preference.PreferencesHelper
 import eu.kanade.tachiyomi.domain.manga.models.Manga
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.launch
 import uy.kohesive.injekt.injectLazy
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.Executors
 
 /** Object that holds info about a covers size ratio + dominant colors */
 object MangaCoverMetadata {
@@ -18,6 +24,23 @@ object MangaCoverMetadata {
     private var vibrantCoverColorMap = ConcurrentHashMap<Long, Int>()
     private val preferences by injectLazy<PreferencesHelper>()
     private val coverCache by injectLazy<CoverCache>()
+
+    /**
+     * Decoding a cover and running a palette over it is CPU work; a background-priority thread
+     * gets a smaller OS-scheduled share of CPU under contention, so it competes less with the UI
+     * thread while the library is scrolling.
+     */
+    private val metadataScope =
+        CoroutineScope(
+            SupervisorJob() +
+                Executors
+                    .newSingleThreadExecutor { runnable ->
+                        Thread {
+                            Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND)
+                            runnable.run()
+                        }.apply { name = "cover-metadata" }
+                    }.asCoroutineDispatcher(),
+        )
 
     fun load() {
         val ratios = preferences.coverRatios().get()
@@ -73,19 +96,24 @@ object MangaCoverMetadata {
                 null
             }
             if (bitmap != null) {
-                Palette.from(bitmap).generate { palette ->
-                    if (isInLibrary) {
-                        palette?.dominantSwatch?.let { swatch ->
-                            addCoverColor(mangaId, swatch.rgb, swatch.titleTextColor)
-                        }
+                val palette = Palette.from(bitmap).generate()
+                if (isInLibrary) {
+                    palette.dominantSwatch?.let { swatch ->
+                        addCoverColor(mangaId, swatch.rgb, swatch.titleTextColor)
                     }
-                    val color = palette?.getBestColor() ?: return@generate
-                    setVibrantColor(mangaId, color)
                 }
+                palette.getBestColor()?.let { setVibrantColor(mangaId, it) }
             }
             if (isInLibrary && !(options.outWidth == -1 || options.outHeight == -1)) {
                 addCoverRatio(mangaId, options.outWidth / options.outHeight.toFloat())
             }
+        }
+    }
+
+    /** Queues [setRatioAndColors] onto the background-priority thread above. */
+    fun setRatioAndColorsAsync(mangaId: Long?, mangaThumbnailUrl: String?, isInLibrary: Boolean, ogFile: UniFile? = null, force: Boolean = false) {
+        metadataScope.launch {
+            setRatioAndColors(mangaId, mangaThumbnailUrl, isInLibrary, ogFile, force)
         }
     }
 

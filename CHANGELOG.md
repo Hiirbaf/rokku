@@ -48,6 +48,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 
 ### Other
 - Bumped Voyager to 2.2.21-1.10.3
+- Moved cover ratio/color decoding to a background-priority thread so it competes less with the UI thread while the library is scrolling
 
 ## [1.6.1]
 
