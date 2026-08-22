@@ -52,6 +52,7 @@ import androidx.recyclerview.widget.RecyclerView
 import co.touchlab.kermit.Logger
 import coil3.asDrawable
 import coil3.imageLoader
+import coil3.request.CachePolicy
 import coil3.request.ImageRequest
 import coil3.request.allowHardware
 import coil3.size.SizeResolver
@@ -662,6 +663,8 @@ class MangaDetailsController :
             .data(presenter.manga.cover())
             .size(SizeResolver.ORIGINAL)
             .allowHardware(false)
+            // Decoded at full size for the palette, keep it out of the entry the grid reads
+            .memoryCachePolicy(CachePolicy.READ_ONLY)
             .target(
                 onSuccess = { image ->
                     val drawable = image.asDrawable(view.context.resources)
