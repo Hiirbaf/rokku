@@ -41,6 +41,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Fixed the "open log" action on the library update skipped notification opening the "Learn why" help page instead of the log, due to colliding notification actions
 - Fixed a crash opening a source's browse page (e.g. from a home screen shortcut) when its extension was no longer installed
 - Fixed adjacent chapters not being preloaded when the current chapter has only a single page, which could leave the reader stuck momentarily when swiping out of it in either direction
+- Fixed the library grid/list losing its row count and collapsing to a single column after toggling uniform grid
 
 ### Other
 - Bumped Voyager to 2.2.21-1.10.3
