@@ -43,6 +43,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Fixed adjacent chapters not being preloaded when the current chapter has only a single page, which could leave the reader stuck momentarily when swiping out of it in either direction
 - Fixed the library grid/list losing its row count and collapsing to a single column after toggling uniform grid
 - Fixed library swipe gestures silently breaking when a view they check against (e.g. the bottom nav or filter sheet) wasn't laid out yet
+- Fixed the manga details cover and its blurred backdrop loading independently, so they could show different covers momentarily while scrolling or on a slow load
 
 ### Other
 - Bumped Voyager to 2.2.21-1.10.3

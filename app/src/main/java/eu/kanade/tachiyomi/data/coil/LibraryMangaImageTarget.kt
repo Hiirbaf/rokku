@@ -21,8 +21,6 @@ class LibraryMangaImageTarget(
     private val progress: View? = null,
 ) : ImageViewTarget(view) {
 
-    private val coverCache: CoverCache by injectLazy()
-
     override fun onStart(placeholder: Image?) {
         progress?.isVisible = true
         Logger.d { "LibraryMangaImageTarget onStart for mangaId=${libraryManga.id} title=${libraryManga.title}" }
@@ -40,19 +38,28 @@ class LibraryMangaImageTarget(
         progress?.isVisible = false
         super.onError(error)
         Logger.w { "LibraryMangaImageTarget onError for mangaId=${libraryManga.id} title=${libraryManga.title} thumbnail_url=${libraryManga.thumbnail_url}" }
-        if (libraryManga.favorite) {
-            launchIO {
-                val file = coverCache.getCoverFile(libraryManga.thumbnail_url, false)
-                // if the file exists and the there was still an error then the file is corrupted
-                if (file != null && file.exists()) {
-                    val options = BitmapFactory.Options()
-                    options.inJustDecodeBounds = true
-                    BitmapFactory.decodeFile(file.path, options)
-                    if (options.outWidth == -1 || options.outHeight == -1) {
-                        libraryManga.updateCoverLastModified()
-                        file.delete()
-                    }
-                }
+        checkForCorruptedCover(libraryManga)
+    }
+}
+
+/**
+ * A load failing for a favorite manga usually means its cached cover file is corrupted, so
+ * invalidate it and let the next load re-fetch/re-decode it. Shared by every target that loads a
+ * manga's cover, not just [LibraryMangaImageTarget].
+ */
+fun checkForCorruptedCover(manga: Manga) {
+    if (!manga.favorite) return
+    val coverCache: CoverCache by injectLazy()
+    launchIO {
+        val file = coverCache.getCoverFile(manga.thumbnail_url, false)
+        // if the file exists and the there was still an error then the file is corrupted
+        if (file != null && file.exists()) {
+            val options = BitmapFactory.Options()
+            options.inJustDecodeBounds = true
+            BitmapFactory.decodeFile(file.path, options)
+            if (options.outWidth == -1 || options.outHeight == -1) {
+                manga.updateCoverLastModified()
+                file.delete()
             }
         }
     }
