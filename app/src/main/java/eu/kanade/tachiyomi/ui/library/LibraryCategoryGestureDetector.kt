@@ -22,14 +22,13 @@ class LibraryCategoryGestureDetector(private val controller: LibraryController?)
         startingX = e.x
         startingY = e.y
         controller ?: return false
-        val startingOnLibraryView = listOf(
+        val startingOnLibraryView = listOfNotNull(
             controller.activityBinding?.bottomNav,
             controller.binding.filterBottomSheet.root,
             controller.binding.categoryHopperFrame,
             controller.activityBinding?.appBar,
             controller.visibleHeaderHolder()?.itemView,
         ).none {
-            it ?: return false
             val viewRect = Rect()
             it.getGlobalVisibleRect(viewRect)
             viewRect.contains(e.x.toInt(), e.y.toInt())
