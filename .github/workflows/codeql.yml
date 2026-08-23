@@ -4,11 +4,28 @@ on:
   push:
     branches:
       - master
+    paths:
+      - '**'
+      - '!**.md'
+      - '!.github/ISSUE_TEMPLATE/**'
+      - '!i18n/src/commonMain/moko-resources/**/strings.xml'
+      - '!i18n/src/commonMain/moko-resources/**/plurals.xml'
+      - 'i18n/src/commonMain/moko-resources/base/strings.xml'
+      - 'i18n/src/commonMain/moko-resources/base/plurals.xml'
   pull_request:
     branches:
       - master
+    paths:
+      - '**'
+      - '!**.md'
+      - '!.github/ISSUE_TEMPLATE/**'
+      - '!i18n/src/commonMain/moko-resources/**/strings.xml'
+      - '!i18n/src/commonMain/moko-resources/**/plurals.xml'
+      - 'i18n/src/commonMain/moko-resources/base/strings.xml'
+      - 'i18n/src/commonMain/moko-resources/base/plurals.xml'
   schedule:
     # Every Monday at 03:17 UTC (off-the-hour to avoid the top-of-hour scheduling rush).
+    # Not path-filtered - always runs regardless of recent changes.
     - cron: '17 3 * * 1'
 
 jobs:
