@@ -48,6 +48,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Fixed the manga details palette request caching an oversized, non-hardware cover bitmap under the same memory cache key the library grid reads
 - Fixed reading a chapter (or any other progress/status update) silently reverting AniList custom list membership to whatever Rokku last knew locally, including changes made directly on AniList itself; custom lists are now only pushed when edited from Rokku's own tracking sheet (see #115)
 - Fixed fetching an AniList entry's tracking info failing with a JSON parsing error when that entry didn't belong to any custom list
+- Fixed a manga's tracking info never actually refreshing when reopening its details page, since the refresh ran before the tracked services list had finished loading
 
 ### Other
 - Bumped Voyager to 2.2.21-1.10.3

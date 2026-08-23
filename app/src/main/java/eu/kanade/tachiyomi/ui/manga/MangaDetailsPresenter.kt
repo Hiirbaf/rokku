@@ -266,14 +266,15 @@ class MangaDetailsPresenter(
             }
 
             setTrackItems()
+            // Must run after setTrackItems() populates trackList, otherwise this refreshes
+            // against an empty list and silently does nothing.
+            refreshTracking(false)
 
             // Runs after updateHeader() so the manga header (and its related-manga section) has
             // already been created - otherwise the first push from here can be dropped because
             // there's no view to update yet.
             fetchRelatedMangaIfEnabled()
         }
-
-        refreshTracking(false)
     }
 
     /**
