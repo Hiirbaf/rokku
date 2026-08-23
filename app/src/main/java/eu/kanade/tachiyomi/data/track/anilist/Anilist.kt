@@ -192,6 +192,19 @@ class Anilist(private val context: Context, id: Long) : TrackService(id) {
         return api.updateLibraryManga(track)
     }
 
+    // Custom list membership is pushed separately from status/progress (see updateCustomLists)
+    // so that routine progress updates never touch it: AniList is the source of truth for list
+    // membership except when the user edits it from Rokku's own tracking sheet.
+    override suspend fun updateCustomLists(track: Track): Track {
+        if (track.library_id == null || track.library_id!! == 0L) {
+            val libManga = api.findLibManga(track, getUsername().toInt())
+                ?: throw Exception("$track not found on user library")
+            track.library_id = libManga.library_id
+        }
+
+        return api.updateCustomLists(track)
+    }
+
     override suspend fun bind(track: Track): Track {
         val remoteTrack = api.findLibManga(track, getUsername().toInt())
 

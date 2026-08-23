@@ -1302,10 +1302,10 @@ class MangaDetailsPresenter(
         }
     }
 
-    private fun updateRemote(track: Track, service: TrackService) {
+    private fun updateRemote(track: Track, service: TrackService, action: suspend () -> Track = { service.update(track) }) {
         presenterScope.launch {
             val binding = try {
-                service.update(track)
+                action()
             } catch (e: Exception) {
                 trackError(e)
                 null
@@ -1369,7 +1369,7 @@ class MangaDetailsPresenter(
     fun setCustomLists(item: TrackItem, lists: Set<String>) {
         val track = item.track!!
         track.setCustomListsSet(lists)
-        updateRemote(track, item.service)
+        updateRemote(track, item.service) { item.service.updateCustomLists(track) }
     }
 
     suspend fun getSuggestedDate(readingDate: TrackingBottomSheet.ReadingDate): Long? {

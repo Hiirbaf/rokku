@@ -28,7 +28,7 @@ data class ALUserListItem(
     val startedAt: ALFuzzyDate,
     val completedAt: ALFuzzyDate,
     val private: Boolean = false,
-    val customLists: Map<String, Boolean> = emptyMap(),
+    val customLists: Map<String, Boolean>? = null,
     val media: ALSearchItem,
 ) {
     fun toALUserManga(): ALUserManga {
@@ -40,7 +40,7 @@ data class ALUserListItem(
             startDateFuzzy = startedAt.toEpochMilli(),
             completedDateFuzzy = completedAt.toEpochMilli(),
             private = private,
-            customLists = customLists,
+            customLists = customLists.orEmpty(),
             manga = media.toALManga(),
         )
     }

@@ -76,6 +76,33 @@ class AnilistApi(val client: OkHttpClient, interceptor: AnilistInterceptor) {
                     put("private", track.private)
                     put("startedAt", createDate(track.started_reading_date))
                     put("completedAt", createDate(track.finished_reading_date))
+                }
+            }
+            authClient.newCall(POST(API_URL, body = payload.toString().toRequestBody(jsonMime)))
+                .awaitSuccess()
+            track
+        }
+    }
+
+    /**
+     * Pushes custom list membership on its own, separate from [updateLibraryManga]. Custom lists
+     * are managed on AniList itself as often as (or more than) from Rokku, so this must only be
+     * called when the user explicitly edits the list membership from Rokku's tracking sheet -
+     * never as a side effect of a routine progress/status update, or it'll stomp on changes made
+     * directly on AniList (see the app's issue tracker, #115).
+     */
+    suspend fun updateCustomLists(track: Track): Track {
+        return withIOContext {
+            val payload = buildJsonObject {
+                put("query", updateCustomListsQuery())
+                putJsonObject("variables") {
+                    put("listId", track.library_id)
+                    put("progress", track.last_chapter_read.toInt())
+                    put("status", track.toApiStatus())
+                    put("score", track.score.toInt())
+                    put("private", track.private)
+                    put("startedAt", createDate(track.started_reading_date))
+                    put("completedAt", createDate(track.finished_reading_date))
                     putJsonArray("customLists") { track.customListsSet().forEach { add(it) } }
                 }
             }
@@ -231,7 +258,29 @@ class AnilistApi(val client: OkHttpClient, interceptor: AnilistInterceptor) {
 
         fun updateInLibraryQuery() =
             """
-            |mutation UpdateManga(${'$'}listId: Int, ${'$'}progress: Int, ${'$'}status: MediaListStatus, ${'$'}score: Int, ${'$'}private: Boolean, ${'$'}startedAt: FuzzyDateInput, ${'$'}completedAt: FuzzyDateInput, ${'$'}customLists: [String]) {
+            |mutation UpdateManga(${'$'}listId: Int, ${'$'}progress: Int, ${'$'}status: MediaListStatus, ${'$'}score: Int, ${'$'}private: Boolean, ${'$'}startedAt: FuzzyDateInput, ${'$'}completedAt: FuzzyDateInput) {
+                |SaveMediaListEntry (id: ${'$'}listId, progress: ${'$'}progress, status: ${'$'}status, scoreRaw: ${'$'}score, private: ${'$'}private, startedAt: ${'$'}startedAt, completedAt: ${'$'}completedAt) {
+                    |id
+                    |status
+                    |progress
+                    |startedAt {
+                        |year
+                        |month
+                        |day
+                    |}
+                    |completedAt {
+                        |year
+                        |month
+                        |day
+                    |}
+                |}
+            |}
+            |
+            """.trimMargin()
+
+        fun updateCustomListsQuery() =
+            """
+            |mutation UpdateMangaCustomLists(${'$'}listId: Int, ${'$'}progress: Int, ${'$'}status: MediaListStatus, ${'$'}score: Int, ${'$'}private: Boolean, ${'$'}startedAt: FuzzyDateInput, ${'$'}completedAt: FuzzyDateInput, ${'$'}customLists: [String]) {
                 |SaveMediaListEntry (id: ${'$'}listId, progress: ${'$'}progress, status: ${'$'}status, scoreRaw: ${'$'}score, private: ${'$'}private, startedAt: ${'$'}startedAt, completedAt: ${'$'}completedAt, customLists: ${'$'}customLists) {
                     |id
                     |status

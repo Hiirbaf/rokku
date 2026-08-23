@@ -75,6 +75,10 @@ abstract class TrackService(val id: Long) {
 
     abstract suspend fun update(track: Track, setToRead: Boolean = false): Track
 
+    // Only meaningful for services with supportsCustomLists (currently just AniList); the UI
+    // hides the custom lists row for every other service, so this is never called for them.
+    open suspend fun updateCustomLists(track: Track): Track = update(track)
+
     abstract suspend fun bind(track: Track): Track
 
     abstract suspend fun search(query: String): List<TrackSearch>
