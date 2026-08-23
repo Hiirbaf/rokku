@@ -53,6 +53,11 @@ abstract class BaseLegacyController<VB : ViewBinding>(bundle: Bundle? = null) :
         return null
     }
 
+    /** Source id this controller is currently browsing, if any - see [MainActivity.updateIncognitoBadge]. */
+    open fun getIncognitoSourceId(): Long? {
+        return null
+    }
+
     fun setTitle() {
         var parentController = parentController
         while (parentController != null) {

@@ -1,6 +1,7 @@
 package eu.kanade.tachiyomi.source
 
 import android.graphics.drawable.Drawable
+import eu.kanade.tachiyomi.data.preference.PreferencesHelper
 import eu.kanade.tachiyomi.extension.ExtensionManager
 import eu.kanade.tachiyomi.extension.model.Extension
 import eu.kanade.tachiyomi.source.online.HttpSource
@@ -23,6 +24,22 @@ fun Source.nameBasedOnEnabledLanguages(enabledLanguages: Set<String>, extensionM
 fun Source.icon(): Drawable? = Injekt.get<ExtensionManager>().getAppIconForSource(this)
 
 fun Source.pkgName() = Injekt.get<ExtensionManager>().getPackageName(this.id)
+
+/**
+ * Whether [sourceId] should be treated as incognito, either because the global incognito
+ * toggle is on or because the extension providing it has per-extension incognito enabled.
+ */
+fun isIncognitoModeForSource(
+    sourceId: Long?,
+    preferences: PreferencesHelper = Injekt.get(),
+    extensionManager: ExtensionManager = Injekt.get(),
+): Boolean {
+    if (preferences.incognitoMode().get()) return true
+    if (sourceId == null) return false
+    val pkgName = extensionManager.getPackageName(sourceId) ?: return false
+    return pkgName in preferences.incognitoExtensions().get()
+}
+
 fun HttpSource.getExtension(extensionManager: ExtensionManager? = null): Extension.Installed? =
     (extensionManager ?: Injekt.get()).installedExtensionsFlow.value.find { it.sources.contains(this) }
 

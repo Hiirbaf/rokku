@@ -11,6 +11,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 ## [Unreleased]
 
 ### Additions
+- Added a per-extension incognito toggle (Extension details) to pause reading history/tracking for just that extension's sources, without turning on global incognito mode; the toolbar's incognito indicator and secure screen now also apply while browsing a source with it enabled
 - Added a "Cover theme style" option (Settings > Appearance) to pick the Material You palette style used for a manga's cover-derived accent color ([@Hiirbaf](https://github.com/Hiirbaf))
 - Added a "Load suggestions automatically" option (Settings > Browse) to fetch related-manga suggestions on demand, from the dedicated suggestions screen, instead of every time a manga's details page is opened
 - Added a "Show 'Duplicate' badge" option (Settings > Browse) to flag entries already in your library from a different extension, in both a source's browse list and Global Search results

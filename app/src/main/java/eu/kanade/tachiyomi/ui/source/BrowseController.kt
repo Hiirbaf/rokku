@@ -32,6 +32,7 @@ import eu.kanade.tachiyomi.databinding.BrowseControllerBinding
 import eu.kanade.tachiyomi.source.CatalogueSource
 import eu.kanade.tachiyomi.source.LocalSource
 import eu.kanade.tachiyomi.source.Source
+import eu.kanade.tachiyomi.source.isIncognitoModeForSource
 import eu.kanade.tachiyomi.ui.base.controller.BaseLegacyController
 import eu.kanade.tachiyomi.ui.extension.ExtensionFilterController
 import eu.kanade.tachiyomi.ui.main.BottomSheetController
@@ -648,7 +649,7 @@ class BrowseController :
      * Opens a catalogue with the given controller.
      */
     private fun openCatalogue(source: CatalogueSource, controller: BrowseSourceController) {
-        if (!preferences.incognitoMode().get()) {
+        if (!isIncognitoModeForSource(source.id, preferences)) {
             preferences.lastUsedCatalogueSource().set(source.id)
             if (source !is LocalSource) {
                 val list = preferences.lastUsedSources().get().toMutableSet()

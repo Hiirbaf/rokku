@@ -251,6 +251,10 @@ class MangaDetailsController :
         return manga?.title
     }
 
+    override fun getIncognitoSourceId(): Long? {
+        return manga?.source
+    }
+
     override fun createBinding(inflater: LayoutInflater) =
         MangaDetailsControllerBinding.inflate(inflater)
 

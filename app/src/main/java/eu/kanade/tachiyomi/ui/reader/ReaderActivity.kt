@@ -407,7 +407,7 @@ class ReaderActivity : BaseActivity<ReaderActivityBinding>() {
 
         preferences.incognitoMode()
             .changesIn(lifecycleScope) {
-                SecureActivityDelegate.setSecure(this)
+                SecureActivityDelegate.setSecure(this, viewModel.manga?.source)
             }
         reEnableBackPressedCallBack()
 
@@ -1402,6 +1402,7 @@ class ReaderActivity : BaseActivity<ReaderActivityBinding>() {
      * and the binding.toolbar title.
      */
     private fun setManga(manga: Manga) {
+        SecureActivityDelegate.setSecure(this, manga.source)
         val prevViewer = viewer
         val noDefault = manga.viewer_flags == -1
         val mangaViewer = viewModel.getMangaReadingMode()

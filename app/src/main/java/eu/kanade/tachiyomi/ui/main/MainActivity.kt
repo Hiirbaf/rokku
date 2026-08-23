@@ -80,6 +80,7 @@ import eu.kanade.tachiyomi.data.updater.AppUpdateResult
 import eu.kanade.tachiyomi.data.updater.RELEASE_URL
 import eu.kanade.tachiyomi.databinding.MainActivityBinding
 import eu.kanade.tachiyomi.extension.ExtensionManager
+import eu.kanade.tachiyomi.source.isIncognitoModeForSource
 import eu.kanade.tachiyomi.source.online.HttpSource
 import eu.kanade.tachiyomi.ui.base.MaterialMenuSheet
 import eu.kanade.tachiyomi.ui.base.SmallToolbarInterface
@@ -717,6 +718,7 @@ open class MainActivity : BaseActivity<MainActivityBinding>() {
                     nav.translationY = 0f
                     backVelocity = 0f
                     showDLQueueTutorial()
+                    updateIncognitoBadge(to)
                     if (!(from is DialogController || to is DialogController) && from != null) {
                         from.view?.alpha = 0f
                     }
@@ -733,6 +735,7 @@ open class MainActivity : BaseActivity<MainActivityBinding>() {
         )
 
         syncActivityViewWithController(router.backstack.lastOrNull()?.controller)
+        updateIncognitoBadge()
 
         val navIcon = if (router.backstackSize > 1) backDrawable else null
         binding.toolbar.navigationIcon = navIcon
@@ -751,9 +754,7 @@ open class MainActivity : BaseActivity<MainActivityBinding>() {
             }
         preferences.incognitoMode()
             .changesIn(lifecycleScope) {
-                binding.toolbar.setIncognitoMode(it)
-                binding.searchToolbar.setIncognitoMode(it)
-                SecureActivityDelegate.setSecure(this)
+                updateIncognitoBadge()
             }
         preferences.sideNavIconAlignment()
             .changesIn(lifecycleScope) {
@@ -1498,6 +1499,20 @@ open class MainActivity : BaseActivity<MainActivityBinding>() {
         val controller = if (this::router.isInitialized) router.backstack.lastOrNull()?.controller else null
         binding.appBar.setToolbarModeBy(controller)
         setFloatingToolbar(canShowFloatingToolbar(controller), changeBG = false)
+    }
+
+    /**
+     * Updates the toolbar incognito badge and secure screen state, taking into account both the
+     * global incognito toggle and any per-extension incognito state for the source [controller]
+     * is currently browsing.
+     */
+    private fun updateIncognitoBadge(controller: Controller? = if (this::router.isInitialized) router.backstack.lastOrNull()?.controller else null) {
+        if (!isBindingInitialized) return
+        val sourceId = (controller as? BaseLegacyController<*>)?.getIncognitoSourceId()
+        val incognito = isIncognitoModeForSource(sourceId, preferences)
+        binding.toolbar.setIncognitoMode(incognito)
+        binding.searchToolbar.setIncognitoMode(incognito)
+        SecureActivityDelegate.setSecure(this, sourceId)
     }
 
     protected open fun syncActivityViewWithController(

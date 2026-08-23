@@ -178,6 +178,10 @@ open class BrowseSourceController(bundle: Bundle) :
         return if (presenter.sourceIsInitialized) searchTitle(presenter.source.name) else null
     }
 
+    override fun getIncognitoSourceId(): Long? {
+        return if (presenter.sourceIsInitialized) presenter.source.id else args.getLong(SOURCE_ID_KEY)
+    }
+
     override val presenter = BrowseSourcePresenter(
         args.getLong(SOURCE_ID_KEY),
         args.getString(SEARCH_QUERY_KEY),

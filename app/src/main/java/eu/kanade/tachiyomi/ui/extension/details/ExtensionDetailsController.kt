@@ -37,10 +37,14 @@ import eu.kanade.tachiyomi.source.preferenceKey
 import eu.kanade.tachiyomi.source.sourcePreferences
 import eu.kanade.tachiyomi.ui.base.controller.BaseCoroutineController
 import eu.kanade.tachiyomi.ui.setting.DSL
+import eu.kanade.tachiyomi.ui.setting.addThenInit
 import eu.kanade.tachiyomi.ui.setting.defaultValue
+import eu.kanade.tachiyomi.ui.setting.iconRes
+import eu.kanade.tachiyomi.ui.setting.iconTint
 import eu.kanade.tachiyomi.ui.setting.onChange
 import eu.kanade.tachiyomi.ui.setting.switchPreference
 import eu.kanade.tachiyomi.util.system.LocaleHelper
+import eu.kanade.tachiyomi.util.system.getResourceColor
 import eu.kanade.tachiyomi.util.view.openInBrowser
 import eu.kanade.tachiyomi.util.view.scrollViewWith
 import eu.kanade.tachiyomi.util.view.setAction
@@ -109,6 +113,8 @@ class ExtensionDetailsController(bundle: Bundle? = null) :
         val screen = manager.createPreferenceScreen(themedContext)
         preferenceScreen = screen
 
+        val incognitoPreference = addIncognitoPreference(screen, extension.pkgName)
+
         val multiSource = extension.sources.size > 1
         val isMultiLangSingleSource = multiSource && extension.sources.map { it.name }.distinct().size == 1
         val languages = preferences.enabledLanguages().get()
@@ -118,6 +124,11 @@ class ExtensionDetailsController(bundle: Bundle? = null) :
         }
 
         manager.setPreferences(screen)
+        // PreferenceManager.setPreferences() re-dispatches each preference's initial value as it
+        // attaches the whole screen, which stomps isChecked a second time even with addThenInit
+        // below handling the first stomp at addPreference() - so the real value has to be set
+        // after this call is the only way it survives.
+        incognitoPreference.isChecked = extension.pkgName in preferences.incognitoExtensions().get()
 
         binding.extensionPrefsRecycler.layoutManager = LinearLayoutManagerAccurateOffset(context)
         val concatAdapterConfig = ConcatAdapter.Config.Builder()
@@ -197,6 +208,42 @@ class ExtensionDetailsController(bundle: Bundle? = null) :
         Logger.d { "Cleared $cleared cookies for: ${urls.joinToString()}" }
         val context = view?.context ?: return
         binding.coordinator.snack(context.getString(MR.strings.cookies_cleared))
+    }
+
+    /**
+     * Adds a switch to pause reading history/tracking for every source in this extension,
+     * mirroring the global incognito toggle but scoped to just this package.
+     *
+     * Its real `isChecked` value is set by the caller, after [PreferenceManager.setPreferences] -
+     * both that call and this screen's [PreferenceManager] having a manager-level
+     * [androidx.preference.PreferenceDataStore] (see [onViewCreated]) independently trigger
+     * androidx's `Preference.dispatchSetInitialValue()`, which reads through that store
+     * regardless of `isPersistent` and resets `isChecked` to unchecked - even though the
+     * underlying [PreferencesHelper.incognitoExtensions] value is unaffected. Setting it any
+     * earlier (even via [addThenInit], which only survives the first of those two resets) gets
+     * silently overwritten, leaving the switch visually stuck off no matter what it's set to.
+     */
+    private fun addIncognitoPreference(screen: PreferenceScreen, pkgName: String): SwitchPreferenceCompat {
+        val context = screen.context
+        return screen.addThenInit(SwitchPreferenceCompat(context)) {
+            key = "${pkgName}_incognito"
+            title = context.getString(MR.strings.incognito_mode)
+            summary = context.getString(MR.strings.pauses_reading_history)
+            isIconSpaceReserved = true
+            iconRes = R.drawable.ic_incognito_circle_24dp
+            iconTint = context.getResourceColor(R.attr.colorPrimary)
+            isPersistent = false
+
+            onChange { newValue ->
+                val enable = newValue as Boolean
+                if (enable) {
+                    preferences.incognitoExtensions() += pkgName
+                } else {
+                    preferences.incognitoExtensions() -= pkgName
+                }
+                true
+            }
+        }
     }
 
     private fun addPreferencesForSource(screen: PreferenceScreen, source: Source, isMultiSource: Boolean, isMultiLangSingleSource: Boolean) {

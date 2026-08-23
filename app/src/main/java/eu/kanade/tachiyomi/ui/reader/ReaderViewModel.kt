@@ -28,6 +28,7 @@ import eu.kanade.tachiyomi.domain.manga.models.Manga
 import eu.kanade.tachiyomi.source.LocalSource
 import eu.kanade.tachiyomi.source.Source
 import eu.kanade.tachiyomi.source.SourceManager
+import eu.kanade.tachiyomi.source.isIncognitoModeForSource
 import eu.kanade.tachiyomi.source.model.Page
 import eu.kanade.tachiyomi.source.online.HttpSource
 import eu.kanade.tachiyomi.ui.manga.chapter.ChapterItem
@@ -644,7 +645,7 @@ class ReaderViewModel(
             readerChapter.chapter.bookmark = dbChapter.bookmark
         }
 
-        val shouldTrack = !preferences.incognitoMode().get() || hasTrackers
+        val shouldTrack = !isIncognitoModeForSource(manga?.source, preferences) || hasTrackers
         if (shouldTrack && page.status !is Page.State.Error) {
             readerChapter.chapter.last_page_read = page.index
             readerChapter.chapter.pages_left = (readerChapter.pages?.size ?: page.index) - page.index
@@ -708,7 +709,7 @@ class ReaderViewModel(
      * Saves this [readerChapter] last read history.
      */
     private suspend fun saveChapterHistory(readerChapter: ReaderChapter) {
-        if (preferences.incognitoMode().get()) return
+        if (isIncognitoModeForSource(manga?.source, preferences)) return
 
         val endTime = Date().time
         val sessionReadDuration = chapterReadStartTime?.let { endTime - it } ?: 0

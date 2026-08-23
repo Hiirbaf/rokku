@@ -441,6 +441,9 @@ class PreferencesHelper(val context: Context, val preferenceStore: PreferenceSto
 
     fun incognitoMode() = preferenceStore.getBoolean(Keys.incognitoMode, false)
 
+    /** Package names of extensions that have per-extension incognito mode enabled. */
+    fun incognitoExtensions() = preferenceStore.getStringSet(Keys.incognitoExtensions, emptySet())
+
     fun hasPromptedBeforeUpdateAll() = preferenceStore.getBoolean("has_prompted_update_all", false)
 
     fun sideNavMode() = preferenceStore.getInt(Keys.sideNavMode, 0)
