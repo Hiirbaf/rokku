@@ -10,6 +10,8 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 
 ## [Unreleased]
 
+## [1.7.0]
+
 ### Additions
 - Added a per-extension incognito toggle (Extension details) to pause history/tracking for just that extension's sources
 - Added a "Cover theme style" option (Settings > Appearance) for the Material You palette used for cover-derived accent colors, including a "Legacy" choice for the pre-Material You look ([@Hiirbaf](https://github.com/Hiirbaf))
