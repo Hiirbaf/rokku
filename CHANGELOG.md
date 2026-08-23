@@ -11,48 +11,49 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 ## [Unreleased]
 
 ### Additions
-- Added a per-extension incognito toggle (Extension details) to pause reading history/tracking for just that extension's sources, without turning on global incognito mode; the toolbar's incognito indicator and secure screen now also apply while browsing a source with it enabled
-- Added a "Cover theme style" option (Settings > Appearance) to pick the Material You palette style used for a manga's cover-derived accent color ([@Hiirbaf](https://github.com/Hiirbaf))
-- Added a "Load suggestions automatically" option (Settings > Browse) to fetch related-manga suggestions on demand, from the dedicated suggestions screen, instead of every time a manga's details page is opened
-- Added a "Show 'Duplicate' badge" option (Settings > Browse) to flag entries already in your library from a different extension, in both a source's browse list and Global Search results
+- Added a per-extension incognito toggle (Extension details) to pause history/tracking for just that extension's sources
+- Added a "Cover theme style" option (Settings > Appearance) for the Material You palette used for cover-derived accent colors, including a "Legacy" choice for the pre-Material You look ([@Hiirbaf](https://github.com/Hiirbaf))
+- Added a "Load suggestions automatically" option (Settings > Browse) to fetch related-manga suggestions on demand instead of automatically
+- Added a "Show 'Duplicate' badge" option (Settings > Browse) to flag library entries already added from a different extension
 - Added a button to open an available extension's website in a WebView before installing it
 
 ### Changes
-- Related-manga suggestions are now cached instead of re-fetched from the source every time they're shown - the cache is only refreshed by a manual manga update or a library update
+- Related-manga suggestions are now cached instead of re-fetched every time they're shown
 - Renamed "Security" settings to "Security and Privacy"
+- The cover-derived accent color now defaults to the "Legacy" style (the pre-Material You look) instead of Material You ([@Hiirbaf](https://github.com/Hiirbaf))
 
 ### Fixes
-- Fixed a possible race condition in download notifications when updated from multiple threads at once
-- Fixed download/error notifications collapsing under a generic system icon instead of Rokku's when grouped together in the notification shade
-- Fixed a restored backup's theme not actually being applied until the app was manually restarted, even though it showed as selected in Settings
-- Fixed a crash in the source filter spinner when its entries shrink while a stale selected position was still pointing past the new end
-- Fixed a possible crash from duplicate extension entries when the same extension is available from more than one repo
-- Fixed extension installs hanging indefinitely with no feedback when started offline, or when the network drops mid-download
-- Fixed the manga description opening expanded when navigating from the browse/extension source list instead of staying collapsed like it does from the library
-- Fixed "Check for updates" failing with a "Fields ... are required" error on nightly builds when the beta-releases preference was off, since GitHub's "latest release" endpoint never resolves for a repo where every release is a prerelease
-- Fixed the "Missing N chapters" chapter-count summary and chapter list divider not counting chapters missing before the earliest available chapter (e.g. a manga starting at chapter 425 instead of 1)
-- Fixed scanlator filtering causing a full library scan on every chapter list/backup/recents query, growing slower as the library grows
+- Fixed a possible race condition in download notifications updated from multiple threads at once
+- Fixed download/error notifications collapsing under a generic icon instead of Rokku's when grouped in the shade
+- Fixed a restored backup's theme not applying until the app was manually restarted
+- Fixed a crash in the source filter spinner when its entries shrink past a stale selected position
+- Fixed a possible crash from duplicate extension entries available from more than one repo
+- Fixed extension installs hanging indefinitely when started offline or the network drops mid-download
+- Fixed the manga description opening expanded when navigating from browse instead of staying collapsed like from the library
+- Fixed "Check for updates" failing on nightly builds when the beta-releases preference was off
+- Fixed the "Missing N chapters" summary and divider not counting chapters missing before the earliest available one
+- Fixed scanlator filtering causing a full library scan on every chapter list/backup/recents query
 - Fixed the library still flickering to the wrong covers while scrolling during an active backup restore
-- Fixed manga covers never loading, then flickering to the wrong one while scrolling, in the migration source list
+- Fixed manga covers never loading, then flickering to the wrong one, in the migration source list
 - Fixed a crash when updating a single library category whose queued manga list came back empty
 - Fixed a settings crash when a stored preference value had been overwritten with an incompatible type
 - Fixed a rare crash when switching chapters while a local archive page was still loading
-- Fixed a recycled source filter spinner briefly showing the wrong item checked, left over from what it was previously bound to
+- Fixed a recycled source filter spinner briefly showing the wrong item, left over from its previous binding
 - Fixed an empty notification staying in the shade after chapter downloads finished
-- Fixed the "open log" action on the library update skipped notification opening the "Learn why" help page instead of the log, due to colliding notification actions
-- Fixed a crash opening a source's browse page (e.g. from a home screen shortcut) when its extension was no longer installed
-- Fixed adjacent chapters not being preloaded when the current chapter has only a single page, which could leave the reader stuck momentarily when swiping out of it in either direction
+- Fixed the library update skipped notification's "open log" action opening the help page instead
+- Fixed a crash opening a source's browse page (e.g. a shortcut) when its extension was no longer installed
+- Fixed adjacent chapters not preloading when the current chapter has only a single page
 - Fixed the library grid/list losing its row count and collapsing to a single column after toggling uniform grid
-- Fixed library swipe gestures silently breaking when a view they check against (e.g. the bottom nav or filter sheet) wasn't laid out yet
-- Fixed the manga details cover and its blurred backdrop loading independently, so they could show different covers momentarily while scrolling or on a slow load
-- Fixed the manga details palette request caching an oversized, non-hardware cover bitmap under the same memory cache key the library grid reads
-- Fixed reading a chapter (or any other progress/status update) silently reverting AniList custom list membership to whatever Rokku last knew locally, including changes made directly on AniList itself; custom lists are now only pushed when edited from Rokku's own tracking sheet (see #115)
-- Fixed fetching an AniList entry's tracking info failing with a JSON parsing error when that entry didn't belong to any custom list
-- Fixed a manga's tracking info never actually refreshing when reopening its details page, since the refresh ran before the tracked services list had finished loading
+- Fixed library swipe gestures silently breaking when a view they check against wasn't laid out yet
+- Fixed the manga details cover and its blurred backdrop loading independently, showing different covers momentarily
+- Fixed the manga details palette request caching an oversized cover bitmap under the library grid's cache key
+- Fixed reading a chapter silently reverting AniList custom list membership to stale local data, including changes made directly on AniList (see #115)
+- Fixed fetching an AniList entry's tracking info failing with a JSON parsing error when it belonged to no custom list
+- Fixed a manga's tracking info never actually refreshing when reopening its details page
 
 ### Other
 - Bumped Voyager to 2.2.21-1.10.3
-- Moved cover ratio/color decoding to a background-priority thread so it competes less with the UI thread while the library is scrolling
+- Moved cover ratio/color decoding to a background-priority thread to compete less with the UI thread
 
 ## [1.6.1]
 
