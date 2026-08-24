@@ -12,6 +12,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 
 ### Fixes
 - Fixed extension loading blocking the main thread during startup, causing ANRs for users with many extensions installed
+- Fixed the file logger blocking the calling thread (including the main thread, e.g. when logging a reader error) whenever the log-writing thread was busy with slow disk I/O
 
 ## [1.7.0]
 

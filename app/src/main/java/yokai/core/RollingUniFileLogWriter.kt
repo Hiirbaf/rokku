@@ -57,7 +57,10 @@ class RollingUniFileLogWriter(
             },
     )
 
-    private val loggingChannel: Channel<ByteArray> = Channel()
+    // Unbounded so trySendBlocking() below never blocks the caller (including the main
+    // thread) waiting on the writer coroutine - a rendezvous channel here caused an ANR
+    // whenever a log call landed while writer() was mid-flush on slow disk I/O.
+    private val loggingChannel: Channel<ByteArray> = Channel(capacity = Channel.UNLIMITED)
 
     init {
         coroutineScope.launchIO {
