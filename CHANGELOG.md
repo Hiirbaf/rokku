@@ -16,6 +16,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 
 ### Other
 - Stopped reporting coroutine cancellations as non-fatal errors to Crashlytics; they're normal control flow, not bugs
+- Stopped reporting pure network connectivity failures (DNS, timeout, TLS handshake, connection reset) as non-fatal errors to Crashlytics; they reflect the user's network or a source's server, not something fixable in the app
 
 ## [1.7.0]
 
