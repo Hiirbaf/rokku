@@ -10,6 +10,9 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 
 ## [Unreleased]
 
+### Fixes
+- Fixed extension loading blocking the main thread during startup, causing ANRs for users with many extensions installed
+
 ## [1.7.0]
 
 ### Additions
