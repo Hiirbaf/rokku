@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Checkmark color when checked, contrasting with the checked box background -->
+    <item android:color="?attr/colorOnSecondary" android:state_checked="true"/>
+
+    <!-- Hidden when unchecked, the box has no fill to draw a checkmark on -->
+    <item android:alpha="0" android:color="?attr/colorOnSecondary"/>
+</selector>

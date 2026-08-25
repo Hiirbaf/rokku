@@ -274,8 +274,8 @@
         <item name="trackTint">@null</item>
     </style>
     <style name="Widget.Tachiyomi.CompoundButton.CheckBox" parent="Base.Widget.Material3.CompoundButton.CheckBox">
-        <item name="buttonTint">@null</item>
-        <item name="buttonIconTint">@null</item>
+        <item name="buttonTint">@color/checkbox_button_tint</item>
+        <item name="buttonIconTint">@color/checkbox_button_icon_tint</item>
     </style>
 
     <style name="Widget.Tachiyomi.CompoundButton.RadioButton" parent="Base.Widget.Material3.CompoundButton.RadioButton">
