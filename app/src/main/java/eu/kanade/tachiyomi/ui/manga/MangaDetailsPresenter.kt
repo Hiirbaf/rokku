@@ -70,6 +70,7 @@ import eu.kanade.tachiyomi.util.system.launchIO
 import eu.kanade.tachiyomi.util.system.launchNonCancellableIO
 import eu.kanade.tachiyomi.util.system.launchNow
 import eu.kanade.tachiyomi.util.system.launchUI
+import eu.kanade.tachiyomi.util.system.w
 import eu.kanade.tachiyomi.util.system.withIOContext
 import eu.kanade.tachiyomi.util.system.withUIContext
 import eu.kanade.tachiyomi.widget.TriStateCheckBox
@@ -342,7 +343,11 @@ class MangaDetailsPresenter(
                 errors.add(e)
             } finally {
                 if (errors.isNotEmpty()) {
-                    if (results.isEmpty()) errors.forEach { Logger.e(it) } else Logger.w(errors.first())
+                    if (results.isEmpty()) {
+                        errors.forEach { Logger.e(it) }
+                    } else {
+                        Logger.w(errors.first())
+                    }
                 }
                 relatedMangaItem.isLoading = false
                 setRelatedMangaCache.await(currentMangaId, results.mapNotNull { it.id })

@@ -9,6 +9,7 @@ import eu.kanade.tachiyomi.ui.base.presenter.BaseCoroutinePresenter
 import eu.kanade.tachiyomi.ui.manga.MangaDetailsPresenter.Companion.MAX_RELATED_MANGA
 import eu.kanade.tachiyomi.util.system.e
 import eu.kanade.tachiyomi.util.system.launchIO
+import eu.kanade.tachiyomi.util.system.w
 import eu.kanade.tachiyomi.util.system.withUIContext
 import kotlinx.coroutines.flow.collectLatest
 import uy.kohesive.injekt.injectLazy
@@ -91,7 +92,11 @@ class RelatedMangaPresenter(
                 errors.add(e)
             } finally {
                 if (errors.isNotEmpty()) {
-                    if (results.isEmpty()) errors.forEach { Logger.e(it) } else Logger.w(errors.first())
+                    if (results.isEmpty()) {
+                        errors.forEach { Logger.e(it) }
+                    } else {
+                        Logger.w(errors.first())
+                    }
                 }
                 setRelatedMangaCache.await(mangaId, results.mapNotNull { it.id })
                 withUIContext {
