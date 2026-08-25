@@ -13,6 +13,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 ### Fixes
 - Fixed extension loading blocking the main thread during startup, causing ANRs for users with many extensions installed
 - Fixed the file logger blocking the calling thread (including the main thread, e.g. when logging a reader error) whenever the log-writing thread was busy with slow disk I/O
+- Fixed a crash opening a manga's chapter list on some devices when a "missing chapters" gap indicator was shown
 
 ### Other
 - Stopped reporting coroutine cancellations as non-fatal errors to Crashlytics; they're normal control flow, not bugs
