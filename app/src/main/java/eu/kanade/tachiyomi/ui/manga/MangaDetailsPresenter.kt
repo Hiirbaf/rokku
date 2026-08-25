@@ -321,10 +321,11 @@ class MangaDetailsPresenter(
 
             val seenUrls = HashSet<String>()
             val results = mutableListOf<Manga>()
+            val errors = mutableListOf<Throwable>()
             try {
                 currentSource.getRelatedMangaList(
                     manga = manga,
-                    exceptionHandler = { Logger.e(it) },
+                    exceptionHandler = { errors.add(it) },
                 ) { (_, sMangaList), _ ->
                     if (results.size >= MAX_RELATED_MANGA) return@getRelatedMangaList
                     val newOnes = sMangaList
@@ -338,8 +339,11 @@ class MangaDetailsPresenter(
                     withUIContext { view?.updateRelatedManga() }
                 }
             } catch (e: Exception) {
-                Logger.e(e)
+                errors.add(e)
             } finally {
+                if (errors.isNotEmpty()) {
+                    if (results.isEmpty()) errors.forEach { Logger.e(it) } else Logger.w(errors.first())
+                }
                 relatedMangaItem.isLoading = false
                 setRelatedMangaCache.await(currentMangaId, results.mapNotNull { it.id })
                 withUIContext { view?.updateRelatedManga() }
