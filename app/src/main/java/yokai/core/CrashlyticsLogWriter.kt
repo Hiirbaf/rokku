@@ -11,7 +11,7 @@ import java.net.ConnectException
 import java.net.SocketException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
-import javax.net.ssl.SSLHandshakeException
+import javax.net.ssl.SSLException
 
 class CrashlyticsLogWriter : LogWriter() {
     override fun isLoggable(tag: String, severity: Severity): Boolean = severity >= Severity.Info
@@ -44,7 +44,7 @@ class CrashlyticsLogWriter : LogWriter() {
                 is SocketTimeoutException,
                 is ConnectException,
                 is SocketException,
-                is SSLHandshakeException,
+                is SSLException,
                 -> return true
             }
             current = current.cause?.takeIf { it !== current }

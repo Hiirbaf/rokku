@@ -717,7 +717,7 @@ open class BrowseSourceController(bundle: Bundle) :
      * @param error the error received.
      */
     fun onAddPageError(error: Throwable) {
-        Logger.e(error)
+        if (error is UnsupportedOperationException) Logger.w(error) else Logger.e(error)
         val adapter = adapter ?: return
         adapter.onLoadMoreComplete(null)
         hideProgressBar()
