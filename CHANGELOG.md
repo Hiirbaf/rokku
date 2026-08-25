@@ -21,6 +21,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Stopped reporting pure network connectivity failures (DNS, timeout, TLS handshake, connection reset) as non-fatal errors to Crashlytics; they reflect the user's network or a source's server, not something fixable in the app
 - Stopped reporting general TLS failures (not just handshake failures) and a source's "unsupported" errors while browsing (e.g. a source that requires a specific search query format) as non-fatal errors to Crashlytics
 - Stopped reporting individual related-manga keyword search failures as non-fatal errors to Crashlytics as long as at least one other keyword still found results
+- Stopped reporting the best-effort metadata/chapter fetch that runs right after adding a manga to the library as a non-fatal error to Crashlytics when it fails
 
 ## [1.7.0]
 

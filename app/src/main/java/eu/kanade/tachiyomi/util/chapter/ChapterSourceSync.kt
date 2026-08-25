@@ -261,6 +261,6 @@ suspend fun fetchAndApplyMangaUpdateOnAdd(
             syncChaptersWithSource(update.chapters, manga, source)
         }
     } catch (e: Exception) {
-        Logger.e(e) { "Failed to fetch metadata/chapters on add for ${manga.title}" }
+        Logger.w(e) { "Failed to fetch metadata/chapters on add for ${manga.title}" }
     }
 }
