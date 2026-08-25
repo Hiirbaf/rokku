@@ -56,6 +56,7 @@ import eu.kanade.tachiyomi.util.system.materialAlertDialog
 import eu.kanade.tachiyomi.util.system.openInBrowser
 import eu.kanade.tachiyomi.util.system.setTextInput
 import eu.kanade.tachiyomi.util.system.toast
+import eu.kanade.tachiyomi.util.system.w
 import eu.kanade.tachiyomi.util.system.withUIContext
 import eu.kanade.tachiyomi.util.view.activityBinding
 import eu.kanade.tachiyomi.util.view.applyBottomAnimatedInsets
@@ -717,7 +718,11 @@ open class BrowseSourceController(bundle: Bundle) :
      * @param error the error received.
      */
     fun onAddPageError(error: Throwable) {
-        if (error is UnsupportedOperationException) Logger.w(error) else Logger.e(error)
+        if (error is UnsupportedOperationException) {
+            Logger.w(error)
+        } else {
+            Logger.e(error)
+        }
         val adapter = adapter ?: return
         adapter.onLoadMoreComplete(null)
         hideProgressBar()
