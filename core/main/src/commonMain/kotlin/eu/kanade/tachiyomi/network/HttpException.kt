@@ -8,3 +8,5 @@ package eu.kanade.tachiyomi.network
  * @param code [Int] the HTTP status code
  */
 class HttpException(val code: Int) : IllegalStateException("HTTP error $code")
+
+val HttpException.isAuthError: Boolean get() = code == 401 || code == 403

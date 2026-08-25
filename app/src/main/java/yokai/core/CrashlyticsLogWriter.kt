@@ -6,6 +6,8 @@ import co.touchlab.kermit.Message
 import co.touchlab.kermit.Severity
 import co.touchlab.kermit.Tag
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import eu.kanade.tachiyomi.network.HttpException
+import eu.kanade.tachiyomi.network.isAuthError
 import kotlinx.coroutines.CancellationException
 import java.net.ConnectException
 import java.net.SocketException
@@ -46,6 +48,8 @@ class CrashlyticsLogWriter : LogWriter() {
                 is SocketException,
                 is SSLException,
                 -> return true
+
+                is HttpException -> if (current.isAuthError) return true
             }
             current = current.cause?.takeIf { it !== current }
         }

@@ -80,6 +80,8 @@ import eu.kanade.tachiyomi.data.notification.NotificationReceiver
 import eu.kanade.tachiyomi.data.track.model.TrackSearch
 import eu.kanade.tachiyomi.databinding.MangaDetailsControllerBinding
 import eu.kanade.tachiyomi.domain.manga.models.Manga
+import eu.kanade.tachiyomi.network.HttpException
+import eu.kanade.tachiyomi.network.isAuthError
 import eu.kanade.tachiyomi.source.CatalogueSource
 import eu.kanade.tachiyomi.source.icon
 import eu.kanade.tachiyomi.source.online.HttpSource
@@ -134,6 +136,7 @@ import eu.kanade.tachiyomi.util.system.rootWindowInsetsCompat
 import eu.kanade.tachiyomi.util.system.setCustomTitleAndMessage
 import eu.kanade.tachiyomi.util.system.timeSpanFromNow
 import eu.kanade.tachiyomi.util.system.toast
+import eu.kanade.tachiyomi.util.system.w
 import eu.kanade.tachiyomi.util.system.withUIContext
 import eu.kanade.tachiyomi.util.view.activityBinding
 import eu.kanade.tachiyomi.util.view.copyToClipboard
@@ -2028,7 +2031,11 @@ class MangaDetailsController :
     }
 
     fun trackRefreshError(error: Exception) {
-        Logger.e(error)
+        if (error is HttpException && error.isAuthError) {
+            Logger.w(error)
+        } else {
+            Logger.e(error)
+        }
         trackingBottomSheet?.onRefreshError(error)
     }
 

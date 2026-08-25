@@ -40,6 +40,8 @@ import eu.kanade.tachiyomi.data.track.model.TrackSearch
 import eu.kanade.tachiyomi.databinding.TrackChaptersDialogBinding
 import eu.kanade.tachiyomi.databinding.TrackScoreDialogBinding
 import eu.kanade.tachiyomi.databinding.TrackingBottomSheetBinding
+import eu.kanade.tachiyomi.network.HttpException
+import eu.kanade.tachiyomi.network.isAuthError
 import eu.kanade.tachiyomi.ui.manga.MangaDetailsController
 import eu.kanade.tachiyomi.ui.manga.MangaDetailsDivider
 import eu.kanade.tachiyomi.util.lang.indexesOf
@@ -202,7 +204,11 @@ class TrackingBottomSheet(private val controller: MangaDetailsController) :
         for (i in adapter!!.items.indices) {
             (binding.trackRecycler.findViewHolderForAdapterPosition(i) as? TrackHolder)?.setProgress(false)
         }
-        activity.toast(error.message)
+        if (error is HttpException && error.isAuthError) {
+            activity.toast(MR.strings.track_login_expired)
+        } else {
+            activity.toast(error.message)
+        }
     }
 
     override fun onLogoClick(position: Int) {

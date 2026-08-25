@@ -15,6 +15,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Fixed extension loading blocking the main thread during startup, causing ANRs for users with many extensions installed
 - Fixed the file logger blocking the calling thread (including the main thread, e.g. when logging a reader error) whenever the log-writing thread was busy with slow disk I/O
 - Fixed a crash opening a manga's chapter list on some devices when a "missing chapters" gap indicator was shown
+- Fixed a tracker refresh/removal failure showing a raw "HTTP error 401" toast instead of telling the user their tracker login session expired
 
 ### Other
 - Stopped reporting coroutine cancellations as non-fatal errors to Crashlytics; they're normal control flow, not bugs
@@ -22,6 +23,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Stopped reporting general TLS failures (not just handshake failures) and a source's "unsupported" errors while browsing (e.g. a source that requires a specific search query format) as non-fatal errors to Crashlytics
 - Stopped reporting individual related-manga keyword search failures as non-fatal errors to Crashlytics as long as at least one other keyword still found results
 - Stopped reporting the best-effort metadata/chapter fetch that runs right after adding a manga to the library as a non-fatal error to Crashlytics when it fails
+- Stopped reporting expired tracker login sessions (HTTP 401/403) as non-fatal errors to Crashlytics
 
 ## [1.7.0]
 
