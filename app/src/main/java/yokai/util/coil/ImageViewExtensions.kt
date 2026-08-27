@@ -9,7 +9,7 @@ import coil3.request.ImageRequest
 import coil3.request.maxBitmapSize
 import coil3.size.Precision
 import coil3.size.Size
-import coil3.size.SizeResolver
+import coil3.size.ViewSizeResolver
 import coil3.target.ImageViewTarget
 import eu.kanade.tachiyomi.data.coil.CoverViewTarget
 import eu.kanade.tachiyomi.data.coil.LibraryMangaImageTarget
@@ -29,7 +29,7 @@ fun ImageView.loadManga(
         .data(manga.cover())
         .target(LibraryMangaImageTarget(this, manga, progress))
         .precision(Precision.INEXACT)
-        .size(SizeResolver.ORIGINAL)
+        .size(ViewSizeResolver(this))
         .maxBitmapSize(Size(MAX_BITMAP_SIZE, MAX_BITMAP_SIZE))
         .apply(builder)
         .build()
@@ -49,7 +49,7 @@ fun ImageView.loadManga(
         .data(cover)
         .target(target ?: CoverViewTarget(this, progress))
         .precision(Precision.INEXACT)
-        .size(SizeResolver.ORIGINAL)
+        .size(ViewSizeResolver(this))
         .maxBitmapSize(Size(MAX_BITMAP_SIZE, MAX_BITMAP_SIZE))
         .apply(builder)
         .build()

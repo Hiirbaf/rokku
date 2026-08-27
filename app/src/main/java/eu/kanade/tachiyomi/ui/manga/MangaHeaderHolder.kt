@@ -785,6 +785,7 @@ class MangaHeaderHolder(
         // mangaCover and backdrop show the same cover, decoded once and applied to both together
         // instead of two separate requests finishing at two separate, unsynced moments.
         binding.mangaCover.loadManga(manga) {
+            memoryCacheKeyExtra("size", "full")
             placeholder(drawable)
             error(drawable)
             crossfade(false)

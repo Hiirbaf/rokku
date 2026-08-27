@@ -107,6 +107,7 @@ class EditMangaDialog : DialogController {
         val context = binding.root.context
 
         binding.mangaCover.loadManga(manga) {
+            memoryCacheKeyExtra("size", "full")
             crossfade(false)
         }
         val isLocal = manga.isLocal()
@@ -238,6 +239,7 @@ class EditMangaDialog : DialogController {
                 manga.cover(),
                 target = binding.mangaCover.asTarget(),
             ) {
+                memoryCacheKeyExtra("size", "full")
                 useCustomCover(false)
             }
             customCoverUri = null
