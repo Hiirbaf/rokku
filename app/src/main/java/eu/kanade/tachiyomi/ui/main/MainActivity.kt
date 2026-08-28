@@ -1261,6 +1261,7 @@ open class MainActivity : BaseActivity<MainActivityBinding>() {
     }
 
     protected open fun backPress() {
+        if (isFinishing || isDestroyed) return
         val controller = router.backstack.lastOrNull()?.controller
         if (if (router.backstackSize == 1) controller?.handleBack() != true else !router.handleBack()) {
             if (preferences.backReturnsToStart().get() && this !is SearchActivity &&

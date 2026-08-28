@@ -68,6 +68,7 @@ class SearchActivity : MainActivity() {
     }
 
     override fun backPress() {
+        if (isFinishing || isDestroyed) return
         if (router.backstack.size <= 1 || !router.handleBack()) {
             SecureActivityDelegate.locked = true
         }
