@@ -37,6 +37,7 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
 import androidx.transition.ChangeBounds
 import androidx.transition.ChangeImageTransform
 import androidx.transition.TransitionManager
@@ -50,9 +51,11 @@ import eu.kanade.tachiyomi.util.system.clipboardHasImage
 import eu.kanade.tachiyomi.util.system.clipboardManager
 import eu.kanade.tachiyomi.util.system.dpToPx
 import eu.kanade.tachiyomi.util.system.getClipboardImageUri
+import eu.kanade.tachiyomi.util.system.ignoredDisplayCutout
 import eu.kanade.tachiyomi.util.system.powerManager
 import eu.kanade.tachiyomi.util.system.rootWindowInsetsCompat
 import eu.kanade.tachiyomi.util.view.animateBlur
+import eu.kanade.tachiyomi.util.view.doOnApplyWindowInsetsCompat
 import uy.kohesive.injekt.injectLazy
 import yokai.i18n.MR
 import yokai.util.lang.getString
@@ -217,9 +220,10 @@ class FullCoverDialog(val controller: MangaDetailsController, drawable: Drawable
         val rect = Rect()
         thumbView.getGlobalVisibleRect(rect)
         val systemInsets = activity?.window?.decorView?.rootWindowInsetsCompat?.getInsets(systemBars())
-        val topInset = systemInsets?.top ?: 0
-        val leftInset = systemInsets?.left ?: 0
-        val rightInset = systemInsets?.right ?: 0
+        val isUnderA15 = Build.VERSION.SDK_INT < Build.VERSION_CODES.VANILLA_ICE_CREAM
+        val topInset = if (isUnderA15) systemInsets?.top ?: 0 else 0
+        val leftInset = if (isUnderA15) systemInsets?.left ?: 0 else 0
+        val rightInset = if (isUnderA15) systemInsets?.right ?: 0 else 0
         expandedImageView.updateLayoutParams<LayoutParams> {
             height = thumbView.height
             width = thumbView.width
@@ -234,6 +238,10 @@ class FullCoverDialog(val controller: MangaDetailsController, drawable: Drawable
         binding.btnShare.alpha = 0f
         binding.btnSave.alpha = 0f
         binding.btnReplace.alpha = 0f
+
+        binding.root.doOnApplyWindowInsetsCompat { _, insets, _ ->
+            binding.buttonContainer.updatePadding(bottom = insets.ignoredDisplayCutout.bottom)
+        }
 
         expandedImageView.post {
             // Hide the thumbnail and show the zoomed-in view. When the animation
@@ -341,9 +349,10 @@ class FullCoverDialog(val controller: MangaDetailsController, drawable: Drawable
         binding.touchOutside.isClickable = false
         val expandedImageView = binding.mangaCoverFull
         val systemInsets = activity?.window?.decorView?.rootWindowInsetsCompat?.getInsets(systemBars())
-        val topInset = systemInsets?.top ?: 0
-        val leftInset = systemInsets?.left ?: 0
-        val rightInset = systemInsets?.right ?: 0
+        val isUnderA15 = Build.VERSION.SDK_INT < Build.VERSION_CODES.VANILLA_ICE_CREAM
+        val topInset = if (isUnderA15) systemInsets?.top ?: 0 else 0
+        val leftInset = if (isUnderA15) systemInsets?.left ?: 0 else 0
+        val rightInset = if (isUnderA15) systemInsets?.right ?: 0 else 0
         expandedImageView.updateLayoutParams<LayoutParams> {
             height = thumbView.height
             width = thumbView.width
