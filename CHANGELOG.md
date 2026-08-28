@@ -30,6 +30,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Stopped reporting a source's server errors (HTTP 5xx) and the downloads folder becoming inaccessible (permission revoked, folder moved/deleted, storage removed) as non-fatal errors to Crashlytics
 - Stopped reporting a source's server errors (HTTP 5xx) raised by an extension's own HTTP client, and a downloaded page file becoming missing/inaccessible when opened in the reader, as non-fatal errors to Crashlytics
 - Stopped reporting a proxy/middlebox mangling the HTTP/2 handshake, the user opening a chapter for a manga whose extension they've since uninstalled, and an extension's own "chapter list is stale" signal (e.g. Madara-based sources) as non-fatal errors to Crashlytics
+- Stopped reporting an extension's dex not being readable yet when its install/update races the startup extension scan, and a downloaded page file disappearing between the download finishing and CBZ archiving, as non-fatal errors to Crashlytics; both already resolve/surface correctly on their own
 
 ## [1.7.0]
 

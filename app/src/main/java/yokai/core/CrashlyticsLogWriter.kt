@@ -45,6 +45,14 @@ class CrashlyticsLogWriter : LogWriter() {
      * removed) - none of these reflect a Rokku bug, and recording them buries real
      * non-fatals in noise. Walks the whole cause chain since some call sites (e.g.
      * MangaCoverFetcher) wrap these in a generic IOException before it reaches here.
+     *
+     * Also skips two more transient, self-healing cases: an extension's dex not being
+     * readable yet (empty DexPathList) when ExtensionManager's startup scan races an
+     * in-progress install/update - ExtensionInstallReceiver reloads that package on its
+     * own once the real PACKAGE_ADDED/PACKAGE_REPLACED broadcast lands - and a downloaded
+     * page file disappearing between the post-download success check and CBZ archiving
+     * (external storage/media scanner interference), which Downloader already surfaces
+     * to the user as a failed download.
      */
     private fun Throwable.isIgnoredForCrashlytics(): Boolean {
         var current: Throwable? = this
@@ -66,6 +74,15 @@ class CrashlyticsLogWriter : LogWriter() {
                 is HttpStatusException -> if (current.statusCode in 500..599) return true
 
                 is IOException -> if (current.message?.contains("SETTINGS preface") == true) return true
+
+                is ClassNotFoundException -> if (current.message?.contains("DexPathList[[]") == true) return true
+
+                is IllegalArgumentException -> if (
+                    current.message?.contains("is child of") == true &&
+                    current.message?.contains("FileNotFoundException") == true
+                ) {
+                    return true
+                }
             }
 
             if (current.message == "Refresh Chapter List") return true
