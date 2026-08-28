@@ -14,6 +14,7 @@ import eu.kanade.tachiyomi.network.isServerError
 import eu.kanade.tachiyomi.ui.reader.loader.MissingDownloadedPageException
 import eu.kanade.tachiyomi.ui.reader.loader.SourceNotInstalledException
 import kotlinx.coroutines.CancellationException
+import kotlinx.serialization.SerializationException
 import org.jsoup.HttpStatusException
 import java.io.IOException
 import java.net.ConnectException
@@ -60,6 +61,11 @@ class CrashlyticsLogWriter : LogWriter() {
      * auth interceptor rejecting a request as unauthorized (a 401 the extension raises as
      * a plain IOException rather than through our HttpException, so it doesn't reach the
      * isAuthError check above) - neither reflects a Rokku bug.
+     *
+     * Also skips Hikka/MangaBaka trying to JSON-decode their saved OAuth token preference
+     * on first use when the user never logged in (empty preference, decoding fails as EOF) -
+     * Hikka.loadOAuth and MangaBaka.restoreToken already catch this and return null, so the
+     * tracker just starts logged out.
      */
     private fun Throwable.isIgnoredForCrashlytics(): Boolean {
         var current: Throwable? = this
@@ -87,6 +93,8 @@ class CrashlyticsLogWriter : LogWriter() {
                 ) {
                     return true
                 }
+
+                is SerializationException -> if (current.message?.contains("had 'EOF' instead") == true) return true
 
                 is ClassNotFoundException -> if (current.message?.contains("DexPathList[[]") == true) return true
 
