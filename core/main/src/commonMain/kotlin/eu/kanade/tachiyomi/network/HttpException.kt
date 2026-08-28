@@ -10,3 +10,4 @@ package eu.kanade.tachiyomi.network
 class HttpException(val code: Int) : IllegalStateException("HTTP error $code")
 
 val HttpException.isAuthError: Boolean get() = code == 401 || code == 403
+val HttpException.isServerError: Boolean get() = code in 500..599

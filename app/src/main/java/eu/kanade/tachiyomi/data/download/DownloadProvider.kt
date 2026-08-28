@@ -51,7 +51,7 @@ class DownloadProvider(private val context: Context) {
             return downloadsDir?.createDirectory(getSourceDirName(source))!!
                 .createDirectory(getMangaDirName(manga))!!
         } catch (e: NullPointerException) {
-            throw Exception(context.getString(MR.strings.invalid_download_location))
+            throw InvalidDownloadLocationException(context.getString(MR.strings.invalid_download_location))
         }
     }
 
@@ -255,3 +255,5 @@ class DownloadProvider(private val context: Context) {
         }.distinct()
     }
 }
+
+class InvalidDownloadLocationException(message: String) : Exception(message)

@@ -6,8 +6,10 @@ import co.touchlab.kermit.Message
 import co.touchlab.kermit.Severity
 import co.touchlab.kermit.Tag
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import eu.kanade.tachiyomi.data.download.InvalidDownloadLocationException
 import eu.kanade.tachiyomi.network.HttpException
 import eu.kanade.tachiyomi.network.isAuthError
+import eu.kanade.tachiyomi.network.isServerError
 import kotlinx.coroutines.CancellationException
 import java.net.ConnectException
 import java.net.SocketException
@@ -31,11 +33,13 @@ class CrashlyticsLogWriter : LogWriter() {
 
     /**
      * Skips exceptions that are never actionable from app code: coroutine cancellation
-     * (normal control flow) and pure device/network connectivity failures (DNS, timeout,
-     * TLS handshake, connection reset) - these reflect the user's network or a source's
-     * server, not a Rokku bug, and recording them buries real non-fatals in noise. Walks
-     * the whole cause chain since some call sites (e.g. MangaCoverFetcher) wrap these in a
-     * generic IOException before it reaches here.
+     * (normal control flow), pure device/network connectivity failures (DNS, timeout,
+     * TLS handshake, connection reset), a source's own server erroring out (5xx) or
+     * rejecting auth (401/403), and the user's downloads folder becoming inaccessible
+     * (permission revoked, folder moved/deleted, storage removed) - none of these reflect
+     * a Rokku bug, and recording them buries real non-fatals in noise. Walks the whole
+     * cause chain since some call sites (e.g. MangaCoverFetcher) wrap these in a generic
+     * IOException before it reaches here.
      */
     private fun Throwable.isIgnoredForCrashlytics(): Boolean {
         var current: Throwable? = this
@@ -47,9 +51,10 @@ class CrashlyticsLogWriter : LogWriter() {
                 is ConnectException,
                 is SocketException,
                 is SSLException,
+                is InvalidDownloadLocationException,
                 -> return true
 
-                is HttpException -> if (current.isAuthError) return true
+                is HttpException -> if (current.isAuthError || current.isServerError) return true
             }
             current = current.cause?.takeIf { it !== current }
         }
