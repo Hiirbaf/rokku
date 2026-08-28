@@ -7,6 +7,7 @@ import co.touchlab.kermit.Severity
 import co.touchlab.kermit.Tag
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import eu.kanade.tachiyomi.data.download.InvalidDownloadLocationException
+import eu.kanade.tachiyomi.data.track.myanimelist.MALTokenExpired
 import eu.kanade.tachiyomi.network.HttpException
 import eu.kanade.tachiyomi.network.isAuthError
 import eu.kanade.tachiyomi.network.isServerError
@@ -53,6 +54,12 @@ class CrashlyticsLogWriter : LogWriter() {
      * page file disappearing between the post-download success check and CBZ archiving
      * (external storage/media scanner interference), which Downloader already surfaces
      * to the user as a failed download.
+     *
+     * Also skips a MyAnimeList tracker session expiring (MyAnimeListInterceptor already
+     * surfaces a clear re-login message to the user instead) and a source extension's own
+     * auth interceptor rejecting a request as unauthorized (a 401 the extension raises as
+     * a plain IOException rather than through our HttpException, so it doesn't reach the
+     * isAuthError check above) - neither reflects a Rokku bug.
      */
     private fun Throwable.isIgnoredForCrashlytics(): Boolean {
         var current: Throwable? = this
@@ -67,13 +74,19 @@ class CrashlyticsLogWriter : LogWriter() {
                 is InvalidDownloadLocationException,
                 is MissingDownloadedPageException,
                 is SourceNotInstalledException,
+                is MALTokenExpired,
                 -> return true
 
                 is HttpException -> if (current.isAuthError || current.isServerError) return true
 
                 is HttpStatusException -> if (current.statusCode in 500..599) return true
 
-                is IOException -> if (current.message?.contains("SETTINGS preface") == true) return true
+                is IOException -> if (
+                    current.message?.contains("SETTINGS preface") == true ||
+                    current.message == "Unauthorized"
+                ) {
+                    return true
+                }
 
                 is ClassNotFoundException -> if (current.message?.contains("DexPathList[[]") == true) return true
 
