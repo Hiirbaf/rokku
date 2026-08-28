@@ -268,7 +268,7 @@ class MangaDetailsController :
         fullCoverActive = false
         val isLegacyTheme = coverThemeOptions[presenter.preferences.coverThemeStyle().get()] == null
         val cachedColor = manga?.vibrantCoverColor
-        if (isLegacyTheme && cachedColor != null) {
+        if (presenter.preferences.themeMangaDetails().get() && isLegacyTheme && cachedColor != null) {
             setAccentColorValueLegacy(cachedColor)
             setHeaderColorValueLegacy(cachedColor, view.context)
         } else {
@@ -336,9 +336,7 @@ class MangaDetailsController :
         binding.swipeRefresh.isRefreshing = presenter.isLoading
         binding.swipeRefresh.setOnRefreshListener { presenter.refreshAll() }
         updateToolbarTitleAlpha()
-        if (presenter.preferences.themeMangaDetails().get()) {
-            setItemColors()
-        }
+        setItemColors()
     }
 
     private fun setAccentColorValue(colorToUse: Int? = null, onColorToUse: Int? = null) {
@@ -730,8 +728,10 @@ class MangaDetailsController :
                                     setItemColors()
                                 }
                             } else {
-                                setCoverColorValue()
+                                setAccentColorValue()
+                                setHeaderColorValue()
                                 coverColor?.let { color -> getHeader()?.setBackDrop(color) }
+                                setItemColors()
                             }
                         }
                     }

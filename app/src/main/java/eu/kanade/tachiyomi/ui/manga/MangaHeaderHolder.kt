@@ -394,10 +394,7 @@ class MangaHeaderHolder(
         if (binding == null) {
             if (chapterBinding != null) {
                 bindChapters()
-                if (adapter.preferences.themeMangaDetails().get()) {
-                    val accentColor = adapter.delegate.accentColor() ?: return
-                    chapterBinding.filterButton.imageTintList = ColorStateList.valueOf(accentColor)
-                }
+                updateColors(false)
             }
             return
         }
@@ -552,9 +549,7 @@ class MangaHeaderHolder(
 
         if (!manga.initialized) return
         updateCover(manga)
-        if (adapter.preferences.themeMangaDetails().get()) {
-            updateColors(false)
-        }
+        updateColors(false)
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -691,7 +686,8 @@ class MangaHeaderHolder(
     }
 
     fun updateColors(updateAll: Boolean = true) {
-        val accentColor = adapter.delegate.accentColor() ?: return
+        val accentColor = adapter.delegate.accentColor()
+            ?: itemView.context.getResourceColor(R.attr.colorSecondary)
         if (binding == null) {
             if (chapterBinding != null) {
                 chapterBinding.filterButton.imageTintList = ColorStateList.valueOf(accentColor)
