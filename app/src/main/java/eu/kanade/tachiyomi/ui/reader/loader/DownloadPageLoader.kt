@@ -58,7 +58,11 @@ class DownloadPageLoader(
         val pages = downloadManager.buildPageList(source, manga, chapter.chapter)
         return pages.map { page ->
             ReaderPage(page.index, page.url, page.imageUrl, stream = {
-                context.contentResolver.openInputStream(page.uri ?: Uri.EMPTY)!!
+                try {
+                    context.contentResolver.openInputStream(page.uri ?: Uri.EMPTY)!!
+                } catch (e: Exception) {
+                    throw MissingDownloadedPageException(e)
+                }
             }).apply {
                 status = Page.State.Ready
             }
@@ -69,3 +73,5 @@ class DownloadPageLoader(
         archivePageLoader?.loadPage(page)
     }
 }
+
+class MissingDownloadedPageException(cause: Throwable) : Exception(cause)

@@ -27,6 +27,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Stopped reporting the best-effort metadata/chapter fetch that runs right after adding a manga to the library as a non-fatal error to Crashlytics when it fails
 - Stopped reporting expired tracker login sessions (HTTP 401/403) as non-fatal errors to Crashlytics
 - Stopped reporting a source's server errors (HTTP 5xx) and the downloads folder becoming inaccessible (permission revoked, folder moved/deleted, storage removed) as non-fatal errors to Crashlytics
+- Stopped reporting a source's server errors (HTTP 5xx) raised by an extension's own HTTP client, and a downloaded page file becoming missing/inaccessible when opened in the reader, as non-fatal errors to Crashlytics
 
 ## [1.7.0]
 
