@@ -351,9 +351,11 @@ class Downloader(
             download.chapter,
             includeId = downloadPreferences.downloadWithId().get(),
         )
-        val tmpDir = mangaDir.createDirectory(chapterDirname + TMP_DIR_SUFFIX)!!
 
         try {
+            val tmpDir = mangaDir.createDirectory(chapterDirname + TMP_DIR_SUFFIX)
+                ?: throw Exception(context.getString(MR.strings.couldnt_create_download_dir))
+
             // If the page list already exists, start from the file
             val pageList = download.pages ?: run {
                 // Otherwise, pull page list from network and add them to download object

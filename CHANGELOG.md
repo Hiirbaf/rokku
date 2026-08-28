@@ -18,6 +18,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Fixed a crash opening a manga's chapter list on some devices when a "missing chapters" gap indicator was shown
 - Fixed a tracker refresh/removal failure showing a raw "HTTP error 401" toast instead of telling the user their tracker login session expired
 - Fixed the manga details screen still theming the follow/download buttons from the cover after disabling "Theme buttons based on cover", once a cover color had already been cached for that manga
+- Fixed a download crashing with an unhandled NullPointerException and getting stuck instead of erroring out when its temporary chapter folder failed to be created
 
 ### Other
 - Stopped reporting coroutine cancellations as non-fatal errors to Crashlytics; they're normal control flow, not bugs
