@@ -10,6 +10,9 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 
 ## [Unreleased]
 
+### Additions
+- Added support for Android 16's Live Updates: the library update progress notification can now be promoted to a status bar chip
+
 ### Fixes
 - Fixed laggy, stuttering library scrolling and covers intermittently failing to appear (library, updates, history), caused by cover images being decoded at their full original resolution instead of the view's size
 - Fixed checked checkboxes rendering with an invisible checkmark on the Yin Yang theme (checkbox and checkmark colors resolved to the same tint)
