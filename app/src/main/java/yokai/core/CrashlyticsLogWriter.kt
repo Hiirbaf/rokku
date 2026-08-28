@@ -66,6 +66,9 @@ class CrashlyticsLogWriter : LogWriter() {
      * on first use when the user never logged in (empty preference, decoding fails as EOF) -
      * Hikka.loadOAuth and MangaBaka.restoreToken already catch this and return null, so the
      * tracker just starts logged out.
+     *
+     * Also skips AniList's tracker refresh not finding the manga in the user's list anymore
+     * (e.g. removed/unlinked directly on AniList's site) - not a Rokku bug.
      */
     private fun Throwable.isIgnoredForCrashlytics(): Boolean {
         var current: Throwable? = this
@@ -106,7 +109,7 @@ class CrashlyticsLogWriter : LogWriter() {
                 }
             }
 
-            if (current.message == "Refresh Chapter List") return true
+            if (current.message == "Refresh Chapter List" || current.message == "Could not find manga") return true
 
             current = current.cause?.takeIf { it !== current }
         }
