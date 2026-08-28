@@ -11,8 +11,10 @@ import eu.kanade.tachiyomi.network.HttpException
 import eu.kanade.tachiyomi.network.isAuthError
 import eu.kanade.tachiyomi.network.isServerError
 import eu.kanade.tachiyomi.ui.reader.loader.MissingDownloadedPageException
+import eu.kanade.tachiyomi.ui.reader.loader.SourceNotInstalledException
 import kotlinx.coroutines.CancellationException
 import org.jsoup.HttpStatusException
+import java.io.IOException
 import java.net.ConnectException
 import java.net.SocketException
 import java.net.SocketTimeoutException
@@ -56,12 +58,18 @@ class CrashlyticsLogWriter : LogWriter() {
                 is SSLException,
                 is InvalidDownloadLocationException,
                 is MissingDownloadedPageException,
+                is SourceNotInstalledException,
                 -> return true
 
                 is HttpException -> if (current.isAuthError || current.isServerError) return true
 
                 is HttpStatusException -> if (current.statusCode in 500..599) return true
+
+                is IOException -> if (current.message?.contains("SETTINGS preface") == true) return true
             }
+
+            if (current.message == "Refresh Chapter List") return true
+
             current = current.cause?.takeIf { it !== current }
         }
         return false

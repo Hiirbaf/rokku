@@ -89,7 +89,9 @@ class ChapterLoader(
                 }
             }
 
-            else -> error(context.getString(MR.strings.source_not_installed))
+            else -> throw SourceNotInstalledException(context.getString(MR.strings.source_not_installed))
         }
     }
 }
+
+class SourceNotInstalledException(message: String) : IllegalStateException(message)
