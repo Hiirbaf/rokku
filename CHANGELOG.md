@@ -10,6 +10,8 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 
 ## [Unreleased]
 
+## [1.7.1]
+
 ### Fixes
 - Fixed laggy, stuttering library scrolling and covers intermittently failing to appear (library, updates, history), caused by cover images being decoded at their full original resolution instead of the view's size
 - Fixed checked checkboxes rendering with an invisible checkmark on the Yin Yang theme (checkbox and checkmark colors resolved to the same tint)
