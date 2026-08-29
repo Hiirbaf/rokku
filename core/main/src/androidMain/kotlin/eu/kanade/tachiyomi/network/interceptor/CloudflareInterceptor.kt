@@ -2,11 +2,14 @@ package eu.kanade.tachiyomi.network.interceptor
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.webkit.JavascriptInterface
+import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
 import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import eu.kanade.tachiyomi.network.AndroidCookieJar
-import eu.kanade.tachiyomi.util.system.WebViewClientCompat
 import eu.kanade.tachiyomi.util.system.isOutdated
 import eu.kanade.tachiyomi.util.system.toast
 import okhttp3.Cookie
@@ -14,7 +17,6 @@ import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
-import org.jsoup.Jsoup
 import yokai.i18n.MR
 import yokai.util.lang.getString
 import java.io.IOException
@@ -29,19 +31,7 @@ class CloudflareInterceptor(
     private val executor = ContextCompat.getMainExecutor(context)
 
     override fun shouldIntercept(response: Response): Boolean {
-        // Check if Cloudflare anti-bot is on
-        return if (response.code in ERROR_CODES && response.header("Server") in SERVER_CHECK) {
-            val document = Jsoup.parse(
-                response.peekBody(Long.MAX_VALUE).string(),
-                response.request.url.toString(),
-            )
-
-            // solve with webview only on captcha, not on geo block
-            document.getElementById("challenge-error-title") != null ||
-                document.getElementById("challenge-error-text") != null
-        } else {
-            false
-        }
+        return response.isCloudflareChallenge()
     }
 
     override fun intercept(
@@ -83,47 +73,71 @@ class CloudflareInterceptor(
         val headers = parseHeaders(originalRequest.headers)
 
         executor.execute {
-            webview = createWebView(originalRequest)
+            val challengeWebView = createWebView(originalRequest)
+            webview = challengeWebView
 
-            webview.webViewClient = object : WebViewClientCompat() {
-                override fun onPageFinished(view: WebView, url: String) {
-                    fun isCloudFlareBypassed(): Boolean {
-                        return cookieManager.get(origRequestUrl.toHttpUrl())
-                            .firstOrNull { it.name == "cf_clearance" }
-                            .let { it != null && it != oldCookie }
-                    }
-
-                    if (isCloudFlareBypassed()) {
-                        cloudflareBypassed = true
+            challengeWebView.addJavascriptInterface(
+                object {
+                    @Suppress("unused")
+                    @JavascriptInterface
+                    fun interactiveDetected() {
                         latch.countDown()
                     }
+                },
+                "mihon",
+            )
 
-                    if (url == origRequestUrl && !challengeFound) {
-                        // The first request didn't return the challenge, abort.
-                        latch.countDown()
-                    }
-                }
+            challengeWebView.webViewClient =
+                object : WebViewClient() {
+                    override fun onPageFinished(
+                        view: WebView,
+                        url: String,
+                    ) {
+                        fun isCloudFlareBypassed(): Boolean =
+                            cookieManager
+                                .get(origRequestUrl.toHttpUrl())
+                                .firstOrNull { it.name == "cf_clearance" }
+                                .let { it != null && it != oldCookie }
 
-                override fun onReceivedErrorCompat(
-                    view: WebView,
-                    errorCode: Int,
-                    description: String?,
-                    failingUrl: String,
-                    isMainFrame: Boolean,
-                ) {
-                    if (isMainFrame) {
-                        if (errorCode in ERROR_CODES) {
-                            // Found the Cloudflare challenge page.
-                            challengeFound = true
-                        } else {
-                            // Unlock thread, the challenge wasn't found.
+                        if (isCloudFlareBypassed()) {
+                            cloudflareBypassed = true
                             latch.countDown()
+                        }
+
+                        if (url == origRequestUrl) {
+                            if (!challengeFound) {
+                                latch.countDown()
+                            } else {
+                                view.evaluateJavascript(
+                                    """
+                                    addEventListener("message", ({data}) => {
+                                        if (data?.source === "cloudflare-challenge" && data?.event === "interactiveBegin") {
+                                            mihon.interactiveDetected();
+                                        }
+                                    })
+                                    """.trimIndent(),
+                                    null,
+                                )
+                            }
+                        }
+                    }
+
+                    override fun onReceivedHttpError(
+                        view: WebView?,
+                        request: WebResourceRequest?,
+                        errorResponse: WebResourceResponse?,
+                    ) {
+                        if (request?.isForMainFrame == true) {
+                            if (errorResponse?.responseHeaders?.get("cf-mitigated") == "challenge") {
+                                challengeFound = true
+                            } else {
+                                latch.countDown()
+                            }
                         }
                     }
                 }
-            }
 
-            webview.loadUrl(origRequestUrl, headers)
+            challengeWebView.loadUrl(origRequestUrl, headers)
         }
 
         latch.awaitFor30Seconds()
@@ -151,7 +165,9 @@ class CloudflareInterceptor(
     }
 }
 
-private val ERROR_CODES = listOf(403, 503)
+internal fun Response.isCloudflareChallenge(): Boolean =
+    header("cf-mitigated") == "challenge" && header("Server") in SERVER_CHECK
+
 private val SERVER_CHECK = arrayOf("cloudflare-nginx", "cloudflare")
 private val COOKIE_NAMES = listOf("cf_clearance")
 
