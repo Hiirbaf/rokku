@@ -10,9 +10,6 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 
 ## [Unreleased]
 
-### Additions
-- Added support for Android 16's Live Updates: the library update progress notification can now be promoted to a status bar chip
-
 ### Fixes
 - Fixed laggy, stuttering library scrolling and covers intermittently failing to appear (library, updates, history), caused by cover images being decoded at their full original resolution instead of the view's size
 - Fixed checked checkboxes rendering with an invisible checkmark on the Yin Yang theme (checkbox and checkmark colors resolved to the same tint)
@@ -25,6 +22,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Fixed the full cover viewer's save/replace buttons overlapping the display cutout, and the cover image double-applying system bar insets, on Android 15+ ([@Hiirbaf](https://github.com/Hiirbaf))
 
 ### Other
+- Added support for Android 16's Live Updates: the library update progress notification can now be promoted to a status bar chip
 - Stopped reporting coroutine cancellations as non-fatal errors to Crashlytics; they're normal control flow, not bugs
 - Stopped reporting pure network connectivity failures (DNS, timeout, TLS handshake, connection reset) as non-fatal errors to Crashlytics; they reflect the user's network or a source's server, not something fixable in the app
 - Stopped reporting general TLS failures (not just handshake failures) and a source's "unsupported" errors while browsing (e.g. a source that requires a specific search query format) as non-fatal errors to Crashlytics
