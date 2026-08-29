@@ -69,6 +69,11 @@ class CrashlyticsLogWriter : LogWriter() {
      *
      * Also skips AniList's tracker refresh not finding the manga in the user's list anymore
      * (e.g. removed/unlinked directly on AniList's site) - not a Rokku bug.
+     *
+     * Also skips the OS refusing to promote a library update job to a foreground service
+     * (android.app.ForegroundServiceStartNotAllowedException, API 31+, matched by class name
+     * since it doesn't extend IllegalStateException) - tryToSetForeground() already treats
+     * this as best-effort and lets the update proceed without the progress notification.
      */
     private fun Throwable.isIgnoredForCrashlytics(): Boolean {
         var current: Throwable? = this
@@ -110,6 +115,7 @@ class CrashlyticsLogWriter : LogWriter() {
             }
 
             if (current.message == "Refresh Chapter List" || current.message == "Could not find manga") return true
+            if (current.javaClass.simpleName == "ForegroundServiceStartNotAllowedException") return true
 
             current = current.cause?.takeIf { it !== current }
         }

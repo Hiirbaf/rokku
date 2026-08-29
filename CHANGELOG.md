@@ -10,6 +10,9 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 
 ## [Unreleased]
 
+### Fixes
+- Fixed the library update job silently failing (and spamming Crashlytics) when the OS refused to promote it to a foreground service
+
 ## [1.7.1]
 
 ### Fixes

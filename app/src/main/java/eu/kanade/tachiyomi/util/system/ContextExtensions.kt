@@ -442,7 +442,11 @@ suspend fun CoroutineWorker.tryToSetForeground() {
     try {
         setForeground(getForegroundInfo())
         delay(1000)
-    } catch (e: IllegalStateException) {
+    } catch (e: Exception) {
+        // Also covers android.app.ForegroundServiceStartNotAllowedException (API 31+),
+        // which does NOT extend IllegalStateException - the OS can refuse to promote us
+        // to a foreground service (e.g. a background-started periodic library update),
+        // and this is best-effort: the update itself still runs without the notification.
         Logger.e(e) { "Not allowed to set foreground job" }
     }
 }
