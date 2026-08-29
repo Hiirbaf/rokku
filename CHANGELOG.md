@@ -13,29 +13,19 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 ## [1.7.1]
 
 ### Fixes
-- Fixed laggy, stuttering library scrolling and covers intermittently failing to appear (library, updates, history), caused by cover images being decoded at their full original resolution instead of the view's size
-- Fixed checked checkboxes rendering with an invisible checkmark on the Yin Yang theme (checkbox and checkmark colors resolved to the same tint)
-- Fixed extension loading blocking the main thread during startup, causing ANRs for users with many extensions installed
-- Fixed the file logger blocking the calling thread (including the main thread, e.g. when logging a reader error) whenever the log-writing thread was busy with slow disk I/O
-- Fixed a crash opening a manga's chapter list on some devices when a "missing chapters" gap indicator was shown
-- Fixed a tracker refresh/removal failure showing a raw "HTTP error 401" toast instead of telling the user their tracker login session expired
-- Fixed the manga details screen still theming the follow/download buttons from the cover after disabling "Theme buttons based on cover", once a cover color had already been cached for that manga
-- Fixed a download crashing with an unhandled NullPointerException and getting stuck instead of erroring out when its temporary chapter folder failed to be created
-- Fixed the full cover viewer's save/replace buttons overlapping the display cutout, and the cover image double-applying system bar insets, on Android 15+ ([@Hiirbaf](https://github.com/Hiirbaf))
+- Fixed laggy, stuttering scrolling and covers intermittently failing to appear in the library, updates, and history
+- Fixed checked checkboxes rendering with an invisible checkmark on the Yin Yang theme
+- Fixed extension loading blocking the main thread during startup, causing ANRs with many extensions installed
+- Fixed the file logger blocking the app, including the UI, during slow disk I/O
+- Fixed a crash opening a manga's chapter list when a "missing chapters" gap indicator was shown
+- Fixed a tracker refresh/removal failure showing a raw "HTTP error 401" toast instead of an expired-session message
+- Fixed the manga details screen still theming the follow/download buttons from the cover after disabling "Theme buttons based on cover"
+- Fixed a download crashing and getting stuck instead of erroring out when its temporary chapter folder failed to be created
+- Fixed the full cover viewer's buttons and image being misaligned with the display cutout/system bars on Android 15+ ([@Hiirbaf](https://github.com/Hiirbaf))
 
 ### Other
 - Added support for Android 16's Live Updates: the library update progress notification can now be promoted to a status bar chip
-- Stopped reporting coroutine cancellations as non-fatal errors to Crashlytics; they're normal control flow, not bugs
-- Stopped reporting pure network connectivity failures (DNS, timeout, TLS handshake, connection reset) as non-fatal errors to Crashlytics; they reflect the user's network or a source's server, not something fixable in the app
-- Stopped reporting general TLS failures (not just handshake failures) and a source's "unsupported" errors while browsing (e.g. a source that requires a specific search query format) as non-fatal errors to Crashlytics
-- Stopped reporting individual related-manga keyword search failures as non-fatal errors to Crashlytics as long as at least one other keyword still found results
-- Stopped reporting the best-effort metadata/chapter fetch that runs right after adding a manga to the library as a non-fatal error to Crashlytics when it fails
-- Stopped reporting expired tracker login sessions (HTTP 401/403) as non-fatal errors to Crashlytics
-- Stopped reporting a source's server errors (HTTP 5xx) and the downloads folder becoming inaccessible (permission revoked, folder moved/deleted, storage removed) as non-fatal errors to Crashlytics
-- Stopped reporting a source's server errors (HTTP 5xx) raised by an extension's own HTTP client, and a downloaded page file becoming missing/inaccessible when opened in the reader, as non-fatal errors to Crashlytics
-- Stopped reporting a proxy/middlebox mangling the HTTP/2 handshake, the user opening a chapter for a manga whose extension they've since uninstalled, and an extension's own "chapter list is stale" signal (e.g. Madara-based sources) as non-fatal errors to Crashlytics
-- Stopped reporting an extension's dex not being readable yet when its install/update races the startup extension scan, and a downloaded page file disappearing between the download finishing and CBZ archiving, as non-fatal errors to Crashlytics; both already resolve/surface correctly on their own
-- Stopped reporting an AniList tracker refresh not finding the manga in the user's list anymore (e.g. removed/unlinked directly on AniList's site) as a non-fatal error to Crashlytics
+- Reduced Crashlytics noise by no longer reporting non-fatal errors that reflect expected conditions rather than real bugs (network/server issues, expired sessions, self-healing races, and similar)
 
 ## [1.7.0]
 
