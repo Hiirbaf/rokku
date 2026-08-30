@@ -16,12 +16,12 @@ import eu.kanade.tachiyomi.source.CatalogueSource
 import eu.kanade.tachiyomi.source.Source
 import eu.kanade.tachiyomi.source.SourceFactory
 import eu.kanade.tachiyomi.util.lang.Hash
-import eu.kanade.tachiyomi.util.system.ChildFirstPathClassLoader
 import eu.kanade.tachiyomi.util.system.withIOContext
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import uy.kohesive.injekt.injectLazy
+import yokai.data.dalvik.DelegateLastClassLoaderCompat
 import yokai.domain.extension.interactor.TrustExtension
 import java.io.File
 import java.nio.file.Files
@@ -339,7 +339,7 @@ internal object ExtensionLoader {
         val hasChangelog = metaData.getInt(METADATA_HAS_CHANGELOG, 0) == 1
 
         val classLoader = try {
-            ChildFirstPathClassLoader(appInfo.sourceDir, null, context.classLoader)
+            DelegateLastClassLoaderCompat(appInfo.sourceDir, null, context.classLoader)
         } catch (e: Exception) {
             Logger.e(e) { "Extension load error: $extName ($pkgName)" }
             return LoadResult.Error
