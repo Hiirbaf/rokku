@@ -7,6 +7,8 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.SearchOff
 import androidx.core.view.WindowInsetsCompat.Type.systemBars
 import androidx.core.view.isVisible
 import androidx.core.view.updatePaddingRelative
@@ -377,7 +379,7 @@ open class GlobalSearchController(
                 applyResultsFilter(searchResult).isEmpty()
         binding.emptyView.isVisible = showEmpty
         if (showEmpty) {
-            binding.emptyView.show(R.drawable.ic_search_off_24dp, MR.strings.no_results_found)
+            binding.emptyView.show(Icons.Outlined.SearchOff, MR.strings.no_results_found)
         }
     }
 
