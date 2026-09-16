@@ -377,7 +377,7 @@ open class GlobalSearchController(
                 applyResultsFilter(searchResult).isEmpty()
         binding.emptyView.isVisible = showEmpty
         if (showEmpty) {
-            binding.emptyView.show(Icons.Outlined.SearchOff, MR.strings.no_results_found)
+            binding.emptyView.show(R.drawable.ic_search_off_24dp, MR.strings.no_results_found)
         }
     }
 
