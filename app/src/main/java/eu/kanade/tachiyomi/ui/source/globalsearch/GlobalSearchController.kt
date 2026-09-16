@@ -147,7 +147,7 @@ open class GlobalSearchController(
                 this@GlobalSearchController,
                 onMangaAdded = { migrationInfo ->
                     migrationInfo?.let { (source, stillFaved) ->
-                        val index = this@GlobalSearchController.adapter
+                        val index = this.adapter
                             ?.currentItems
                             ?.indexOfFirst { (it as? GlobalSearchItem)?.source?.id == source } ?: return@let
                         val item = this.adapter?.getItem(index) as? GlobalSearchItem ?: return@let
