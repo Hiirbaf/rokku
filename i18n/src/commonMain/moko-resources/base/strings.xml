@@ -1160,6 +1160,7 @@
     <string name="filter">Filter</string>
     <string name="forward">Forward</string>
     <string name="free">Free</string>
+    <string name="has_results">Has results</string>
     <string name="hide">Hide</string>
     <string name="ignore">Ignore</string>
     <string name="include_">Include: %s</string>
