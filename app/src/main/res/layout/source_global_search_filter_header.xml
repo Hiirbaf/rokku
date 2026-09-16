@@ -16,6 +16,7 @@
         android:id="@+id/pinned_button"
         style="@style/Widget.Tachiyomi.Button.OutlinedButton.Icon"
         android:checkable="true"
+        app:toggleCheckedStateOnClick="false"
         app:icon="@drawable/ic_pin_checked_selector_24dp"
         android:text="@string/pinned_only" />
 
@@ -23,6 +24,7 @@
         android:id="@+id/has_results_button"
         style="@style/Widget.Tachiyomi.Button.OutlinedButton.Icon"
         android:checkable="true"
+        app:toggleCheckedStateOnClick="false"
         app:icon="@drawable/ic_search_check_24dp"
         android:text="@string/has_results" />
 
