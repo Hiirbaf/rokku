@@ -147,10 +147,10 @@ open class GlobalSearchController(
                 this@GlobalSearchController,
                 onMangaAdded = { migrationInfo ->
                     migrationInfo?.let { (source, stillFaved) ->
-                        val index = this.adapter
+                        val index = this@GlobalSearchController.adapter
                             ?.currentItems
                             ?.indexOfFirst { (it as? GlobalSearchItem)?.source?.id == source } ?: return@let
-                        val item = this.adapter?.getItem(index) as? GlobalSearchItem ?: return@let
+                        val item = this@GlobalSearchController.adapter?.getItem(index) as? GlobalSearchItem ?: return@let
                         val oldMangaIndex = item.results?.indexOfFirst {
                             it.manga.title.lowercase() == manga.title.lowercase()
                         } ?: return@let
@@ -377,7 +377,7 @@ open class GlobalSearchController(
                 applyResultsFilter(searchResult).isEmpty()
         binding.emptyView.isVisible = showEmpty
         if (showEmpty) {
-            binding.emptyView.show(R.drawable.ic_search_off_24dp, R.string.no_results_found)
+            binding.emptyView.show(Icons.Outlined.SearchOff, MR.strings.no_results_found)
         }
     }
 
