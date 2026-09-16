@@ -36,6 +36,7 @@ import eu.kanade.tachiyomi.util.view.setOnQueryTextChangeListener
 import eu.kanade.tachiyomi.util.view.snack
 import eu.kanade.tachiyomi.util.view.toolbarHeight
 import eu.kanade.tachiyomi.util.view.withFadeTransaction
+import eu.kanade.tachiyomi.widget.EmptyView
 import uy.kohesive.injekt.injectLazy
 import yokai.i18n.MR
 import yokai.util.lang.getString
@@ -88,6 +89,9 @@ open class GlobalSearchController(
     private var snack: Snackbar? = null
     private var lastPosition: Int = -1
 
+    private var showOnlyResults = false
+    private var lastSearchResult: List<GlobalSearchItem> = emptyList()
+
     // Called when controller is initialized.
     init {
         setHasOptionsMenu(true)
@@ -102,7 +106,7 @@ open class GlobalSearchController(
     override val presenter = GlobalSearchPresenter(initialQuery, extensionFilter)
 
     override fun onTitleClick(position: Int) {
-        val source = adapter?.getItem(position)?.source ?: return
+        val source = (adapter?.getItem(position) as? GlobalSearchItem)?.source ?: return
         preferences.lastUsedCatalogueSource().set(source.id)
         router.pushController(BrowseSourceController(source, presenter.query).withFadeTransaction())
         lastPosition = position
@@ -115,7 +119,8 @@ open class GlobalSearchController(
      */
     override fun onMangaClick(manga: Manga) {
         // Open MangaController.
-        lastPosition = adapter?.currentItems?.indexOfFirst { it.source.id == manga.source } ?: -1
+        lastPosition =
+            adapter?.currentItems?.indexOfFirst { (it as? GlobalSearchItem)?.source?.id == manga.source } ?: -1
         router.pushController(
             MangaDetailsController(manga, true, shouldLockIfNeeded = activity is SearchActivity)
                 .withFadeTransaction(),
@@ -143,8 +148,9 @@ open class GlobalSearchController(
                 onMangaAdded = { migrationInfo ->
                     migrationInfo?.let { (source, stillFaved) ->
                         val index = this@GlobalSearchController.adapter
-                            ?.currentItems?.indexOfFirst { it.source.id == source } ?: return@let
-                        val item = this@GlobalSearchController.adapter?.getItem(index) ?: return@let
+                            ?.currentItems
+                            ?.indexOfFirst { (it as? GlobalSearchItem)?.source?.id == source } ?: return@let
+                        val item = this.adapter?.getItem(index) as? GlobalSearchItem ?: return@let
                         val oldMangaIndex = item.results?.indexOfFirst {
                             it.manga.title.lowercase() == manga.title.lowercase()
                         } ?: return@let
@@ -257,6 +263,8 @@ open class GlobalSearchController(
                 (activityBinding?.root?.rootWindowInsetsCompat?.getInsets(systemBars())?.top ?: 0),
         )
 
+        setupFilterHeader()
+
         // Create recycler and set adapter.
         binding.recycler.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(view.context)
         binding.recycler.adapter = adapter
@@ -300,7 +308,7 @@ open class GlobalSearchController(
         val adapter = adapter ?: return null
 
         adapter.allBoundViewHolders.forEach { holder ->
-            val item = adapter.getItem(holder.flexibleAdapterPosition)
+            val item = adapter.getItem(holder.flexibleAdapterPosition) as? GlobalSearchItem
             if (item != null && source.id == item.source.id) {
                 return holder as GlobalSearchHolder
             }
@@ -332,7 +340,9 @@ open class GlobalSearchController(
                 activityBinding?.appBar?.updateAppBarAfterY(binding.recycler)
             }
         }
-        adapter?.updateDataSet(searchResult)
+        lastSearchResult = searchResult
+        adapter?.updateDataSet(applyResultsFilter(searchResult))
+        updateFooterAndEmptyState(searchResult)
     }
 
     /**
@@ -342,6 +352,62 @@ open class GlobalSearchController(
      */
     fun onMangaInitialized(source: CatalogueSource, manga: Manga) {
         getHolder(source)?.setImage(manga)
+    }
+
+    private fun applyResultsFilter(searchResult: List<GlobalSearchItem>): List<GlobalSearchItem> =
+        if (showOnlyResults) searchResult.filter { !it.results.isNullOrEmpty() } else searchResult
+
+    private fun updateFooterAndEmptyState(searchResult: List<GlobalSearchItem>) {
+        val loadingCount = searchResult.count { it.results == null }
+        // only touch the footer on an actual show/hide transition - removing and re-adding it on
+        // every source that finishes (even though its content never changes) makes RecyclerView's
+        // item animator fade it out and back in each time
+        val shouldShowFooter = showOnlyResults && loadingCount > 0
+        val footerShown = adapter?.scrollableFooters?.isNotEmpty() == true
+        if (shouldShowFooter && !footerShown) {
+            adapter?.addScrollableFooter(GlobalSearchLoadingFooterItem())
+        } else if (!shouldShowFooter && footerShown) {
+            adapter?.removeAllScrollableFooters()
+        }
+
+        val showEmpty =
+            showOnlyResults &&
+                loadingCount == 0 &&
+                searchResult.isNotEmpty() &&
+                applyResultsFilter(searchResult).isEmpty()
+        binding.emptyView.isVisible = showEmpty
+        if (showEmpty) {
+            binding.emptyView.show(R.drawable.ic_search_off_24dp, R.string.no_results_found)
+        }
+    }
+
+    private fun setHasResultsFilter(enabled: Boolean) {
+        showOnlyResults = enabled
+        preferences.onlySearchWithResults().set(enabled)
+        adapter?.updateDataSet(applyResultsFilter(lastSearchResult))
+        updateFooterAndEmptyState(lastSearchResult)
+    }
+
+    private fun setPinnedOnlyFilter(enabled: Boolean) {
+        preferences.onlySearchPinned().set(enabled)
+        presenter.refreshSourceFilter()
+    }
+
+    private fun setupFilterHeader() {
+        showOnlyResults = preferences.onlySearchWithResults().get()
+        adapter?.addScrollableHeader(
+            GlobalSearchFilterHeaderItem(
+                // sourcesToUse (e.g. migration search) bypasses the pinned/all filter entirely
+                showPinnedButton = { presenter.sourceFilterEnabled },
+                isPinnedOnly = { preferences.onlySearchPinned().get() },
+                isHasResults = { showOnlyResults },
+                onPinnedClick = ::setPinnedOnlyFilter,
+                onHasResultsClick = ::setHasResultsFilter,
+            ),
+        )
+        // in case items were already pushed by the presenter before this ran
+        adapter?.updateDataSet(applyResultsFilter(lastSearchResult))
+        updateFooterAndEmptyState(lastSearchResult)
     }
 
     /**
