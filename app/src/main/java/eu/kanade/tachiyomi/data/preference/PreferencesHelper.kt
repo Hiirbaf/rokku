@@ -404,6 +404,8 @@ class PreferencesHelper(val context: Context, val preferenceStore: PreferenceSto
 
     fun onlySearchPinned() = preferenceStore.getBoolean(Keys.onlySearchPinned, false)
 
+    fun onlySearchWithResults() = preferenceStore.getBoolean(Keys.onlySearchWithResults, false)
+
     fun hideInLibraryItems() = preferenceStore.getBoolean("browse_hide_in_library_items", false)
 
     fun showDuplicateInLibraryItems() = preferenceStore.getBoolean("browse_show_duplicate_in_library_items", false)
