@@ -16,7 +16,7 @@ import android.R as AR
 class MangaDetailsDivider(context: Context, val padding: Int = 12.dpToPx) : androidx.recyclerview.widget.RecyclerView.ItemDecoration() {
 
     private val divider: Drawable
-    private val baseDividerColor = ContextCompat.getColor(context, AR.color.divider)
+    private val baseDividerColor = ContextCompat.getColor(context, R.color.divider)
 
     /** Shifts the divider's hue to match the cover's accent color, keeping its original alpha/lightness */
     var accentColor: Int? = null
