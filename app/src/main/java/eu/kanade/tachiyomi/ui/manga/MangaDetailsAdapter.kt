@@ -22,6 +22,13 @@ import yokai.util.lang.getString
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 
+/** The cover-derived colors used to theme the manga details page, computed together so every consumer stays in sync */
+data class MangaDetailsColors(
+    val cover: Int? = null,
+    val accent: Int? = null,
+    val background: Int? = null,
+)
+
 class MangaDetailsAdapter(
     val controller: MangaDetailsController,
 ) : BaseChapterAdapter<IFlexible<*>>(controller) {
@@ -177,8 +184,7 @@ class MangaDetailsAdapter(
     interface MangaDetailsInterface : MangaHeaderInterface, DownloadInterface
 
     interface MangaHeaderInterface {
-        fun coverColor(): Int?
-        fun accentColor(): Int?
+        fun themeColors(): MangaDetailsColors
         fun mangaPresenter(): MangaDetailsPresenter
         fun prepareToShareManga()
         fun openInWebView()
