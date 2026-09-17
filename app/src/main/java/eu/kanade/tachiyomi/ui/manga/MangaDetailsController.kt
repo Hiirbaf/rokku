@@ -471,7 +471,7 @@ class MangaDetailsController :
         }
 
         val context = view?.context ?: return
-        val backgroundColor = accentColor ?: return
+        val backgroundColor = themeColors.accent ?: return
 
         val states = arrayOf(
             intArrayOf(-AR.attr.state_enabled),
@@ -750,7 +750,7 @@ class MangaDetailsController :
                                         manga?.vibrantCoverColor = scheme.primary.toArgb()
                                         setAccentColorValue(scheme.primary.toArgb(), scheme.onPrimary.toArgb())
                                         setHeaderColorValue(scheme.primaryContainer.toArgb())
-                                        setBackgroundColorValue(vibrantColor) //Vibrant color
+                                        setBackgroundColorValue() //prueba
                                     }
                                     setItemColors()
                                 }
@@ -780,7 +780,7 @@ class MangaDetailsController :
     private fun setAccentColorValueLegacy(colorToUse: Int?) {
         val context = view?.context ?: return
         setCoverColorValue(colorToUse)
-        accentColor = colorToUse?.let {
+        val newAccentColor = colorToUse?.let {
             val luminance = ColorUtils.calculateLuminance(it).toFloat()
             if (if (!context.isInNightMode()) luminance > 0.4 else luminance <= 0.6) {
                 ColorUtils.blendARGB(
