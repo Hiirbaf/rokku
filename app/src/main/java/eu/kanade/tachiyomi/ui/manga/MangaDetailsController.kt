@@ -758,7 +758,7 @@ class MangaDetailsController :
                                 setAccentColorValue()
                                 setHeaderColorValue()
                                     setBackgroundColorValue()
-                                    themeColors.cover?.let { color -> getHeader()?.setBackDrop(color) }
+                                    themeColors.background?.let { color -> getHeader()?.setBackDrop(color) }
                                 setItemColors()
                             }
                         }
