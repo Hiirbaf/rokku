@@ -661,7 +661,7 @@ class MangaHeaderHolder(
             stateListAnimator = AnimatorInflater.loadStateListAnimator(context, R.animator.icon_btn_state_list_anim)
             backgroundTintList = ColorStateList.valueOf(
                 ColorUtils.blendARGB(
-                    adapter.delegate.accentColor() ?: context.getResourceColor(R.attr.colorSecondary),
+                    adapter.delegate.themeColors().accent ?: context.getResourceColor(R.attr.colorSecondary),
                     context.getResourceColor(R.attr.background),
                     0.706f,
                 ),
