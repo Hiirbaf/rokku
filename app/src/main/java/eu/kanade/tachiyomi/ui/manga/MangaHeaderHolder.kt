@@ -53,6 +53,7 @@ import eu.kanade.tachiyomi.util.lang.toNormalized
 import eu.kanade.tachiyomi.util.system.getResourceColor
 import eu.kanade.tachiyomi.util.system.isInNightMode
 import eu.kanade.tachiyomi.util.system.isLTR
+import eu.kanade.tachiyomi.util.view.backgroundColor
 import eu.kanade.tachiyomi.util.view.resetStrokeColor
 import io.noties.markwon.Markwon
 import io.noties.markwon.SoftBreakAddsNewLinePlugin
@@ -450,9 +451,10 @@ class MangaHeaderHolder(
             adapter.delegate.setFavButtonPopup(this)
         }
         binding.trueBackdrop.setBackgroundColor(
-            adapter.delegate.coverColor()
+            adapter.delegate.themeColors().cover
                 ?: itemView.context.getResourceColor(R.attr.background),
         )
+        applyBackgroundTint(binding)
 
         val tracked = presenter.isTracked() && !item.isLocked
 
@@ -578,18 +580,19 @@ class MangaHeaderHolder(
             val dark = context.isInNightMode()
             val amoled = adapter.delegate.mangaPresenter().preferences.themeDarkAmoled().get()
             val baseTagColor = context.getResourceColor(R.attr.background)
+            val tagAccentColor = adapter.delegate.themeColors().accent
             val bgArray = FloatArray(3)
             val accentArray = FloatArray(3)
 
             ColorUtils.colorToHSL(baseTagColor, bgArray)
             ColorUtils.colorToHSL(
-                adapter.delegate.accentColor() ?: context.getResourceColor(R.attr.colorSecondary),
+                tagAccentColor ?: context.getResourceColor(R.attr.colorSecondary),
                 accentArray,
             )
             val downloadedColor = ColorUtils.setAlphaComponent(
                 ColorUtils.HSLToColor(
                     floatArrayOf(
-                        if (adapter.delegate.accentColor() != null) accentArray[0] else bgArray[0],
+                        if (tagAccentColor != null) accentArray[0] else bgArray[0],
                         bgArray[1],
                         (
                             when {
@@ -685,8 +688,19 @@ class MangaHeaderHolder(
         binding.trueBackdrop.setBackgroundColor(color)
     }
 
+    /** Tints the plain-background fill areas around the backdrop and "more" fade with the page's themed background */
+    private fun applyBackgroundTint(binding: MangaHeaderItemBinding) {
+        val bgColor =
+            adapter.delegate.themeColors().background
+                ?: itemView.context.getResourceColor(R.attr.background)
+        binding.backdropGradient.backgroundTintList = ColorStateList.valueOf(bgColor)
+        binding.backdropFill.setBackgroundColor(bgColor)
+        binding.moreBgGradient.backgroundTintList = ColorStateList.valueOf(bgColor)
+        binding.moreBgSolid.setBackgroundColor(bgColor)
+    }
+
     fun updateColors(updateAll: Boolean = true) {
-        val accentColor = adapter.delegate.accentColor()
+        val accentColor = adapter.delegate.themeColors().accent
             ?: itemView.context.getResourceColor(R.attr.colorSecondary)
         if (binding == null) {
             if (chapterBinding != null) {
@@ -697,9 +711,10 @@ class MangaHeaderHolder(
         val manga = adapter.presenter.manga
         with(binding) {
             trueBackdrop.setBackgroundColor(
-                adapter.delegate.coverColor()
+                adapter.delegate.themeColors().cover
                     ?: trueBackdrop.context.getResourceColor(R.attr.background),
             )
+            applyBackgroundTint(binding)
             TextViewCompat.setCompoundDrawableTintList(moreButton, ColorStateList.valueOf(accentColor))
             moreButton.setTextColor(accentColor)
             TextViewCompat.setCompoundDrawableTintList(lessButton, ColorStateList.valueOf(accentColor))
