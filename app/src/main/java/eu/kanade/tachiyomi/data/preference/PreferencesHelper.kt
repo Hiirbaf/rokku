@@ -283,6 +283,25 @@ class PreferencesHelper(val context: Context, val preferenceStore: PreferenceSto
         InstalledExtensionsOrder.Name.value,
     )
 
+    fun showBrowseSearchHistory() = preferenceStore.getBoolean(Keys.showBrowseSearchHistory, true)
+
+    /** Recent browse queries, newest first. Global search and per source search share the one list. */
+    fun browseSearchHistory() =
+        preferenceStore.getObject(
+            Keys.browseSearchHistory,
+            object : Serializer<List<String>> {
+                override fun serialize(value: List<String>): String = Json.encodeToString(value)
+
+                override fun deserialize(serialized: String): List<String> =
+                    try {
+                        Json.decodeFromString(serialized)
+                    } catch (e: Exception) {
+                        emptyList()
+                    }
+            },
+            emptyList(),
+        )
+
     // TODO: SourcePref
     fun migrationSourceOrder() = preferenceStore.getInt(
         "migration_source_order",
