@@ -419,7 +419,7 @@ class MangaDetailsController :
         val context = view?.context ?: return
         val baseBackground = context.getResourceColor(R.attr.background)
         val newBackgroundColor =
-            if (presenter.preferences.themeMangaDetails()) {
+            if (presenter.preferences.themeMangaDetails().get()) {
                 (colorToUse ?: manga?.vibrantCoverColor)?.let {
                     makeColorFrom(hueOf = it, satAndLumOf = baseBackground)
                 }
