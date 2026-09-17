@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
+import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.util.system.dpToPx
 import eu.kanade.tachiyomi.util.system.isLTR
 import android.R as AR
