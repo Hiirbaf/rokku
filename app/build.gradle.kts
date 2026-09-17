@@ -124,6 +124,14 @@ android {
         aidl = true
         renderScript = false
         shaders = false
+        prefab = true
+    }
+
+    externalNativeBuild {
+        cmake {
+            path = file("src/main/cpp/CMakeLists.txt")
+            version = "3.22.1"
+        }
     }
 
     flavorDimensions.add("default")
@@ -269,6 +277,9 @@ dependencies {
     // REF: https://square.github.io/leakcanary/
     debugImplementation(libs.leakcanary.android)
     implementation(libs.leakcanary.plumber)
+
+    // Discord Partner SDK
+    implementation(files("libs/discord_partner_sdk.aar"))
 }
 
 tasks {
