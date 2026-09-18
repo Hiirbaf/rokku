@@ -189,11 +189,12 @@ class DiscordRPCService : Service() {
                     else -> context.getString(discordScreen.details)
                 },
             )
+            val chapterText = getFormattedChapterTitle(context, readerData)
             val state = sanitizeField(
                 when {
                     !showProgress -> null
-                    readerData.chapterNumber != null -> readerData.chapterNumber
-                    else -> context.getString(discordScreen.text)
+                    chapterText != null -> chapterText
+                    else -> context.getString(discordScreen.state)
                 },
             )
             val imageUrl = readerData.thumbnailUrl.takeUnless { it.isNullOrBlank() } ?: discordScreen.imageUrl
@@ -234,14 +235,14 @@ class DiscordRPCService : Service() {
 
                 val discordIncognito = isIncognito(categories, readerData.incognitoMode)
                 val mangaTitle = readerData.mangaTitle.takeUnless { discordIncognito }
-                val chapterTitle = getFormattedChapterTitle(readerData, discordIncognito)
                 val mangaThumbnail = if (discordIncognito) null else readerData.thumbnailUrl.takeUnless { it.isNullOrBlank() }
 
                 val data = ReaderData(
                     incognitoMode = discordIncognito,
                     mangaId = readerData.mangaId,
                     mangaTitle = mangaTitle,
-                    chapterNumber = chapterTitle,
+                    chapterNumber = readerData.chapterNumber,
+                    chapterTitle = readerData.chapterTitle,
                     thumbnailUrl = mangaThumbnail,
                 )
 
@@ -252,6 +253,18 @@ class DiscordRPCService : Service() {
                 withIOContext { setScreen(context, DiscordScreen.MANGA, data) }
             } catch (e: Exception) {
                 Log.e(TAG, "Error setting reader activity: ${e.message}", e)
+            }
+        }
+
+        private fun getFormattedChapterTitle(context: Context, readerData: ReaderData): String? {
+            if (readerData.incognitoMode) return null
+            return if (connectionsPreferences.useChapterTitles().get()) {
+                readerData.chapterTitle
+            } else {
+                context.resources.getString(
+                    R.string.chapter_,
+                    formatChapterNumber(readerData.chapterNumber.first.toDouble()),
+                ) + "/${readerData.chapterNumber.second}"
             }
         }
 
@@ -269,17 +282,6 @@ class DiscordRPCService : Service() {
             val incognitoCategories = connectionsPreferences.discordRPCIncognitoCategories().get()
             val incognitoCategory = categories.fastAny { it in incognitoCategories }
             return discordIncognitoMode || incognitoMode || incognitoCategory
-        }
-
-        private fun getFormattedChapterTitle(readerData: ReaderData, discordIncognito: Boolean): String? {
-            if (discordIncognito) return null
-            return if (connectionsPreferences.useChapterTitles().get()) {
-                readerData.chapterTitle
-            } else {
-                readerData.chapterNumber.let {
-                    context.resources.getString(R.string.chapter_, formatChapterNumber(it.first.toDouble())) + "/${it.second}"
-                }
-            }
         }
     }
 }
