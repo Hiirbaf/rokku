@@ -67,6 +67,7 @@ android {
         buildConfigField("Boolean", "INCLUDE_UPDATER", "false")
         buildConfigField("Boolean", "BETA", "false")
         buildConfigField("Boolean", "NIGHTLY", "false")
+        buildConfigField("long", "DISCORD_APP_ID", "1550230563879780442" + "L")
 
         ndk {
             // False positive, we have x86 abi support
