@@ -62,6 +62,8 @@ import eu.davidea.flexibleadapter.items.IHeader
 import eu.davidea.flexibleadapter.items.ISectionable
 import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.core.preference.Preference
+import eu.kanade.tachiyomi.data.connections.discord.DiscordRPCService
+import eu.kanade.tachiyomi.data.connections.discord.DiscordScreen
 import eu.kanade.tachiyomi.data.database.models.Category
 import eu.kanade.tachiyomi.data.database.models.LibraryManga
 import eu.kanade.tachiyomi.data.library.LibraryUpdateJob
@@ -608,6 +610,13 @@ open class LibraryController(
     }
 
     override fun createBinding(inflater: LayoutInflater) = LibraryControllerBinding.inflate(inflater)
+
+    override fun onAttach(view: View) {
+        super.onAttach(view)
+        viewScope.launch {
+            DiscordRPCService.setScreen(activity ?: return@launch, DiscordScreen.LIBRARY)
+        }
+    }
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View) {
