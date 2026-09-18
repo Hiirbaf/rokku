@@ -315,7 +315,7 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="discord-TU_APP_ID_AQUI" />
+                <data android:scheme="discord-1550230563879780442" />
             </intent-filter>
         </activity>
 
