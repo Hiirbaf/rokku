@@ -8,7 +8,7 @@ const val RICH_PRESENCE_TAG = "discord_rpc"
 const val DOWNLOAD_BUTTON_LABEL = "Descargar"
 const val DOWNLOAD_BUTTON_URL = "https://github.com/rokku-app/rokku/releases"
 const val DISCORD_BUTTON_LABEL = "Discord"
-const val DISCORD_BUTTON_URL = "TU_INVITE_AQUI"
+const val DISCORD_BUTTON_URL = "https://discord.gg/fvskrQZb9j"
 
 data class ReaderData(
     val incognitoMode: Boolean = false,
