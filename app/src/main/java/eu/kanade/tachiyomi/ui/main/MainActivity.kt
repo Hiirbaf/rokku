@@ -293,6 +293,10 @@ open class MainActivity : BaseActivity<MainActivityBinding>() {
 
         super.onCreate(savedInstanceState)
 
+        com.discord.socialsdk.DiscordSocialSdkInit.setEngineActivity(this)
+
+        backPressedCallback = object : OnBackPressedCallback(enabled = true) {
+
         backPressedCallback = object : OnBackPressedCallback(enabled = true) {
             var startTime: Long = 0
             var lastX: Float = 0f
