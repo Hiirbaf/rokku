@@ -306,6 +306,24 @@
             </intent-filter>
         </activity>
 
+        <!-- Discord OAuth (SDK) -->
+        <activity
+            android:name="com.discord.socialsdk.AuthenticationActivity"
+            android:exported="true"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="discord-TU_APP_ID_AQUI" />
+            </intent-filter>
+        </activity>
+
+        <activity android:label="Discord Login"
+            android:name=".ui.setting.connections.DiscordLoginActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:exported="false" />
+
         <activity
             android:name=".extension.util.ExtensionInstallActivity"
             android:icon="@mipmap/ic_launcher"
@@ -357,6 +375,12 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/updates_grid_glance_widget_info" />
         </receiver>
+
+        <service
+            android:name=".data.connections.discord.DiscordRPCService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
 
         <service
             android:name="androidx.work.impl.foreground.SystemForegroundService"
