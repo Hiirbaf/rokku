@@ -33,6 +33,18 @@ class ConnectionsPreferences(
 
     fun useChapterTitles() = preferenceStore.getBoolean("pref_discord_rpc_use_chapter_titles", true)
 
+    fun discordCustomMessage() = preferenceStore.getString("pref_discord_custom_message", "")
+
+    fun discordShowProgress() = preferenceStore.getBoolean("pref_discord_show_progress", true)
+
+    fun discordShowTimestamp() = preferenceStore.getBoolean("pref_discord_show_timestamp", true)
+
+    fun discordShowButtons() = preferenceStore.getBoolean("pref_discord_show_buttons", true)
+
+    fun discordShowDownloadButton() = preferenceStore.getBoolean("pref_discord_show_download_button", true)
+
+    fun discordShowDiscordButton() = preferenceStore.getBoolean("pref_discord_show_discord_button", true)
+
     fun discordAccounts() = preferenceStore.getString("discord_accounts", "")
 
     companion object {
