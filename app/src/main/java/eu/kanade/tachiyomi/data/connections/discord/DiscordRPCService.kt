@@ -276,7 +276,9 @@ class DiscordRPCService : Service() {
             return if (connectionsPreferences.useChapterTitles().get()) {
                 readerData.chapterTitle
             } else {
-                readerData.chapterNumber?.let { formatChapterNumber(it.first.toDouble()) + "/${it.second}" }
+                readerData.chapterNumber.let {
+                    context.resources.getString(R.string.chapter_, formatChapterNumber(it.first.toDouble())) + "/${it.second}"
+                }
             }
         }
     }
