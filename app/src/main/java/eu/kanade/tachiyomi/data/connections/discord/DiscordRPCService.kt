@@ -24,7 +24,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import yokai.domain.category.interactor.GetCategories
 import yokai.domain.category.models.Category.Companion.UNCATEGORIZED_ID
-import yokai.i18n.MR
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 import uy.kohesive.injekt.injectLazy
@@ -92,11 +91,11 @@ class DiscordRPCService : Service() {
 
     private fun notification(context: Context) {
         val toggleIcon = if (isPaused) R.drawable.ic_play_arrow_24dp else R.drawable.ic_pause_24dp
-        val toggleText = if (isPaused) getString(MR.strings.resume) else getString(MR.strings.pause)
+        val toggleText = if (isPaused) getString(R.string.resume) else getString(R.string.pause)
         val builder = context.notificationBuilder(Notifications.CHANNEL_DISCORD_RPC) {
             setLargeIcon(BitmapFactory.decodeResource(context.resources, R.mipmap.ic_launcher))
             setSmallIcon(R.drawable.ic_discord_24dp)
-            setContentText(context.resources.getString(MR.strings.pref_discord_rpc))
+            setContentText(context.resources.getString(R.string.pref_discord_rpc))
             setAutoCancel(false)
             setOngoing(true)
             setWhen(since)
@@ -175,7 +174,7 @@ class DiscordRPCService : Service() {
             readerData: ReaderData,
             discordScreen: DiscordScreen,
         ) {
-            val appName = context.getString(MR.strings.app_name)
+            val appName = context.getString(R.string.app_name)
             val customMessage = connectionsPreferences.discordCustomMessage().get()
             val showProgress = connectionsPreferences.discordShowProgress().get()
             val showTimestamp = connectionsPreferences.discordShowTimestamp().get()
@@ -278,7 +277,7 @@ class DiscordRPCService : Service() {
                 readerData.chapterTitle
             } else {
                 readerData.chapterNumber.let {
-                    context.resources.getString(MR.strings.chapter_, formatChapterNumber(it.first.toDouble())) + "/${it.second}"
+                    context.resources.getString(R.string.chapter_, formatChapterNumber(it.first.toDouble())) + "/${it.second}"
                 }
             }
         }
