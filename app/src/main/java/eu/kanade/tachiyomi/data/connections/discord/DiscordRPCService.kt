@@ -20,7 +20,6 @@ import eu.kanade.tachiyomi.ui.reader.formatChapterNumber
 import eu.kanade.tachiyomi.util.system.notificationBuilder
 import eu.kanade.tachiyomi.util.system.launchIO
 import eu.kanade.tachiyomi.util.system.withIOContext
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import yokai.domain.category.interactor.GetCategories
 import yokai.domain.category.models.Category.Companion.UNCATEGORIZED_ID
@@ -31,7 +30,6 @@ import uy.kohesive.injekt.injectLazy
 class DiscordRPCService : Service() {
 
     private val connectionsManager: ConnectionsManager by injectLazy()
-    private val scope: CoroutineScope by injectLazy()
 
     @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate() {
@@ -47,7 +45,7 @@ class DiscordRPCService : Service() {
                 DiscordRpcManager.reconnectWithToken(effectiveToken)
             }
 
-            scope.launchIO {
+            launchIO {
                 DiscordRpcManager.connectionStatus.collect { status ->
                     if (status == DiscordRpcManager.Status.Connected && !isPaused) {
                         try {
@@ -74,7 +72,7 @@ class DiscordRPCService : Service() {
                     DiscordRpcManager.clear()
                 } else {
                     val data = activeReaderData ?: ReaderData()
-                    scope.launchIO { setScreen(this@DiscordRPCService, currentScreen, data) }
+                    launchIO { setScreen(this@DiscordRPCService, currentScreen, data) }
                 }
             }
         }
