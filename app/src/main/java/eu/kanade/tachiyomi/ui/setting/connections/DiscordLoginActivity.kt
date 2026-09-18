@@ -2,13 +2,14 @@ package eu.kanade.tachiyomi.ui.setting.connections
 
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import yokai.domain.connections.service.ConnectionsPreferences
 import eu.kanade.tachiyomi.data.connections.ConnectionsManager
 import eu.kanade.tachiyomi.data.connections.discord.DiscordAccount
 import eu.kanade.tachiyomi.data.connections.discord.DiscordRPCService
 import eu.kanade.tachiyomi.data.connections.discord.DiscordRpcManager
 import eu.kanade.tachiyomi.data.connections.discord.DiscordTokenStore
-import eu.kanade.tachiyomi.ui.base.activity.BaseActivity
+import eu.kanade.tachiyomi.data.connections.discord.DiscordUser
 import eu.kanade.tachiyomi.util.system.toast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -18,7 +19,7 @@ import kotlinx.coroutines.withContext
 import yokai.i18n.MR
 import uy.kohesive.injekt.injectLazy
 
-class DiscordLoginActivity : BaseActivity() {
+class DiscordLoginActivity : AppCompatActivity() {
 
     private val connectionsManager: ConnectionsManager by injectLazy()
     private val connectionsPreferences: ConnectionsPreferences by injectLazy()
@@ -61,7 +62,7 @@ class DiscordLoginActivity : BaseActivity() {
         }
     }
 
-    private fun saveAccount(user: eu.kanade.tachiyomi.data.connections.discord.DiscordUser, token: String) {
+    private fun saveAccount(user: DiscordUser, token: String) {
         val account = DiscordAccount(
             id = user.id,
             username = user.username,
