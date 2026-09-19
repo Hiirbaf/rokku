@@ -524,6 +524,28 @@ class ReaderActivity : BaseActivity<ReaderActivityBinding>() {
         }
     }
 
+    private fun updateDiscordPresence(readerChapter: ReaderChapter, totalPages: Int) {
+            val manga = viewModel.manga ?: return
+            val chapter = readerChapter.chapter
+            val incognito = connectionsPreferences.discordRPCIncognito().get() ||
+            preferences.incognitoMode().get() ||
+            isIncognitoModeForSource(manga.source)
+
+            lifecycleScope.launchIO {
+                DiscordRPCService.updateReaderActivity(
+                    context = this@ReaderActivity,
+                    readerData = ReaderData(
+                        incognitoMode = incognito,
+                        mangaId = manga.id,
+                        mangaTitle = manga.title,
+                        chapterNumber = Pair(chapter.chapter_number, totalPages),
+                        chapterTitle = chapter.preferredChapterName(this@ReaderActivity, manga, preferences),
+                        thumbnailUrl = manga.thumbnail_url,
+                    ),
+                )
+            }
+    }
+
     /**
      * Called when the activity is saving instance state. Current progress is persisted if this
      * activity isn't changing configurations.
@@ -1633,27 +1655,6 @@ class ReaderActivity : BaseActivity<ReaderActivityBinding>() {
         }
         if (didTransitionFromChapter) {
             MainActivity.chapterIdToExitTo = viewerChapters.currChapter.chapter.id ?: 0L
-        }
-        private fun updateDiscordPresence(readerChapter: ReaderChapter, totalPages: Int) {
-            val manga = viewModel.manga ?: return
-            val chapter = readerChapter.chapter
-            val incognito = connectionsPreferences.discordRPCIncognito().get() ||
-            preferences.incognitoMode().get() ||
-            isIncognitoModeForSource(manga.source)
-
-            lifecycleScope.launchIO {
-                DiscordRPCService.updateReaderActivity(
-                    context = this@ReaderActivity,
-                    readerData = ReaderData(
-                        incognitoMode = incognito,
-                        mangaId = manga.id,
-                        mangaTitle = manga.title,
-                        chapterNumber = Pair(chapter.chapter_number, totalPages),
-                        chapterTitle = chapter.preferredChapterName(this@ReaderActivity, manga, preferences),
-                        thumbnailUrl = manga.thumbnail_url,
-                    ),
-                )
-            }
         }
     }
 
