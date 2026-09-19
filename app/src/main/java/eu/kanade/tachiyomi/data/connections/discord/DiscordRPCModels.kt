@@ -36,7 +36,7 @@ enum class DiscordScreen(
 }
 
 private const val CDN = "https://cdn.discordapp.com/"
-private const val tachiyomiImageUrl = "${CDN}emojis/1391938380727713842.webp?quality=lossless"
+private const val tachiyomiImageUrl = "${CDN}emojis/1550782013022281728.webp?quality=lossless"
 private const val libraryImageUrl = "${CDN}emojis/1391940601015959714.webp?quality=lossless"
 private const val updatesImageUrl = "${CDN}emojis/1391945005194674237.webp?quality=lossless"
 private const val historyImageUrl = "${CDN}emojis/1391945005194674237.webp?quality=lossless"
