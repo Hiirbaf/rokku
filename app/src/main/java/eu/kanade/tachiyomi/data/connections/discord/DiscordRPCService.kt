@@ -36,10 +36,12 @@ class DiscordRPCService : Service() {
     @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate() {
         super.onCreate()
+        // Initialize the native SDK if not already done
         if (!DiscordRpcManager.isInitialized()) {
             DiscordRpcManager.init(applicationContext)
         }
 
+        // Get stored OAuth token for the native SDK
         val effectiveToken = DiscordTokenStore.retrieve()
 
         if (!effectiveToken.isNullOrBlank()) {
@@ -47,6 +49,7 @@ class DiscordRPCService : Service() {
                 DiscordRpcManager.reconnectWithToken(effectiveToken)
             }
 
+            // Listen for connection ready state and update RPC automatically when established
             launchIO {
                 DiscordRpcManager.connectionStatus.collect { status ->
                     if (status == DiscordRpcManager.Status.Connected && !isPaused) {
