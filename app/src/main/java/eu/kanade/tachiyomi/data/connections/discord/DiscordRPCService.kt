@@ -20,7 +20,9 @@ import eu.kanade.tachiyomi.ui.reader.formatChapterNumber
 import eu.kanade.tachiyomi.util.system.notificationBuilder
 import eu.kanade.tachiyomi.util.system.launchIO
 import eu.kanade.tachiyomi.util.system.withIOContext
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.delay
 import yokai.domain.category.interactor.GetCategories
 import yokai.domain.category.models.Category.Companion.UNCATEGORIZED_ID
 import uy.kohesive.injekt.Injekt
@@ -126,6 +128,8 @@ class DiscordRPCService : Service() {
 
         const val ACTION_DISCORD_TOGGLE_PAUSE_RESUME = "eu.kanade.tachiyomi.action.DISCORD_RPC_TOGGLE_PAUSE_RESUME"
 
+        private const val ACTIVITY_UPDATE_DELAY_MS = 5_000L
+        private var pendingActivityUpdate: Job? = null
         private var since = 0L
         private var activeReaderData: ReaderData? = null
         internal var currentScreen = DiscordScreen.APP
@@ -219,6 +223,15 @@ class DiscordRPCService : Service() {
                     button2Url = button2Url,
                 ),
             )
+        }
+
+        @OptIn(DelicateCoroutinesApi::class)
+        fun updateReaderActivity(context: Context, readerData: ReaderData = ReaderData()) {
+            pendingActivityUpdate?.cancel()
+            pendingActivityUpdate = launchIO {
+                delay(ACTIVITY_UPDATE_DELAY_MS)
+                setReaderActivity(context, readerData)
+            }
         }
 
         @Suppress("SwallowedException", "TooGenericExceptionCaught")
