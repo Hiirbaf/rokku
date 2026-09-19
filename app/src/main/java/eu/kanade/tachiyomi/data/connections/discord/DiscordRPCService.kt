@@ -55,7 +55,11 @@ class DiscordRPCService : Service() {
                     if (status == DiscordRpcManager.Status.Connected && !isPaused) {
                         try {
                             DiscordRpcManager.setOnlineStatus(
-                                mapToDiscordStatusType(connectionsPreferences.discordRPCStatus().get()),
+                                when (connectionsPreferences.discordRPCStatus().get()) {
+                                    -1 -> DiscordRpcManager.StatusType.Dnd
+                                    0 -> DiscordRpcManager.StatusType.Idle
+                                    else -> DiscordRpcManager.StatusType.Online
+                                },
                             )
                             val data = activeReaderData ?: ReaderData()
                             setScreen(this@DiscordRPCService, currentScreen, data)
@@ -175,12 +179,6 @@ class DiscordRPCService : Service() {
             }
             if (!DiscordRpcManager.isReady() || isPaused) return
             updateDiscordRPC(context, readerData, discordScreen)
-        }
-
-        private fun mapToDiscordStatusType(pref: Int): Int = when (pref) {
-            -1 -> 4 // Discord_StatusType_Dnd
-            0 -> 3  // Discord_StatusType_Idle
-            else -> 0 // Discord_StatusType_Online
         }
 
         private fun updateDiscordRPC(
