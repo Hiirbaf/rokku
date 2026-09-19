@@ -32,7 +32,6 @@
 
     <string name="pref_category_connections">Connections</string>
     <string name="track_activity_name">Tracker login</string>  
-    <string name="login_success">Logged in</string>
     <string name="action_web_view" translatable="false">WebView</string>
     !-- Connections section -->
     <string name="special_services">Special Services</string>
@@ -76,13 +75,10 @@
     <string name="pref_discord_show_discord_button">Show Discord Button</string>
     <string name="pref_discord_show_discord_button_summary">Displays a button to join the Discord server</string>
     <string name="login">Login</string>
-    <string name="login_success">Logged in</string>
     <string name="login_title">Log in to %1$s</string>
     <string name="username">Username</string>
     <string name="email">Email address</string>
     <string name="password">Password</string>
-    <string name="logout_title">Log out from %1$s?</string>
-    <string name="logout">Log out</string>
     <string name="logout_success">You are now logged out</string>
     <string name="tracking_guide">Tracking guide</string>
     <string name="action_cancel">Cancel</string>
