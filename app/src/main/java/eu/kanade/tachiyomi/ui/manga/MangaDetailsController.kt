@@ -70,6 +70,9 @@ import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.SelectableAdapter
 import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.data.coil.getBestColor
+import eu.kanade.tachiyomi.data.connections.discord.DiscordRPCService
+import eu.kanade.tachiyomi.data.connections.discord.DiscordScreen
+import eu.kanade.tachiyomi.data.connections.discord.ReaderData
 import eu.kanade.tachiyomi.data.database.models.Category
 import eu.kanade.tachiyomi.data.database.models.Chapter
 import eu.kanade.tachiyomi.data.database.models.seriesType
@@ -157,6 +160,7 @@ import eu.kanade.tachiyomi.util.view.toolbarHeight
 import eu.kanade.tachiyomi.util.view.withFadeTransaction
 import eu.kanade.tachiyomi.widget.LinearLayoutManagerAccurateOffset
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import yokai.domain.manga.models.cover
 import yokai.i18n.MR
@@ -835,6 +839,16 @@ class MangaDetailsController :
             addMangaHeader()
             updateFab()
             binding.recycler.itemAnimator = itemAnimator
+            viewScope.launch {
+                DiscordRPCService.setScreen(
+                    activity ?: return@launch,
+                    DiscordScreen.LIBRARY,
+                    ReaderData(
+                        mangaId = manga?.id,
+                        mangaTitle = manga?.title,
+                    ),
+                )
+            }
         }
     }
 
