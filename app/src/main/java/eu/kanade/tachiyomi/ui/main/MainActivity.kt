@@ -220,7 +220,6 @@ open class MainActivity : BaseActivity<MainActivityBinding>() {
 
     private val basePreferences: BasePreferences by injectLazy()
 
-    private val basePreferences: BasePreferences by injectLazy()
     private val connectionsPreferences: ConnectionsPreferences by injectLazy()
 
     // Ideally we want this to be inside the controller itself, but Conductor doesn't support the new ActivityResult API
