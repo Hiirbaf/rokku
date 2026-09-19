@@ -12,6 +12,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -99,6 +100,64 @@ object SettingsDiscordScreen : ComposableSettings() {
 
         val enableDRPC by enableDRPCPref.collectAsState()
 
+        val customMessagePref = connectionsPreferences.discordCustomMessage()
+            val showProgressPref = connectionsPreferences.discordShowProgress()
+            val showTimestampPref = connectionsPreferences.discordShowTimestamp()
+            val showButtonsPref = connectionsPreferences.discordShowButtons()
+            val showDownloadButtonPref = connectionsPreferences.discordShowDownloadButton()
+            val showDiscordButtonPref = connectionsPreferences.discordShowDiscordButton()
+
+            val showButtons by showButtonsPref.collectAsState()
+
+            var showCustomMessageDialog by rememberSaveable { mutableStateOf(false) }
+            var tempCustomMessage by rememberSaveable { mutableStateOf(customMessagePref.get()) }
+
+            if (showCustomMessageDialog) {
+                AlertDialog(
+                    onDismissRequest = {
+                        showCustomMessageDialog = false
+                        tempCustomMessage = customMessagePref.get()
+                    },
+                    title = { Text(stringResource(MR.strings.pref_discord_custom_message)) },
+                    text = {
+                        Column {
+                            OutlinedTextField(
+                                value = tempCustomMessage,
+                                onValueChange = { tempCustomMessage = it },
+                                label = { Text(stringResource(MR.strings.pref_discord_custom_message_summary)) },
+                                modifier = Modifier.fillMaxWidth(),
+                                singleLine = true,
+                            )
+                            TextButton(
+                                onClick = {
+                                    customMessagePref.delete()
+                                    tempCustomMessage = ""
+                                },
+                                modifier = Modifier.align(Alignment.End),
+                            ) {
+                                Text(stringResource(MR.strings.action_reset))
+                            }
+                        }
+                    },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            customMessagePref.set(tempCustomMessage)
+                            showCustomMessageDialog = false
+                        }) {
+                            Text(stringResource(MR.strings.action_ok))
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = {
+                            showCustomMessageDialog = false
+                            tempCustomMessage = customMessagePref.get()
+                        }) {
+                            Text(stringResource(MR.strings.action_cancel))
+                        }
+                    },
+                )
+            }
+
         var dialog by remember { mutableStateOf<Any?>(null) }
         dialog?.run {
             when (this) {
@@ -147,6 +206,44 @@ object SettingsDiscordScreen : ComposableSettings() {
             getRPCIncognitoGroup(
                 connectionsPreferences = connectionsPreferences,
                 enabled = enableDRPC,
+            ),
+            Preference.PreferenceGroup(
+                title = stringResource(MR.strings.pref_category_discord_customization),
+                enabled = enableDRPC,
+                preferenceItems = persistentListOf(
+                    Preference.PreferenceItem.TextPreference(
+                        title = stringResource(MR.strings.pref_discord_custom_message),
+                        subtitle = stringResource(MR.strings.pref_discord_custom_message_summary),
+                        onClick = { showCustomMessageDialog = true },
+                    ),
+                    Preference.PreferenceItem.SwitchPreference(
+                        pref = showProgressPref,
+                        title = stringResource(MR.strings.pref_discord_show_progress),
+                        subtitle = stringResource(MR.strings.pref_discord_show_progress_summary),
+                    ),
+                    Preference.PreferenceItem.SwitchPreference(
+                        pref = showTimestampPref,
+                        title = stringResource(MR.strings.pref_discord_show_timestamp),
+                        subtitle = stringResource(MR.strings.pref_discord_show_timestamp_summary),
+                    ),
+                    Preference.PreferenceItem.SwitchPreference(
+                        pref = showButtonsPref,
+                        title = stringResource(MR.strings.pref_discord_show_buttons),
+                        subtitle = stringResource(MR.strings.pref_discord_show_buttons_summary),
+                    ),
+                    Preference.PreferenceItem.SwitchPreference(
+                        pref = showDownloadButtonPref,
+                        title = stringResource(MR.strings.pref_discord_show_download_button),
+                        subtitle = stringResource(MR.strings.pref_discord_show_download_button_summary),
+                        enabled = showButtons,
+                    ),
+                    Preference.PreferenceItem.SwitchPreference(
+                        pref = showDiscordButtonPref,
+                        title = stringResource(MR.strings.pref_discord_show_discord_button),
+                        subtitle = stringResource(MR.strings.pref_discord_show_discord_button_summary),
+                        enabled = showButtons,
+                    ),
+                ),
             ),
             Preference.PreferenceItem.TextPreference(
                 title = stringResource(MR.strings.logout),
