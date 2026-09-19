@@ -87,6 +87,8 @@
     <string name="tracking_guide">Tracking guide</string>
     <string name="action_cancel">Cancel</string>
     <string name="action_close">Close</string>
+    <string name="action_ok">Ok</string>
+    <string name="action_reset">Reset</string>
 
     <!-- Manga Type -->
     <string name="manga">Manga</string>
