@@ -69,6 +69,8 @@ import com.google.android.material.transition.platform.MaterialContainerTransfor
 import eu.kanade.tachiyomi.BuildConfig
 import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.data.backup.restore.BackupRestoreJob
+import eu.kanade.tachiyomi.data.connections.discord.DiscordRPCService
+import eu.kanade.tachiyomi.data.connections.discord.DiscordRpcManager
 import eu.kanade.tachiyomi.data.download.DownloadManager
 import eu.kanade.tachiyomi.data.library.LibraryUpdateJob
 import eu.kanade.tachiyomi.data.notification.NotificationReceiver
@@ -138,11 +140,13 @@ import eu.kanade.tachiyomi.util.view.withFadeInTransaction
 import eu.kanade.tachiyomi.util.view.withFadeTransaction
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import uy.kohesive.injekt.injectLazy
 import yokai.core.migration.Migrator
 import yokai.domain.base.BasePreferences
+import yokai.domain.connections.service.ConnectionsPreferences
 import yokai.domain.recents.interactor.GetRecents
 import yokai.i18n.MR
 import yokai.presentation.core.Constants
@@ -215,6 +219,9 @@ open class MainActivity : BaseActivity<MainActivityBinding>() {
         }
 
     private val basePreferences: BasePreferences by injectLazy()
+
+    private val basePreferences: BasePreferences by injectLazy()
+    private val connectionsPreferences: ConnectionsPreferences by injectLazy()
 
     // Ideally we want this to be inside the controller itself, but Conductor doesn't support the new ActivityResult API
     // Should be fine once we moved completely to Compose..... someday....
@@ -293,8 +300,35 @@ open class MainActivity : BaseActivity<MainActivityBinding>() {
 
         super.onCreate(savedInstanceState)
 
-        com.discord.socialsdk.DiscordSocialSdkInit.setEngineActivity(this)
+        try {
+            com.discord.socialsdk.DiscordSocialSdkInit.setEngineActivity(this)
+        } catch (_: Exception) {}
 
+        DiscordRpcManager.init(applicationContext)
+
+        lifecycleScope.launchUI {
+            if (connectionsPreferences.enableDiscordRPC().get()) {
+                DiscordRPCService.start(this@MainActivity.applicationContext)
+            }
+            connectionsPreferences.enableDiscordRPC().changes()
+                .drop(1)
+                .onEach {
+                    if (it) {
+                        DiscordRPCService.start(this@MainActivity.applicationContext)
+                    } else {
+                        DiscordRPCService.stop(this@MainActivity.applicationContext, 0L)
+                    }
+                }
+                .launchIn(this)
+
+            connectionsPreferences.discordRPCStatus().changes()
+                .drop(1)
+                .onEach {
+                    DiscordRPCService.stop(this@MainActivity.applicationContext, 0L)
+                    DiscordRPCService.start(this@MainActivity.applicationContext)
+                }
+                .launchIn(this)
+        }
         backPressedCallback = object : OnBackPressedCallback(enabled = true) {
             var startTime: Long = 0
             var lastX: Float = 0f
@@ -1226,6 +1260,9 @@ open class MainActivity : BaseActivity<MainActivityBinding>() {
     override fun isChangingConfigurations(): Boolean = !recreatingForSettingsChange && super.isChangingConfigurations()
 
     override fun onDestroy() {
+        try {
+            com.discord.socialsdk.DiscordSocialSdkInit.setEngineActivity(null)
+        } catch (_: Exception) {}
         super.onDestroy()
         overflowDialog?.dismiss()
         overflowDialog = null
