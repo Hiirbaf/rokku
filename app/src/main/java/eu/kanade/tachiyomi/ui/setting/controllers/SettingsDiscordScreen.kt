@@ -246,7 +246,7 @@ object SettingsDiscordScreen : ComposableSettings() {
                 ),
             ),
             Preference.PreferenceItem.TextPreference(
-                title = stringResource(MR.strings.logout),
+                title = stringResource(MR.strings.log_out),
                 onClick = { dialog = LogoutConnectionsDialog(connectionsManager.discord) },
             ),
         )
