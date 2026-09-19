@@ -54,6 +54,9 @@ class DiscordRPCService : Service() {
                 DiscordRpcManager.connectionStatus.collect { status ->
                     if (status == DiscordRpcManager.Status.Connected && !isPaused) {
                         try {
+                            DiscordRpcManager.setOnlineStatus(
+                                mapToDiscordStatusType(connectionsPreferences.discordRPCStatus().get()),
+                            )
                             val data = activeReaderData ?: ReaderData()
                             setScreen(this@DiscordRPCService, currentScreen, data)
                         } catch (e: Exception) {
