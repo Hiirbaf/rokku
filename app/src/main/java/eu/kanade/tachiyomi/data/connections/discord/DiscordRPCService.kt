@@ -174,6 +174,12 @@ class DiscordRPCService : Service() {
             updateDiscordRPC(context, readerData, discordScreen)
         }
 
+        private fun mapToDiscordStatusType(pref: Int): Int = when (pref) {
+            -1 -> 4 // Discord_StatusType_Dnd
+            0 -> 3  // Discord_StatusType_Idle
+            else -> 0 // Discord_StatusType_Online
+        }
+
         private fun updateDiscordRPC(
             context: Context,
             readerData: ReaderData,
