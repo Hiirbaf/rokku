@@ -1821,7 +1821,7 @@ class ReaderActivity : BaseActivity<ReaderActivityBinding>() {
         // For a double page, show the last 2 pages as if it was the final part of the seekbar
         binding.readerNav.pageSeekbar.value = (if (progress == pages.lastIndex) progress else page.index).toFloat()
 
-        updateDiscordPresence(page.chapter, pages.size)
+        updateDiscordPresence(page.chapter, pages.size, page.number)
     }
 
     /**
