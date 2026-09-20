@@ -220,7 +220,7 @@ internal fun ConnectionsLogoutDialog(
         onDismissRequest = onDismissRequest,
         title = {
             Text(
-                text = stringResource(MR.strings.logout_title, stringResource(service.nameRes())),
+                text = stringResource(MR.strings.log_out_from_, stringResource(service.nameRes())),
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth(),
             )
@@ -231,14 +231,14 @@ internal fun ConnectionsLogoutDialog(
                     modifier = Modifier.weight(1f),
                     onClick = onDismissRequest,
                 ) {
-                    Text(text = stringResource(MR.strings.action_cancel))
+                    Text(text = stringResource(MR.strings.cancel))
                 }
                 Button(
                     modifier = Modifier.weight(1f),
                     onClick = {
                         service.logout()
                         onDismissRequest()
-                        context.toast(MR.strings.logout_success)
+                        context.toast(MR.strings.successfully_logged_out)
                         navigator.pop()  // reemplaza router.popCurrentController()
                     },
                     colors = ButtonDefaults.buttonColors(
