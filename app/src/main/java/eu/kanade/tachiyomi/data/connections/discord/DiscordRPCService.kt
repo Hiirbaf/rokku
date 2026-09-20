@@ -285,13 +285,16 @@ class DiscordRPCService : Service() {
 
         private fun getFormattedChapterTitle(context: Context, readerData: ReaderData): String? {
             if (readerData.incognitoMode) return null
+
+            val (currentPage, totalPages) = readerData.chapterProgress
+            val isSpanish = java.util.Locale.getDefault().language == "es"
+            val pageLabel = if (isSpanish) "Pág. $currentPage/$totalPages" else "Page $currentPage/$totalPages"
+
             return if (connectionsPreferences.useChapterTitles().get()) {
-                readerData.chapterTitle
+                readerData.chapterTitle?.let { "$it ($pageLabel)" }
             } else {
-                context.resources.getString(
-                    R.string.chapter_,
-                    formatChapterNumber(readerData.chapterNumber.first.toDouble()),
-                ) + "/${readerData.chapterNumber.second}"
+                val chapterNum = formatChapterNumber(readerData.chapterNumber.toDouble())
+                "${context.getString(R.string.chapter_, chapterNum)} ($pageLabel)"
             }
         }
 
