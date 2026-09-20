@@ -199,7 +199,7 @@ object SettingsConnectionsScreen : ComposableSettings() {
     ): Boolean {
         return try {
             service.login(username, password)
-            withUIContext { context.toast(MR.strings.login_success) }
+            withUIContext { context.toast(MR.strings.successfully_logged_in) }
             true
         } catch (e: Throwable) {
             service.logout()
@@ -246,7 +246,7 @@ internal fun ConnectionsLogoutDialog(
                         contentColor = MaterialTheme.colorScheme.onError,
                     ),
                 ) {
-                    Text(text = stringResource(MR.strings.logout))
+                    Text(text = stringResource(MR.strings.log_out))
                 }
             }
         },
