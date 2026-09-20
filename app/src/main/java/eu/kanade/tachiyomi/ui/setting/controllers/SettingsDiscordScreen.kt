@@ -152,7 +152,7 @@ object SettingsDiscordScreen : ComposableSettings() {
                             showCustomMessageDialog = false
                             tempCustomMessage = customMessagePref.get()
                         }) {
-                            Text(stringResource(MR.strings.action_cancel))
+                            Text(stringResource(MR.strings.cancel))
                         }
                     },
                 )
@@ -337,7 +337,7 @@ object SettingsDiscordScreen : ComposableSettings() {
             },
             confirmButton = {
                 TextButton(onClick = onDismissRequest) {
-                    Text(text = stringResource(MR.strings.action_cancel))
+                    Text(text = stringResource(MR.strings.cancel))
                 }
             },
         )
