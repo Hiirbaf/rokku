@@ -269,6 +269,7 @@ class DiscordRPCService : Service() {
                     mangaId = readerData.mangaId,
                     mangaTitle = mangaTitle,
                     chapterNumber = readerData.chapterNumber,
+                    chapterProgress = readerData.chapterProgress,
                     chapterTitle = readerData.chapterTitle,
                     thumbnailUrl = mangaThumbnail,
                 )
