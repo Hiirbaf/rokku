@@ -288,8 +288,7 @@ class DiscordRPCService : Service() {
             if (readerData.incognitoMode) return null
 
             val (currentPage, totalPages) = readerData.chapterProgress
-            val isSpanish = java.util.Locale.getDefault().language == "es"
-            val pageLabel = if (isSpanish) "Pág. $currentPage/$totalPages" else "Page $currentPage/$totalPages"
+            val pageLabel = context.getString(R.string.page_, currentPage, totalPages)
 
             return if (connectionsPreferences.useChapterTitles().get()) {
                 readerData.chapterTitle?.let { "$it ($pageLabel)" }
