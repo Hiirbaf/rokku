@@ -524,26 +524,27 @@ class ReaderActivity : BaseActivity<ReaderActivityBinding>() {
         }
     }
 
-    private fun updateDiscordPresence(readerChapter: ReaderChapter, totalPages: Int) {
-            val manga = viewModel.manga ?: return
-            val chapter = readerChapter.chapter
-            val incognito = connectionsPreferences.discordRPCIncognito().get() ||
+    private fun updateDiscordPresence(readerChapter: ReaderChapter, totalPages: Int, currentPage: Int = 0) {
+        val manga = viewModel.manga ?: return
+        val chapter = readerChapter.chapter
+        val incognito = connectionsPreferences.discordRPCIncognito().get() ||
             preferences.incognitoMode().get() ||
             isIncognitoModeForSource(manga.source)
 
-            lifecycleScope.launchIO {
-                DiscordRPCService.updateReaderActivity(
-                    context = this@ReaderActivity,
-                    readerData = ReaderData(
-                        incognitoMode = incognito,
-                        mangaId = manga.id,
-                        mangaTitle = manga.title,
-                        chapterNumber = Pair(chapter.chapter_number, totalPages),
-                        chapterTitle = chapter.preferredChapterName(this@ReaderActivity, manga, preferences),
-                        thumbnailUrl = manga.thumbnail_url,
-                    ),
-                )
-            }
+        lifecycleScope.launchIO {
+            DiscordRPCService.updateReaderActivity(
+                context = this@ReaderActivity,
+                readerData = ReaderData(
+                    incognitoMode = incognito,
+                    mangaId = manga.id,
+                    mangaTitle = manga.title,
+                    chapterNumber = chapter.chapter_number,
+                    chapterProgress = Pair(currentPage, totalPages),
+                    chapterTitle = chapter.preferredChapterName(this@ReaderActivity, manga, preferences),
+                    thumbnailUrl = manga.thumbnail_url,
+                ),
+            )
+        }
     }
 
     /**
