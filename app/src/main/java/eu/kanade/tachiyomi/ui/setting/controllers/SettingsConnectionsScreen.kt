@@ -78,7 +78,6 @@ object SettingsConnectionsScreen : ComposableSettings() {
                         },
                     ),
                     Preference.PreferenceItem.InfoPreference(stringResource(MR.strings.connections_discord_info)),
-                    Preference.PreferenceItem.InfoPreference(stringResource(MR.strings.connections_info)),
                 ),
             ),
         )
@@ -104,7 +103,7 @@ object SettingsConnectionsScreen : ComposableSettings() {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         text = stringResource(
-                            MR.strings.login_title,
+                            MR.strings.log_in_to_,
                             stringResource(service.nameRes()),
                         ),
                         modifier = Modifier.weight(1f),
@@ -184,7 +183,7 @@ object SettingsConnectionsScreen : ComposableSettings() {
                         }
                     },
                 ) {
-                    val id = if (processing) MR.strings.loading else MR.strings.login
+                    val id = if (processing) MR.strings.loading else MR.strings.log_in
                     Text(text = stringResource(id))
                 }
             },
