@@ -112,7 +112,7 @@ object SettingsConnectionsScreen : ComposableSettings() {
                     IconButton(onClick = onDismissRequest) {
                         Icon(
                             imageVector = Icons.Outlined.Close,
-                            contentDescription = stringResource(MR.strings.action_close),
+                            contentDescription = stringResource(MR.strings.close),
                         )
                     }
                 }
