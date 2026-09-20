@@ -135,7 +135,7 @@ object SettingsDiscordScreen : ComposableSettings() {
                                 },
                                 modifier = Modifier.align(Alignment.End),
                             ) {
-                                Text(stringResource(MR.strings.action_reset))
+                                Text(stringResource(MR.strings.reset))
                             }
                         }
                     },
