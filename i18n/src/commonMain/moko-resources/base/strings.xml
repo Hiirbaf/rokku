@@ -79,10 +79,7 @@
     <string name="username">Username</string>
     <string name="email">Email address</string>
     <string name="password">Password</string>
-    <string name="logout_success">You are now logged out</string>
     <string name="tracking_guide">Tracking guide</string>
-    <string name="action_cancel">Cancel</string>
-    <string name="action_close">Close</string>
     <string name="action_ok">Ok</string>
     <string name="action_reset">Reset</string>
 
