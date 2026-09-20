@@ -31,15 +31,11 @@
     <!--Models-->
 
     <string name="pref_category_connections">Connections</string>
-    <string name="track_activity_name">Tracker login</string>  
-    <string name="action_web_view" translatable="false">WebView</string>
     !-- Connections section -->
     <string name="special_services">Special Services</string>
     <string name="pref_category_connections">Connections</string>
-    <string name="pref_connections_summary">Discord, more to come..</string>
-    <string name="connections_info">Special Services that are unique to Anikku and enhance the way you use the app</string>
     <string name="connections_discord">Discord</string>
-    <string name="connections_discord_info">This Discord Service works through token logging. Use at your own risk. Your token is stored locally and Anikku does not share it anywhere else</string>
+    <string name="connections_discord_info">Rokku connects to Discord using the official Discord Social SDK. Your account is authorized through the Discord app itself — Rokku never sees or stores your password.</string>
     <string name="pref_discord_rpc">Discord Rich Presence</string>
     <string name="show_chapters_titles_title">Show Chapters Titles</string>
     <string name="show_chapters_titles_subtitle">Show the title of the chapter you are reading</string>
@@ -64,7 +60,7 @@
     <string name="pref_discord_custom_message">Custom Message</string>
     <string name="pref_discord_custom_message_summary">Custom message that will be displayed on Discord</string>
     <string name="pref_discord_show_progress">Show Progress</string>
-    <string name="pref_discord_show_progress_summary">Display the current episode progress</string>
+    <string name="pref_discord_show_progress_summary">Display the current chapter progress</string>
     <string name="pref_discord_show_timestamp">Show Time</string>
     <string name="pref_discord_show_timestamp_summary">Display elapsed/remaining time</string>
     <string name="pref_discord_show_buttons">Show Buttons</string>
@@ -73,12 +69,12 @@
     <string name="pref_discord_show_download_button_summary">Displays a button to download the app</string>
     <string name="pref_discord_show_discord_button">Show Discord Button</string>
     <string name="pref_discord_show_discord_button_summary">Displays a button to join the Discord server</string>
-    <string name="login">Login</string>
+    <!-- <string name="login">Login</string>
     <string name="login_title">Log in to %1$s</string>
     <string name="username">Username</string>
     <string name="email">Email address</string>
     <string name="password">Password</string>
-    <string name="tracking_guide">Tracking guide</string>
+    <string name="tracking_guide">Tracking guide</string> -->
     <string name="action_ok">Ok</string>
 
     <!-- Manga Type -->
