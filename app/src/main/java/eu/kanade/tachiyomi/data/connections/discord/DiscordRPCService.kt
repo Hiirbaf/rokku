@@ -209,7 +209,9 @@ class DiscordRPCService : Service() {
                     else -> context.getString(discordScreen.state)
                 },
             )
-            val imageUrl = readerData.thumbnailUrl.takeUnless { it.isNullOrBlank() } ?: discordScreen.imageUrl
+            val imageUrl = readerData.thumbnailUrl
+                ?.takeIf { it.startsWith("http://") || it.startsWith("https://") }
+                ?: discordScreen.imageUrl
 
             val button1Label = if (showButtons && showDownloadButton) DOWNLOAD_BUTTON_LABEL else null
             val button1Url = if (showButtons && showDownloadButton) DOWNLOAD_BUTTON_URL else null
