@@ -58,7 +58,7 @@ fun ConnectionsPreferenceWidget(
                         .padding(4.dp)
                         .size(32.dp),
                     tint = Color(0xFF4CAF50),
-                    contentDescription = stringResource(MR.strings.login_success),
+                    contentDescription = stringResource(MR.strings.successfully_logged_in),
                 )
             }
         }
