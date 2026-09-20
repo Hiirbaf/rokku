@@ -81,7 +81,6 @@
     <string name="password">Password</string>
     <string name="tracking_guide">Tracking guide</string>
     <string name="action_ok">Ok</string>
-    <string name="action_reset">Reset</string>
 
     <!-- Manga Type -->
     <string name="manga">Manga</string>
