@@ -14,7 +14,8 @@ data class ReaderData(
     val incognitoMode: Boolean = false,
     val mangaId: Long? = null,
     val mangaTitle: String? = null,
-    val chapterNumber: Pair<Float, Int> = Pair(0f, 0),
+    val chapterNumber: Float = 0f,
+    val chapterProgress: Pair<Int, Int> = Pair(0, 0),
     val chapterTitle: String? = null,
     val thumbnailUrl: String? = null,
 )
