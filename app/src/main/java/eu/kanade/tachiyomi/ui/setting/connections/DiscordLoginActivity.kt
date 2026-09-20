@@ -77,7 +77,7 @@ class DiscordLoginActivity : AppCompatActivity() {
     }
 
     private fun handleLoginSuccess() {
-        toast(MR.strings.login_success)
+        toast(MR.strings.successfully_logged_in)
         setResult(RESULT_OK)
         if (connectionsPreferences.enableDiscordRPC().get()) {
             DiscordRPCService.start(applicationContext)
