@@ -65,7 +65,7 @@ class SearchHistoryView
             scope = newScope
             preferences
                 .browseSearchHistory()
-                .asFlow()
+                .changes()
                 .onEach(::setHistory)
                 .launchIn(newScope)
         }
