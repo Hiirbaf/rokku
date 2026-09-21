@@ -94,6 +94,7 @@ class DiscordRPCService : Service() {
     override fun onDestroy() {
         NotificationReceiver.dismissNotification(this, Notifications.ID_DISCORD_RPC)
         DiscordRpcManager.destroy()
+        since = 0L
         super.onDestroy()
     }
 
@@ -154,7 +155,9 @@ class DiscordRPCService : Service() {
         fun start(context: Context) {
             handler.removeCallbacksAndMessages(null)
             if (connectionsPreferences.enableDiscordRPC().get()) {
-                since = System.currentTimeMillis()
+                if (since == 0L) {
+                    since = System.currentTimeMillis()
+                }
                 context.startForegroundService(Intent(context, DiscordRPCService::class.java))
             }
         }
