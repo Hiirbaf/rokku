@@ -46,8 +46,12 @@ import eu.kanade.tachiyomi.ui.main.SearchActivity
 import eu.kanade.tachiyomi.ui.manga.MangaDetailsController
 import eu.kanade.tachiyomi.ui.source.BrowseController
 import eu.kanade.tachiyomi.ui.source.globalsearch.GlobalSearchController
+import eu.kanade.tachiyomi.ui.source.searchhistory.FilterApplyResult
 import eu.kanade.tachiyomi.ui.source.searchhistory.SearchHistoryDelegate
+import eu.kanade.tachiyomi.ui.source.searchhistory.addFilterSnapshotToSearchHistory
 import eu.kanade.tachiyomi.ui.source.searchhistory.addToSearchHistory
+import eu.kanade.tachiyomi.ui.source.searchhistory.applyTo
+import eu.kanade.tachiyomi.ui.source.searchhistory.diffFromDefault
 import eu.kanade.tachiyomi.ui.webview.WebViewActivity
 import eu.kanade.tachiyomi.util.addOrRemoveToFavorites
 import eu.kanade.tachiyomi.util.system.connectivityManager
@@ -153,6 +157,30 @@ open class BrowseSourceController(bundle: Bundle) :
             controller = this,
             container = { binding.sourceLayout },
             recycler = { recycler },
+            onApplyFilters = { filters, sourceId ->
+                // start from default so a saved snapshot doesn't just layer on top of whatever
+                // else is currently toggled
+                val previousFilters = presenter.sourceFilters
+                presenter.sourceFilters = presenter.source.getFilterList()
+                // captured on this exact source - matching is already exact, no need to guess
+                val strict = sourceId == presenter.source.id
+                val result = filters.applyTo(presenter.sourceFilters, strict = strict)
+                if (result == FilterApplyResult.NONE) {
+                    // nothing landed - put back what was there before the reset above instead
+                    // of leaving the source wiped to default
+                    presenter.sourceFilters = previousFilters
+                } else {
+                    // always re-search here (even for a query-carrying entry, where the query
+                    // submit right after will search again) since a filters-only snapshot has no
+                    // query submit to fall back on for actually applying the change
+                    showProgressBar()
+                    adapter?.clear()
+                    presenter.setSourceFilter(presenter.sourceFilters)
+                    updatePopLatestIcons()
+                }
+                result
+            },
+            showFilterSnapshots = { presenter.sourceFilters.isNotEmpty() },
         )
 
     /**
@@ -441,6 +469,14 @@ open class BrowseSourceController(bundle: Bundle) :
 
     private fun applyFilters() {
         val allDefault = presenter.filtersMatchDefault()
+        if (!allDefault) {
+                    val diff = presenter.sourceFilters.diffFromDefault(presenter.source.getFilterList())
+                    if (presenter.query.isNotBlank()) {
+                        presenter.prefs.addToSearchHistory(presenter.query, diff, presenter.source.id)
+                    } else {
+                        presenter.prefs.addFilterSnapshotToSearchHistory(diff, presenter.source.id)
+                    }
+        }
         showProgressBar()
         adapter?.clear()
         presenter.setSourceFilter(if (allDefault) FilterList() else presenter.sourceFilters)
@@ -695,7 +731,11 @@ open class BrowseSourceController(bundle: Bundle) :
      */
     private fun searchWithQuery(newQuery: String) {
         // saved before the early return below, so re-searching the same thing still bumps it up
-        presenter.preferences.addToSearchHistory(newQuery, presenter.source.id)
+        presenter.preferences.addToSearchHistory(
+            newQuery,
+            presenter.sourceFilters.diffFromDefault(presenter.source.getFilterList()),
+            presenter.source.id,
+        )
         searchHistory.setVisible(false)
         if (presenter.query == newQuery) {
             return
