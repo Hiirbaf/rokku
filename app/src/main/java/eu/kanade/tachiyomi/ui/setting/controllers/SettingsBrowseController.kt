@@ -153,7 +153,7 @@ class SettingsBrowseController : SettingsLegacyController() {
 
                     preferences
                         .browseSearchHistory()
-                        .asImmediateFlowIn(viewScope) { history ->
+                        .changesIn(viewScope) { history ->
                             isVisible = history.isNotEmpty()
                         }
 
