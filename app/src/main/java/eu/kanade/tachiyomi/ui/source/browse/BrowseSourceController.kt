@@ -725,7 +725,7 @@ open class BrowseSourceController(bundle: Bundle) :
      */
     private fun searchWithQuery(newQuery: String) {
         // saved before the early return below, so re-searching the same thing still bumps it up
-        presenter.prefs.addToSearchHistory(newQuery, presenter.source.id)
+        presenter.preferences.addToSearchHistory(newQuery, presenter.source.id)
         setSearchHistoryVisible(false)
         if (presenter.query == newQuery) {
             return
