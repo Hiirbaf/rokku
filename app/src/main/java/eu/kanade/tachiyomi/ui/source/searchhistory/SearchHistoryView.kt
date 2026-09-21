@@ -96,8 +96,8 @@ class SearchHistoryView
                 history.mapIndexed { index, query ->
                     SearchHistoryItem(
                         query = query,
-                        isTopOfGroup = index == 0,
-                        isBottomOfGroup = index == history.lastIndex,
+                        // isTopOfGroup = index == 0,
+                        // isBottomOfGroup = index == history.lastIndex,
                         onDeleteClicked = { preferences.removeFromSearchHistory(it) },
                         onFillClicked = { onQueryFilled(it) },
                     )
