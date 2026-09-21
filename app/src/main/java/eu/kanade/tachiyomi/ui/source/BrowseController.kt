@@ -10,8 +10,6 @@ import android.view.MenuItem
 import android.view.RoundedCorner
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-import android.widget.FrameLayout
 import androidx.activity.BackEventCompat
 import androidx.appcompat.widget.SearchView
 import androidx.core.graphics.ColorUtils
@@ -45,7 +43,7 @@ import eu.kanade.tachiyomi.ui.setting.controllers.SettingsBrowseController
 import eu.kanade.tachiyomi.ui.setting.controllers.SettingsSourcesController
 import eu.kanade.tachiyomi.ui.source.browse.BrowseSourceController
 import eu.kanade.tachiyomi.ui.source.globalsearch.GlobalSearchController
-import eu.kanade.tachiyomi.ui.source.searchhistory.SearchHistoryView
+import eu.kanade.tachiyomi.ui.source.searchhistory.SearchHistoryDelegate
 import eu.kanade.tachiyomi.ui.source.searchhistory.addToSearchHistory
 import eu.kanade.tachiyomi.util.system.dpToPx
 import eu.kanade.tachiyomi.util.system.getBottomGestureInsets
@@ -107,7 +105,13 @@ class BrowseController :
      */
     private var adapter: SourceAdapter? = null
 
-    private var searchHistoryView: SearchHistoryView? = null
+    private val searchHistory =
+        SearchHistoryDelegate(
+            controller = this,
+            container = { binding.browseFrameLayout },
+            recycler = { binding.sourceRecycler },
+            extraShouldShow = { !showingExtensions },
+        )
 
     var extQuery = ""
         private set
@@ -153,7 +157,7 @@ class BrowseController :
         }
         adapter?.isSwipeEnabled = true
         adapter?.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
-        setUpSearchHistory()
+        searchHistory.setUp()
         scrollViewWith(
             binding.sourceRecycler,
             afterInsets = {
@@ -161,7 +165,7 @@ class BrowseController :
                 binding.sourceRecycler.updatePaddingRelative(
                     bottom = (activityBinding?.bottomNav?.height ?: it.getBottomGestureInsets()) + 58.spToPx,
                 )
-                updateSearchHistoryPadding()
+                searchHistory.updatePadding()
                 if (activityBinding?.bottomNav == null) {
                     setBottomPadding()
                 }
@@ -540,7 +544,7 @@ class BrowseController :
 
     override fun onDestroyView(view: View) {
         adapter = null
-        searchHistoryView = null
+        searchHistory.onDestroyView()
         binding.bottomSheet.root.onDestroy()
         super.onDestroyView(view)
     }
@@ -701,7 +705,7 @@ class BrowseController :
         setOnQueryTextChangeListener(
             searchView,
             true,
-            onTextChange = { setSearchHistoryVisible(it.isNullOrBlank()) },
+            onTextChange = { searchHistory.setVisible(it.isNullOrBlank()) },
         ) {
             if (!it.isNullOrBlank()) performGlobalSearch(it)
             true
@@ -710,54 +714,13 @@ class BrowseController :
 
     private fun performGlobalSearch(query: String) {
         preferences.addToSearchHistory(query)
-        setSearchHistoryVisible(false)
+        searchHistory.setVisible(false)
         router.pushController(GlobalSearchController(query).withFadeTransaction())
     }
 
-    private fun setUpSearchHistory() {
-        val searchView = { activityBinding?.searchToolbar?.searchView }
-        searchHistoryView =
-            SearchHistoryView(binding.browseFrameLayout.context).apply {
-                isVisible = false
-                onQueryClicked = { searchView()?.setQuery(it, true) }
-                onQueryFilled = { searchView()?.setQuery(it, false) }
-                onHistoryEmptied = { setSearchHistoryVisible(false) }
-                binding.browseFrameLayout.addView(
-                    this,
-                    FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT),
-                )
-            }
-    }
+    override fun onActionViewExpand(item: MenuItem?) = searchHistory.onActionViewExpand(item)
 
-    private fun updateSearchHistoryPadding() {
-        searchHistoryView?.setContentPadding(
-            top = binding.sourceRecycler.paddingTop,
-            bottom = binding.sourceRecycler.paddingBottom,
-        )
-    }
-
-    private fun setSearchHistoryVisible(show: Boolean) {
-        val historyView = searchHistoryView ?: return
-        val shouldShow =
-            show &&
-                !showingExtensions &&
-                activityBinding?.searchToolbar?.isSearchExpanded == true &&
-                historyView.hasHistory()
-        if (historyView.isVisible == shouldShow) return
-        historyView.isVisible = shouldShow
-        if (shouldShow) {
-            updateSearchHistoryPadding()
-            historyView.scrollToTop()
-        }
-    }
-
-    override fun onActionViewExpand(item: MenuItem?) {
-        setSearchHistoryVisible(true)
-    }
-
-    override fun onActionViewCollapse(item: MenuItem?) {
-        setSearchHistoryVisible(false)
-    }
+    override fun onActionViewCollapse(item: MenuItem?) = searchHistory.onActionViewCollapse(item)
 
     /**
      * Called when an option menu item has been selected by the user.
