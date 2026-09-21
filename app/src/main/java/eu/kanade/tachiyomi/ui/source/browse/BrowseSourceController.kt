@@ -48,7 +48,6 @@ import eu.kanade.tachiyomi.ui.source.BrowseController
 import eu.kanade.tachiyomi.ui.source.globalsearch.GlobalSearchController
 import eu.kanade.tachiyomi.ui.source.searchhistory.FilterApplyResult
 import eu.kanade.tachiyomi.ui.source.searchhistory.SearchHistoryDelegate
-import eu.kanade.tachiyomi.ui.source.searchhistory.addFilterSnapshotToSearchHistory
 import eu.kanade.tachiyomi.ui.source.searchhistory.addToSearchHistory
 import eu.kanade.tachiyomi.ui.source.searchhistory.applyTo
 import eu.kanade.tachiyomi.ui.source.searchhistory.diffFromDefault
@@ -173,6 +172,10 @@ open class BrowseSourceController(bundle: Bundle) :
                 result
             },
             showFilterSnapshots = { presenter.sourceFilters.isNotEmpty() },
+            extraBottomPadding = {
+                val bar = binding.floatingBrowseBar
+                if (bar.isVisible) bar.height else 0
+            },
         )
 
     /**
@@ -406,7 +409,8 @@ open class BrowseSourceController(bundle: Bundle) :
         if (isBehindGlobalSearch) {
             router.popController(this)
         } else {
-            searchWithQuery("")
+            // just closing the search bar, not actually submitting an empty search - don't save it
+            searchWithQuery("", save = false)
         }
     }
 
@@ -462,12 +466,11 @@ open class BrowseSourceController(bundle: Bundle) :
     private fun applyFilters() {
         val allDefault = presenter.filtersMatchDefault()
         if (!allDefault) {
-                    val diff = presenter.sourceFilters.diffFromDefault(presenter.source.getFilterList())
-                    if (presenter.query.isNotBlank()) {
-                        presenter.preferences.addToSearchHistory(presenter.query, diff, presenter.source.id)
-                    } else {
-                        presenter.preferences.addFilterSnapshotToSearchHistory(diff, presenter.source.id)
-                    }
+            val diff = presenter.sourceFilters.diffFromDefault(presenter.source.getFilterList())
+                    presenter.prefs.addToSearchHistory(presenter.query, diff, presenter.source.id)
+                }
+                if (presenter.query.isBlank()) {
+                    searchHistory.setVisible(false)
         }
         showProgressBar()
         adapter?.clear()
@@ -721,13 +724,18 @@ open class BrowseSourceController(bundle: Bundle) :
      *
      * @param newQuery the new query.
      */
-    private fun searchWithQuery(newQuery: String) {
-        // saved before the early return below, so re-searching the same thing still bumps it up
-        presenter.preferences.addToSearchHistory(
-            newQuery,
-            presenter.sourceFilters.diffFromDefault(presenter.source.getFilterList()),
-            presenter.source.id,
-        )
+    private fun searchWithQuery(
+        newQuery: String,
+        save: Boolean = true,
+    ) {
+        if (save) {
+            // saved before the early return below, so re-searching the same thing still bumps it up
+            presenter.prefs.addToSearchHistory(
+                newQuery,
+                presenter.sourceFilters.diffFromDefault(presenter.source.getFilterList()),
+                presenter.source.id,
+            )
+        }
         searchHistory.setVisible(false)
         if (presenter.query == newQuery) {
             return
