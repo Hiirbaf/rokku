@@ -2,7 +2,6 @@ package eu.kanade.tachiyomi.data.preference
 
 import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
-import yokai.domain.source.browse.filter.Serializer
 import com.google.android.material.color.DynamicColors
 import eu.kanade.tachiyomi.BuildConfig
 import eu.kanade.tachiyomi.core.preference.Preference
@@ -290,18 +289,16 @@ class PreferencesHelper(val context: Context, val preferenceStore: PreferenceSto
     /** Recent browse queries, newest first. Global search and per source search share the one list. */
     fun browseSearchHistory() =
         preferenceStore.getObject(
-            Keys.browseSearchHistory,
-            object : Serializer<List<String>> {
-                override fun serialize(value: List<String>): String = Json.encodeToString(value)
-
-                override fun deserialize(serialized: String): List<String> =
-                    try {
-                        Json.decodeFromString(serialized)
-                    } catch (e: Exception) {
-                        emptyList()
-                    }
+            key = Keys.browseSearchHistory,
+            defaultValue = emptyList(),
+            serializer = { Json.encodeToString(it) },
+            deserializer = {
+                try {
+                    Json.decodeFromString<List<String>>(it)
+                } catch (e: Exception) {
+                    emptyList()
+                }
             },
-            emptyList(),
         )
 
     // TODO: SourcePref
