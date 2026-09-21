@@ -467,7 +467,7 @@ open class BrowseSourceController(bundle: Bundle) :
         val allDefault = presenter.filtersMatchDefault()
         if (!allDefault) {
             val diff = presenter.sourceFilters.diffFromDefault(presenter.source.getFilterList())
-                    presenter.prefs.addToSearchHistory(presenter.query, diff, presenter.source.id)
+                    presenter.preferences.addToSearchHistory(presenter.query, diff, presenter.source.id)
                 }
                 if (presenter.query.isBlank()) {
                     searchHistory.setVisible(false)
@@ -730,7 +730,7 @@ open class BrowseSourceController(bundle: Bundle) :
     ) {
         if (save) {
             // saved before the early return below, so re-searching the same thing still bumps it up
-            presenter.prefs.addToSearchHistory(
+            presenter.preferences.addToSearchHistory(
                 newQuery,
                 presenter.sourceFilters.diffFromDefault(presenter.source.getFilterList()),
                 presenter.source.id,
