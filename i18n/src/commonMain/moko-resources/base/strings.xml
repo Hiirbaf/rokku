@@ -29,7 +29,7 @@
     <string name="invalid_location_generic">Invalid location</string>
 
     <!--Models-->
-
+    <string name="action_web_view" translatable="false">WebView</string>
     <string name="pref_category_connections">Connections</string>
     !-- Connections section -->
     <string name="special_services">Special Services</string>
@@ -69,12 +69,7 @@
     <string name="pref_discord_show_download_button_summary">Displays a button to download the app</string>
     <string name="pref_discord_show_discord_button">Show Discord Button</string>
     <string name="pref_discord_show_discord_button_summary">Displays a button to join the Discord server</string>
-    <!-- <string name="login">Login</string>
-    <string name="login_title">Log in to %1$s</string>
-    <string name="username">Username</string>
-    <string name="email">Email address</string>
-    <string name="password">Password</string>
-    <string name="tracking_guide">Tracking guide</string> -->
+    <string name="tracking_guide">Tracking guide</string>
     <string name="action_ok">Ok</string>
 
     <!-- Manga Type -->
