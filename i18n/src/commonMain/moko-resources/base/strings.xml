@@ -52,6 +52,7 @@
     <string name="active_account">Active Account</string>
     <string name="no_accounts_found">No accounts found</string>
     <!-- Discord section -->
+    <string name="page_count">Page %1$s/%2$s</string>
     <string name="browsing">Browsing</string>
     <string name="scrolling">Scrolling through</string>
     <string name="messing">Messing around with</string>
@@ -112,7 +113,6 @@
     <string name="unread">Unread</string>
     <string name="last_read_chapter_">Last read Chapter %1$s</string>
     <string name="chapter_">Chapter %1$s</string>
-    <string name="page_">Page %1$s/%2$s</string>
     <string name="chapter_x_of_y">Chapter %1$d of %2$d</string>
     <string name="page_x_of_y">Page %1$d of %2$d</string>
     <string name="all_chapters_read">All chapters read</string>
