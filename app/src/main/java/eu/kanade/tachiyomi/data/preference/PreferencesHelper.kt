@@ -2,7 +2,7 @@ package eu.kanade.tachiyomi.data.preference
 
 import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
-import com.fredporciuncula.flow.preferences.Serializer
+import yokai.domain.source.browse.filter.Serializer
 import com.google.android.material.color.DynamicColors
 import eu.kanade.tachiyomi.BuildConfig
 import eu.kanade.tachiyomi.core.preference.Preference
