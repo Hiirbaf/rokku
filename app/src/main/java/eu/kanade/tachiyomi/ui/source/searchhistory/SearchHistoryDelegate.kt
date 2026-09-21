@@ -7,9 +7,11 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bluelinelabs.conductor.Controller
+import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.data.preference.PreferencesHelper
 import eu.kanade.tachiyomi.util.view.activityBinding
 import eu.kanade.tachiyomi.util.view.moveRecyclerViewUp
+import eu.kanade.tachiyomi.util.view.snack
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 
