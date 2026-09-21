@@ -19,6 +19,7 @@ import eu.kanade.tachiyomi.ui.reader.settings.ReaderBottomButton
 import eu.kanade.tachiyomi.ui.reader.settings.ReadingModeType
 import eu.kanade.tachiyomi.ui.reader.viewer.ViewerNavigation
 import eu.kanade.tachiyomi.ui.recents.RecentsPresenter
+import eu.kanade.tachiyomi.ui.source.searchhistory.SearchHistoryEntry
 import eu.kanade.tachiyomi.util.system.Themes
 import eu.kanade.tachiyomi.util.system.coverThemeOptions
 import kotlinx.coroutines.CoroutineScope
@@ -294,7 +295,7 @@ class PreferencesHelper(val context: Context, val preferenceStore: PreferenceSto
             serializer = { Json.encodeToString(it) },
             deserializer = {
                 try {
-                    Json.decodeFromString<List<String>>(it)
+                    Json.decodeFromString<List<SearchHistoryEntry>>(it)
                 } catch (e: Exception) {
                     emptyList()
                 }
