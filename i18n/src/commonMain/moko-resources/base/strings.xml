@@ -925,6 +925,7 @@
     <string name="search_history">Search history</string>
     <string name="show_recent_searches">Show recent searches</string>
     <string name="search_history_cleared">Search history cleared</string>
+    <string name="search_removed">Search term removed</string>
     <string name="only_search_pinned_when">Only search pinned sources</string>
     <string name="hide_in_library_items">Hide entries already in library</string>
     <string name="show_duplicate_in_library_items">Show "Duplicate" badge</string>
