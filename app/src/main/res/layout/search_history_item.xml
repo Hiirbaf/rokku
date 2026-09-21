@@ -9,7 +9,7 @@
         android:id="@+id/back_view"
         style="@style/Widget.Tachiyomi.CardView.Container"
         android:layout_height="@dimen/material_component_lists_two_line_height"
-        app:cardBackgroundColor="@color/material_red_500">
+        app:cardBackgroundColor="@color/md_red_500">
 
         <ImageView
             android:id="@+id/left_back_view"
