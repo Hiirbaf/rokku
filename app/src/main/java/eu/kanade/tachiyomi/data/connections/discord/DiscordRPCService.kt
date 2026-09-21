@@ -291,7 +291,7 @@ class DiscordRPCService : Service() {
             if (readerData.incognitoMode) return null
 
             val (currentPage, totalPages) = readerData.chapterProgress
-            val pageLabel = context.getString(R.string.page_, currentPage, totalPages)
+            val pageLabel = context.getString(R.string.page_count, currentPage, totalPages)
 
             return if (connectionsPreferences.useChapterTitles().get()) {
                 readerData.chapterTitle?.let { "$it ($pageLabel)" }
