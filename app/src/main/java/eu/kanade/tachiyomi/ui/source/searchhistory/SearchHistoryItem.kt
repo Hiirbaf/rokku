@@ -7,12 +7,9 @@ import com.google.android.material.card.MaterialCardView
 import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.items.AbstractItem
 import eu.kanade.tachiyomi.R
-import eu.kanade.tachiyomi.util.view.makeContainerShape
 
 class SearchHistoryItem(
     val query: String,
-    private val isTopOfGroup: Boolean,
-    private val isBottomOfGroup: Boolean,
     private val onDeleteClicked: (String) -> Unit,
     private val onFillClicked: (String) -> Unit,
 ) : AbstractItem<FastAdapter.ViewHolder<SearchHistoryItem>>() {
@@ -38,13 +35,6 @@ class SearchHistoryItem(
             payloads: List<Any>,
         ) {
             title.text = item.query
-            // merges consecutive rows into one rounded card, like ChapterHolder does for chapters
-            card.shapeAppearanceModel =
-                card.makeContainerShape(
-                    item.isTopOfGroup,
-                    item.isBottomOfGroup,
-                    clipContentTo = frontView,
-                )
             deleteButton.setOnClickListener { item.onDeleteClicked(item.query) }
             fillButton.setOnClickListener { item.onFillClicked(item.query) }
         }
