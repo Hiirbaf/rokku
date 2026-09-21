@@ -472,9 +472,9 @@ open class BrowseSourceController(bundle: Bundle) :
         if (!allDefault) {
                     val diff = presenter.sourceFilters.diffFromDefault(presenter.source.getFilterList())
                     if (presenter.query.isNotBlank()) {
-                        presenter.prefs.addToSearchHistory(presenter.query, diff, presenter.source.id)
+                        presenter.preferences.addToSearchHistory(presenter.query, diff, presenter.source.id)
                     } else {
-                        presenter.prefs.addFilterSnapshotToSearchHistory(diff, presenter.source.id)
+                        presenter.preferences.addFilterSnapshotToSearchHistory(diff, presenter.source.id)
                     }
         }
         showProgressBar()
