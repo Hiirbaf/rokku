@@ -6,15 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:paddingTop="4dp"
-        android:paddingBottom="4dp"
-        tools:listitem="@layout/source_global_search_controller_card" />
-
     <com.google.android.material.loadingindicator.LoadingIndicator
         android:id="@+id/progress"
         android:indeterminate="true"
@@ -32,5 +23,14 @@
         android:visibility="gone"
         android:gravity="center"
         tools:visibility="visible" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        tools:listitem="@layout/source_global_search_controller_card" />
 
 </FrameLayout>
