@@ -10,6 +10,7 @@ import android.view.View
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.SearchOff
 import androidx.core.view.WindowInsetsCompat.Type.systemBars
+import androidx.core.view.isVisible
 import androidx.core.view.updatePaddingRelative
 import androidx.recyclerview.widget.RecyclerView
 import com.bluelinelabs.conductor.ControllerChangeHandler
