@@ -304,7 +304,7 @@ class PreferencesHelper(val context: Context, val preferenceStore: PreferenceSto
 
     /** User-named, permanently saved query/filter presets - unlike [browseSearchHistory], never auto-trimmed. */
     fun savedSearches() =
-        flowPrefs.getObject(
+        preferenceStore.getObject(
             Keys.savedSearches,
             object : Serializer<List<SearchHistoryEntry>> {
                 override fun serialize(value: List<SearchHistoryEntry>): String = Json.encodeToString(value)
