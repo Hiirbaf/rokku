@@ -2,6 +2,7 @@ package eu.kanade.tachiyomi.data.preference
 
 import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
+import com.fredporciuncula.flow.preferences.Serializer
 import com.google.android.material.color.DynamicColors
 import eu.kanade.tachiyomi.BuildConfig
 import eu.kanade.tachiyomi.core.preference.Preference
@@ -25,6 +26,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.serialization.json.Json
 import java.text.DateFormat
 import java.util.Locale
 import eu.kanade.tachiyomi.data.preference.PreferenceKeys as Keys
