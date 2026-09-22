@@ -17,6 +17,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.items.IFlexible
 import eu.kanade.tachiyomi.databinding.SourceFilterSheetBinding
+import eu.kanade.tachiyomi.ui.source.filter.SavedSearchesHeaderItem
 import eu.kanade.tachiyomi.util.system.dpToPx
 import eu.kanade.tachiyomi.util.system.rootWindowInsetsCompat
 import eu.kanade.tachiyomi.util.view.checkHeightThen
@@ -199,13 +200,35 @@ class SourceFilterSheet(
         binding.titleLayout.translationY = bottomSheetVisibleHeight.toFloat()
     }
 
-    override fun dismiss() {
+    override fun dismiss() = dismiss(triggerSearch = true)
+
+    private fun dismiss(triggerSearch: Boolean) {
         super.dismiss()
-        onSearchClicked()
+        if (triggerSearch && filterChanged) {
+            onSearchClicked()
+        }
+    }
+
+    /** Set once before showing the sheet - a row offering the saved-search list is pinned atop [setFilters] while true. */
+    private var hasSavedSearches = false
+
+    fun setSavedSearchesVisible(visible: Boolean) {
+        hasSavedSearches = visible
     }
 
     fun setFilters(items: List<IFlexible<*>>) {
-        adapter.updateDataSet(items)
+        val prefix: List<IFlexible<*>> =
+            if (hasSavedSearches) {
+                listOf(
+                    SavedSearchesHeaderItem {
+                        dismiss(triggerSearch = false)
+                        onSavedSearchesClicked()
+                    },
+                )
+            } else {
+                emptyList()
+            }
+        adapter.updateDataSet(prefix + items)
     }
 
     fun scrollToTop() {
