@@ -223,7 +223,9 @@ open class GlobalSearchController(
             hideKbOnSubmit = true,
             onTextChange = { searchHistory.setVisible(it.isNullOrBlank()) },
         ) {
-            preferences.addToSearchHistory(it ?: "")
+            if (!searchHistory.consumeSuppressSave()) {
+                preferences.addToSearchHistory(it ?: "")
+            }
             searchHistory.setVisible(false)
             val query = it ?: ""
             // If the query is a manga URL from an already-installed source, open it directly
