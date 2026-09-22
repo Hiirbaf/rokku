@@ -713,7 +713,9 @@ class BrowseController :
     }
 
     private fun performGlobalSearch(query: String) {
-        preferences.addToSearchHistory(query)
+        if (!searchHistory.consumeSuppressSave()) {
+            preferences.addToSearchHistory(query)
+        }
         searchHistory.setVisible(false)
         router.pushController(GlobalSearchController(query).withFadeTransaction())
     }
