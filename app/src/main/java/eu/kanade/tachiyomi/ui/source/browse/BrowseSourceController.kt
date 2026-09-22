@@ -402,7 +402,8 @@ open class BrowseSourceController(bundle: Bundle) :
         }
     }
 
-    override fun onActionViewExpand(item: MenuItem?) = searchHistory.onActionViewExpand(item)
+    // manually set its visibility as coming from global search shouldn't make this show
+    override fun onActionViewExpand(item: MenuItem?) = searchHistory.setVisible(presenter.query.isBlank())
 
     override fun onActionViewCollapse(item: MenuItem?) {
         searchHistory.setVisible(false)
