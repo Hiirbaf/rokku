@@ -28,9 +28,8 @@ object SaveSearchDialog {
         if (entry.sourceId != null) {
             binding.showOnSourceBtn.text =
                 binding.root.context.getString(R.string.only_x, sourceManager.getOrStub(entry.sourceId).name)
-                binding.showOnGroup.check(if (entry.showOnAllSources) binding.showOnAllBtn.id else binding.showOnSourceBtn.id)
+            binding.showOnGroup.check(if (entry.showOnAllSources) binding.showOnAllBtn.id else binding.showOnSourceBtn.id)
         } else {
-            // nothing to scope to a single source - there's no choice to offer
             binding.showOnRow.isVisible = false
         }
 
@@ -42,16 +41,13 @@ object SaveSearchDialog {
                     setView(binding.root)
                     setNegativeButton(android.R.string.cancel, null)
                     setPositiveButton(R.string.save) { _, _ ->
-                        val name =
-                            binding.name.text
-                                .toString()
-                                .trim()
+                        val name = binding.name.text.toString().trim()
                         val showOnAllSources =
                             entry.sourceId == null || binding.showOnGroup.checkedButtonId == binding.showOnAllBtn.id
                         if (isExisting) {
                             preferences.updateSavedSearch(entry.id, name, showOnAllSources)
                         } else {
-                            preferences.addSavedSearch(name, entry.query, entry.filters, entry.sourceId, showOnAllSources)
+                            preferences.addSavedSearch(name, entry.query, entry.sourceId, showOnAllSources)
                         }
                         onSaved()
                     }
@@ -61,11 +57,7 @@ object SaveSearchDialog {
             val positiveButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE)
 
             fun refreshPositiveButton() {
-                val name =
-                    binding.name.text
-                        ?.toString()
-                        ?.trim()
-                        .orEmpty()
+                val name = binding.name.text?.toString()?.trim().orEmpty()
                 positiveButton?.isEnabled = name.isNotBlank()
                 val conflicts =
                     name.isNotBlank() &&
