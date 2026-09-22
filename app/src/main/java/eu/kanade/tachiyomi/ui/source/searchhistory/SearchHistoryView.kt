@@ -233,12 +233,6 @@ class SearchHistoryView
         private fun deleteEntry(entry: SearchHistoryEntry) {
             val isSaved = entry.name != null
             if (isSaved) preferences.removeSavedSearch(entry.id) else preferences.removeFromSearchHistory(entry)
-            undoSnack.moveAboveSafeAreas(context)
-            (context as? MainActivity)?.setUndoSnackBar(undoSnack)
-        }
-
-        private fun deleteSavedAt(entry: SearchHistoryEntry) {
-            preferences.removeSavedSearch(entry.id)
             val undoSnack =
                 snack(R.string.search_removed) {
                     setAction(R.string.undo) {
@@ -270,7 +264,7 @@ class SearchHistoryView
                     onTrailingClicked = onTrailingClicked,
                 )
             }
-    
+
         /**
          * Rebuilds only [savedItemsAdapter] - used for the collapse/expand toggle so it doesn't
          * also re-set the header (which would replay its own item-level animation on top of the
