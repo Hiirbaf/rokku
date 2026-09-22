@@ -7,12 +7,6 @@ import com.mikepenz.fastadapter.items.AbstractItem
 import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.databinding.SearchHistoryItemBinding
 
-/**
- * One row shared by both the "Recent searches" and "Saved searches" sections - [entry] is a
- * saved search when [SearchHistoryEntry.name] is set, a plain recent search otherwise, the same
- * way blank/non-blank [SearchHistoryEntry.query] already distinguishes a snapshot from a real
- * search elsewhere in this feature.
- */
 class SearchRowItem(
     val entry: SearchHistoryEntry,
     private val isTopOfGroup: Boolean,
@@ -47,26 +41,15 @@ class SearchRowItem(
             binding.historyCard.translationX = 0f
             binding.backView.isVisible = false
             binding.historyIcon.setImageResource(if (isSaved) R.drawable.ic_star_24dp else R.drawable.ic_history_24dp)
-            // a filter-only snapshot has a blank query - nothing to show as a title then
-            binding.title.isVisible = isSaved || entry.query.isNotBlank()
+            binding.title.isVisible = true
             binding.title.text = entry.name ?: entry.query
 
-            // a recent row's title already shows the query, so repeating it in the subtitle would
-            // be redundant - a saved row's title is its name instead, so the query only shows here
-            val filtersText =
-                entry.filters
-                    .takeIf { it.isNotEmpty() }
-                    ?.let { binding.root.context.getString(R.string.parenthesis, it.joinToString { f -> f.filterName }) }
-            val summary =
-                if (isSaved) {
-                    listOfNotNull(entry.query.takeIf { it.isNotBlank() }, filtersText).joinToString(" ")
-                } else {
-                    filtersText.orEmpty()
-                }
-            binding.subtitle.isVisible = summary.isNotBlank()
-            binding.subtitle.text = summary.unitalicizeArrows()
+            // a recent row's title already shows the query - a saved row's title is its name
+            // instead, so the query only shows here
+            binding.subtitle.isVisible = isSaved && entry.query.isNotBlank()
+            binding.subtitle.text = entry.query
 
-            binding.fillButton.isVisible = entry.filters.isEmpty()
+            binding.fillButton.isVisible = true
             binding.fillButton.setOnClickListener { item.onFillClicked(entry.query) }
 
             binding.saveButton.contentDescription =
@@ -79,7 +62,6 @@ class SearchRowItem(
             binding.title.text = null
             binding.fillButton.setOnClickListener(null)
             binding.saveButton.setOnClickListener(null)
-            // so a recycled holder doesn't reappear mid-swipe from whatever row it last showed
             binding.historyCard.translationX = 0f
             binding.backView.isVisible = false
         }
