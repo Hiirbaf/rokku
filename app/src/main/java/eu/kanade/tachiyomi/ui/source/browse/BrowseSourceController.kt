@@ -10,9 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExploreOff
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.core.view.WindowInsetsCompat.Type.systemBars
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
@@ -59,9 +56,7 @@ import eu.kanade.tachiyomi.util.system.connectivityManager
 import eu.kanade.tachiyomi.util.system.dpToPx
 import eu.kanade.tachiyomi.util.system.e
 import eu.kanade.tachiyomi.util.system.launchIO
-import eu.kanade.tachiyomi.util.system.materialAlertDialog
 import eu.kanade.tachiyomi.util.system.openInBrowser
-import eu.kanade.tachiyomi.util.system.setTextInput
 import eu.kanade.tachiyomi.util.system.toast
 import eu.kanade.tachiyomi.util.system.w
 import eu.kanade.tachiyomi.util.system.withUIContext
@@ -87,7 +82,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import uy.kohesive.injekt.injectLazy
 import yokai.domain.manga.interactor.GetManga
-import yokai.domain.source.browse.filter.models.SavedSearch
 import yokai.i18n.MR
 import yokai.presentation.core.icons.CustomIcons
 import yokai.presentation.core.icons.LocalSource
@@ -191,9 +185,6 @@ open class BrowseSourceController(bundle: Bundle) :
     /** Current filter sheet */
     private var filterSheet: SourceFilterSheet? = null
     private var lastPosition: Int = -1
-
-    // Basically a cache just so the filter sheet is shown faster
-    var savedSearches by mutableStateOf(emptyList<SavedSearch>())
 
     private val isBehindGlobalSearch: Boolean
         get() = router.backstackSize >= 2 &&
@@ -472,10 +463,10 @@ open class BrowseSourceController(bundle: Bundle) :
         val allDefault = presenter.filtersMatchDefault()
         if (!allDefault) {
             val diff = presenter.sourceFilters.diffFromDefault(presenter.source.getFilterList())
-                    presenter.preferences.addToSearchHistory(presenter.query, diff, presenter.source.id)
-                }
-                if (presenter.query.isBlank()) {
-                    searchHistory.setVisible(false)
+            presenter.preferences.addToSearchHistory(presenter.query, diff, presenter.source.id)
+        }
+        if (presenter.query.isBlank()) {
+            searchHistory.setVisible(false)
         }
         showProgressBar()
         adapter?.clear()
@@ -500,9 +491,8 @@ open class BrowseSourceController(bundle: Bundle) :
 
         val oldFilters = presenter.sourceFilters.map { it.snapshotFilterState() }
 
-        filterSheet = SourceFilterSheet(
+        val sheet = SourceFilterSheet(
             activity = activity!!,
-            searches = { savedSearches },
             onSearchClicked = {
                 val matches = presenter.sourceFilters.indices.all { i ->
                     presenter.sourceFilters[i].filterStateMatches(oldFilters.getOrNull(i))
@@ -518,57 +508,36 @@ open class BrowseSourceController(bundle: Bundle) :
                 filterSheet?.setFilters(presenter.filterItems)
             },
             onSaveClicked = {
-                viewScope.launchIO {
-                    val names = presenter.loadSearches().map { it.name }
-                    var searchName = ""
-                    withUIContext {
-                        activity!!.materialAlertDialog()
-                            .setTitle(activity!!.getString(MR.strings.save_search))
-                            .setTextInput(hint = activity!!.getString(MR.strings.save_search_hint)) { input ->
-                                searchName = input
-                            }
-                            .setPositiveButton(MR.strings.save) { _, _ ->
-                                if (searchName.isNotBlank() && searchName !in names) {
-                                    presenter.saveSearch(searchName.trim(), presenter.query, presenter.sourceFilters)
-                                    filterSheet?.scrollToTop()
-                                } else {
-                                    activity!!.toast(MR.strings.save_search_invalid_name)
-                                }
-                            }
-                            .setNegativeButton(MR.strings.cancel, null)
-                            .show()
-                    }
-                }
-            },
-            onSavedSearchClicked = ss@{ searchId ->
-                viewScope.launchIO {
-                    val search = presenter.loadSearch(searchId) // Grab the latest data from database
-                    if (search?.filters == null) return@launchIO
-
-                    withUIContext {
-                        presenter.sourceFilters = search.filters
+                SaveSearchDialog.show(
+                    activity = activity!!,
+                    existing = null,
+                    query = presenter.query,
+                    filters = presenter.sourceFilters.diffFromDefault(presenter.source.getFilterList()),
+                    sourceId = presenter.source.id,
+                    onSaved = {
+                        filterSheet?.setSavedSearchesVisible(true)
                         filterSheet?.setFilters(presenter.filterItems)
-                        // This will call onSaveClicked()
-                        filterSheet?.dismiss()
-                    }
-                }
+                    },
+                )
             },
-            onDeleteSavedSearchClicked = { searchId ->
-                activity!!.materialAlertDialog()
-                    .setTitle(MR.strings.save_search_delete)
-                    .setMessage(MR.strings.save_search_delete)
-                    .setPositiveButton(MR.strings.cancel, null)
-                    .setNegativeButton(android.R.string.ok) { _, _ -> presenter.deleteSearch(searchId) }
-                    .show()
+            onSavedSearchesClicked = {
+                if (activityBinding?.searchToolbar?.isSearchExpanded != true) {
+                    activityBinding?.searchToolbar?.searchItem?.expandActionView()
+                }
+                searchHistory.setVisible(true)
             },
         )
-        filterSheet?.setFilters(presenter.filterItems)
+        filterSheet = sheet
+        sheet.setSavedSearchesVisible(
+            preferences.savedSearches().get().applicableTo(presenter.source.id).isNotEmpty(),
+        )
+        sheet.setFilters(presenter.filterItems)
         presenter.filtersChanged = false
 
-        filterSheet?.setOnCancelListener { filterSheet = null }
-        filterSheet?.setOnDismissListener { filterSheet = null }
+        sheet.setOnCancelListener { filterSheet = null }
+        sheet.setOnDismissListener { filterSheet = null }
 
-        filterSheet?.show()
+        sheet.show()
     }
 
     /**
