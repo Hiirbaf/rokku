@@ -110,8 +110,6 @@ class SearchHistoryView
             val swipeCallback =
                 SwipeDeleteCallback { position ->
                     (fastAdapter.getItem(position) as? SearchRowItem)?.entry?.let { deleteEntry(it) }
-                        if (entry.name == null) deleteRecentAt(entry) else deleteSavedAt(entry)
-                    }
                 }
             ItemTouchHelper(swipeCallback).attachToRecyclerView(binding.recycler)
 
