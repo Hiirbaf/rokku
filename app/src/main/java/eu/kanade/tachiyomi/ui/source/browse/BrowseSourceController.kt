@@ -48,6 +48,7 @@ import eu.kanade.tachiyomi.ui.source.BrowseController
 import eu.kanade.tachiyomi.ui.source.globalsearch.GlobalSearchController
 import eu.kanade.tachiyomi.ui.source.searchhistory.FilterApplyResult
 import eu.kanade.tachiyomi.ui.source.searchhistory.SearchHistoryDelegate
+import eu.kanade.tachiyomi.ui.source.searchhistory.SearchHistoryView
 import eu.kanade.tachiyomi.ui.source.searchhistory.addToSearchHistory
 import eu.kanade.tachiyomi.ui.source.searchhistory.applyTo
 import eu.kanade.tachiyomi.ui.source.searchhistory.diffFromDefault
