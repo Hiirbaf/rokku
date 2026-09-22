@@ -63,7 +63,6 @@ class SearchHistoryView
         private var lastHistory: List<SearchHistoryEntry> = emptyList()
         private var lastSaved: List<SearchHistoryEntry> = emptyList()
 
-        /** Tracks the target shown/hidden state immediately, unlike [isVisible] when animated */
         var historyShown = false
             private set
 
@@ -72,7 +71,6 @@ class SearchHistoryView
         var onHistoryEmptied: () -> Unit = { }
         var onSaveHistoryEntry: (SearchHistoryEntry) -> Unit = { _ -> }
         var onEditSavedSearch: (SearchHistoryEntry) -> Unit = { _ -> }
-        var showFilterSnapshots: Boolean = true
         var currentSourceId: Long? = null
 
         init {
@@ -91,8 +89,7 @@ class SearchHistoryView
                 if (item is SearchRowItem) {
                     val entry = item.entry
                     if (entry.name == null) {
-                        // move to top - a saved search isn't reordered by use
-                        preferences.addToSearchHistory(entry.query, entry.filters, entry.sourceId)
+                        preferences.addToSearchHistory(entry.query, entry.sourceId)
                     }
                     onQueryClicked(entry)
                 }
@@ -146,7 +143,6 @@ class SearchHistoryView
             scope = null
         }
 
-        /** Fades the whole overlay in or out instead of popping it on/off screen. */
         fun setAnimatedVisible(visible: Boolean) {
             if (historyShown == visible) return
             historyShown = visible
@@ -157,8 +153,6 @@ class SearchHistoryView
                 if (isLaidOut) {
                     fadeIn()
                 } else {
-                    // freshly added to the hierarchy - animating before its first layout pass
-                    // just snaps straight to the end value instead of visibly fading in
                     doOnNextLayout { if (historyShown) fadeIn() }
                 }
             } else {
@@ -204,7 +198,7 @@ class SearchHistoryView
             popup.setOnMenuItemClickListener { menuItem ->
                 when (menuItem.itemId) {
                     0 -> if (isSaved) onEditSavedSearch(entry) else onSaveHistoryEntry(entry)
-                    1 -> copySummary(entry.query, entry.filters)
+                    1 -> copyQuery(entry.query)
                     else -> deleteEntry(entry)
                 }
                 true
@@ -212,18 +206,10 @@ class SearchHistoryView
             popup.show()
         }
 
-        private fun copySummary(
-            query: String,
-            filters: List<SavedFilter>,
-        ) {
-            val summary =
-                (
-                    listOfNotNull(query.takeIf { it.isNotBlank() }) +
-                        filters.map { it.copyName }
-                ).joinToString(", ")
-            if (summary.isBlank()) return
+        private fun copyQuery(query: String) {
+            if (query.isBlank()) return
             val label = context.getString(R.string.search)
-            context.clipboardManager.setPrimaryClip(ClipData.newPlainText(label, summary))
+            context.clipboardManager.setPrimaryClip(ClipData.newPlainText(label, query))
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
                 snack(context.getString(R.string._copied_to_clipboard, label))
                     .moveAboveSafeAreas(context)
@@ -243,11 +229,9 @@ class SearchHistoryView
             (context as? MainActivity)?.setUndoSnackBar(undoSnack)
         }
 
-        /** Same filtering [setHistory] applies to the saved section, kept in one place since both it and [refreshSavedItems] need it. */
         private fun computeShownSaved(): List<SearchHistoryEntry> =
             lastSaved
                 .applicableTo(currentSourceId)
-                .let { if (showFilterSnapshots) it else it.filter { entry -> entry.query.isNotBlank() } }
                 .distinctBy { it.id }
                 .sortedBy { it.name?.lowercase() ?: "" }
 
@@ -265,11 +249,6 @@ class SearchHistoryView
                 )
             }
 
-        /**
-         * Rebuilds only [savedItemsAdapter] - used for the collapse/expand toggle so it doesn't
-         * also re-set the header (which would replay its own item-level animation on top of the
-         * chevron's) or the unrelated recent-searches adapters.
-         */
         private fun refreshSavedItems() {
             val shownSaved = computeShownSaved()
             savedItemsAdapter.set(
@@ -283,9 +262,7 @@ class SearchHistoryView
         ) {
             lastHistory = history
             lastSaved = saved
-            val shownHistory =
-                (if (showFilterSnapshots) history else history.filter { it.query.isNotBlank() })
-                    .distinctBy { it.id }
+            val shownHistory = history.distinctBy { it.id }
             val shownSaved = computeShownSaved()
 
             savedHeaderAdapter.set(
@@ -331,17 +308,12 @@ class SearchHistoryView
 
             fun hasHistory(
                 preferences: PreferencesHelper = Injekt.get(),
-                includeFilterSnapshots: Boolean = true,
                 sourceId: Long? = null,
             ): Boolean =
                 preferences.showBrowseSearchHistory().get() &&
                     (
-                        preferences.browseSearchHistory().get().any { includeFilterSnapshots || it.query.isNotBlank() } ||
-                            preferences
-                                .savedSearches()
-                                .get()
-                                .applicableTo(sourceId)
-                                .any { includeFilterSnapshots || it.query.isNotBlank() }
+                        preferences.browseSearchHistory().get().isNotEmpty() ||
+                            preferences.savedSearches().get().applicableTo(sourceId).isNotEmpty()
                     )
         }
     }
