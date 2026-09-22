@@ -47,8 +47,10 @@ import eu.kanade.tachiyomi.ui.manga.MangaDetailsController
 import eu.kanade.tachiyomi.ui.source.BrowseController
 import eu.kanade.tachiyomi.ui.source.globalsearch.GlobalSearchController
 import eu.kanade.tachiyomi.ui.source.searchhistory.FilterApplyResult
+import eu.kanade.tachiyomi.ui.source.searchhistory.SaveSearchDialog
 import eu.kanade.tachiyomi.ui.source.searchhistory.SearchHistoryDelegate
 import eu.kanade.tachiyomi.ui.source.searchhistory.addToSearchHistory
+import eu.kanade.tachiyomi.ui.source.searchhistory.applicableTo
 import eu.kanade.tachiyomi.ui.source.searchhistory.applyTo
 import eu.kanade.tachiyomi.ui.source.searchhistory.diffFromDefault
 import eu.kanade.tachiyomi.ui.webview.WebViewActivity
@@ -176,6 +178,9 @@ open class BrowseSourceController(bundle: Bundle) :
                 val bar = binding.floatingBrowseBar
                 if (bar.isVisible) bar.height else 0
             },
+            currentSourceId = { presenter.source.id },
+            // scrolling the history list can hide this the same way scrolling the results does
+            onHidden = { showFloatingBrowseBar() },
         )
 
     /**
@@ -636,6 +641,13 @@ open class BrowseSourceController(bundle: Bundle) :
 
             adapter?.clear()
             presenter.restartPager("", filterList)
+            // a tag tapped from manga details restarts the pager directly, bypassing
+            // searchWithQuery - record it as a filter snapshot the same way the filter sheet does
+            presenter.preferences.addToSearchHistory(
+                "",
+                presenter.sourceFilters.diffFromDefault(presenter.source.getFilterList()),
+                presenter.source.id,
+            )
         } else {
             if (!useContains) {
                 searchGenres(names, true)
