@@ -11,7 +11,6 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsCompat.Type.systemBars
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePaddingRelative
-import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import eu.davidea.flexibleadapter.FlexibleAdapter
@@ -24,19 +23,19 @@ import eu.kanade.tachiyomi.util.view.checkHeightThen
 import eu.kanade.tachiyomi.util.view.collapse
 import eu.kanade.tachiyomi.util.view.doOnApplyWindowInsetsCompat
 import eu.kanade.tachiyomi.widget.E2EBottomSheetDialog
-import yokai.domain.source.browse.filter.models.SavedSearch
 import yokai.presentation.component.recyclerview.VertPaddingDecoration
 import android.R as AR
 
 class SourceFilterSheet(
     val activity: Activity,
-    searches: () -> List<SavedSearch> = { emptyList() },
     val onSearchClicked: () -> Unit,
     val onResetClicked: () -> Unit,
     val onSaveClicked: () -> Unit,
-    val onSavedSearchClicked: (Long) -> Unit,
-    val onDeleteSavedSearchClicked: (Long) -> Unit,
+    val onSavedSearchesClicked: () -> Unit,
 ) : E2EBottomSheetDialog<SourceFilterSheetBinding>(activity) {
+
+    /** Set by the controller whenever it applies a filter change, so [dismiss] knows whether a re-search is due. */
+    var filterChanged = true
 
     val adapter: FlexibleAdapter<IFlexible<*>> = FlexibleAdapter<IFlexible<*>>(null)
         .setDisplayHeadersAtStartUp(true)
@@ -44,12 +43,6 @@ class SourceFilterSheet(
     override var recyclerView: RecyclerView? = binding.filtersRecycler
 
     override fun createBinding(inflater: LayoutInflater) = SourceFilterSheetBinding.inflate(inflater)
-
-    private val savedSearchesAdapter = SavedSearchesAdapter(
-        searches = searches,
-        onSavedSearchClicked = onSavedSearchClicked,
-        onDeleteSavedSearchClicked = onDeleteSavedSearchClicked,
-    )
 
     /**
      * True once the card has been sized for real (title height + window insets known). Guards
@@ -122,10 +115,7 @@ class SourceFilterSheet(
 
         recyclerView?.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
         recyclerView?.addItemDecoration(VertPaddingDecoration(12.dpToPx))
-        recyclerView?.adapter = ConcatAdapter(
-            savedSearchesAdapter,
-            adapter,
-        )
+        recyclerView?.adapter = adapter
         recyclerView?.setHasFixedSize(false)
         // The default ItemAnimator fades in every newly inserted row. That's unnoticeable for a
         // handful of items (e.g. expanding Sort or a short Genre list), but a group with dozens
