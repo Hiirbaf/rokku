@@ -12,12 +12,11 @@ fun List<SearchHistoryEntry>.findConflictingEntry(
 fun PreferencesHelper.addSavedSearch(
     name: String,
     query: String,
-    filters: List<SavedFilter>,
     sourceId: Long?,
     showOnAllSources: Boolean,
 ): SearchHistoryEntry {
     val trimmedName = name.trim()
-    val entry = SearchHistoryEntry(System.currentTimeMillis(), query, filters, sourceId, trimmedName, showOnAllSources)
+    val entry = SearchHistoryEntry(System.currentTimeMillis(), query, sourceId, trimmedName, showOnAllSources)
     val pref = savedSearches()
     pref.set(pref.get().filterNot { it.sourceId == sourceId && it.name.equals(trimmedName, ignoreCase = true) } + entry)
     return entry
