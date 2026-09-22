@@ -7,11 +7,9 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bluelinelabs.conductor.Controller
-import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.data.preference.PreferencesHelper
 import eu.kanade.tachiyomi.util.view.activityBinding
 import eu.kanade.tachiyomi.util.view.moveRecyclerViewUp
-import eu.kanade.tachiyomi.util.view.snack
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 
@@ -23,12 +21,6 @@ import uy.kohesive.injekt.api.get
  * @param isEnabled whether this controller supports the feature at all
  * @param extraShouldShow an extra condition for the history to show
  * @param requireSearchExpanded whether the search toolbar must be expanded before showing
- * @param onApplyFilters called when a picked entry carries filters, so the controller can apply
- * them to whatever single source's [eu.kanade.tachiyomi.source.model.FilterList] it owns (only
- * [eu.kanade.tachiyomi.ui.source.browse.BrowseSourceController] has one), passing along the
- * source id the entry was captured on so an exact match can skip loose matching entirely. Return
- * how many of them found a match - anything short of [FilterApplyResult.ALL] shows a heads-up.
- * @param showFilterSnapshots whether to show query-less filter-only entries
  * @param extraBottomPadding extra clearance for whatever floats over the bottom of [recycler]
  * @param currentSourceId the single source currently being browsed, if any
  * @param onHidden called whenever the history overlay goes from shown to hidden
@@ -40,8 +32,6 @@ class SearchHistoryDelegate(
     private val isEnabled: () -> Boolean = { true },
     private val extraShouldShow: () -> Boolean = { true },
     private val requireSearchExpanded: Boolean = true,
-    private val onApplyFilters: (List<SavedFilter>, Long?) -> FilterApplyResult = { _, _ -> FilterApplyResult.ALL },
-    private val showFilterSnapshots: () -> Boolean = { false },
     private val extraBottomPadding: () -> Int = { 0 },
     private val currentSourceId: () -> Long? = { null },
     private val onHidden: () -> Unit = {},
@@ -53,12 +43,6 @@ class SearchHistoryDelegate(
 
     private var suppressNextSave = false
 
-    /**
-     * Whether the submission this call is answering for should skip being recorded into recent
-     * history - true right after picking a saved search, since [searchView]'s own submit fires
-     * the controller's normal search-and-save flow the same way a manually typed query would.
-     * Resets itself on read so it only ever applies to the one submission it was set for.
-     */
     fun consumeSuppressSave(): Boolean {
         val value = suppressNextSave
         suppressNextSave = false
@@ -74,34 +58,8 @@ class SearchHistoryDelegate(
             SearchHistoryView(container().context).apply {
                 isVisible = false
                 onQueryClicked = { entry ->
-                    val result =
-                        if (entry.filters.isEmpty()) FilterApplyResult.ALL else onApplyFilters(entry.filters, entry.sourceId)
-                    val isSnapshot = entry.query.isBlank()
-                    if (isSnapshot) {
-                        if (result != FilterApplyResult.NONE) {
-                            // onApplyFilters above already re-searched with it, so there's no
-                            // reason to keep the search bar open - if nothing landed there's
-                            // nothing to show for it, so leave things as they were instead
-                            setVisible(false)
-                            controller.activityBinding
-                                ?.searchToolbar
-                                ?.searchItem
-                                ?.collapseActionView()
-                        }
-                    } else {
-                        // a saved search is never itself reordered into/recorded as recent - the
-                        // controller's own submit listener saves every search by default, so tell
-                        // it to skip just this once
-                        if (entry.name != null) suppressNextSave = true
-                        searchView()?.setQuery(entry.query, true)
-                    }
-                    val message =
-                        when (result) {
-                            FilterApplyResult.NONE -> if (isSnapshot) R.string.no_filters_applied else R.string.some_filters_not_applied
-                            FilterApplyResult.SOME -> R.string.some_filters_not_applied
-                            FilterApplyResult.ALL -> null
-                        }
-                    message?.let { container().snack(it).moveAboveSafeAreas(container().context) }
+                    if (entry.name != null) suppressNextSave = true
+                    searchView()?.setQuery(entry.query, true)
                 }
                 onQueryFilled = { searchView()?.setQuery(it, false) }
                 onHistoryEmptied = { setVisible(false) }
@@ -120,7 +78,6 @@ class SearchHistoryDelegate(
         SaveSearchDialog.show(activity, entry, isExisting)
     }
 
-    /** Pads the history list under whatever height the app bar is currently showing on screen. */
     fun updatePadding() {
         val recycler = recycler() ?: return
         val appBar = controller.activityBinding?.appBar
@@ -135,17 +92,13 @@ class SearchHistoryDelegate(
 
     fun setVisible(show: Boolean) {
         val historyView = setUp() ?: return
-        // re-evaluated every call, not just once at setUp() - e.g. a source's filters might not
-        // have loaded yet the first time this ran
-        val showFilterSnapshots = showFilterSnapshots()
         val sourceId = currentSourceId()
-        historyView.showFilterSnapshots = showFilterSnapshots
         historyView.currentSourceId = sourceId
         val shouldShow =
             show &&
                 extraShouldShow() &&
                 (!requireSearchExpanded || controller.activityBinding?.searchToolbar?.isSearchExpanded == true) &&
-                SearchHistoryView.hasHistory(preferences, includeFilterSnapshots = showFilterSnapshots, sourceId = sourceId)
+                SearchHistoryView.hasHistory(preferences, sourceId = sourceId)
         if (historyView.historyShown == shouldShow) return
         historyView.setAnimatedVisible(shouldShow)
         if (!shouldShow) {
@@ -154,7 +107,6 @@ class SearchHistoryDelegate(
             return
         }
         val revealHistory = {
-            // freeze the recycler behind the history it can't drag the app bar
             recycler()?.suppressLayout(true)
             updatePadding()
             historyView.scrollToTop()
