@@ -136,8 +136,8 @@ class SearchHistoryView
             val newScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
             scope = newScope
             combine(
-                preferences.browseSearchHistory().asFlow(),
-                preferences.savedSearches().asFlow(),
+                preferences.browseSearchHistory().changes(),
+                preferences.savedSearches().changes(),
                 ::setHistory,
             ).launchIn(newScope)
         }
