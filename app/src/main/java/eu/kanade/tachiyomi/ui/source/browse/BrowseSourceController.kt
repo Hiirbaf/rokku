@@ -10,6 +10,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExploreOff
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.core.view.WindowInsetsCompat.Type.systemBars
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
@@ -44,10 +47,8 @@ import eu.kanade.tachiyomi.ui.manga.MangaDetailsController
 import eu.kanade.tachiyomi.ui.source.BrowseController
 import eu.kanade.tachiyomi.ui.source.globalsearch.GlobalSearchController
 import eu.kanade.tachiyomi.ui.source.searchhistory.FilterApplyResult
-import eu.kanade.tachiyomi.ui.source.searchhistory.SaveSearchDialog
 import eu.kanade.tachiyomi.ui.source.searchhistory.SearchHistoryDelegate
 import eu.kanade.tachiyomi.ui.source.searchhistory.addToSearchHistory
-import eu.kanade.tachiyomi.ui.source.searchhistory.applicableTo
 import eu.kanade.tachiyomi.ui.source.searchhistory.applyTo
 import eu.kanade.tachiyomi.ui.source.searchhistory.diffFromDefault
 import eu.kanade.tachiyomi.ui.webview.WebViewActivity
@@ -56,7 +57,9 @@ import eu.kanade.tachiyomi.util.system.connectivityManager
 import eu.kanade.tachiyomi.util.system.dpToPx
 import eu.kanade.tachiyomi.util.system.e
 import eu.kanade.tachiyomi.util.system.launchIO
+import eu.kanade.tachiyomi.util.system.materialAlertDialog
 import eu.kanade.tachiyomi.util.system.openInBrowser
+import eu.kanade.tachiyomi.util.system.setTextInput
 import eu.kanade.tachiyomi.util.system.toast
 import eu.kanade.tachiyomi.util.system.w
 import eu.kanade.tachiyomi.util.system.withUIContext
@@ -82,6 +85,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import uy.kohesive.injekt.injectLazy
 import yokai.domain.manga.interactor.GetManga
+import yokai.domain.source.browse.filter.models.SavedSearch
 import yokai.i18n.MR
 import yokai.presentation.core.icons.CustomIcons
 import yokai.presentation.core.icons.LocalSource
@@ -172,9 +176,6 @@ open class BrowseSourceController(bundle: Bundle) :
                 val bar = binding.floatingBrowseBar
                 if (bar.isVisible) bar.height else 0
             },
-            currentSourceId = { presenter.source.id },
-            // scrolling the history list can hide this the same way scrolling the results does
-            onHidden = { showFloatingBrowseBar() },
         )
 
     /**
@@ -185,6 +186,9 @@ open class BrowseSourceController(bundle: Bundle) :
     /** Current filter sheet */
     private var filterSheet: SourceFilterSheet? = null
     private var lastPosition: Int = -1
+
+    // Basically a cache just so the filter sheet is shown faster
+    var savedSearches by mutableStateOf(emptyList<SavedSearch>())
 
     private val isBehindGlobalSearch: Boolean
         get() = router.backstackSize >= 2 &&
@@ -491,8 +495,9 @@ open class BrowseSourceController(bundle: Bundle) :
 
         val oldFilters = presenter.sourceFilters.map { it.snapshotFilterState() }
 
-        val sheet = SourceFilterSheet(
+        filterSheet = SourceFilterSheet(
             activity = activity!!,
+            searches = { savedSearches },
             onSearchClicked = {
                 val matches = presenter.sourceFilters.indices.all { i ->
                     presenter.sourceFilters[i].filterStateMatches(oldFilters.getOrNull(i))
@@ -508,36 +513,57 @@ open class BrowseSourceController(bundle: Bundle) :
                 filterSheet?.setFilters(presenter.filterItems)
             },
             onSaveClicked = {
-                SaveSearchDialog.show(
-                    activity = activity!!,
-                    existing = null,
-                    query = presenter.query,
-                    filters = presenter.sourceFilters.diffFromDefault(presenter.source.getFilterList()),
-                    sourceId = presenter.source.id,
-                    onSaved = {
-                        filterSheet?.setSavedSearchesVisible(true)
-                        filterSheet?.setFilters(presenter.filterItems)
-                    },
-                )
-            },
-            onSavedSearchesClicked = {
-                if (activityBinding?.searchToolbar?.isSearchExpanded != true) {
-                    activityBinding?.searchToolbar?.searchItem?.expandActionView()
+                viewScope.launchIO {
+                    val names = presenter.loadSearches().map { it.name }
+                    var searchName = ""
+                    withUIContext {
+                        activity!!.materialAlertDialog()
+                            .setTitle(activity!!.getString(MR.strings.save_search))
+                            .setTextInput(hint = activity!!.getString(MR.strings.save_search_hint)) { input ->
+                                searchName = input
+                            }
+                            .setPositiveButton(MR.strings.save) { _, _ ->
+                                if (searchName.isNotBlank() && searchName !in names) {
+                                    presenter.saveSearch(searchName.trim(), presenter.query, presenter.sourceFilters)
+                                    filterSheet?.scrollToTop()
+                                } else {
+                                    activity!!.toast(MR.strings.save_search_invalid_name)
+                                }
+                            }
+                            .setNegativeButton(MR.strings.cancel, null)
+                            .show()
+                    }
                 }
-                searchHistory.setVisible(true)
+            },
+            onSavedSearchClicked = ss@{ searchId ->
+                viewScope.launchIO {
+                    val search = presenter.loadSearch(searchId) // Grab the latest data from database
+                    if (search?.filters == null) return@launchIO
+
+                    withUIContext {
+                        presenter.sourceFilters = search.filters
+                        filterSheet?.setFilters(presenter.filterItems)
+                        // This will call onSaveClicked()
+                        filterSheet?.dismiss()
+                    }
+                }
+            },
+            onDeleteSavedSearchClicked = { searchId ->
+                activity!!.materialAlertDialog()
+                    .setTitle(MR.strings.save_search_delete)
+                    .setMessage(MR.strings.save_search_delete)
+                    .setPositiveButton(MR.strings.cancel, null)
+                    .setNegativeButton(android.R.string.ok) { _, _ -> presenter.deleteSearch(searchId) }
+                    .show()
             },
         )
-        filterSheet = sheet
-        sheet.setSavedSearchesVisible(
-            preferences.savedSearches().get().applicableTo(presenter.source.id).isNotEmpty(),
-        )
-        sheet.setFilters(presenter.filterItems)
+        filterSheet?.setFilters(presenter.filterItems)
         presenter.filtersChanged = false
 
-        sheet.setOnCancelListener { filterSheet = null }
-        sheet.setOnDismissListener { filterSheet = null }
+        filterSheet?.setOnCancelListener { filterSheet = null }
+        filterSheet?.setOnDismissListener { filterSheet = null }
 
-        sheet.show()
+        filterSheet?.show()
     }
 
     /**
@@ -610,13 +636,6 @@ open class BrowseSourceController(bundle: Bundle) :
 
             adapter?.clear()
             presenter.restartPager("", filterList)
-            // a tag tapped from manga details restarts the pager directly, bypassing
-            // searchWithQuery - record it as a filter snapshot the same way the filter sheet does
-            presenter.preferences.addToSearchHistory(
-                "",
-                presenter.sourceFilters.diffFromDefault(presenter.source.getFilterList()),
-                presenter.source.id,
-            )
         } else {
             if (!useContains) {
                 searchGenres(names, true)
