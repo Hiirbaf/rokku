@@ -221,4 +221,21 @@ class SourceFilterSheet(
     }
 
     fun setFilters(items: List<IFlexible<*>>) {
-        val prefix: List<IFlexible
+        val prefix: List<IFlexible<*>> =
+            if (hasSearchHistory) {
+                listOf(
+                    SavedSearchesHeaderItem {
+                        dismiss(triggerSearch = false)
+                        onSavedSearchesClicked()
+                    },
+                )
+            } else {
+                emptyList()
+            }
+        adapter.updateDataSet(prefix + items)
+    }
+
+    fun scrollToTop() {
+        recyclerView?.layoutManager?.scrollToPosition(0)
+    }
+}
