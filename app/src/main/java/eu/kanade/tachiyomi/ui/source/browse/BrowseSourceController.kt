@@ -557,8 +557,21 @@ open class BrowseSourceController(bundle: Bundle) :
                     .setNegativeButton(android.R.string.ok) { _, _ -> presenter.deleteSearch(searchId) }
                     .show()
             },
+            onSavedSearchesClicked = {
+                if (activityBinding?.searchToolbar?.isSearchExpanded != true) {
+                    activityBinding?.searchToolbar?.searchItem?.expandActionView()
+                }
+                searchHistory.setVisible(true)
+            },
         )
         filterSheet?.setFilters(presenter.filterItems)
+        filterSheet?.setSavedSearchesVisible(
+            SearchHistoryView.hasHistory(
+                preferences,
+                includeFilterSnapshots = presenter.sourceFilters.isNotEmpty(),
+                sourceId = presenter.source.id,
+            ),
+        )
         presenter.filtersChanged = false
 
         filterSheet?.setOnCancelListener { filterSheet = null }
