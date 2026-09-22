@@ -11,31 +11,31 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsCompat.Type.systemBars
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePaddingRelative
+import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import eu.davidea.flexibleadapter.FlexibleAdapter
 import eu.davidea.flexibleadapter.items.IFlexible
 import eu.kanade.tachiyomi.databinding.SourceFilterSheetBinding
-import eu.kanade.tachiyomi.ui.source.filter.SavedSearchesHeaderItem
 import eu.kanade.tachiyomi.util.system.dpToPx
 import eu.kanade.tachiyomi.util.system.rootWindowInsetsCompat
 import eu.kanade.tachiyomi.util.view.checkHeightThen
 import eu.kanade.tachiyomi.util.view.collapse
 import eu.kanade.tachiyomi.util.view.doOnApplyWindowInsetsCompat
 import eu.kanade.tachiyomi.widget.E2EBottomSheetDialog
+import yokai.domain.source.browse.filter.models.SavedSearch
 import yokai.presentation.component.recyclerview.VertPaddingDecoration
 import android.R as AR
 
 class SourceFilterSheet(
     val activity: Activity,
+    searches: () -> List<SavedSearch> = { emptyList() },
     val onSearchClicked: () -> Unit,
     val onResetClicked: () -> Unit,
     val onSaveClicked: () -> Unit,
-    val onSavedSearchesClicked: () -> Unit,
+    val onSavedSearchClicked: (Long) -> Unit,
+    val onDeleteSavedSearchClicked: (Long) -> Unit,
 ) : E2EBottomSheetDialog<SourceFilterSheetBinding>(activity) {
-
-    /** Set by the controller whenever it applies a filter change, so [dismiss] knows whether a re-search is due. */
-    var filterChanged = true
 
     val adapter: FlexibleAdapter<IFlexible<*>> = FlexibleAdapter<IFlexible<*>>(null)
         .setDisplayHeadersAtStartUp(true)
@@ -43,6 +43,12 @@ class SourceFilterSheet(
     override var recyclerView: RecyclerView? = binding.filtersRecycler
 
     override fun createBinding(inflater: LayoutInflater) = SourceFilterSheetBinding.inflate(inflater)
+
+    private val savedSearchesAdapter = SavedSearchesAdapter(
+        searches = searches,
+        onSavedSearchClicked = onSavedSearchClicked,
+        onDeleteSavedSearchClicked = onDeleteSavedSearchClicked,
+    )
 
     /**
      * True once the card has been sized for real (title height + window insets known). Guards
@@ -115,7 +121,10 @@ class SourceFilterSheet(
 
         recyclerView?.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
         recyclerView?.addItemDecoration(VertPaddingDecoration(12.dpToPx))
-        recyclerView?.adapter = adapter
+        recyclerView?.adapter = ConcatAdapter(
+            savedSearchesAdapter,
+            adapter,
+        )
         recyclerView?.setHasFixedSize(false)
         // The default ItemAnimator fades in every newly inserted row. That's unnoticeable for a
         // handful of items (e.g. expanding Sort or a short Genre list), but a group with dozens
@@ -190,35 +199,13 @@ class SourceFilterSheet(
         binding.titleLayout.translationY = bottomSheetVisibleHeight.toFloat()
     }
 
-    override fun dismiss() = dismiss(triggerSearch = true)
-
-    private fun dismiss(triggerSearch: Boolean) {
+    override fun dismiss() {
         super.dismiss()
-        if (triggerSearch && filterChanged) {
-            onSearchClicked()
-        }
-    }
-
-    /** Set once before showing the sheet - a row offering the saved-search list is pinned atop [setFilters] while true. */
-    private var hasSavedSearches = false
-
-    fun setSavedSearchesVisible(visible: Boolean) {
-        hasSavedSearches = visible
+        onSearchClicked()
     }
 
     fun setFilters(items: List<IFlexible<*>>) {
-        val prefix: List<IFlexible<*>> =
-            if (hasSavedSearches) {
-                listOf(
-                    SavedSearchesHeaderItem {
-                        dismiss(triggerSearch = false)
-                        onSavedSearchesClicked()
-                    },
-                )
-            } else {
-                emptyList()
-            }
-        adapter.updateDataSet(prefix + items)
+        adapter.updateDataSet(items)
     }
 
     fun scrollToTop() {
