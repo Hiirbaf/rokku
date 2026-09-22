@@ -6,7 +6,6 @@ import com.mikepenz.fastadapter.FastAdapter
 import com.mikepenz.fastadapter.items.AbstractItem
 import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.databinding.SearchHistoryItemBinding
-import eu.kanade.tachiyomi.util.view.makeContainerShape
 
 /**
  * One row shared by both the "Recent searches" and "Saved searches" sections - [entry] is a
@@ -51,14 +50,6 @@ class SearchRowItem(
             // a filter-only snapshot has a blank query - nothing to show as a title then
             binding.title.isVisible = isSaved || entry.query.isNotBlank()
             binding.title.text = entry.name ?: entry.query
-            val shape =
-                binding.historyCard.makeContainerShape(
-                    item.isTopOfGroup,
-                    item.isBottomOfGroup,
-                    clipContentTo = binding.frontView,
-                )
-            binding.historyCard.shapeAppearanceModel = shape
-            binding.backView.shapeAppearanceModel = shape
 
             // a recent row's title already shows the query, so repeating it in the subtitle would
             // be redundant - a saved row's title is its name instead, so the query only shows here
