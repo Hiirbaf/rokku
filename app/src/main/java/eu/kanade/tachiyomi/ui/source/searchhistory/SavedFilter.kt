@@ -1,5 +1,10 @@
 package eu.kanade.tachiyomi.ui.source.searchhistory
 
+import android.graphics.Typeface
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.TextPaint
+import android.text.style.MetricAffectingSpan
 import eu.kanade.tachiyomi.source.model.Filter
 import eu.kanade.tachiyomi.source.model.FilterList
 import eu.kanade.tachiyomi.util.system.toInt
@@ -14,6 +19,7 @@ import kotlinx.serialization.Serializable
 sealed class SavedFilter {
     abstract val name: String
     abstract val filterName: String
+    abstract val copyName: String
 
     @Serializable
     @SerialName("checkbox")
@@ -21,8 +27,8 @@ sealed class SavedFilter {
         override val name: String,
         val checked: Boolean,
     ) : SavedFilter() {
-        override val filterName: String
-            get() = name
+        override val filterName: String get() = name
+        override val copyName: String get() = filterName
     }
 
     @Serializable
@@ -31,8 +37,8 @@ sealed class SavedFilter {
         override val name: String,
         val state: Int,
     ) : SavedFilter() {
-        override val filterName: String
-            get() = name
+        override val filterName: String get() = name
+        override val copyName: String get() = filterName
     }
 
     @Serializable
@@ -41,8 +47,8 @@ sealed class SavedFilter {
         override val name: String,
         val text: String,
     ) : SavedFilter() {
-        override val filterName: String
-            get() = text
+        override val filterName: String get() = text
+        override val copyName: String get() = filterName
     }
 
     @Serializable
@@ -51,8 +57,8 @@ sealed class SavedFilter {
         override val name: String,
         val value: String,
     ) : SavedFilter() {
-        override val filterName: String
-            get() = "$name: $value"
+        override val filterName: String get() = "$name: $value"
+        override val copyName: String get() = "$name:$value"
     }
 
     @Serializable
@@ -62,8 +68,8 @@ sealed class SavedFilter {
         val value: String,
         val ascending: Boolean,
     ) : SavedFilter() {
-        override val filterName: String
-            get() = value
+        override val filterName: String get() = "${if (ascending) ASCENDING_ARROW else DESCENDING_ARROW}$value"
+        override val copyName: String get() = value
     }
 
     @Serializable
@@ -72,8 +78,34 @@ sealed class SavedFilter {
         override val name: String,
         val children: List<SavedFilter>,
     ) : SavedFilter() {
-        override val filterName: String
-            get() = children.joinToString { it.filterName }
+        override val filterName: String get() = children.joinToString { it.filterName }
+        override val copyName: String get() = children.joinToString { it.copyName }
+    }
+
+    companion object {
+        const val ASCENDING_ARROW = '↑'
+        const val DESCENDING_ARROW = '↓'
+    }
+}
+
+private class BoldUprightSpan : MetricAffectingSpan() {
+    override fun updateDrawState(tp: TextPaint) = replace(tp)
+
+    override fun updateMeasureState(tp: TextPaint) = replace(tp)
+
+    private fun replace(tp: TextPaint) {
+        tp.typeface = Typeface.create(tp.typeface, Typeface.BOLD)
+    }
+}
+
+fun CharSequence.unitalicizeArrows(): CharSequence {
+    if (SavedFilter.ASCENDING_ARROW !in this && SavedFilter.DESCENDING_ARROW !in this) return this
+    return SpannableString(this).apply {
+        indices.forEach { i ->
+            if (this[i] == SavedFilter.ASCENDING_ARROW || this[i] == SavedFilter.DESCENDING_ARROW) {
+                setSpan(BoldUprightSpan(), i, i + 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            }
+        }
     }
 }
 
@@ -98,7 +130,6 @@ private fun looselyMatchesType(
         is SavedFilter.CheckBox, is SavedFilter.TriState ->
             filter is Filter.CheckBox || filter is Filter.TriState
         is SavedFilter.Text, is SavedFilter.Select, is SavedFilter.Sort ->
-            // Some sources might have the same filter logic but extended to a group of checkbox
             filter is Filter.Text || filter is Filter.Select<*> || filter is Filter.Sort || filter is Filter.Group<*>
         is SavedFilter.Group ->
             filter is Filter.Group<*> || filter is Filter.Text || filter is Filter.Select<*> || filter is Filter.Sort
@@ -330,7 +361,7 @@ private val SavedFilter.anyValue: String?
 private fun applyValueAnywhere(
     value: String,
     filters: FilterList,
-    ascending: Boolean = null,
+    ascending: Boolean? = null,
 ): Boolean {
     for (filter in filters) {
         val applied =
@@ -340,10 +371,8 @@ private fun applyValueAnywhere(
                 // too aggressive to stuff an arbitrary value into an unrelated free-text field
                 is Filter.Text -> false
                 else -> applyValueLoosely(value, filter, ascending)
-                }
             }
         if (applied) return true
-        }
     }
     return false
 }
@@ -362,7 +391,7 @@ enum class FilterApplyResult {
  * filter by name.
  *
  * @param strict skip the loose/anywhere fallbacks - only an exact match counts. For when [filters]
- * is are from the same source
+ * is are from the same source.
  */
 fun List<SavedFilter>.applyTo(
     filters: FilterList,
@@ -387,7 +416,7 @@ fun List<SavedFilter>.applyTo(
                     saved is SavedFilter.Group ->
                         saved.children.isNotEmpty() &&
                             saved.children.all { child -> child.anyValue?.let { applyValueAnywhere(it, filters) } ?: false }
-                    else -> saved.anyValue?.let { applyValueAnywhere(it, filters, (saved as? SavedFilter.Sort
+                    else -> saved.anyValue?.let { applyValueAnywhere(it, filters, (saved as? SavedFilter.Sort)?.ascending) } ?: false
                 }
             }
         if (applied) appliedCount++
