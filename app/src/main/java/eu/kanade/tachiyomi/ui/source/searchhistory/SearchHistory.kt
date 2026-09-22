@@ -7,10 +7,9 @@ import kotlinx.serialization.Serializable
 private const val SEARCH_HISTORY_LIMIT = 20
 
 /**
- * A remembered query + filter combination - either an auto-recorded recent search, or a
- * user-named saved one. [name] is only ever non-null for the latter; the item/view layer reads
- * its presence to tell which kind a given entry is, the same way [query] blank/non-blank already
- * distinguishes a plain search from a filter-only snapshot.
+ * A remembered search - either an auto-recorded recent query, or a user-named saved one. [name]
+ * is only ever non-null for the latter; the item/view layer reads its presence to tell which kind
+ * a given entry is.
  *
  * @param id each entry's identity (and its recency, since a bump replaces it with a fresh one).
  * @param showOnAllSources only meaningful when [name] is set - whether a saved search is offered
@@ -20,26 +19,22 @@ private const val SEARCH_HISTORY_LIMIT = 20
 data class SearchHistoryEntry(
     val id: Long,
     val query: String,
-    val filters: List<SavedFilter> = emptyList(),
     val sourceId: Long? = null,
     val name: String? = null,
     val showOnAllSources: Boolean = false,
 )
 
 fun PreferencesHelper.addToSearchHistory(
-    query: String = "",
-    filters: List<SavedFilter> = emptyList(),
+    query: String,
     sourceId: Long? = null,
 ) {
     if (!showBrowseSearchHistory().get()) return
     if (isIncognitoModeForSource(sourceId, this)) return
     val trimmedQuery = query.trim()
-    if (trimmedQuery.isBlank() && filters.isEmpty()) return
+    if (trimmedQuery.isBlank()) return
     val pref = browseSearchHistory()
-    val entry = SearchHistoryEntry(System.currentTimeMillis(), trimmedQuery, filters, sourceId)
-    // bump instead of duplicating only when it's a truly identical repeat - same query, same filters
-    val history =
-        listOf(entry) + pref.get().filterNot { it.query.equals(trimmedQuery, true) && it.filters == filters }
+    val entry = SearchHistoryEntry(System.currentTimeMillis(), trimmedQuery, sourceId)
+    val history = listOf(entry) + pref.get().filterNot { it.query.equals(trimmedQuery, true) }
     pref.set(history.take(SEARCH_HISTORY_LIMIT))
 }
 
