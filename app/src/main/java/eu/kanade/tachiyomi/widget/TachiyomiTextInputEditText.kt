@@ -72,7 +72,7 @@ class TachiyomiTextInputEditText @JvmOverloads constructor(
                 }
                 
                 applyIncognito(isIncognitoModeForSource(sourceId(), preferences))
-                merge(preferences.incognitoMode().asFlow(), preferences.incognitoExtensions().asFlow())
+                merge(preferences.incognitoMode().changes(), preferences.incognitoExtensions().changes())
                     .onEach { applyIncognito(isIncognitoModeForSource(sourceId(), preferences)) }
             } catch (_: Exception) {
             }
