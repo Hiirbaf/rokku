@@ -1,6 +1,8 @@
 package eu.kanade.tachiyomi.ui.base.controller
 
 import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -13,6 +15,7 @@ import co.touchlab.kermit.Logger
 import com.bluelinelabs.conductor.Controller
 import com.bluelinelabs.conductor.ControllerChangeHandler
 import com.bluelinelabs.conductor.ControllerChangeType
+import com.bluelinelabs.conductor.Router
 import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.util.view.BackHandlerControllerInterface
 import eu.kanade.tachiyomi.util.view.activityBinding
@@ -140,6 +143,25 @@ abstract class BaseController(bundle: Bundle? = null) :
         } else {
             true
         }
+    }
+
+    /** Source id of the topmost controller, if it's showing content tied to one. */
+    fun Router.currentIncognitoSourceId(): Long? = (backstack.lastOrNull()?.controller as? BaseController<*>)?.getIncognitoSourceId()
+
+    /**
+     * Resolves the hosting [MainActivity] from a widget's [Context] (unwrapping any
+     * [ContextWrapper]s, e.g. a themed context) and returns its [MainActivity.currentIncognitoSourceId] -
+     * for widgets like [eu.kanade.tachiyomi.ui.base.MiniSearchView] or
+     * [eu.kanade.tachiyomi.widget.TachiyomiTextInputEditText] that need to know whether the screen
+     * they're on is showing per-source incognito content.
+     */
+    fun Context.currentIncognitoSourceId(): Long? {
+        var ctx: Context = this
+        while (ctx is ContextWrapper) {
+            if (ctx is MainActivity) return ctx.currentIncognitoSourceId()
+            ctx = ctx.baseContext
+        }
+        return null
     }
 
     fun hideLegacyAppBar() {
