@@ -271,7 +271,7 @@ class SearchHistoryView
                 } else {
                     listOf(
                         SearchHistorySectionHeaderItem(
-                            R.string.saved_searches,
+                            R.string.save_search_title,
                             collapsible = true,
                             collapsed = savedSearchesCollapsed,
                             onToggleCollapsed = {
