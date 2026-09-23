@@ -1259,9 +1259,6 @@ open class MainActivity : BaseActivity<MainActivityBinding>() {
     override fun isChangingConfigurations(): Boolean = !recreatingForSettingsChange && super.isChangingConfigurations()
 
     override fun onDestroy() {
-        try {
-            com.discord.socialsdk.DiscordSocialSdkInit.setEngineActivity(null)
-        } catch (_: Exception) {}
         super.onDestroy()
         overflowDialog?.dismiss()
         overflowDialog = null
