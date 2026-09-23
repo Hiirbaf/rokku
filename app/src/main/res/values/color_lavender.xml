@@ -10,7 +10,7 @@
   ~ Neutral #EDE2FF
 -->
 <resources>
-    <color name="lavender_primary">#9C64D3#7B46AF</color>
+    <color name="lavender_primary">#7B46AF</color>
     <color name="lavender_on_primary">#EDE2FF</color>
     <color name="lavender_primary_variant">#DED3F3</color>
     <color name="lavender_primary_inverse">#D6BAFF</color>
