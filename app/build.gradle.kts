@@ -55,7 +55,7 @@ val supportedAbis = setOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
 android {
     defaultConfig {
         applicationId = "app.rokku"
-        versionCode = 158
+        versionCode = 160
         versionName = _versionName
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled = true
