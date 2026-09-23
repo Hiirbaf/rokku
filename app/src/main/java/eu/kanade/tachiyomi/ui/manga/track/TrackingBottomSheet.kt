@@ -43,7 +43,7 @@ import eu.kanade.tachiyomi.databinding.TrackingBottomSheetBinding
 import eu.kanade.tachiyomi.network.HttpException
 import eu.kanade.tachiyomi.network.isAuthError
 import eu.kanade.tachiyomi.ui.manga.MangaDetailsController
-import eu.kanade.tachiyomi.ui.manga.MangaDetailsDivider
+import eu.kanade.tachiyomi.ui.manga.TrackerSearchDivider
 import eu.kanade.tachiyomi.util.lang.indexesOf
 import eu.kanade.tachiyomi.util.system.addCheckBoxPrompt
 import eu.kanade.tachiyomi.util.system.dpToPx
@@ -182,7 +182,7 @@ class TrackingBottomSheet(private val controller: MangaDetailsController) :
         binding.trackSearchRecycler.layoutManager = LinearLayoutManager(activity)
         binding.trackSearchRecycler.adapter = searchAdapter
         binding.trackSearchRecycler.setHasFixedSize(false)
-        binding.trackSearchRecycler.addItemDecoration(MangaDetailsDivider(activity, 16.dpToPx))
+        binding.trackSearchRecycler.addItemDecoration(TrackerSearchDivider(activity, 16.dpToPx))
         binding.trackSearchRecycler.itemAnimator = null
 
         adapter?.items = presenter.trackList

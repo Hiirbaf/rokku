@@ -5,11 +5,16 @@ import android.graphics.Canvas
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.view.View
+import eu.kanade.tachiyomi.R
+import eu.kanade.tachiyomi.util.system.dpToPx
+import eu.kanade.tachiyomi.util.system.getResourceColor
+import kotlin.math.roundToInt
 import android.R as AR
 
 class SourceDividerItemDecoration(context: Context) : androidx.recyclerview.widget.RecyclerView.ItemDecoration() {
 
     private val divider: Drawable
+    private val padding: Int = 12.dpToPx
 
     init {
         val a = context.obtainStyledAttributes(intArrayOf(AR.attr.listDivider))
@@ -27,12 +32,13 @@ class SourceDividerItemDecoration(context: Context) : androidx.recyclerview.widg
             ) {
                 val params = child.layoutParams as androidx.recyclerview.widget.RecyclerView.LayoutParams
                 val top = child.bottom + params.bottomMargin
-                val bottom = top + divider.intrinsicHeight
-                val left = parent.paddingStart // + holder.margin
-                val right = parent.width - parent.paddingEnd // - holder.margin
+                val bottom = top + divider.intrinsicHeight + 0.5f.dpToPx.roundToInt()
+                val left = parent.paddingStart + padding
+                val right = parent.width - parent.paddingEnd - padding
 
                 divider.setBounds(left, top, right, bottom)
                 divider.draw(c)
+                c.drawColor(parent.context.getResourceColor(R.attr.background))
             }
         }
     }
@@ -43,6 +49,6 @@ class SourceDividerItemDecoration(context: Context) : androidx.recyclerview.widg
         parent: androidx.recyclerview.widget.RecyclerView,
         state: androidx.recyclerview.widget.RecyclerView.State,
     ) {
-        outRect.set(0, 0, 0, divider.intrinsicHeight)
+        outRect.set(0, 0, 0, divider.intrinsicHeight + 0.5f.dpToPx.roundToInt())
     }
 }
