@@ -377,6 +377,12 @@
         </receiver>
 
         <service
+            android:name="com.discord.socialsdk.ForegroundService"
+            android:foregroundServiceType="mediaPlayback|microphone"
+            android:enabled="true"
+            android:exported="false" />
+
+        <service
             android:name=".data.connections.discord.DiscordRPCService"
             android:enabled="true"
             android:exported="false"
