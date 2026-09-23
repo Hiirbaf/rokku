@@ -54,7 +54,6 @@ class TachiyomiTextInputEditText @JvmOverloads constructor(
          * if incognito mode is on - either the global toggle, or per-extension incognito for
          * [sourceId]'s source, if one is given. Some IMEs may not respect this flag.
          */
-          */
         fun EditText.setIncognito(
             viewScope: CoroutineScope,
             sourceId: () -> Long? = { null },
