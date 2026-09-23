@@ -418,6 +418,16 @@
 
     </application>
 
+    <queries>
+        <intent>
+            <action android:name="android.support.customtabs.action.CustomTabsService" />
+        </intent>
+        <intent>
+            <action android:name="com.discord.socialsdk.rpc.IDiscordRpcService" />
+        </intent>
+        <package android:name="com.discord" />
+    </queries>
+
     <uses-sdk tools:overrideLibrary="rikka.shizuku.api"
         tools:ignore="ManifestOrder" />
 
