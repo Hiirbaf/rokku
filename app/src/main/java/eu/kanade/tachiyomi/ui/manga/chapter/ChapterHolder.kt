@@ -159,13 +159,12 @@ class ChapterHolder(
         adapter.delegate.accentColor()?.let {
             binding.startView.setCardBackgroundColor(it)
 
-            val color = binding.chapterCard.cardBackgroundColor.defaultColor
+            val color = binding.chapterCard.context.getResourceColor(R.attr.colorSurfaceContainerLowest)
             val bgArray = FloatArray(3)
             val accentArray = FloatArray(3)
             ColorUtils.colorToHSL(color, bgArray)
             ColorUtils.colorToHSL(it, accentArray)
             bgArray[0] = accentArray[0]
-            binding.chapterCard.setCardBackgroundColor(ColorUtils.HSLToColor(bgArray))
 
             binding.bookmark.imageTintList = ColorStateList.valueOf(
                 context.getResourceColor(AR.attr.textColorPrimaryInverse),
