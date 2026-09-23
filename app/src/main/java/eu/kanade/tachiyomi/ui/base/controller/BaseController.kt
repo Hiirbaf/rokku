@@ -147,7 +147,7 @@ abstract class BaseController(bundle: Bundle? = null) :
     }
 
     /** Source id of the topmost controller, if it's showing content tied to one. */
-    fun Router.currentIncognitoSourceId(): Long? = (backstack.lastOrNull()?.controller as? BaseController<*>)?.getIncognitoSourceId()
+    fun Router.currentIncognitoSourceId(): Long? = (backstack.lastOrNull()?.controller as? BaseLegacyController<*>)?.getIncognitoSourceId()
 
     /**
      * Resolves the hosting [MainActivity] from a widget's [Context] (unwrapping any
