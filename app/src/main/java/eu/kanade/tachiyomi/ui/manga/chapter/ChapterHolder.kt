@@ -156,7 +156,7 @@ class ChapterHolder(
     fun notifyStatus(status: Download.State, locked: Boolean, progress: Int, animated: Boolean = false) = with(
         binding.downloadButton.downloadButton,
     ) {
-        adapter.delegate.accentColor()?.let {
+        adapter.delegate.themeColors().accent?.let {
             binding.startView.setCardBackgroundColor(it)
 
             val color = binding.chapterCard.context.getResourceColor(R.attr.colorSurfaceContainerLowest)
