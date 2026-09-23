@@ -310,7 +310,8 @@
         <activity
             android:name="com.discord.socialsdk.AuthenticationActivity"
             android:exported="true"
-            android:launchMode="singleTask">
+            android:launchMode="singleTask"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -322,6 +323,7 @@
         <activity android:label="Discord Login"
             android:name=".ui.setting.connections.DiscordLoginActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:exported="false" />
 
         <activity
@@ -375,12 +377,6 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/updates_grid_glance_widget_info" />
         </receiver>
-
-        <service
-            android:name="com.discord.socialsdk.ForegroundService"
-            android:foregroundServiceType="mediaPlayback|microphone"
-            android:enabled="true"
-            android:exported="false" />
 
         <service
             android:name=".data.connections.discord.DiscordRPCService"
