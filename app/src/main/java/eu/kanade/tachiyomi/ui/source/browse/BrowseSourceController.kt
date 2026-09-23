@@ -544,11 +544,7 @@ open class BrowseSourceController(bundle: Bundle) :
         )
         filterSheet?.setFilters(presenter.filterItems)
         filterSheet?.setSavedSearchesVisible(
-            SearchHistoryView.hasHistory(
-                preferences,
-                includeFilterSnapshots = presenter.sourceFilters.isNotEmpty(),
-                sourceId = presenter.source.id,
-            ),
+            SearchHistoryView.hasHistory(preferences, sourceId = presenter.source.id),
         )
         presenter.filtersChanged = false
 
