@@ -37,7 +37,7 @@
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_marginEnd="8dp"
-        android:contentDescription="@string/save_searches_title"
+        android:contentDescription="@string/save_search_title"
         android:src="@drawable/ic_expand_less_24dp"
         app:tint="?attr/colorOnSurfaceVariant" />
 
