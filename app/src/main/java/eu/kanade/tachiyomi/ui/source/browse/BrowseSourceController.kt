@@ -722,11 +722,7 @@ open class BrowseSourceController(bundle: Bundle) :
     ) {
         if (save) {
             // saved before the early return below, so re-searching the same thing still bumps it up
-            presenter.preferences.addToSearchHistory(
-                newQuery,
-                presenter.sourceFilters.diffFromDefault(presenter.source.getFilterList()),
-                presenter.source.id,
-            )
+            presenter.preferences.addToSearchHistory(newQuery, presenter.source.id)
         }
         searchHistory.setVisible(false)
         if (presenter.query == newQuery) {
