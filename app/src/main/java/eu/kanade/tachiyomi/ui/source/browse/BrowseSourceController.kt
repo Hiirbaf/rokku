@@ -46,12 +46,9 @@ import eu.kanade.tachiyomi.ui.main.SearchActivity
 import eu.kanade.tachiyomi.ui.manga.MangaDetailsController
 import eu.kanade.tachiyomi.ui.source.BrowseController
 import eu.kanade.tachiyomi.ui.source.globalsearch.GlobalSearchController
-import eu.kanade.tachiyomi.ui.source.searchhistory.FilterApplyResult
 import eu.kanade.tachiyomi.ui.source.searchhistory.SearchHistoryDelegate
 import eu.kanade.tachiyomi.ui.source.searchhistory.SearchHistoryView
 import eu.kanade.tachiyomi.ui.source.searchhistory.addToSearchHistory
-import eu.kanade.tachiyomi.ui.source.searchhistory.applyTo
-import eu.kanade.tachiyomi.ui.source.searchhistory.diffFromDefault
 import eu.kanade.tachiyomi.ui.webview.WebViewActivity
 import eu.kanade.tachiyomi.util.addOrRemoveToFavorites
 import eu.kanade.tachiyomi.util.system.connectivityManager
@@ -157,22 +154,6 @@ open class BrowseSourceController(bundle: Bundle) :
             controller = this,
             container = { binding.sourceLayout },
             recycler = { recycler },
-            onApplyFilters = { filters, sourceId ->
-                val previousFilters = presenter.sourceFilters
-                presenter.sourceFilters = presenter.source.getFilterList()
-                val strict = sourceId == presenter.source.id
-                val result = filters.applyTo(presenter.sourceFilters, strict = strict)
-                if (result == FilterApplyResult.NONE) {
-                    presenter.sourceFilters = previousFilters
-                } else {
-                    showProgressBar()
-                    adapter?.clear()
-                    presenter.setSourceFilter(presenter.sourceFilters)
-                    updatePopLatestIcons()
-                }
-                result
-            },
-            showFilterSnapshots = { presenter.sourceFilters.isNotEmpty() },
             extraBottomPadding = {
                 val bar = binding.floatingBrowseBar
                 if (bar.isVisible) bar.height else 0
@@ -467,10 +448,6 @@ open class BrowseSourceController(bundle: Bundle) :
 
     private fun applyFilters() {
         val allDefault = presenter.filtersMatchDefault()
-        if (!allDefault) {
-            val diff = presenter.sourceFilters.diffFromDefault(presenter.source.getFilterList())
-            presenter.preferences.addToSearchHistory(presenter.query, diff, presenter.source.id)
-        }
         if (presenter.query.isBlank()) {
             searchHistory.setVisible(false)
         }
