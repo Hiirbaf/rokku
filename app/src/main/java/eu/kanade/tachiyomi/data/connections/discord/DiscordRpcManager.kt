@@ -139,9 +139,9 @@ object DiscordRpcManager {
             Log.i(TAG, "init: already initialized, skipping")
             return
         }
-        Log.i(TAG, "init: loading native library 'animetail_discord'")
+        Log.i(TAG, "init: loading native library 'rokku_discord'")
         try {
-            System.loadLibrary("animetail_discord")
+            System.loadLibrary("rokku_discord")
             Log.i(TAG, "init: native library loaded successfully")
         } catch (e: UnsatisfiedLinkError) {
             Log.e(TAG, "init: Failed to load native library", e)
