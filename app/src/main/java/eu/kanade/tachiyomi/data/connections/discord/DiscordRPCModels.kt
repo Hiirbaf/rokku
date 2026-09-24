@@ -26,22 +26,22 @@ enum class DiscordScreen(
     @StringRes val state: Int,
     val imageUrl: String,
 ) {
-    APP(R.string.app_name, R.string.browsing, R.string.library, tachiyomiImageUrl),
-    LIBRARY(R.string.app_name, R.string.browsing, R.string.library, libraryImageUrl),
-    UPDATES(R.string.app_name, R.string.scrolling, R.string.recents, updatesImageUrl),
-    HISTORY(R.string.app_name, R.string.scrolling, R.string.recents, historyImageUrl),
-    BROWSE(R.string.app_name, R.string.browsing, R.string.browse, browseImageUrl),
+    APP(R.string.app_name, R.string.browsing, R.string.library, ROKKU_IMAGE_URL),
+    LIBRARY(R.string.app_name, R.string.browsing, R.string.library, LIBRARY_IMAGE_URL),
+    // UPDATES(R.string.app_name, R.string.scrolling, R.string.recents, updatesImageUrl),
+    HISTORY(R.string.app_name, R.string.scrolling, R.string.recents, HISTORY_IMAGE_URL),
+    BROWSE(R.string.app_name, R.string.browsing, R.string.browse, BROWSE_IMAGE_URL),
     MORE(R.string.app_name, R.string.messing, R.string.settings, moreImageUrl),
-    WEBVIEW(R.string.app_name, R.string.browsing, R.string.action_web_view, webviewImageUrl),
+    // WEBVIEW(R.string.app_name, R.string.browsing, R.string.action_web_view, webviewImageUrl),
     MANGA(R.string.app_name, R.string.comic, R.string.reading, mangaImageUrl),
 }
 
 private const val CDN = "https://cdn.discordapp.com/"
-private const val tachiyomiImageUrl = "${CDN}emojis/1550782013022281728.webp?quality=lossless"
-private const val libraryImageUrl = "${CDN}emojis/1391940601015959714.webp?quality=lossless"
-private const val updatesImageUrl = "${CDN}emojis/1391945005194674237.webp?quality=lossless"
-private const val historyImageUrl = "${CDN}emojis/1391945005194674237.webp?quality=lossless"
-private const val browseImageUrl = "${CDN}emojis/1391945777517166804.webp?quality=lossless"
+private const val ROKKU_IMAGE_URL = "${CDN}emojis/1550782013022281728.webp?quality=lossless"
+private const val LIBRARY_IMAGE_URL = "${CDN}emojis/1552645911254138911.webp?quality=lossless"
+// private const val updatesImageUrl = "${CDN}emojis/1391945005194674237.webp?quality=lossless"
+private const val HISTORY_IMAGE_URL = "${CDN}emojis/1552649831149998131.webp?quality=lossless"
+private const val BROWSE_IMAGE_URL = "${CDN}emojis/1552656747083206747.webp?quality=lossless"
 private const val moreImageUrl = "${CDN}emojis/1391947518224371772.webp?quality=lossless"
-private const val webviewImageUrl = "${CDN}emojis/1391952048223817791.webp?quality=lossless"
+// private const val webviewImageUrl = "${CDN}emojis/1391952048223817791.webp?quality=lossless"
 private const val mangaImageUrl = "${CDN}emojis/1391953132329898124.webp?quality=lossless"
