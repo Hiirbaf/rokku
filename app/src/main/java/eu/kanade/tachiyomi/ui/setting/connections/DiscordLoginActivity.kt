@@ -1,8 +1,8 @@
 package eu.kanade.tachiyomi.ui.setting.connections
 
+import android.app.Activity
 import android.os.Bundle
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
 import yokai.domain.connections.service.ConnectionsPreferences
 import eu.kanade.tachiyomi.data.connections.ConnectionsManager
 import eu.kanade.tachiyomi.data.connections.discord.DiscordAccount
@@ -19,7 +19,7 @@ import kotlinx.coroutines.withContext
 import yokai.i18n.MR
 import uy.kohesive.injekt.injectLazy
 
-class DiscordLoginActivity : AppCompatActivity() {
+class DiscordLoginActivity : Activity() {
 
     private val connectionsManager: ConnectionsManager by injectLazy()
     private val connectionsPreferences: ConnectionsPreferences by injectLazy()
