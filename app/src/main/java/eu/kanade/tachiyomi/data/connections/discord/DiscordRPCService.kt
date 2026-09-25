@@ -175,12 +175,20 @@ class DiscordRPCService : Service() {
             readerData: ReaderData = ReaderData(),
         ) {
             if (!connectionsPreferences.enableDiscordRPC().get()) return
+
             currentScreen = discordScreen
-            if (discordScreen != DiscordScreen.MANGA && discordScreen != DiscordScreen.WEBVIEW) {
+
+            if (discordScreen == DiscordScreen.MANGA || discordScreen == DiscordScreen.WEBVIEW) {
+                if (readerData.mangaId != null) {
+                    activeReaderData = readerData
+                }
+            } else {
                 lastUsedScreen = discordScreen
                 activeReaderData = null
             }
+
             if (!DiscordRpcManager.isReady() || isPaused) return
+
             updateDiscordRPC(context, readerData, discordScreen)
         }
 
