@@ -18,6 +18,7 @@ data class ReaderData(
     val chapterProgress: Pair<Int, Int> = Pair(0, 0),
     val chapterTitle: String? = null,
     val thumbnailUrl: String? = null,
+    val browsingOnly: Boolean = false,
 )
 
 enum class DiscordScreen(
