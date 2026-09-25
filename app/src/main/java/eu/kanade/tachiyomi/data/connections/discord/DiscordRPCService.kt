@@ -200,11 +200,12 @@ class DiscordRPCService : Service() {
             val details = sanitizeField(
                 when {
                     customMessage.isNotBlank() -> customMessage
+                    readerData.browsingOnly -> context.getString(R.string.browsing)
                     readerData.mangaTitle != null -> readerData.mangaTitle
                     else -> context.getString(discordScreen.details)
                 },
             )
-            val chapterText = if (discordScreen == DiscordScreen.MANGA) {
+            val chapterText = if (discordScreen == DiscordScreen.MANGA && !readerData.browsingOnly) {
                 getFormattedChapterTitle(context, readerData)
             } else {
                 null
@@ -212,6 +213,7 @@ class DiscordRPCService : Service() {
             val state = sanitizeField(
                 when {
                     !showProgress -> null
+                    readerData.browsingOnly -> readerData.mangaTitle
                     chapterText != null -> chapterText
                     else -> context.getString(discordScreen.state)
                 },
