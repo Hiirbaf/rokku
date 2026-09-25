@@ -827,23 +827,16 @@ class MangaDetailsController :
 
     override fun onAttach(view: View) {
         super.onAttach(view)
-        presenter.refreshRelatedMangaFavorites()
-
-        manga?.let { m ->
-            viewScope.launch {
-                DiscordRPCService.setScreen(
-                    activity ?: return@launch,
-                    DiscordScreen.MANGA,
-                    ReaderData(
-                        mangaId = m.id,
-                        mangaTitle = m.title,
-                        thumbnailUrl = m.thumbnail_url,
-                        browsingOnly = true,
-                    ),
-                )
-            }
+        viewScope.launch {
+            DiscordRPCService.setScreen(activity ?: return@launch, DiscordScreen.MANGA)
+            ReaderData(
+                mangaId = manga?.id,
+                mangaTitle = manga?.title,
+                thumbnailUrl = manga?.thumbnail_url,
+                browsingOnly = true,
+            )
         }
-
+        presenter.refreshRelatedMangaFavorites()
         if (!returningFromReader) return
         returningFromReader = false
 
