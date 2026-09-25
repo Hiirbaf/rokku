@@ -168,6 +168,7 @@ class RecentsController(bundle: Bundle? = null) :
 
     override fun onAttach(view: View) {
         super.onAttach(view)
+        if (!isControllerVisible) return
         viewScope.launch {
             DiscordRPCService.setScreen(activity ?: return@launch, DiscordScreen.HISTORY)
         }
