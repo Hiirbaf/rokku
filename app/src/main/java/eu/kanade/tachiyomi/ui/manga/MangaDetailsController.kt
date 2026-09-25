@@ -828,27 +828,35 @@ class MangaDetailsController :
     override fun onAttach(view: View) {
         super.onAttach(view)
         presenter.refreshRelatedMangaFavorites()
+
+        manga?.let { m ->
+            viewScope.launch {
+                DiscordRPCService.setScreen(
+                    activity ?: return@launch,
+                    DiscordScreen.MANGA,
+                    ReaderData(
+                        mangaId = m.id,
+                        mangaTitle = m.title,
+                        thumbnailUrl = m.thumbnail_url,
+                        browsingOnly = true,
+                    ),
+                )
+            }
+        }
+
         if (!returningFromReader) return
         returningFromReader = false
+
         runBlocking {
             val itemAnimator = binding.recycler.itemAnimator
             val chapters = withTimeoutOrNull(1000) { presenter.getChaptersNow() } ?: return@runBlocking
+
             binding.recycler.itemAnimator = null
             tabletAdapter?.notifyItemChanged(0)
             adapter?.setChapters(chapters)
             addMangaHeader()
             updateFab()
             binding.recycler.itemAnimator = itemAnimator
-            viewScope.launch {
-                DiscordRPCService.setScreen(
-                    activity ?: return@launch,
-                    DiscordScreen.LIBRARY,
-                    ReaderData(
-                        mangaId = manga?.id,
-                        mangaTitle = manga?.title,
-                    ),
-                )
-            }
         }
     }
 
