@@ -7,8 +7,6 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.core.net.toUri
 import co.touchlab.kermit.Logger
-import eu.kanade.tachiyomi.data.connections.discord.DiscordRPCService
-import eu.kanade.tachiyomi.data.connections.discord.DiscordScreen
 import eu.kanade.tachiyomi.network.NetworkHelper
 import eu.kanade.tachiyomi.source.SourceManager
 import eu.kanade.tachiyomi.source.online.HttpSource
@@ -64,13 +62,6 @@ open class WebViewActivity : BaseWebViewActivity() {
                 onOpenInBrowser = this::openInBrowser,
                 onClearCookies = this::clearCookies,
             )
-        }
-    }
-
-    override fun onAttach(view: View) {
-        super.onAttach(view)
-        viewScope.launch {
-            DiscordRPCService.setScreen(activity ?: return@launch, DiscordScreen.WEBVIEW)
         }
     }
 
