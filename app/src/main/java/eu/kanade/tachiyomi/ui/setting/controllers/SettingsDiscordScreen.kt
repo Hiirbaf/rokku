@@ -101,62 +101,62 @@ object SettingsDiscordScreen : ComposableSettings() {
         val enableDRPC by enableDRPCPref.collectAsState()
 
         val customMessagePref = connectionsPreferences.discordCustomMessage()
-            val showProgressPref = connectionsPreferences.discordShowProgress()
-            val showTimestampPref = connectionsPreferences.discordShowTimestamp()
-            val showButtonsPref = connectionsPreferences.discordShowButtons()
-            val showDownloadButtonPref = connectionsPreferences.discordShowDownloadButton()
-            val showDiscordButtonPref = connectionsPreferences.discordShowDiscordButton()
+        val uploadLocalCoversPref = connectionsPreferences.discordUploadLocalCovers()
+        val showProgressPref = connectionsPreferences.discordShowProgress()
+        val showTimestampPref = connectionsPreferences.discordShowTimestamp()
+        val showButtonsPref = connectionsPreferences.discordShowButtons()
+        val showDownloadButtonPref = connectionsPreferences.discordShowDownloadButton()
+        val showDiscordButtonPref = connectionsPreferences.discordShowDiscordButton()
+        val showButtons by showButtonsPref.collectAsState()
 
-            val showButtons by showButtonsPref.collectAsState()
+        var showCustomMessageDialog by rememberSaveable { mutableStateOf(false) }
+        var tempCustomMessage by rememberSaveable { mutableStateOf(customMessagePref.get()) }
 
-            var showCustomMessageDialog by rememberSaveable { mutableStateOf(false) }
-            var tempCustomMessage by rememberSaveable { mutableStateOf(customMessagePref.get()) }
-
-            if (showCustomMessageDialog) {
-                AlertDialog(
-                    onDismissRequest = {
+        if (showCustomMessageDialog) {
+            AlertDialog(
+                onDismissRequest = {
+                    showCustomMessageDialog = false
+                    tempCustomMessage = customMessagePref.get()
+                },
+                title = { Text(stringResource(MR.strings.pref_discord_custom_message)) },
+                text = {
+                    Column {
+                        OutlinedTextField(
+                            value = tempCustomMessage,
+                            onValueChange = { tempCustomMessage = it },
+                            label = { Text(stringResource(MR.strings.pref_discord_custom_message_summary)) },
+                            modifier = Modifier.fillMaxWidth(),
+                            singleLine = true,
+                        )
+                        TextButton(
+                            onClick = {
+                                customMessagePref.delete()
+                                tempCustomMessage = ""
+                            },
+                            modifier = Modifier.align(Alignment.End),
+                        ) {
+                            Text(stringResource(MR.strings.reset))
+                        }
+                    }
+                },
+                confirmButton = {
+                    TextButton(onClick = {
+                        customMessagePref.set(tempCustomMessage)
+                        showCustomMessageDialog = false
+                    }) {
+                        Text(stringResource(MR.strings.action_ok))
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = {
                         showCustomMessageDialog = false
                         tempCustomMessage = customMessagePref.get()
-                    },
-                    title = { Text(stringResource(MR.strings.pref_discord_custom_message)) },
-                    text = {
-                        Column {
-                            OutlinedTextField(
-                                value = tempCustomMessage,
-                                onValueChange = { tempCustomMessage = it },
-                                label = { Text(stringResource(MR.strings.pref_discord_custom_message_summary)) },
-                                modifier = Modifier.fillMaxWidth(),
-                                singleLine = true,
-                            )
-                            TextButton(
-                                onClick = {
-                                    customMessagePref.delete()
-                                    tempCustomMessage = ""
-                                },
-                                modifier = Modifier.align(Alignment.End),
-                            ) {
-                                Text(stringResource(MR.strings.reset))
-                            }
-                        }
-                    },
-                    confirmButton = {
-                        TextButton(onClick = {
-                            customMessagePref.set(tempCustomMessage)
-                            showCustomMessageDialog = false
-                        }) {
-                            Text(stringResource(MR.strings.action_ok))
-                        }
-                    },
-                    dismissButton = {
-                        TextButton(onClick = {
-                            showCustomMessageDialog = false
-                            tempCustomMessage = customMessagePref.get()
-                        }) {
-                            Text(stringResource(MR.strings.cancel))
-                        }
-                    },
-                )
-            }
+                    }) {
+                        Text(stringResource(MR.strings.cancel))
+                    }
+                },
+            )
+        }
 
         var dialog by remember { mutableStateOf<Any?>(null) }
         dialog?.run {
@@ -215,6 +215,11 @@ object SettingsDiscordScreen : ComposableSettings() {
                         title = stringResource(MR.strings.pref_discord_custom_message),
                         subtitle = stringResource(MR.strings.pref_discord_custom_message_summary),
                         onClick = { showCustomMessageDialog = true },
+                    ),
+                    Preference.PreferenceItem.SwitchPreference(
+                        pref = uploadLocalCoversPref,
+                        title = stringResource(MR.strings.pref_discord_upload_local_covers),
+                        subtitle = stringResource(MR.strings.pref_discord_upload_local_covers_summary),
                     ),
                     Preference.PreferenceItem.SwitchPreference(
                         pref = showProgressPref,
