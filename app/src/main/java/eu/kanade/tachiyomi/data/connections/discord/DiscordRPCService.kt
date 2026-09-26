@@ -149,7 +149,7 @@ class DiscordRPCService : Service() {
 
         internal var lastUsedScreen = DiscordScreen.APP
             set(value) {
-                field = if (value == DiscordScreen.MANGA || value == DiscordScreen.WEBVIEW) field else value
+                field = if (value == DiscordScreen.MANGA) field else value
             }
 
         fun start(context: Context) {
@@ -176,7 +176,7 @@ class DiscordRPCService : Service() {
         ) {
             if (!connectionsPreferences.enableDiscordRPC().get()) return
             currentScreen = discordScreen
-            if (discordScreen != DiscordScreen.MANGA && discordScreen != DiscordScreen.WEBVIEW) {
+            if (discordScreen != DiscordScreen.MANGA) {
                 lastUsedScreen = discordScreen
                 activeReaderData = null
             }
