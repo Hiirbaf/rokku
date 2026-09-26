@@ -7,6 +7,8 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.core.net.toUri
 import co.touchlab.kermit.Logger
+import eu.kanade.tachiyomi.data.connections.discord.DiscordRPCService
+import eu.kanade.tachiyomi.data.connections.discord.DiscordScreen
 import eu.kanade.tachiyomi.network.NetworkHelper
 import eu.kanade.tachiyomi.source.SourceManager
 import eu.kanade.tachiyomi.source.online.HttpSource
