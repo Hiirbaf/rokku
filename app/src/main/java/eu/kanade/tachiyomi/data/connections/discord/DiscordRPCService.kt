@@ -184,7 +184,7 @@ class DiscordRPCService : Service() {
             updateDiscordRPC(context, readerData, discordScreen)
         }
 
-        private fun updateDiscordRPC(
+        private suspend fun updateDiscordRPC(
             context: Context,
             readerData: ReaderData,
             discordScreen: DiscordScreen,
@@ -218,9 +218,7 @@ class DiscordRPCService : Service() {
                     else -> context.getString(discordScreen.state)
                 },
             )
-            val imageUrl = readerData.thumbnailUrl
-                ?.takeIf { it.startsWith("http://") || it.startsWith("https://") }
-                ?: discordScreen.imageUrl
+            val imageUrl = resolveDisplayImage(context, readerData.thumbnailUrl, discordScreen.imageUrl)
 
             val button1Label = if (showButtons && showDownloadButton) DOWNLOAD_BUTTON_LABEL else null
             val button1Url = if (showButtons && showDownloadButton) DOWNLOAD_BUTTON_URL else null
@@ -287,6 +285,13 @@ class DiscordRPCService : Service() {
             } catch (e: Exception) {
                 Log.e(TAG, "Error setting reader activity: ${e.message}", e)
             }
+        }
+
+        private suspend fun resolveDisplayImage(context: Context, thumbnailUrl: String?, fallback: String): String {
+            if (thumbnailUrl.isNullOrBlank()) return fallback
+            if (thumbnailUrl.startsWith("http://") || thumbnailUrl.startsWith("https://")) return thumbnailUrl
+            if (!connectionsPreferences.discordUploadLocalCovers().get()) return fallback
+            return DiscordImageUploader.resolveImageUrl(context, thumbnailUrl) ?: fallback
         }
 
         private fun getFormattedChapterTitle(context: Context, readerData: ReaderData): String? {
