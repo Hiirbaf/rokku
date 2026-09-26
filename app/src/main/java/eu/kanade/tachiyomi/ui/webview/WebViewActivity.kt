@@ -65,6 +65,13 @@ open class WebViewActivity : BaseWebViewActivity() {
         }
     }
 
+    override fun onAttach(view: View) {
+        super.onAttach(view)
+        viewScope.launch {
+            DiscordRPCService.setScreen(activity ?: return@launch, DiscordScreen.WEBVIEW)
+        }
+    }
+
     override fun onProvideAssistContent(outContent: AssistContent) {
         super.onProvideAssistContent(outContent)
         assistUrl?.let { outContent.webUri = it.toUri() }
