@@ -1,14 +1,14 @@
 package eu.kanade.tachiyomi.data.connections.discord
 
-import androidx.annotation.StringRes
-import eu.kanade.tachiyomi.R
+import dev.icerock.moko.resources.compose.stringResource
+import yokai.i18n.MR
 
 const val RICH_PRESENCE_TAG = "discord_rpc"
 
-const val DOWNLOAD_BUTTON_LABEL = "Descargar"
+const val DOWNLOAD_BUTTON_LABEL = MR.strings.download
 const val DOWNLOAD_BUTTON_URL = "https://github.com/rokku-app/rokku/releases"
-const val DISCORD_BUTTON_LABEL = "Discord"
-const val DISCORD_BUTTON_URL = "https://discord.gg/fvskrQZb9j"
+const val READ_CHAPTER_BUTTON_LABEL = "Leer capítulo"
+const val VIEW_MANGA_BUTTON_LABEL = "Ver manga"
 
 data class ReaderData(
     val incognitoMode: Boolean = false,
@@ -22,24 +22,21 @@ data class ReaderData(
     val sourceUrl: String? = null,
 )
 
-const val READ_CHAPTER_BUTTON_LABEL = "Leer capítulo"
-const val VIEW_MANGA_BUTTON_LABEL = "Ver manga"
-
 enum class DiscordScreen(
     @StringRes val text: Int,
     @StringRes val details: Int,
     @StringRes val state: Int,
     val imageUrl: String,
 ) {
-    APP(R.string.app_name, R.string.browsing, R.string.library, ROKKU_IMAGE_URL),
-    LIBRARY(R.string.app_name, R.string.browsing, R.string.library, LIBRARY_IMAGE_URL),
-    HISTORY(R.string.app_name, R.string.scrolling, R.string.recents, HISTORY_IMAGE_URL),
-    BROWSE(R.string.app_name, R.string.browsing, R.string.browse, BROWSE_IMAGE_URL),
-    MANGA(R.string.app_name, R.string.comic, R.string.reading, MANGA_IMAGE_URL),
+    APP(MR.strings.app_name, MR.strings.browsing, MR.strings.library, ROKKU_IMAGE_URL),
+    LIBRARY(MR.strings.app_name, MR.strings.browsing, MR.strings.library, LIBRARY_IMAGE_URL),
+    HISTORY(MR.strings.app_name, MR.strings.scrolling, MR.strings.recents, HISTORY_IMAGE_URL),
+    BROWSE(MR.strings.app_name, MR.strings.browsing, MR.strings.browse, BROWSE_IMAGE_URL),
+    MANGA(MR.strings.app_name, MR.strings.comic, MR.strings.reading, MANGA_IMAGE_URL),
     // temporarily deactivated
-    // MORE(R.string.app_name, R.string.messing, R.string.settings, MORE_IMAGE_URL),
-    // WEBVIEW(R.string.app_name, R.string.browsing, R.string.action_web_view, WEBVIEW_IMAGE_URL),
-    // UPDATES(R.string.app_name, R.string.scrolling, R.string.recents, updatesImageUrl),
+    // MORE(MR.strings.app_name, MR.strings.messing, MR.strings.settings, MORE_IMAGE_URL),
+    // WEBVIEW(MR.strings.app_name, MR.strings.browsing, MR.strings.action_web_view, WEBVIEW_IMAGE_URL),
+    // UPDATES(MR.strings.app_name, MR.strings.scrolling, MR.strings.recents, updatesImageUrl),
 }
 
 private const val CDN = "https://cdn.discordapp.com/"
