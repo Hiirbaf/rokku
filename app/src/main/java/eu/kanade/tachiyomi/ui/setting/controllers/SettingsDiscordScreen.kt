@@ -106,7 +106,7 @@ object SettingsDiscordScreen : ComposableSettings() {
         val showTimestampPref = connectionsPreferences.discordShowTimestamp()
         val showButtonsPref = connectionsPreferences.discordShowButtons()
         val showDownloadButtonPref = connectionsPreferences.discordShowDownloadButton()
-        val showDiscordButtonPref = connectionsPreferences.discordShowDiscordButton()
+        val showMangaButtonPref = connectionsPreferences.discordShowMangaButton()
         val showButtons by showButtonsPref.collectAsState()
 
         var showCustomMessageDialog by rememberSaveable { mutableStateOf(false) }
@@ -243,7 +243,7 @@ object SettingsDiscordScreen : ComposableSettings() {
                         enabled = showButtons,
                     ),
                     Preference.PreferenceItem.SwitchPreference(
-                        pref = showDiscordButtonPref,
+                        pref = showMangaButtonPref,
                         title = stringResource(MR.strings.pref_discord_show_discord_button),
                         subtitle = stringResource(MR.strings.pref_discord_show_discord_button_summary),
                         enabled = showButtons,
