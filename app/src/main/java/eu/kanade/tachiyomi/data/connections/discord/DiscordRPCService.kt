@@ -27,6 +27,7 @@ import yokai.domain.category.interactor.GetCategories
 import yokai.domain.category.models.Category.Companion.UNCATEGORIZED_ID
 import yokai.domain.connections.service.ConnectionsPreferences
 import yokai.i18n.MR
+import yokai.util.lang.getString
 import dev.icerock.moko.resources.desc.desc
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
@@ -192,7 +193,7 @@ class DiscordRPCService : Service() {
             readerData: ReaderData,
             discordScreen: DiscordScreen,
         ) {
-            val appName = MR.strings.app_name.desc().toString(context)
+            val appName = context.getString(MR.strings.app_name)
             val customMessage = connectionsPreferences.discordCustomMessage().get()
             val showProgress = connectionsPreferences.discordShowProgress().get()
             val showTimestamp = connectionsPreferences.discordShowTimestamp().get()
@@ -205,7 +206,7 @@ class DiscordRPCService : Service() {
                     customMessage.isNotBlank() -> customMessage
                     readerData.browsingOnly -> MR.strings.browsing.desc().toString(context)
                     readerData.mangaTitle != null -> readerData.mangaTitle
-                    else -> discordScreen.details.desc().toString(context)
+                    else -> context.getString(discordScreen.details)
                 },
             )
 
@@ -339,17 +340,20 @@ class DiscordRPCService : Service() {
             if (readerData.incognitoMode) return null
 
             val (currentPage, totalPages) = readerData.chapterProgress
-            val pageLabel = MR.strings.page_count
-                .desc(currentPage, totalPages)
-                .toString(context)
+            val pageLabel = context.getString(
+                MR.strings.page_count,
+                currentPage.toString(),
+                totalPages.toString(),
+            )
 
             return if (connectionsPreferences.useChapterTitles().get()) {
                 readerData.chapterTitle?.let { "$it ($pageLabel)" }
             } else {
                 val chapterNum = formatChapterNumber(readerData.chapterNumber.toDouble())
-                val chapterLabel = MR.strings.chapter_
-                    .desc(chapterNum)
-                    .toString(context)
+                val chapterLabel = context.getString(
+                    MR.strings.chapter_,
+                    chapterNum,
+                )
 
                 "$chapterLabel ($pageLabel)"
             }
