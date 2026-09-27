@@ -72,8 +72,8 @@
     <string name="pref_discord_show_buttons_summary">Display buttons to download the app or join the Discord server</string>
     <string name="pref_discord_show_download_button">Show Download Button</string>
     <string name="pref_discord_show_download_button_summary">Displays a button to download the app</string>
-    <string name="pref_discord_show_discord_button">Show Discord Button</string>
-    <string name="pref_discord_show_discord_button_summary">Displays a button to join the Discord server</string>
+    <string name="pref_discord_show_manga_button">Show Manga/Chapter Button</string>
+    <string name="pref_discord_show_manga_button_summary">Displays a button to open the link to the current manga/chapter.</string>
     <string name="tracking_guide">Tracking guide</string>
     <string name="action_ok">Ok</string>
 
