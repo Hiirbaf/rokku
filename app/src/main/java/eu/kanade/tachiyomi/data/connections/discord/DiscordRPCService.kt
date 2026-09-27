@@ -204,9 +204,9 @@ class DiscordRPCService : Service() {
             val details = sanitizeField(
                 when {
                     customMessage.isNotBlank() -> customMessage
-                    readerData.browsingOnly -> MR.strings.browsing.desc().toString(context)
+                    readerData.browsingOnly -> context.getString(MR.strings.browsing)
                     readerData.mangaTitle != null -> readerData.mangaTitle
-                    else -> context.getString(discordScreen.state)
+                    else -> context.getString(discordScreen.details)
                 },
             )
 
@@ -221,20 +221,20 @@ class DiscordRPCService : Service() {
                     !showProgress -> null
                     readerData.browsingOnly -> readerData.mangaTitle
                     chapterText != null -> chapterText
-                    else -> discordScreen.state.desc().toString(context)
+                    else -> context.getString(discordScreen.state)
                 },
             )
 
             val imageUrl = resolveDisplayImage(context, readerData, discordScreen.imageUrl)
 
             val button1Label = if (showButtons && showMangaButton && readerData.sourceUrl != null) {
-                (
+                context.getString(
                     if (discordScreen == DiscordScreen.MANGA && !readerData.browsingOnly) {
                         READ_CHAPTER_BUTTON_LABEL
                     } else {
                         VIEW_MANGA_BUTTON_LABEL
-                    }
-                ).desc().toString(context)
+                    },
+                )
             } else {
                 null
             }
@@ -246,7 +246,7 @@ class DiscordRPCService : Service() {
             }
 
             val button2Label = if (showButtons && showDownloadButton) {
-                DOWNLOAD_BUTTON_LABEL.desc().toString(context)
+                context.getString(DOWNLOAD_BUTTON_LABEL)
             } else {
                 null
             }
