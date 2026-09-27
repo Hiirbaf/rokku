@@ -206,7 +206,7 @@ class DiscordRPCService : Service() {
                     customMessage.isNotBlank() -> customMessage
                     readerData.browsingOnly -> MR.strings.browsing.desc().toString(context)
                     readerData.mangaTitle != null -> readerData.mangaTitle
-                    else -> context.getString(discordScreen.details)
+                    else -> context.getString(discordScreen.state)
                 },
             )
 
@@ -267,7 +267,7 @@ class DiscordRPCService : Service() {
                     largeImage = imageUrl,
                     largeText = appName,
                     smallImage = DiscordScreen.APP.imageUrl,
-                    smallText = DiscordScreen.APP.text.desc().toString(context),
+                    smallText = context.getString(DiscordScreen.APP.text),
                     button1Label = button1Label,
                     button1Url = button1Url,
                     button2Label = button2Label,
