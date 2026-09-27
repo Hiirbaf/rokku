@@ -224,7 +224,11 @@ class DiscordRPCService : Service() {
             val button1Label = if (showButtons && showDownloadButton) DOWNLOAD_BUTTON_LABEL else null
             val button1Url = if (showButtons && showDownloadButton) DOWNLOAD_BUTTON_URL else null
             val button2Label = if (showButtons && showDiscordButton) DISCORD_BUTTON_LABEL else null
-            val button2Url = if (showButtons && showDiscordButton) DISCORD_BUTTON_URL else null
+            val button2Url = if (showButtons && showDiscordButton) {
+                readerData.chapterUrl ?: DISCORD_BUTTON_URL
+            } else {
+                null
+            }
 
             DiscordRpcManager.setActivity(
                 DiscordNativeActivity(
@@ -276,6 +280,7 @@ class DiscordRPCService : Service() {
                     chapterProgress = readerData.chapterProgress,
                     chapterTitle = readerData.chapterTitle,
                     thumbnailUrl = mangaThumbnail,
+                    chapterUrl = readerData.chapterUrl,
                 )
 
                 currentScreen = DiscordScreen.MANGA
