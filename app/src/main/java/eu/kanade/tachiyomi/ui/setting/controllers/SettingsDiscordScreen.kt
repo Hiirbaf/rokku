@@ -244,8 +244,8 @@ object SettingsDiscordScreen : ComposableSettings() {
                     ),
                     Preference.PreferenceItem.SwitchPreference(
                         pref = showMangaButtonPref,
-                        title = stringResource(MR.strings.pref_discord_show_discord_button),
-                        subtitle = stringResource(MR.strings.pref_discord_show_discord_button_summary),
+                        title = stringResource(MR.strings.pref_discord_show_manga_button),
+                        subtitle = stringResource(MR.strings.pref_discord_show_manga_button_summary),
                         enabled = showButtons,
                     ),
                 ),
