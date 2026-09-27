@@ -10,8 +10,6 @@ import android.os.IBinder
 import android.os.Looper
 import android.util.Log
 import androidx.compose.ui.util.fastAny
-import yokai.domain.connections.service.ConnectionsPreferences
-import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.data.cache.CoverCache
 import eu.kanade.tachiyomi.data.connections.ConnectionsManager
 import eu.kanade.tachiyomi.data.notification.NotificationReceiver
@@ -26,6 +24,9 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.delay
 import yokai.domain.category.interactor.GetCategories
 import yokai.domain.category.models.Category.Companion.UNCATEGORIZED_ID
+import yokai.domain.connections.service.ConnectionsPreferences
+import yokai.i18n.MR
+import dev.icerock.moko.resources.desc.desc
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 import uy.kohesive.injekt.injectLazy
@@ -190,7 +191,7 @@ class DiscordRPCService : Service() {
             readerData: ReaderData,
             discordScreen: DiscordScreen,
         ) {
-            val appName = context.getString(R.string.app_name)
+            val appName = MR.strings.app_name.desc().toString(context)
             val customMessage = connectionsPreferences.discordCustomMessage().get()
             val showProgress = connectionsPreferences.discordShowProgress().get()
             val showTimestamp = connectionsPreferences.discordShowTimestamp().get()
@@ -201,34 +202,58 @@ class DiscordRPCService : Service() {
             val details = sanitizeField(
                 when {
                     customMessage.isNotBlank() -> customMessage
-                    readerData.browsingOnly -> context.getString(R.string.browsing)
+                    readerData.browsingOnly -> MR.strings.browsing.desc().toString(context)
                     readerData.mangaTitle != null -> readerData.mangaTitle
-                    else -> context.getString(discordScreen.details)
+                    else -> discordScreen.details.desc().toString(context)
                 },
             )
+
             val chapterText = if (discordScreen == DiscordScreen.MANGA && !readerData.browsingOnly) {
                 getFormattedChapterTitle(context, readerData)
             } else {
                 null
             }
+
             val state = sanitizeField(
                 when {
                     !showProgress -> null
                     readerData.browsingOnly -> readerData.mangaTitle
                     chapterText != null -> chapterText
-                    else -> context.getString(discordScreen.state)
+                    else -> discordScreen.state.desc().toString(context)
                 },
             )
+
             val imageUrl = resolveDisplayImage(context, readerData, discordScreen.imageUrl)
 
             val button1Label = if (showButtons && showMangaButton && readerData.sourceUrl != null) {
-                if (discordScreen == DiscordScreen.MANGA && !readerData.browsingOnly) READ_CHAPTER_BUTTON_LABEL else VIEW_MANGA_BUTTON_LABEL
+                (
+                    if (discordScreen == DiscordScreen.MANGA && !readerData.browsingOnly) {
+                        READ_CHAPTER_BUTTON_LABEL
+                    } else {
+                        VIEW_MANGA_BUTTON_LABEL
+                    }
+                ).desc().toString(context)
             } else {
                 null
             }
-            val button1Url = if (showButtons && readerData.sourceUrl != null) readerData.sourceUrl else null
-            val button2Label = if (showButtons && showDownloadButton) DOWNLOAD_BUTTON_LABEL else null
-            val button2Url = if (showButtons && showDownloadButton) DOWNLOAD_BUTTON_URL else null
+
+            val button1Url = if (showButtons && readerData.sourceUrl != null) {
+                readerData.sourceUrl
+            } else {
+                null
+            }
+
+            val button2Label = if (showButtons && showDownloadButton) {
+                DOWNLOAD_BUTTON_LABEL.desc().toString(context)
+            } else {
+                null
+            }
+
+            val button2Url = if (showButtons && showDownloadButton) {
+                DOWNLOAD_BUTTON_URL
+            } else {
+                null
+            }
 
             DiscordRpcManager.setActivity(
                 DiscordNativeActivity(
@@ -240,7 +265,7 @@ class DiscordRPCService : Service() {
                     largeImage = imageUrl,
                     largeText = appName,
                     smallImage = DiscordScreen.APP.imageUrl,
-                    smallText = context.getString(DiscordScreen.APP.text),
+                    smallText = DiscordScreen.APP.text.desc().toString(context),
                     button1Label = button1Label,
                     button1Url = button1Url,
                     button2Label = button2Label,
@@ -313,13 +338,15 @@ class DiscordRPCService : Service() {
             if (readerData.incognitoMode) return null
 
             val (currentPage, totalPages) = readerData.chapterProgress
-            val pageLabel = context.getString(R.string.page_count, currentPage, totalPages)
+            val pageLabel = MR.strings.page_count.desc(currentPage, totalPages).toString(context)
 
             return if (connectionsPreferences.useChapterTitles().get()) {
                 readerData.chapterTitle?.let { "$it ($pageLabel)" }
             } else {
                 val chapterNum = formatChapterNumber(readerData.chapterNumber.toDouble())
-                "${context.getString(R.string.chapter_, chapterNum)} ($pageLabel)"
+                val chapterLabel = MR.strings.chapter_.desc(chapterNum).toString(context)
+
+                "$chapterLabel ($pageLabel)"
             }
         }
 
