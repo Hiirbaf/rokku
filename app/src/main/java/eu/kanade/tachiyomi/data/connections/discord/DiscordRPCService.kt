@@ -272,6 +272,7 @@ class DiscordRPCService : Service() {
                 val mangaTitle = readerData.mangaTitle.takeUnless { discordIncognito }
                 val mangaThumbnail = if (discordIncognito) null else readerData.thumbnailUrl.takeUnless { it.isNullOrBlank() }
 
+                val sourceUrl = readerData.sourceUrl.takeUnless { discordIncognito }
                 val data = ReaderData(
                     incognitoMode = discordIncognito,
                     mangaId = readerData.mangaId,
@@ -280,7 +281,7 @@ class DiscordRPCService : Service() {
                     chapterProgress = readerData.chapterProgress,
                     chapterTitle = readerData.chapterTitle,
                     thumbnailUrl = mangaThumbnail,
-                    chapterUrl = readerData.chapterUrl,
+                    sourceUrl = sourceUrl,
                 )
 
                 currentScreen = DiscordScreen.MANGA
