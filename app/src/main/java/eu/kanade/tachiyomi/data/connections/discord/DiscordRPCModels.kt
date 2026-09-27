@@ -18,9 +18,12 @@ data class ReaderData(
     val chapterProgress: Pair<Int, Int> = Pair(0, 0),
     val chapterTitle: String? = null,
     val thumbnailUrl: String? = null,
-    val chapterUrl: String? = null,
     val browsingOnly: Boolean = false,
+    val sourceUrl: String? = null,
 )
+
+const val READ_CHAPTER_BUTTON_LABEL = "Leer capítulo"
+const val VIEW_MANGA_BUTTON_LABEL = "Ver manga"
 
 enum class DiscordScreen(
     @StringRes val text: Int,
