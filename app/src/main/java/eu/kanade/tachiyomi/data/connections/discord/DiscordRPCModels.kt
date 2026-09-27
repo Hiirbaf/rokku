@@ -21,6 +21,7 @@ data class ReaderData(
     val thumbnailUrl: String? = null,
     val browsingOnly: Boolean = false,
     val sourceUrl: String? = null,
+    val seriesType: String? = null,
 )
 
 enum class DiscordScreen(
