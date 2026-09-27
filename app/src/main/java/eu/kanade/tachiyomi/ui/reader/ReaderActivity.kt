@@ -542,6 +542,7 @@ class ReaderActivity : BaseActivity<ReaderActivityBinding>() {
                     chapterProgress = Pair(currentPage, totalPages),
                     chapterTitle = chapter.preferredChapterName(this@ReaderActivity, manga, preferences),
                     thumbnailUrl = manga.thumbnail_url,
+                    chapterUrl = viewModel.getChapterUrl(),
                 ),
             )
         }
