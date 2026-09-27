@@ -223,11 +223,20 @@ class DiscordRPCService : Service() {
 
             val button1Label = if (showButtons && showDownloadButton) DOWNLOAD_BUTTON_LABEL else null
             val button1Url = if (showButtons && showDownloadButton) DOWNLOAD_BUTTON_URL else null
-            val button2Label = if (showButtons && showDiscordButton) DISCORD_BUTTON_LABEL else null
-            val button2Url = if (showButtons && showDiscordButton) {
-                readerData.chapterUrl ?: DISCORD_BUTTON_URL
-            } else {
-                null
+            val button2Label: String?
+            val button2Url: String?
+            when {
+                !showButtons -> { button2Label = null; button2Url = null }
+                readerData.sourceUrl != null -> {
+                    button2Label = if (discordScreen == DiscordScreen.MANGA && !readerData.browsingOnly) {
+                        READ_CHAPTER_BUTTON_LABEL
+                    } else {
+                        VIEW_MANGA_BUTTON_LABEL
+                    }
+                    button2Url = readerData.sourceUrl
+                }
+                showDiscordButton -> { button2Label = DISCORD_BUTTON_LABEL; button2Url = DISCORD_BUTTON_URL }
+                else -> { button2Label = null; button2Url = null }
             }
 
             DiscordRpcManager.setActivity(
