@@ -839,6 +839,7 @@ class MangaDetailsController :
                         mangaTitle = m.title,
                         thumbnailUrl = m.thumbnail_url,
                         browsingOnly = true,
+                        sourceUrl = viewModel.getChapterUrl(),
                     ),
                 )
             }
