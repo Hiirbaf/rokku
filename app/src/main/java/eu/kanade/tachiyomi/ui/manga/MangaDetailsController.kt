@@ -829,8 +829,10 @@ class MangaDetailsController :
         super.onAttach(view)
         presenter.refreshRelatedMangaFavorites()
 
-        val source = presenter.source as? HttpSource ?: return
         manga?.let { m ->
+            val sourceUrl = (presenter.source as? HttpSource)?.let { source ->
+                try { source.getMangaUrl(presenter.manga) } catch (e: Exception) { null }
+            }
             viewScope.launch {
                 DiscordRPCService.setScreen(
                     activity ?: return@launch,
@@ -840,7 +842,7 @@ class MangaDetailsController :
                         mangaTitle = m.title,
                         thumbnailUrl = m.thumbnail_url,
                         browsingOnly = true,
-                        sourceUrl = source.getMangaUrl(presenter.manga)
+                        sourceUrl = sourceUrl,
                     ),
                 )
             }
