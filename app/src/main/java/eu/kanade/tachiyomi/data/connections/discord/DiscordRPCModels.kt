@@ -1,14 +1,15 @@
 package eu.kanade.tachiyomi.data.connections.discord
 
-import dev.icerock.moko.resources.compose.stringResource
+import dev.icerock.moko.resources.StringResource
 import yokai.i18n.MR
 
 const val RICH_PRESENCE_TAG = "discord_rpc"
 
-const val DOWNLOAD_BUTTON_LABEL = MR.strings.download
+val DOWNLOAD_BUTTON_LABEL = MR.strings.download
 const val DOWNLOAD_BUTTON_URL = "https://github.com/rokku-app/rokku/releases"
-const val READ_CHAPTER_BUTTON_LABEL = "Leer capítulo"
-const val VIEW_MANGA_BUTTON_LABEL = "Ver manga"
+
+val READ_CHAPTER_BUTTON_LABEL = MR.strings.read_chapter_button
+val VIEW_MANGA_BUTTON_LABEL = MR.strings.view_manga_button
 
 data class ReaderData(
     val incognitoMode: Boolean = false,
@@ -23,9 +24,9 @@ data class ReaderData(
 )
 
 enum class DiscordScreen(
-    @StringRes val text: Int,
-    @StringRes val details: Int,
-    @StringRes val state: Int,
+    val text: StringResource,
+    val details: StringResource,
+    val state: StringResource,
     val imageUrl: String,
 ) {
     APP(MR.strings.app_name, MR.strings.browsing, MR.strings.library, ROKKU_IMAGE_URL),
@@ -33,6 +34,7 @@ enum class DiscordScreen(
     HISTORY(MR.strings.app_name, MR.strings.scrolling, MR.strings.recents, HISTORY_IMAGE_URL),
     BROWSE(MR.strings.app_name, MR.strings.browsing, MR.strings.browse, BROWSE_IMAGE_URL),
     MANGA(MR.strings.app_name, MR.strings.comic, MR.strings.reading, MANGA_IMAGE_URL),
+
     // temporarily deactivated
     // MORE(MR.strings.app_name, MR.strings.messing, MR.strings.settings, MORE_IMAGE_URL),
     // WEBVIEW(MR.strings.app_name, MR.strings.browsing, MR.strings.action_web_view, WEBVIEW_IMAGE_URL),
