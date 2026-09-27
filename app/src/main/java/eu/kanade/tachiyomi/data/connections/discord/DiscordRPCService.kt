@@ -195,8 +195,8 @@ class DiscordRPCService : Service() {
             val showProgress = connectionsPreferences.discordShowProgress().get()
             val showTimestamp = connectionsPreferences.discordShowTimestamp().get()
             val showButtons = connectionsPreferences.discordShowButtons().get()
+            val showMangaButton = connectionsPreferences.discordShowMangaButton().get()
             val showDownloadButton = connectionsPreferences.discordShowDownloadButton().get()
-            val showDiscordButton = connectionsPreferences.discordShowDiscordButton().get()
 
             val details = sanitizeField(
                 when {
@@ -221,23 +221,14 @@ class DiscordRPCService : Service() {
             )
             val imageUrl = resolveDisplayImage(context, readerData, discordScreen.imageUrl)
 
-            val button1Label = if (showButtons && showDownloadButton) DOWNLOAD_BUTTON_LABEL else null
-            val button1Url = if (showButtons && showDownloadButton) DOWNLOAD_BUTTON_URL else null
-            val button2Label: String?
-            val button2Url: String?
-            when {
-                !showButtons -> { button2Label = null; button2Url = null }
-                readerData.sourceUrl != null -> {
-                    button2Label = if (discordScreen == DiscordScreen.MANGA && !readerData.browsingOnly) {
-                        READ_CHAPTER_BUTTON_LABEL
-                    } else {
-                        VIEW_MANGA_BUTTON_LABEL
-                    }
-                    button2Url = readerData.sourceUrl
-                }
-                showDiscordButton -> { button2Label = DISCORD_BUTTON_LABEL; button2Url = DISCORD_BUTTON_URL }
-                else -> { button2Label = null; button2Url = null }
+            val button1Label = if (showButtons && showMangaButton && readerData.sourceUrl != null) {
+                if (discordScreen == DiscordScreen.MANGA && !readerData.browsingOnly) READ_CHAPTER_BUTTON_LABEL else VIEW_MANGA_BUTTON_LABEL
+            } else {
+                null
             }
+            val button1Url = if (showButtons && readerData.sourceUrl != null) readerData.sourceUrl else null
+            val button2Label = if (showButtons && showDownloadButton) DOWNLOAD_BUTTON_LABEL else null
+            val button2Url = if (showButtons && showDownloadButton) DOWNLOAD_BUTTON_URL else null
 
             DiscordRpcManager.setActivity(
                 DiscordNativeActivity(
