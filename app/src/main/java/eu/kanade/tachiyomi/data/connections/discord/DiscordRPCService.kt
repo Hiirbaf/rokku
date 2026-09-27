@@ -10,6 +10,7 @@ import android.os.IBinder
 import android.os.Looper
 import android.util.Log
 import androidx.compose.ui.util.fastAny
+import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.data.cache.CoverCache
 import eu.kanade.tachiyomi.data.connections.ConnectionsManager
 import eu.kanade.tachiyomi.data.notification.NotificationReceiver
