@@ -839,7 +839,7 @@ class MangaDetailsController :
                         mangaTitle = m.title,
                         thumbnailUrl = m.thumbnail_url,
                         browsingOnly = true,
-                        sourceUrl = viewModel.getChapterUrl(),
+                        sourceUrl = source.getMangaUrl(presenter.manga)
                     ),
                 )
             }
