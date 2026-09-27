@@ -28,7 +28,6 @@ import yokai.domain.category.models.Category.Companion.UNCATEGORIZED_ID
 import yokai.domain.connections.service.ConnectionsPreferences
 import yokai.i18n.MR
 import yokai.util.lang.getString
-import dev.icerock.moko.resources.desc.desc
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 import uy.kohesive.injekt.injectLazy
