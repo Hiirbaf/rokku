@@ -339,13 +339,17 @@ class DiscordRPCService : Service() {
             if (readerData.incognitoMode) return null
 
             val (currentPage, totalPages) = readerData.chapterProgress
-            val pageLabel = MR.strings.page_count.desc(currentPage, totalPages).toString(context)
+            val pageLabel = MR.strings.page_count
+                .desc(currentPage, totalPages)
+                .toString(context)
 
             return if (connectionsPreferences.useChapterTitles().get()) {
                 readerData.chapterTitle?.let { "$it ($pageLabel)" }
             } else {
                 val chapterNum = formatChapterNumber(readerData.chapterNumber.toDouble())
-                val chapterLabel = MR.strings.chapter_.desc(chapterNum).toString(context)
+                val chapterLabel = MR.strings.chapter_
+                    .desc(chapterNum)
+                    .toString(context)
 
                 "$chapterLabel ($pageLabel)"
             }
