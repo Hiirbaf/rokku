@@ -33,6 +33,8 @@ class ConnectionsPreferences(
 
     fun useChapterTitles() = preferenceStore.getBoolean("pref_discord_rpc_use_chapter_titles", true)
 
+    fun discordUploadLocalCovers() = preferenceStore.getBoolean("pref_discord_upload_local_covers", false)
+
     fun discordCustomMessage() = preferenceStore.getString("pref_discord_custom_message", "")
 
     fun discordShowProgress() = preferenceStore.getBoolean("pref_discord_show_progress", true)
