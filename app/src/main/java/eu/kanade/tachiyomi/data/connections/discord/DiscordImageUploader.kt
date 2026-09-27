@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import eu.kanade.tachiyomi.network.NetworkHelper
+import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -23,18 +24,19 @@ internal object DiscordImageUploader {
     private val uploadCache = mutableMapOf<String, String>()
     private val networkHelper: NetworkHelper by injectLazy()
 
-    suspend fun resolveImageUrl(context: Context, localUri: String): String? = withContext(Dispatchers.IO) {
-        uploadCache[localUri]?.let { return@withContext it }
+    suspend fun resolveImageUrl(context: Context, file: File): String? = withContext(Dispatchers.IO) {
+        val cacheKey = file.absolutePath
+        uploadCache[cacheKey]?.let { return@withContext it }
 
         val bytes = try {
-            context.contentResolver.openInputStream(Uri.parse(localUri))?.use { it.readBytes() }
+            file.readBytes()
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to read local cover: ${e.message}", e)
-            null
-        } ?: return@withContext null
+            Log.e(TAG, "Failed to read cover file: ${e.message}", e)
+            return@withContext null
+        }
 
         val uploaded = uploadToUguu(bytes) ?: uploadToCatbox(bytes)
-        uploaded?.let { uploadCache[localUri] = it }
+        uploaded?.let { uploadCache[cacheKey] = it }
         uploaded
     }
 
