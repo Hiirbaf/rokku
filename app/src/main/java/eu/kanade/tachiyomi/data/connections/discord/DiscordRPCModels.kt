@@ -1,0 +1,52 @@
+package eu.kanade.tachiyomi.data.connections.discord
+
+import dev.icerock.moko.resources.StringResource
+import yokai.i18n.MR
+
+const val RICH_PRESENCE_TAG = "discord_rpc"
+
+val DOWNLOAD_BUTTON_LABEL = MR.strings.download
+const val DOWNLOAD_BUTTON_URL = "https://github.com/rokku-app/rokku/releases"
+
+val READ_CHAPTER_BUTTON_LABEL = MR.strings.read_chapter_button
+val VIEW_MANGA_BUTTON_LABEL = MR.strings.view_manga_button
+
+data class ReaderData(
+    val incognitoMode: Boolean = false,
+    val mangaId: Long? = null,
+    val mangaTitle: String? = null,
+    val chapterNumber: Float = 0f,
+    val chapterProgress: Pair<Int, Int> = Pair(0, 0),
+    val chapterTitle: String? = null,
+    val thumbnailUrl: String? = null,
+    val browsingOnly: Boolean = false,
+    val sourceUrl: String? = null,
+)
+
+enum class DiscordScreen(
+    val text: StringResource,
+    val details: StringResource,
+    val state: StringResource,
+    val imageUrl: String,
+) {
+    APP(MR.strings.app_name, MR.strings.browsing, MR.strings.library, ROKKU_IMAGE_URL),
+    LIBRARY(MR.strings.app_name, MR.strings.browsing, MR.strings.library, LIBRARY_IMAGE_URL),
+    HISTORY(MR.strings.app_name, MR.strings.scrolling, MR.strings.recents, HISTORY_IMAGE_URL),
+    BROWSE(MR.strings.app_name, MR.strings.browsing, MR.strings.browse, BROWSE_IMAGE_URL),
+    MANGA(MR.strings.app_name, MR.strings.comic, MR.strings.reading, MANGA_IMAGE_URL),
+
+    // temporarily deactivated
+    // MORE(MR.strings.app_name, MR.strings.messing, MR.strings.settings, MORE_IMAGE_URL),
+    // WEBVIEW(MR.strings.app_name, MR.strings.browsing, MR.strings.action_web_view, WEBVIEW_IMAGE_URL),
+    // UPDATES(MR.strings.app_name, MR.strings.scrolling, MR.strings.recents, updatesImageUrl),
+}
+
+private const val CDN = "https://cdn.discordapp.com/"
+private const val ROKKU_IMAGE_URL = "${CDN}emojis/1553410036825464893.webp?quality=lossless"
+private const val LIBRARY_IMAGE_URL = "${CDN}emojis/1552645911254138911.webp?quality=lossless"
+private const val HISTORY_IMAGE_URL = "${CDN}emojis/1552649831149998131.webp?quality=lossless"
+private const val BROWSE_IMAGE_URL = "${CDN}emojis/1552656747083206747.webp?quality=lossless"
+private const val MANGA_IMAGE_URL = "${CDN}emojis/1553175613077065808.webp?quality=lossless"
+// private const val MORE_IMAGE_URL = "${CDN}emojis/1391947518224371772.webp?quality=lossless"
+// private const val WEBVIEW_IMAGE_URL = "${CDN}emojis/1391952048223817791.webp?quality=lossless"
+// private const val updatesImageUrl = "${CDN}emojis/1391945005194674237.webp?quality=lossless"
