@@ -12,6 +12,7 @@ import android.util.Log
 import androidx.compose.ui.util.fastAny
 import yokai.domain.connections.service.ConnectionsPreferences
 import eu.kanade.tachiyomi.R
+import eu.kanade.tachiyomi.data.cache.CoverCache
 import eu.kanade.tachiyomi.data.connections.ConnectionsManager
 import eu.kanade.tachiyomi.data.notification.NotificationReceiver
 import eu.kanade.tachiyomi.data.notification.Notifications
@@ -218,7 +219,7 @@ class DiscordRPCService : Service() {
                     else -> context.getString(discordScreen.state)
                 },
             )
-            val imageUrl = resolveDisplayImage(context, readerData.thumbnailUrl, discordScreen.imageUrl)
+            val imageUrl = resolveDisplayImage(context, readerData, discordScreen.imageUrl)
 
             val button1Label = if (showButtons && showDownloadButton) DOWNLOAD_BUTTON_LABEL else null
             val button1Url = if (showButtons && showDownloadButton) DOWNLOAD_BUTTON_URL else null
@@ -287,7 +288,15 @@ class DiscordRPCService : Service() {
             }
         }
 
-        private suspend fun resolveDisplayImage(context: Context, thumbnailUrl: String?, fallback: String): String {
+        private suspend fun resolveDisplayImage(context: Context, readerData: ReaderData, fallback: String): String {
+            if (connectionsPreferences.discordUploadLocalCovers().get() && readerData.mangaId != null) {
+                val customCover = Injekt.get<CoverCache>().getCustomCoverFile(readerData.mangaId)
+                if (customCover.exists()) {
+                    DiscordImageUploader.resolveImageUrl(context, customCover)?.let { return it }
+                }
+            }
+
+            val thumbnailUrl = readerData.thumbnailUrl
             if (thumbnailUrl.isNullOrBlank()) return fallback
             if (thumbnailUrl.startsWith("http://") || thumbnailUrl.startsWith("https://")) return thumbnailUrl
             if (!connectionsPreferences.discordUploadLocalCovers().get()) return fallback
