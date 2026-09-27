@@ -829,6 +829,7 @@ class MangaDetailsController :
         super.onAttach(view)
         presenter.refreshRelatedMangaFavorites()
 
+        val source = presenter.source as? HttpSource ?: return
         manga?.let { m ->
             viewScope.launch {
                 DiscordRPCService.setScreen(
