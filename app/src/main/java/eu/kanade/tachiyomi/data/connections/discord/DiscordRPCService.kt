@@ -261,6 +261,7 @@ class DiscordRPCService : Service() {
                     name = appName,
                     details = details,
                     state = state,
+                    startTimestamp = since / 1000L,
                     largeImage = imageUrl,
                     largeText = appName,
                     smallImage = DiscordScreen.APP.imageUrl,
