@@ -52,9 +52,9 @@
     <string name="active_account">Active Account</string>
     <string name="no_accounts_found">No accounts found</string>
     <!-- Discord section -->
+    <string name="view_series">View %1$s</string>
     <string name="page_count">Page %1$s/%2$s</string>
     <string name="browsing">Browsing</string>
-    <string name="view_manga_button">View Manga</string>
     <string name="read_chapter_button">Read Chapter</string>
     <string name="scrolling">Scrolling through</string>
     <string name="messing">Messing around with</string>
