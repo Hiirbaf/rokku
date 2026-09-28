@@ -226,7 +226,7 @@ class DiscordRPCService : Service() {
 
             val imageUrl = resolveDisplayImage(context, readerData, discordScreen.imageUrl)
 
-            val button1Label = if (showButtons && readerData.sourceUrl != null) {
+            val button1Label = if (showButtons && showMangaButton && readerData.sourceUrl != null) {
                 if (discordScreen == DiscordScreen.MANGA && !readerData.browsingOnly) {
                     context.getString(READ_CHAPTER_BUTTON_LABEL)
                 } else {
@@ -238,7 +238,7 @@ class DiscordRPCService : Service() {
                 null
             }
 
-            val button1Url = if (showButtons && readerData.sourceUrl != null) {
+            val button1Url = if (showButtons && showMangaButton && readerData.sourceUrl != null) {
                 readerData.sourceUrl
             } else {
                 null
@@ -267,6 +267,7 @@ class DiscordRPCService : Service() {
                     largeText = appName,
                     smallImage = DiscordScreen.APP.imageUrl,
                     smallText = context.getString(DiscordScreen.APP.text),
+                    showAppIcon = showAppIcon,
                     button1Label = button1Label,
                     button1Url = button1Url,
                     button2Label = button2Label,
