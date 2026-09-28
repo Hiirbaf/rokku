@@ -195,7 +195,6 @@ class DiscordRPCService : Service() {
             val appName = context.getString(MR.strings.app_name)
             val customMessage = connectionsPreferences.discordCustomMessage().get()
             val showProgress = connectionsPreferences.discordShowProgress().get()
-            val showTimestamp = connectionsPreferences.discordShowTimestamp().get()
             val showButtons = connectionsPreferences.discordShowButtons().get()
             val showMangaButton = connectionsPreferences.discordShowMangaButton().get()
             val showDownloadButton = connectionsPreferences.discordShowDownloadButton().get()
@@ -262,7 +261,6 @@ class DiscordRPCService : Service() {
                     name = appName,
                     details = details,
                     state = state,
-                    startTimestamp = if (showTimestamp) since / 1000L else 0L,
                     largeImage = imageUrl,
                     largeText = appName,
                     smallImage = DiscordScreen.APP.imageUrl,
