@@ -856,12 +856,13 @@ class MangaDetailsController :
         presenter.refreshRelatedMangaFavorites()
 
         manga?.let { m ->
-            val sourceUrl = (presenter.source as? HttpSource)?.let { source ->
-                try { source.getMangaUrl(presenter.manga) } catch (e: Exception) { null }
-            }
             viewScope.launch {
+                val ctx = activity ?: return@launch
+                val sourceUrl = (presenter.source as? HttpSource)?.let { source ->
+                    try { source.getMangaUrl(presenter.manga) } catch (e: Exception) { null }
+                }
                 DiscordRPCService.setScreen(
-                    activity ?: return@launch,
+                    ctx,
                     DiscordScreen.MANGA,
                     ReaderData(
                         mangaId = m.id,
@@ -869,6 +870,7 @@ class MangaDetailsController :
                         thumbnailUrl = m.thumbnail_url,
                         browsingOnly = true,
                         sourceUrl = sourceUrl,
+                        seriesType = m.seriesType(ctx).replaceFirstChar { it.titlecase() },
                     ),
                 )
             }
