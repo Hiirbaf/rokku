@@ -37,6 +37,8 @@ class ConnectionsPreferences(
 
     fun discordCustomMessage() = preferenceStore.getString("pref_discord_custom_message", "")
 
+    fun discordShowAppIcon() = preferenceStore.getBoolean("pref_discord_show_app_icon", true)
+
     fun discordShowProgress() = preferenceStore.getBoolean("pref_discord_show_progress", true)
 
     fun discordShowButtons() = preferenceStore.getBoolean("pref_discord_show_buttons", true)
