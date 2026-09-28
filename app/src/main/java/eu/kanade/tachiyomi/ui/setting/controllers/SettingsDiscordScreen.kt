@@ -101,6 +101,7 @@ object SettingsDiscordScreen : ComposableSettings() {
         val enableDRPC by enableDRPCPref.collectAsState()
 
         val customMessagePref = connectionsPreferences.discordCustomMessage()
+        val showAppIconPref = connectionsPreferences.discordShowAppIcon()
         val uploadLocalCoversPref = connectionsPreferences.discordUploadLocalCovers()
         val showProgressPref = connectionsPreferences.discordShowProgress()
         val showButtonsPref = connectionsPreferences.discordShowButtons()
@@ -214,6 +215,11 @@ object SettingsDiscordScreen : ComposableSettings() {
                         title = stringResource(MR.strings.pref_discord_custom_message),
                         subtitle = stringResource(MR.strings.pref_discord_custom_message_summary),
                         onClick = { showCustomMessageDialog = true },
+                    ),
+                    Preference.PreferenceItem.SwitchPreference(
+                        pref = showAppIconPref,
+                        title = stringResource(MR.strings.pref_discord_show_app_icon),
+                        subtitle = stringResource(MR.strings.pref_discord_show_app_icon_summary),
                     ),
                     Preference.PreferenceItem.SwitchPreference(
                         pref = uploadLocalCoversPref,
