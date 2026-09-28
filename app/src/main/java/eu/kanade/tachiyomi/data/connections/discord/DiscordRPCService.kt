@@ -232,7 +232,7 @@ class DiscordRPCService : Service() {
                 } else {
                     readerData.seriesType?.let {
                         context.getString(MR.strings.view_series, it)
-                    } ?: context.getString(VIEW_MANGA_BUTTON_LABEL)
+                    }
                 }
             } else {
                 null
