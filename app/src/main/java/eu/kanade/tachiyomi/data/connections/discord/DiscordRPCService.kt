@@ -231,7 +231,7 @@ class DiscordRPCService : Service() {
                     if (discordScreen == DiscordScreen.MANGA && !readerData.browsingOnly) {
                         READ_CHAPTER_BUTTON_LABEL
                     } else {
-                        VIEW_MANGA_BUTTON_LABEL
+                        readerData.seriesType ?: VIEW_MANGA_BUTTON_LABEL
                     },
                 )
             } else {
