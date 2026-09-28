@@ -1,4 +1,3 @@
-// AM (DISCORD) -->
 package eu.kanade.tachiyomi.data.connections.discord
 
 /**
@@ -16,6 +15,7 @@ data class DiscordNativeActivity(
     val largeText: String?,
     val smallImage: String?,
     val smallText: String?,
+    val showAppIcon: Boolean = true,
     val button1Label: String? = null,
     val button1Url: String? = null,
     val button2Label: String? = null,
@@ -30,4 +30,3 @@ data class DiscordNativeActivity(
         const val TYPE_COMPETING = 5
     }
 }
-// <-- AM (DISCORD)
