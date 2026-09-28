@@ -226,14 +226,12 @@ class DiscordRPCService : Service() {
 
             val imageUrl = resolveDisplayImage(context, readerData, discordScreen.imageUrl)
 
-            val button1Label = if (showButtons && showMangaButton && readerData.sourceUrl != null) {
-                context.getString(
-                    if (discordScreen == DiscordScreen.MANGA && !readerData.browsingOnly) {
-                        READ_CHAPTER_BUTTON_LABEL
-                    } else {
-                        readerData.seriesType ?: VIEW_MANGA_BUTTON_LABEL
-                    },
-                )
+            val button1Label = if (showButtons && readerData.sourceUrl != null) {
+                if (discordScreen == DiscordScreen.MANGA && !readerData.browsingOnly) {
+                    context.getString(READ_CHAPTER_BUTTON_LABEL)
+                } else {
+                    readerData.seriesType ?: context.getString(VIEW_MANGA_BUTTON_LABEL)
+                }
             } else {
                 null
             }
