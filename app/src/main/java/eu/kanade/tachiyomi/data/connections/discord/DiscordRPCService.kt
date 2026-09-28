@@ -194,6 +194,7 @@ class DiscordRPCService : Service() {
         ) {
             val appName = context.getString(MR.strings.app_name)
             val customMessage = connectionsPreferences.discordCustomMessage().get()
+            val showAppIcon = connectionsPreferences.discordShowAppIcon().get()
             val showProgress = connectionsPreferences.discordShowProgress().get()
             val showButtons = connectionsPreferences.discordShowButtons().get()
             val showMangaButton = connectionsPreferences.discordShowMangaButton().get()
