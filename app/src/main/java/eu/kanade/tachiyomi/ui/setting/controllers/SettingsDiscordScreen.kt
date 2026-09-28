@@ -103,7 +103,6 @@ object SettingsDiscordScreen : ComposableSettings() {
         val customMessagePref = connectionsPreferences.discordCustomMessage()
         val uploadLocalCoversPref = connectionsPreferences.discordUploadLocalCovers()
         val showProgressPref = connectionsPreferences.discordShowProgress()
-        val showTimestampPref = connectionsPreferences.discordShowTimestamp()
         val showButtonsPref = connectionsPreferences.discordShowButtons()
         val showDownloadButtonPref = connectionsPreferences.discordShowDownloadButton()
         val showMangaButtonPref = connectionsPreferences.discordShowMangaButton()
@@ -225,11 +224,6 @@ object SettingsDiscordScreen : ComposableSettings() {
                         pref = showProgressPref,
                         title = stringResource(MR.strings.pref_discord_show_progress),
                         subtitle = stringResource(MR.strings.pref_discord_show_progress_summary),
-                    ),
-                    Preference.PreferenceItem.SwitchPreference(
-                        pref = showTimestampPref,
-                        title = stringResource(MR.strings.pref_discord_show_timestamp),
-                        subtitle = stringResource(MR.strings.pref_discord_show_timestamp_summary),
                     ),
                     Preference.PreferenceItem.SwitchPreference(
                         pref = showButtonsPref,
