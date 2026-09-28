@@ -9,7 +9,6 @@ val DOWNLOAD_BUTTON_LABEL = MR.strings.download
 const val DOWNLOAD_BUTTON_URL = "https://github.com/rokku-app/rokku/releases"
 
 val READ_CHAPTER_BUTTON_LABEL = MR.strings.read_chapter_button
-val VIEW_MANGA_BUTTON_LABEL = MR.strings.view_manga_button
 
 data class ReaderData(
     val incognitoMode: Boolean = false,
