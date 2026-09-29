@@ -358,12 +358,15 @@ object SettingsDiscordScreen : ComposableSettings() {
 
             Column(
                 modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(0.dp),
             ) {
                 Text(
                     text = account?.name
                     ?: account?.username
                     ?: stringResource(MR.strings.not_logged_in),
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        lineHeight = 20.sp,
+                    ),
                 )
 
                 if (account != null) {
@@ -373,20 +376,31 @@ object SettingsDiscordScreen : ComposableSettings() {
                     ) {
                         Text(
                             text = "@${account.username}",
-                            style = MaterialTheme.typography.bodyMedium,
+                            style = MaterialTheme.typography.bodyMedium.copy(
+                                lineHeight = 18.sp,
+                            ),
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
 
                         Spacer(Modifier.weight(1f))
 
-                        TextButton(onClick = onLogout) {
+                        TextButton(
+                            onClick = onLogout,
+                            contentPadding = PaddingValues(
+                                horizontal = 8.dp,
+                                vertical = 0.dp,
+                            ),
+                        ) {
                             Text(stringResource(MR.strings.log_out))
                         }
                     }
 
                     Text(
                         text = "Connected",
-                        style = MaterialTheme.typography.bodySmall,
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            lineHeight = 16.sp,
+                
+                        ),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
