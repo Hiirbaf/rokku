@@ -1,6 +1,7 @@
 package eu.kanade.tachiyomi.ui.setting.controllers
 
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.layout.Column
@@ -339,6 +340,9 @@ object SettingsDiscordScreen : ComposableSettings() {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 8.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface,
+            )
         ) {
             Row(
                 modifier = Modifier
@@ -369,7 +373,8 @@ object SettingsDiscordScreen : ComposableSettings() {
                 ) {
                     Text(
                         text = account?.name
-                            ?: stringResource(MR.strings.not_logged_in),
+                        ?.takeUnless { it.isBlank() || it.equals("null", ignoreCase = true) }
+                        ?: stringResource(MR.strings.not_logged_in),
                         style = MaterialTheme.typography.titleMedium,
                     )
 
