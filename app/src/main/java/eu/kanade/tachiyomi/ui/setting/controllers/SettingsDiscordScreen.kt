@@ -47,6 +47,16 @@ import eu.kanade.tachiyomi.core.storage.preference.collectAsState
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 import yokai.presentation.settings.ComposableSettings
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.ui.res.stringResource
+import coil3.compose.AsyncImage
+import eu.kanade.tachiyomi.data.connections.discord.DiscordAccount
+import eu.kanade.tachiyomi.data.connections.discord.DiscordRpcManager
+import eu.kanade.tachiyomi.data.connections.discord.DiscordTokenStore
 
 object SettingsDiscordScreen : ComposableSettings() {
 
@@ -97,6 +107,9 @@ object SettingsDiscordScreen : ComposableSettings() {
         val enableDRPCPref = connectionsPreferences.enableDiscordRPC()
         val useChapterTitlesPref = connectionsPreferences.useChapterTitles()
         val discordRPCStatus = connectionsPreferences.discordRPCStatus()
+
+        val accounts = connectionsManager.discord.getAccounts()
+        val activeAccount = accounts.find { it.isActive }
 
         val enableDRPC by enableDRPCPref.collectAsState()
 
@@ -174,10 +187,19 @@ object SettingsDiscordScreen : ComposableSettings() {
         }
 
         return listOf(
-            Preference.PreferenceItem.TextPreference(
-                title = stringResource(MR.strings.discord_accounts),
-                onClick = { navigator.push(DiscordAccountsScreen) },
-            ),
+            Preference.PreferenceItem.CustomPreference(
+                title = "",
+            ) {
+                DiscordAccountRow(
+                    account = activeAccount,
+                    onLogout = {
+                        activeAccount?.let { connectionsManager.discord.removeAccount(it.id) }
+                        DiscordTokenStore.clear()
+                        DiscordRpcManager.clear()
+                        connectionsPreferences.enableDiscordRPC().set(false)
+                    },
+                )
+            },
             Preference.PreferenceGroup(
                 title = stringResource(MR.strings.connections_discord),
                 preferenceItems = persistentListOf(
@@ -312,6 +334,45 @@ object SettingsDiscordScreen : ComposableSettings() {
             ),
             enabled = enabled,
         )
+    }
+
+    @Composable
+    private fun DiscordAccountRow(
+        account: DiscordAccount?,
+        onLogout: () -> Unit,
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            if (account?.avatarUrl != null) {
+                AsyncImage(
+                    model = account.avatarUrl,
+                    contentDescription = null,
+                    modifier = Modifier.size(48.dp).clip(CircleShape),
+                )
+            } else {
+                Icon(
+                    imageVector = Icons.Filled.AccountCircle,
+                    contentDescription = null,
+                    modifier = Modifier.size(48.dp),
+                )
+            }
+            Spacer(Modifier.width(16.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = account?.username ?: stringResource(MR.strings.not_logged_in),
+                    style = MaterialTheme.typography.titleMedium,
+                )
+            }
+            if (account != null) {
+                TextButton(onClick = onLogout) {
+                    Text(stringResource(MR.strings.log_out))
+                }
+            }
+        }
     }
 
     @Composable
