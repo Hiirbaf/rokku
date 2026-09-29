@@ -394,14 +394,26 @@ object SettingsDiscordScreen : ComposableSettings() {
                     )
                 }
 
-                TextButton(
-                    onClick = onLogout,
-                    contentPadding = PaddingValues(
-                        horizontal = 8.dp,
-                        vertical = 0.dp,
-                    ),
-                ) {
-                    Text(stringResource(MR.strings.log_out))
+                Row {
+                    IconButton(
+                        onClick = onLogout,
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.Logout,
+                            contentDescription = stringResource(MR.strings.log_out),
+                        )
+                    }
+
+                    IconButton(
+                        onClick = {
+                            // TODO: abrir ajustes
+                        },
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = stringResource(MR.strings.settings),
+                        )
+                    }
                 }
             }
         }
