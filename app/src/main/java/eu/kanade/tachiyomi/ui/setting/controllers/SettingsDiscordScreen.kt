@@ -353,9 +353,9 @@ object SettingsDiscordScreen : ComposableSettings() {
                     .padding(horizontal = 16.dp, vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                if (account?.avatarUrl != null) {
+                if (avatarUrl != null) {
                     AsyncImage(
-                        model = account.avatarUrl,
+                        model = avatarUrl,
                         contentDescription = null,
                         modifier = Modifier
                             .size(48.dp)
