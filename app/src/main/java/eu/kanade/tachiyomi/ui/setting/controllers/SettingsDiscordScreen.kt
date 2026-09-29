@@ -375,37 +375,33 @@ object SettingsDiscordScreen : ComposableSettings() {
                     modifier = Modifier.weight(1f),
                 ) {
                     Text(
-                        text = account?.name
+                        text = account.name
                         ?.takeUnless { it.isBlank() || it.equals("null", ignoreCase = true) }
-                        ?: stringResource(MR.strings.not_logged_in),
+                        ?: account.username,
                         style = MaterialTheme.typography.titleMedium,
                     )
 
-                    if (account != null) {
-                        Text(
-                            text = "@${account.username}",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
+                    Text(
+                        text = "@${account.username}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
 
-                        Text(
-                            text = stringResource(MR.strings.connected),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
+                    Text(
+                        text = stringResource(MR.strings.connected),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
                 }
 
-                if (account != null) {
-                    TextButton(
-                        onClick = onLogout,
-                        contentPadding = PaddingValues(
-                            horizontal = 8.dp,
-                            vertical = 0.dp,
-                        ),
-                    ) {
-                        Text(stringResource(MR.strings.log_out))
-                    }
+                TextButton(
+                    onClick = onLogout,
+                    contentPadding = PaddingValues(
+                        horizontal = 8.dp,
+                        vertical = 0.dp,
+                    ),
+                ) {
+                    Text(stringResource(MR.strings.log_out))
                 }
             }
         }
