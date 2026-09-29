@@ -195,7 +195,7 @@ object SettingsDiscordScreen : ComposableSettings() {
                 title = "",
             ) {
                 DiscordAccountRow(
-                    account = activeAccount,
+                    account = activeAccount!!,
                     onLogout = { dialog = LogoutConnectionsDialog(connectionsManager.discord) },
                 )
             },
