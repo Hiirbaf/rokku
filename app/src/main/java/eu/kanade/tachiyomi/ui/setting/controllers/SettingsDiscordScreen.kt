@@ -336,6 +336,9 @@ object SettingsDiscordScreen : ComposableSettings() {
         account: DiscordAccount?,
         onLogout: () -> Unit,
     ) {
+        val avatarUrl = account?.let {
+            it.avatarUrl ?: "https://cdn.discordapp.com/embed/avatars/${(it.id.toLong() shr 22) % 6}.png"
+        }
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -360,14 +363,10 @@ object SettingsDiscordScreen : ComposableSettings() {
                     )
                 } else {
                     Icon(
-                            painter = painterResource(R.drawable.ic_discord_24dp),
-                            contentDescription = null,
-                            modifier =
-                                Modifier
-                                    .size(36.dp)
-                                    .align(Alignment.Center)
-                                    .alpha(0.4f),
-                        )
+                        imageVector = Icons.Filled.AccountCircle,
+                        contentDescription = null,
+                        modifier = Modifier.size(48.dp),
+                    )
                 }
 
                 Spacer(Modifier.width(16.dp))
