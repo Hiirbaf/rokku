@@ -344,7 +344,9 @@ object SettingsDiscordScreen : ComposableSettings() {
                 AsyncImage(
                     model = account.avatarUrl,
                     contentDescription = null,
-                    modifier = Modifier.size(48.dp).clip(CircleShape),
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(CircleShape),
                 )
             } else {
                 Icon(
@@ -353,8 +355,12 @@ object SettingsDiscordScreen : ComposableSettings() {
                     modifier = Modifier.size(48.dp),
                 )
             }
+
             Spacer(Modifier.width(16.dp))
-            Column(modifier = Modifier.weight(1f)) {
+
+            Column(
+                modifier = Modifier.weight(1f),
+            ) {
                 Text(
                     text = account?.name
                     ?: account?.username
@@ -363,19 +369,17 @@ object SettingsDiscordScreen : ComposableSettings() {
                 )
 
                 if (account != null) {
-                    Text(
-                        text = "@${account.username}",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text = "@${account.username}",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
 
-                    Text(
-                        text = "Connected",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-
-                    Spacer(Modifier.weight(1f))
+                        Spacer(Modifier.weight(1f))
 
                         TextButton(
                             onClick = onLogout,
@@ -386,6 +390,13 @@ object SettingsDiscordScreen : ComposableSettings() {
                         ) {
                             Text(stringResource(MR.strings.log_out))
                         }
+                    }
+
+                    Text(
+                        text = "Connected",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
                 }
             }
         }
