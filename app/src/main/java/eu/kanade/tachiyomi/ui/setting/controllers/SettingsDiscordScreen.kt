@@ -368,8 +368,8 @@ object SettingsDiscordScreen : ComposableSettings() {
                 )
             }
             if (account != null) {
-                TextButton(onClick = onLogout) {
-                    Text(stringResource(MR.strings.log_out))
+                TextButton(onClick = {
+                    dialog = LogoutConnectionsDialog(connectionsManager.discord)
                 }
             }
         }
