@@ -51,6 +51,7 @@
     <string name="discord_accounts">Discord Accounts</string>
     <string name="active_account">Active Account</string>
     <string name="no_accounts_found">No accounts found</string>
+    <string name="not_logged_in">Not logged in</string>
     <!-- Discord section -->
     <string name="view_series">View %1$s</string>
     <string name="page_count">Page %1$s/%2$s</string>
