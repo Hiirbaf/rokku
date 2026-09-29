@@ -360,10 +360,14 @@ object SettingsDiscordScreen : ComposableSettings() {
                     )
                 } else {
                     Icon(
-                        imageVector = Icons.Filled.AccountCircle,
-                        contentDescription = null,
-                        modifier = Modifier.size(48.dp),
-                    )
+                            painter = painterResource(R.drawable.ic_discord_24dp),
+                            contentDescription = null,
+                            modifier =
+                                Modifier
+                                    .size(36.dp)
+                                    .align(Alignment.Center)
+                                    .alpha(0.4f),
+                        )
                 }
 
                 Spacer(Modifier.width(16.dp))
