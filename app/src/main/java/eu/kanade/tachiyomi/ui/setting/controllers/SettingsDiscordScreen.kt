@@ -333,7 +333,7 @@ object SettingsDiscordScreen : ComposableSettings() {
 
     @Composable
     private fun DiscordAccountRow(
-        account: DiscordAccount?,
+        account: DiscordAccount,
         onLogout: () -> Unit,
     ) {
         val avatarUrl = account?.let {
