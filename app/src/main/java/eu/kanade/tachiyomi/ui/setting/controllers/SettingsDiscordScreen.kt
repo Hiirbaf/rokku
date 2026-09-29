@@ -88,7 +88,7 @@ object SettingsDiscordScreen : ComposableSettings() {
 
     @ReadOnlyComposable
     @Composable
-    override fun getTitleRes() = MR.strings.pref_category_connections
+    override fun getTitleRes() = MR.strings.connections_discord
 
     @Composable
     override fun RowScope.AppBarAction() {
@@ -198,7 +198,7 @@ object SettingsDiscordScreen : ComposableSettings() {
                 )
             },
             Preference.PreferenceGroup(
-                title = stringResource(MR.strings.connections_discord),
+                title = stringResource(MR.strings.options),
                 preferenceItems = persistentListOf(
                     Preference.PreferenceItem.SwitchPreference(
                         pref = enableDRPCPref,
