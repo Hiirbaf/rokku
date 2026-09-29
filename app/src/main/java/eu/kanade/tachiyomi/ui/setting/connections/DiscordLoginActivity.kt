@@ -66,6 +66,7 @@ class DiscordLoginActivity : Activity() {
         val account = DiscordAccount(
             id = user.id,
             username = user.username,
+            name = user.name,
             avatarUrl = user.avatar,
             token = token,
             isActive = true,
