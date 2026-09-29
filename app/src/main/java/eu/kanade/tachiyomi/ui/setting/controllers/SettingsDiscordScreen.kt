@@ -334,57 +334,69 @@ object SettingsDiscordScreen : ComposableSettings() {
         account: DiscordAccount?,
         onLogout: () -> Unit,
     ) {
-        Row(
+        Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp),
-            verticalAlignment = Alignment.CenterVertically,
+                .padding(horizontal = 16.dp, vertical = 8.dp),
         ) {
-            if (account?.avatarUrl != null) {
-                AsyncImage(
-                    model = account.avatarUrl,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(48.dp)
-                        .clip(CircleShape),
-                )
-            } else {
-                Icon(
-                    imageVector = Icons.Filled.AccountCircle,
-                    contentDescription = null,
-                    modifier = Modifier.size(48.dp),
-                )
-            }
-
-            Spacer(Modifier.width(16.dp))
-
-            Column(
-                modifier = Modifier.weight(1f),
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(
-                    text = account?.name ?: account?.username,
-                    style = MaterialTheme.typography.titleMedium,
-                )
-                if (account != null) {
-                    Text(
-                        text = "@${account.username}",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                if (account?.avatarUrl != null) {
+                    AsyncImage(
+                        model = account.avatarUrl,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(48.dp)
+                            .clip(CircleShape),
                     )
-                    Text(
-                        text = stringResource(MR.strings.connected),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                } else {
+                    Icon(
+                        imageVector = Icons.Filled.AccountCircle,
+                        contentDescription = null,
+                        modifier = Modifier.size(48.dp),
                     )
                 }
-            }
 
-            if (account != null) {
-                TextButton(
-                    onClick = onLogout,
-                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp),
+                Spacer(Modifier.width(16.dp))
+
+                Column(
+                    modifier = Modifier.weight(1f),
                 ) {
-                  Text(stringResource(MR.strings.log_out))
+                    Text(
+                        text = account?.name
+                            ?: stringResource(MR.strings.not_logged_in),
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+
+                    if (account != null) {
+                        Text(
+                            text = "@${account.username}",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+
+                        Text(
+                            text = stringResource(MR.strings.connected),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                }
+
+                if (account != null) {
+                    TextButton(
+                        onClick = onLogout,
+                        contentPadding = PaddingValues(
+                            horizontal = 8.dp,
+                            vertical = 0.dp,
+                        ),
+                    ) {
+                        Text(stringResource(MR.strings.log_out))
+                    }
                 }
             }
         }
