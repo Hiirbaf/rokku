@@ -372,6 +372,10 @@ object SettingsDiscordScreen : ComposableSettings() {
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
+
+                    TextButton(onClick = onLogout) {
+                        Text(stringResource(MR.strings.log_out))
+                    }
                 }
             }
         }
