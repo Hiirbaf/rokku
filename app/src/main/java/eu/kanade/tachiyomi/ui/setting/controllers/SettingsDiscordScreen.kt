@@ -200,7 +200,7 @@ object SettingsDiscordScreen : ComposableSettings() {
                 )
             },
             Preference.PreferenceGroup(
-                title = stringResource(MR.strings.options),
+                title = stringResource(MR.strings.general),
                 preferenceItems = persistentListOf(
                     Preference.PreferenceItem.SwitchPreference(
                         pref = enableDRPCPref,
