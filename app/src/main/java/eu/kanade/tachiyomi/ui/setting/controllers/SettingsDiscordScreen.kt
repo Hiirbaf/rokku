@@ -1,5 +1,7 @@
 package eu.kanade.tachiyomi.ui.setting.controllers
 
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -358,7 +360,6 @@ object SettingsDiscordScreen : ComposableSettings() {
 
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(0.dp),
             ) {
                 Text(
                     text = account?.name
