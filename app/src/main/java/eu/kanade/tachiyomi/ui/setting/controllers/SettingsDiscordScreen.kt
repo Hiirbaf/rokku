@@ -192,12 +192,7 @@ object SettingsDiscordScreen : ComposableSettings() {
             ) {
                 DiscordAccountRow(
                     account = activeAccount,
-                    onLogout = {
-                        activeAccount?.let { connectionsManager.discord.removeAccount(it.id) }
-                        DiscordTokenStore.clear()
-                        DiscordRpcManager.clear()
-                        connectionsPreferences.enableDiscordRPC().set(false)
-                    },
+                    onLogout = { dialog = LogoutConnectionsDialog(connectionsManager.discord) },
                 )
             },
             Preference.PreferenceGroup(
@@ -368,8 +363,8 @@ object SettingsDiscordScreen : ComposableSettings() {
                 )
             }
             if (account != null) {
-                TextButton(onClick = {
-                    dialog = LogoutConnectionsDialog(connectionsManager.discord)
+                TextButton(onClick = onLogout) {
+                    Text(stringResource(MR.strings.log_out))
                 }
             }
         }
