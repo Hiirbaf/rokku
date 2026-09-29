@@ -362,41 +362,29 @@ object SettingsDiscordScreen : ComposableSettings() {
                 modifier = Modifier.weight(1f),
             ) {
                 Text(
-                    text = account?.name
-                    ?: account?.username
-                    ?: stringResource(MR.strings.not_logged_in),
+                    text = account?.username ?: stringResource(MR.strings.not_logged_in),
                     style = MaterialTheme.typography.titleMedium,
                 )
-
                 if (account != null) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Text(
-                            text = "@${account.username}",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-
-                        Spacer(Modifier.weight(1f))
-
-                        TextButton(
-                            onClick = onLogout,
-                            contentPadding = PaddingValues(
-                                horizontal = 8.dp,
-                                vertical = 0.dp,
-                            ),
-                        ) {
-                            Text(stringResource(MR.strings.log_out))
-                        }
-                    }
-
                     Text(
-                        text = "Connected",
+                        text = "@${account.username}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    Text(
+                        text = stringResource(MR.strings.connected),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
+                }
+            }
+
+            if (account != null) {
+                TextButton(
+                    onClick = onLogout,
+                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp),
+                ) {
+                  Text(stringResource(MR.strings.log_out))
                 }
             }
         }
