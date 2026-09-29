@@ -1,5 +1,6 @@
 package eu.kanade.tachiyomi.ui.setting.controllers
 
+import androidx.compose.material3.Card
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.layout.Column
