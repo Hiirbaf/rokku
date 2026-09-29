@@ -362,7 +362,7 @@ object SettingsDiscordScreen : ComposableSettings() {
                 modifier = Modifier.weight(1f),
             ) {
                 Text(
-                    text = account?.username ?: stringResource(MR.strings.not_logged_in),
+                    text = account?.name ?: stringResource(MR.strings.not_logged_in),
                     style = MaterialTheme.typography.titleMedium,
                 )
                 if (account != null) {
