@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
@@ -31,6 +32,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -306,7 +308,7 @@ private fun DiscordAccountItem(
     Card(
         onClick = onSetActive,
         modifier = Modifier.fillMaxWidth(),
-        colors = androidx.compose.material3.CardDefaults.cardColors(
+        colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
         ),
     ) {
@@ -319,7 +321,9 @@ private fun DiscordAccountItem(
             AsyncImage(
                 model = avatarUrl,
                 contentDescription = null,
-                modifier = Modifier.size(40.dp),
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape),
             )
 
             Column(
@@ -341,14 +345,16 @@ private fun DiscordAccountItem(
                 }
             }
 
-            IconButton(
-                onClick = onRemove,
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = stringResource(MR.strings.delete),
-                    tint = MaterialTheme.colorScheme.error,
-                )
+            if (!account.isActive) {
+                IconButton(
+                    onClick = onRemove,
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = stringResource(MR.strings.delete),
+                        tint = MaterialTheme.colorScheme.error,
+                    )
+                }
             }
         }
     }
