@@ -116,8 +116,11 @@ object SettingsDiscordScreen : ComposableSettings() {
         val useChapterTitlesPref = connectionsPreferences.useChapterTitles()
         val discordRPCStatus = connectionsPreferences.discordRPCStatus()
 
-        val accounts = connectionsManager.discord.getAccounts()
-        val activeAccount = accounts.find { it.isActive }
+        var activeAccount by remember {
+            mutableStateOf(
+                connectionsManager.discord.getAccounts().find { it.isActive },
+            )
+        }
 
         val enableDRPC by enableDRPCPref.collectAsState()
 
@@ -212,6 +215,11 @@ object SettingsDiscordScreen : ComposableSettings() {
                     DiscordAccountsDialog(
                         onDismiss = {
                             showDiscordSettings = false
+                        },
+                        onAccountChanged = {
+                            activeAccount = connectionsManager.discord
+                                .getAccounts()
+                                .find { it.isActive }
                         },
                     )
                 }
