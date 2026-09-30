@@ -60,6 +60,7 @@ data class DiscordAccountsScreenState(
 @Composable
 fun DiscordAccountsDialog(
     onDismiss: () -> Unit,
+    onAccountChanged: () -> Unit,
 ) {
     val context = LocalContext.current
     val screenModel = remember { DiscordAccountsScreenModel() }
@@ -169,7 +170,10 @@ fun DiscordAccountsDialog(
                                         screenModel.removeAccount(account.id)
                                     },
                                     onSetActive = {
-                                        screenModel.setActiveAccount(account.id)
+                                        screenModel.setActiveAccount(
+                                            account.id,
+                                            onSuccess = onAccountChanged,
+                                        )
                                     },
                                 )
                             }
@@ -268,7 +272,10 @@ class DiscordAccountsScreenModel : StateScreenModel<DiscordAccountsScreenState>(
         }
     }
 
-    fun setActiveAccount(accountId: String) {
+    fun setActiveAccount(
+        accountId: String,
+        onSuccess: () -> Unit,
+    ) {
         screenModelScope.launch {
             mutableState.update {
                 it.copy(
@@ -281,6 +288,8 @@ class DiscordAccountsScreenModel : StateScreenModel<DiscordAccountsScreenState>(
                 discord.setActiveAccount(accountId)
                 discord.restartRichPresence()
                 loadAccounts()
+            }.onSuccess {
+                onSuccess()
             }.onFailure { e ->
                 mutableState.update {
                     it.copy(
