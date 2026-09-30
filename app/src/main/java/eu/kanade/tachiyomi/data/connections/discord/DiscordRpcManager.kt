@@ -1,4 +1,3 @@
-// AM (DISCORD) -->
 package eu.kanade.tachiyomi.data.connections.discord
 
 import android.content.Context
@@ -481,4 +480,3 @@ object DiscordRpcManager {
         Log.i(TAG, "logout: complete, accessToken cleared")
     }
 }
-// <-- AM (DISCORD)
