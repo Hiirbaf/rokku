@@ -1,5 +1,6 @@
 package eu.kanade.tachiyomi.ui.setting.controllers
 
+import androidx.compose.ui.res.colorResource
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Card
@@ -414,7 +415,7 @@ object SettingsDiscordScreen : ComposableSettings() {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.Logout,
                             contentDescription = stringResource(MR.strings.log_out),
-                            tint = MaterialTheme.colorScheme.error,
+                            tint = colorResource(R.color.holo_red),
                         )
                     }
                 }
