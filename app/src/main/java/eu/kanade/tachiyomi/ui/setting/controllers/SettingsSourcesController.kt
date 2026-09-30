@@ -216,11 +216,6 @@ class SettingsSourcesController : SettingsLegacyController(), FloatingSearchInte
             drawSources()
             true
         }
-
-        if (useSearchTB) {
-            // Fixes problem with the overflow icon showing up in lieu of search
-            searchItem?.fixExpand(onExpand = { invalidateMenuOnExpand() })
-        }
     }
 
     override fun showFloatingBar() = activityBinding?.appBar?.useLargeToolbar == true
