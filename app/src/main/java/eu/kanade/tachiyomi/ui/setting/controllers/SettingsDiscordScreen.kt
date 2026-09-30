@@ -397,7 +397,9 @@ object SettingsDiscordScreen : ComposableSettings() {
                     )
                 }
 
-                Row {
+                Row(
+                    modifier = Modifier.padding(start = 8.dp),
+                ) {
                     IconButton(
                         onClick = {
                             // TODO: abrir ajustes
