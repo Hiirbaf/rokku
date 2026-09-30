@@ -132,6 +132,7 @@ object SettingsDiscordScreen : ComposableSettings() {
 
         var showCustomMessageDialog by rememberSaveable { mutableStateOf(false) }
         var tempCustomMessage by rememberSaveable { mutableStateOf(customMessagePref.get()) }
+        var showDiscordSettings by rememberSaveable { mutableStateOf(false) }
 
         if (showCustomMessageDialog) {
             AlertDialog(
@@ -200,8 +201,20 @@ object SettingsDiscordScreen : ComposableSettings() {
             ) {
                 DiscordAccountRow(
                     account = activeAccount!!,
-                    onLogout = { dialog = LogoutConnectionsDialog(connectionsManager.discord) },
+                    onLogout = {
+                        dialog = LogoutConnectionsDialog(connectionsManager.discord)
+                    },
+                    onSettings = {
+                        showDiscordSettings = true
+                    },
                 )
+                if (showDiscordSettings) {
+                    DiscordAccountsDialog(
+                        onDismiss = {
+                            showDiscordSettings = false
+                        },
+                    )
+                }
             },
             Preference.PreferenceGroup(
                 title = stringResource(MR.strings.general),
@@ -339,6 +352,7 @@ object SettingsDiscordScreen : ComposableSettings() {
     private fun DiscordAccountRow(
         account: DiscordAccount,
         onLogout: () -> Unit,
+        onSettings: () -> Unit,
     ) {
         val avatarUrl = account?.let {
             it.avatarUrl ?: "https://cdn.discordapp.com/embed/avatars/${(it.id.toLong() shr 22) % 6}.png"
@@ -402,9 +416,7 @@ object SettingsDiscordScreen : ComposableSettings() {
                     modifier = Modifier.padding(start = 8.dp),
                 ) {
                     IconButton(
-                        onClick = {
-                            // TODO: abrir ajustes
-                        },
+                        onClick = onSettings,
                     ) {
                         Icon(
                             imageVector = Icons.Default.Settings,
