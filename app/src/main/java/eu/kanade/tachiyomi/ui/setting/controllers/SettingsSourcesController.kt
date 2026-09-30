@@ -222,6 +222,39 @@ class SettingsSourcesController : SettingsLegacyController(), FloatingSearchInte
 
     var expandActionViewFromInteraction = false
 
+    private fun MenuItem.fixExpand(
+        onExpand: ((MenuItem) -> Boolean)? = null,
+        onCollapse: ((MenuItem) -> Boolean)? = null,
+    ) {
+        setOnActionExpandListener(
+            object : MenuItem.OnActionExpandListener {
+                override fun onMenuItemActionExpand(item: MenuItem): Boolean {
+                    return onExpand?.invoke(item) ?: true
+                }
+
+                override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
+                    activity?.invalidateOptionsMenu()
+
+                    return onCollapse?.invoke(item) ?: true
+                }
+            },
+        )
+
+        if (expandActionViewFromInteraction) {
+            expandActionViewFromInteraction = false
+            expandActionView()
+        }
+    }
+
+    private fun invalidateMenuOnExpand(): Boolean {
+        return if (expandActionViewFromInteraction) {
+            activity?.invalidateOptionsMenu()
+            false
+        } else {
+            true
+        }
+    }
+
     private fun drawSources() {
         val activeLangsCodes = preferences.enabledLanguages().get()
         langPrefs.forEach { group ->
