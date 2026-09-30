@@ -398,15 +398,6 @@ object SettingsDiscordScreen : ComposableSettings() {
 
                 Row {
                     IconButton(
-                        onClick = onLogout,
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.Logout,
-                            contentDescription = stringResource(MR.strings.log_out),
-                        )
-                    }
-
-                    IconButton(
                         onClick = {
                             // TODO: abrir ajustes
                         },
@@ -414,6 +405,16 @@ object SettingsDiscordScreen : ComposableSettings() {
                         Icon(
                             imageVector = Icons.Default.Settings,
                             contentDescription = stringResource(MR.strings.settings),
+                        )
+                    }
+
+                    IconButton(
+                        onClick = onLogout,
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.Logout,
+                            contentDescription = stringResource(MR.strings.log_out),
+                            tint = MaterialTheme.colorScheme.error,
                         )
                     }
                 }
