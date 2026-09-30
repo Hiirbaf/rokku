@@ -354,7 +354,7 @@ object SettingsDiscordScreen : ComposableSettings() {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 16.dp, end = 4.dp, top = 12.dp, bottom = 12.dp)
+                    .padding(start = 16.dp, end = 4.dp, top = 12.dp, bottom = 12.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 if (avatarUrl != null) {
