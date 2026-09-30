@@ -50,6 +50,7 @@ import kotlinx.coroutines.runBlocking
 import yokai.domain.category.interactor.GetCategories
 import yokai.i18n.MR
 import dev.icerock.moko.resources.compose.stringResource
+import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.core.storage.preference.collectAsState
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
