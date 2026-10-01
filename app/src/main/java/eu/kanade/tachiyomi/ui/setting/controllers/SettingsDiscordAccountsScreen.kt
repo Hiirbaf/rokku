@@ -52,6 +52,7 @@ import uy.kohesive.injekt.api.get
 import uy.kohesive.injekt.injectLazy
 import yokai.domain.connections.service.ConnectionsPreferences
 import yokai.i18n.MR
+import yokai.util.lang.getString
 
 data class DiscordAccountsScreenState(
     val accounts: List<DiscordAccount> = emptyList(),
