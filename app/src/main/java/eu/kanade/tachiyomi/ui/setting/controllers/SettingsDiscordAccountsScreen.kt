@@ -286,7 +286,6 @@ class DiscordAccountsScreenModel : StateScreenModel<DiscordAccountsScreenState>(
 
             runCatching {
                 discord.setActiveAccount(accountId)
-                discord.restartRichPresence()
                 loadAccounts()
             }.onSuccess {
                 onSuccess()
