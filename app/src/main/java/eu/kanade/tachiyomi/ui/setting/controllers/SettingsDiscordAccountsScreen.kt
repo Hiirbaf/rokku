@@ -88,7 +88,7 @@ fun DiscordAccountsDialog(
                 .fillMaxWidth()
                 .padding(16.dp),
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                containerColor = MaterialTheme.colorScheme.surfaceVariant,
             ),
         ) {
             Column(
