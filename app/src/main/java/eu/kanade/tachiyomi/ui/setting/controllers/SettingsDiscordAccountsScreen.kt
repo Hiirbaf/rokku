@@ -76,6 +76,7 @@ fun DiscordAccountsDialog(
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             screenModel.refreshAccounts()
+            onAccountChanged()
         }
     }
 
