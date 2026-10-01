@@ -20,6 +20,8 @@
     <color name="tachiyomi_onSurfaceVariant">#C5C6D0</color>
     <color name="tachiyomi_surfaceContainerHigh">#292730</color>
     <color name="tachiyomi_surfaceContainerHighest">#302E38</color>
+    <color name="tachiyomi_surfaceContainerLow">#232329</color>
+    <color name="tachiyomi_surfaceContainerLowest">#151518</color>
     <color name="tachiyomi_outline">#8F9099</color>
     <color name="tachiyomi_inverseOnSurface">#1B1B1E</color>
     <color name="tachiyomi_inverseSurface">#E4E2E6</color>
