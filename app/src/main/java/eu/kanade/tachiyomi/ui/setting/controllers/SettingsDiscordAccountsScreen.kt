@@ -319,8 +319,98 @@ private fun DiscordAccountItem(
     val avatarUrl = account.avatarUrl
         ?: "https://cdn.discordapp.com/embed/avatars/${(account.id.toLong() shr 22) % 6}.png"
 
+    var showSwitchDialog by rememberSaveable { mutableStateOf(false) }
+    var showDeleteDialog by rememberSaveable { mutableStateOf(false) }
+
+    if (showSwitchDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                showSwitchDialog = false
+            },
+            title = {
+                Text(
+                    text = stringResource(MR.strings.switch_account),
+                )
+            },
+            text = {
+                Text(
+                    text = stringResource(
+                        MR.strings.switch_account_confirmation,
+                        account.username,
+                    ),
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showSwitchDialog = false
+                        onSetActive()
+                    },
+                ) {
+                    Text(stringResource(MR.strings.action_ok))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showSwitchDialog = false
+                    },
+                ) {
+                    Text(stringResource(MR.strings.cancel))
+                }
+            },
+        )
+    }
+
+    if (showDeleteDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                showDeleteDialog = false
+            },
+            title = {
+                Text(
+                    text = stringResource(MR.strings.delete_account),
+                )
+            },
+            text = {
+                Text(
+                    text = stringResource(
+                        MR.strings.delete_account_confirmation,
+                        account.username,
+                    ),
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showDeleteDialog = false
+                        onRemove()
+                    },
+                ) {
+                    Text(
+                        text = stringResource(MR.strings.delete),
+                        color = MaterialTheme.colorScheme.error,
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        showDeleteDialog = false
+                    },
+                ) {
+                    Text(stringResource(MR.strings.cancel))
+                }
+            },
+        )
+    }
+
     Card(
-        onClick = onSetActive,
+        onClick = {
+            if (!account.isActive) {
+                showSwitchDialog = true
+            }
+        },
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.secondaryContainer,
@@ -361,7 +451,9 @@ private fun DiscordAccountItem(
 
             if (!account.isActive) {
                 IconButton(
-                    onClick = onRemove,
+                    onClick = {
+                        showDeleteDialog = true
+                    },
                 ) {
                     Icon(
                         imageVector = Icons.Default.Delete,
