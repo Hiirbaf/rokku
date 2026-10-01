@@ -1,6 +1,7 @@
 package eu.kanade.tachiyomi.ui.setting.controllers
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -195,6 +196,7 @@ class DiscordAccountsScreenModel : StateScreenModel<DiscordAccountsScreenState>(
 ) {
     private val discord = Injekt.get<ConnectionsManager>().discord
     private val connectionsPreferences = Injekt.get<ConnectionsPreferences>()
+    private val context: Context by injectLazy()
     private var noAccountsFoundString: String = ""
 
     init {
@@ -242,7 +244,7 @@ class DiscordAccountsScreenModel : StateScreenModel<DiscordAccountsScreenState>(
                 mutableState.update {
                     it.copy(
                         isLoading = false,
-                        error = e.message ?: "Unknown error",
+                        error = e.message ?: context.getString(MR.strings.unknown_error)
                     )
                 }
             }
@@ -265,7 +267,7 @@ class DiscordAccountsScreenModel : StateScreenModel<DiscordAccountsScreenState>(
                 mutableState.update {
                     it.copy(
                         isLoading = false,
-                        error = e.message ?: "Unknown error",
+                        error = e.message ?: context.getString(MR.strings.unknown_error)
                     )
                 }
             }
@@ -293,7 +295,7 @@ class DiscordAccountsScreenModel : StateScreenModel<DiscordAccountsScreenState>(
                 mutableState.update {
                     it.copy(
                         isLoading = false,
-                        error = e.message ?: "Unknown error",
+                        error = e.message ?: context.getString(MR.strings.unknown_error)
                     )
                 }
             }
