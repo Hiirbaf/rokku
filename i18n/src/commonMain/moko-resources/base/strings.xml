@@ -34,7 +34,8 @@
     !-- Connections section -->
     <string name="special_services">Special Services</string>
     <string name="connections_discord">Discord</string>
-    <string name="connections_discord_info">Rokku connects to Discord using the official Discord Social SDK. Your account is authorized through the Discord app itself — Rokku never sees or stores your password.</string>
+    <string name="connections_discord_info">Rokku connects to Discord using the official Discord Social SDK.
+        Your account is authorized through the Discord app itself — Rokku never sees or stores your password.</string>
     <string name="pref_discord_rpc">Discord Rich Presence</string>
     <string name="show_chapters_titles_title">Show Chapters Titles</string>
     <string name="show_chapters_titles_subtitle">Show the title of the chapter you are reading</string>
@@ -47,11 +48,18 @@
     <string name="pref_discord_incognito">Discord Incognito mode</string>
     <string name="pref_discord_incognito_summary">Overridden when Incognito Mode is enabled</string>
     <string name="pref_discord_incognito_categories_details">Entries in included categories will not be displayed in Discord</string>
+    
+    <!-- Discord accounts -->
     <string name="discord_accounts">Discord Accounts</string>
     <string name="active_account">Active Account</string>
     <string name="no_accounts_found">No accounts found</string>
+    <string name="switch_account">Switch account</string>
+    <string name="switch_account_confirmation">Switch to %1$s?</string>
+    <string name="delete_account">Delete account</string>
+    <string name="delete_account_confirmation">Are you sure you want to delete the account %1$s?</string>
     <string name="not_logged_in">Not logged in</string>
     <string name="connected">Connected</string>
+    
     <!-- Discord section -->
     <string name="view_series">View %1$s</string>
     <string name="page_count">Page %1$s/%2$s</string>
@@ -59,6 +67,7 @@
     <string name="read_chapter_button">Read Chapter</string>
     <string name="scrolling">Scrolling through</string>
     <string name="messing">Messing around with</string>
+    
     <!-- Discord RPC Customization -->
     <string name="pref_category_discord_customization">Discord Customization</string>
     <string name="pref_discord_custom_message">Custom Message</string>
