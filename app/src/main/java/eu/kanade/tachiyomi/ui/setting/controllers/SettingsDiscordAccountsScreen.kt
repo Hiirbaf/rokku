@@ -34,7 +34,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberSaveable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -324,8 +323,8 @@ private fun DiscordAccountItem(
     val avatarUrl = account.avatarUrl
         ?: "https://cdn.discordapp.com/embed/avatars/${(account.id.toLong() shr 22) % 6}.png"
 
-    var showSwitchDialog by rememberSaveable { mutableStateOf(false) }
-    var showDeleteDialog by rememberSaveable { mutableStateOf(false) }
+    var showSwitchDialog by remember { mutableStateOf(false) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
 
     if (showSwitchDialog) {
         AlertDialog(
