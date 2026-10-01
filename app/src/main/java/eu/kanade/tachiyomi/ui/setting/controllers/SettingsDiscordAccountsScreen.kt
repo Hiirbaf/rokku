@@ -9,18 +9,19 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -32,13 +33,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import coil3.compose.AsyncImage
 import dev.icerock.moko.resources.compose.stringResource
 import eu.kanade.tachiyomi.data.connections.ConnectionsManager
@@ -50,17 +50,6 @@ import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 import yokai.domain.connections.service.ConnectionsPreferences
 import yokai.i18n.MR
-import yokai.presentation.AppBarType
-import yokai.presentation.YokaiScaffold
-
-object DiscordAccountsScreen : Screen {
-    private fun readResolve(): Any = DiscordAccountsScreen
-
-    @Composable
-    override fun Content() {
-        DiscordAccountsScreenContent()
-    }
-}
 
 data class DiscordAccountsScreenState(
     val accounts: List<DiscordAccount> = emptyList(),
@@ -68,11 +57,12 @@ data class DiscordAccountsScreenState(
     val error: String? = null,
 )
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun DiscordAccountsScreenContent() {
+fun DiscordAccountsDialog(
+    onDismiss: () -> Unit,
+    onAccountChanged: () -> Unit,
+) {
     val context = LocalContext.current
-    val navigator = LocalNavigator.currentOrThrow
     val screenModel = remember { DiscordAccountsScreenModel() }
     val state by screenModel.state.collectAsState()
 
@@ -86,56 +76,107 @@ private fun DiscordAccountsScreenContent() {
         }
     }
 
-    // YokaiScaffold en lugar de Scaffold + AppBar de Mihon
-    YokaiScaffold(
-        onNavigationIconClicked = navigator::pop,
-        title = stringResource(MR.strings.discord_accounts),
-        appBarType = AppBarType.SMALL,
-        actions = {
-            IconButton(
-                onClick = {
-                    launcher.launch(Intent(context, DiscordLoginActivity::class.java))
-                },
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = stringResource(MR.strings.add),
-                )
-            }
-        },
-    ) { paddingValues ->
-        Box(
+    Dialog(
+        onDismissRequest = onDismiss,
+    ) {
+        Card(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
+                .fillMaxWidth()
+                .padding(16.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface,
+            ),
         ) {
-            when {
-                state.isLoading -> {
-                    CircularProgressIndicator(
-                        modifier = Modifier.align(Alignment.Center),
-                    )
-                }
-                state.error != null -> {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            start = 20.dp,
+                            end = 8.dp,
+                            top = 12.dp,
+                            bottom = 8.dp,
+                        ),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
                     Text(
-                        text = state.error!!,
-                        color = MaterialTheme.colorScheme.error,
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .padding(16.dp),
+                        text = stringResource(MR.strings.discord_accounts),
+                        style = MaterialTheme.typography.titleLarge,
+                        modifier = Modifier.weight(1f),
                     )
-                }
-                else -> {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                        contentPadding = PaddingValues(16.dp),
-                    ) {
-                        items(state.accounts) { account ->
-                            DiscordAccountItem(
-                                account = account,
-                                onRemove = { screenModel.removeAccount(account.id) },
-                                onSetActive = { screenModel.setActiveAccount(account.id) },
+
+                    IconButton(
+                        onClick = {
+                            launcher.launch(
+                                Intent(
+                                    context,
+                                    DiscordLoginActivity::class.java,
+                                ),
                             )
+                        },
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = stringResource(MR.strings.add),
+                        )
+                    }
+
+                    IconButton(
+                        onClick = onDismiss,
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = null,
+                        )
+                    }
+                }
+
+                when {
+                    state.isLoading -> {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(32.dp),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
+
+                    state.error != null -> {
+                        Text(
+                            text = state.error!!,
+                            color = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.padding(20.dp),
+                        )
+                    }
+
+                    else -> {
+                        LazyColumn(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentPadding = PaddingValues(
+                                start = 16.dp,
+                                end = 16.dp,
+                                bottom = 16.dp,
+                            ),
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
+                            items(state.accounts) { account ->
+                                DiscordAccountItem(
+                                    account = account,
+                                    onRemove = {
+                                        screenModel.removeAccount(account.id)
+                                    },
+                                    onSetActive = {
+                                        screenModel.setActiveAccount(
+                                            account.id,
+                                            onSuccess = onAccountChanged,
+                                        )
+                                    },
+                                )
+                            }
                         }
                     }
                 }
@@ -157,11 +198,11 @@ class DiscordAccountsScreenModel : StateScreenModel<DiscordAccountsScreenState>(
     private var noAccountsFoundString: String = ""
 
     init {
-        // screenModelScope en lugar de scope (Migrator.scope no existe en Yōkai)
         screenModelScope.launch {
             connectionsPreferences.discordAccounts().changes()
                 .collect { loadAccounts() }
         }
+
         loadAccounts()
     }
 
@@ -171,9 +212,16 @@ class DiscordAccountsScreenModel : StateScreenModel<DiscordAccountsScreenState>(
 
     private fun loadAccounts() {
         screenModelScope.launch {
-            mutableState.update { it.copy(isLoading = true, error = null) }
+            mutableState.update {
+                it.copy(
+                    isLoading = true,
+                    error = null,
+                )
+            }
+
             runCatching {
                 val accounts = discord.getAccounts()
+
                 if (accounts.isEmpty()) {
                     mutableState.update {
                         it.copy(
@@ -184,12 +232,18 @@ class DiscordAccountsScreenModel : StateScreenModel<DiscordAccountsScreenState>(
                     }
                 } else {
                     mutableState.update {
-                        it.copy(accounts = accounts, isLoading = false)
+                        it.copy(
+                            accounts = accounts,
+                            isLoading = false,
+                        )
                     }
                 }
             }.onFailure { e ->
                 mutableState.update {
-                    it.copy(isLoading = false, error = e.message ?: "Unknown error")
+                    it.copy(
+                        isLoading = false,
+                        error = e.message ?: "Unknown error",
+                    )
                 }
             }
         }
@@ -197,28 +251,51 @@ class DiscordAccountsScreenModel : StateScreenModel<DiscordAccountsScreenState>(
 
     fun removeAccount(accountId: String) {
         screenModelScope.launch {
-            mutableState.update { it.copy(isLoading = true, error = null) }
+            mutableState.update {
+                it.copy(
+                    isLoading = true,
+                    error = null,
+                )
+            }
+
             runCatching {
                 discord.removeAccount(accountId)
                 loadAccounts()
             }.onFailure { e ->
                 mutableState.update {
-                    it.copy(isLoading = false, error = e.message ?: "Unknown error")
+                    it.copy(
+                        isLoading = false,
+                        error = e.message ?: "Unknown error",
+                    )
                 }
             }
         }
     }
 
-    fun setActiveAccount(accountId: String) {
+    fun setActiveAccount(
+        accountId: String,
+        onSuccess: () -> Unit,
+    ) {
         screenModelScope.launch {
-            mutableState.update { it.copy(isLoading = true, error = null) }
+            mutableState.update {
+                it.copy(
+                    isLoading = true,
+                    error = null,
+                )
+            }
+
             runCatching {
                 discord.setActiveAccount(accountId)
                 discord.restartRichPresence()
                 loadAccounts()
+            }.onSuccess {
+                onSuccess()
             }.onFailure { e ->
                 mutableState.update {
-                    it.copy(isLoading = false, error = e.message ?: "Unknown error")
+                    it.copy(
+                        isLoading = false,
+                        error = e.message ?: "Unknown error",
+                    )
                 }
             }
         }
@@ -235,9 +312,15 @@ private fun DiscordAccountItem(
     onRemove: () -> Unit,
     onSetActive: () -> Unit,
 ) {
+    val avatarUrl = account.avatarUrl
+        ?: "https://cdn.discordapp.com/embed/avatars/${(account.id.toLong() shr 22) % 6}.png"
+
     Card(
         onClick = onSetActive,
         modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+        ),
     ) {
         Row(
             modifier = Modifier
@@ -246,10 +329,13 @@ private fun DiscordAccountItem(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             AsyncImage(
-                model = account.avatarUrl,
+                model = avatarUrl,
                 contentDescription = null,
-                modifier = Modifier.size(40.dp),
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape),
             )
+
             Column(
                 modifier = Modifier
                     .weight(1f)
@@ -259,6 +345,7 @@ private fun DiscordAccountItem(
                     text = account.username,
                     style = MaterialTheme.typography.titleMedium,
                 )
+
                 if (account.isActive) {
                     Text(
                         text = stringResource(MR.strings.active_account),
@@ -267,12 +354,17 @@ private fun DiscordAccountItem(
                     )
                 }
             }
-            IconButton(onClick = onRemove) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = stringResource(MR.strings.delete),
-                    tint = MaterialTheme.colorScheme.error,
-                )
+
+            if (!account.isActive) {
+                IconButton(
+                    onClick = onRemove,
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = stringResource(MR.strings.delete),
+                        tint = MaterialTheme.colorScheme.error,
+                    )
+                }
             }
         }
     }

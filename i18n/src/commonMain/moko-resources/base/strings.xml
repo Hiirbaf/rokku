@@ -33,7 +33,6 @@
     <string name="pref_category_connections">Connections</string>
     !-- Connections section -->
     <string name="special_services">Special Services</string>
-    <string name="pref_category_connections">Connections</string>
     <string name="connections_discord">Discord</string>
     <string name="connections_discord_info">Rokku connects to Discord using the official Discord Social SDK. Your account is authorized through the Discord app itself — Rokku never sees or stores your password.</string>
     <string name="pref_discord_rpc">Discord Rich Presence</string>
@@ -51,6 +50,8 @@
     <string name="discord_accounts">Discord Accounts</string>
     <string name="active_account">Active Account</string>
     <string name="no_accounts_found">No accounts found</string>
+    <string name="not_logged_in">Not logged in</string>
+    <string name="connected">Connected</string>
     <!-- Discord section -->
     <string name="view_series">View %1$s</string>
     <string name="page_count">Page %1$s/%2$s</string>

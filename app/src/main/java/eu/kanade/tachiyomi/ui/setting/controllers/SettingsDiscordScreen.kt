@@ -1,5 +1,12 @@
 package eu.kanade.tachiyomi.ui.setting.controllers
 
+import androidx.compose.ui.res.colorResource
+import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -43,10 +50,21 @@ import kotlinx.coroutines.runBlocking
 import yokai.domain.category.interactor.GetCategories
 import yokai.i18n.MR
 import dev.icerock.moko.resources.compose.stringResource
+import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.core.storage.preference.collectAsState
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 import yokai.presentation.settings.ComposableSettings
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.ui.res.stringResource
+import coil3.compose.AsyncImage
+import eu.kanade.tachiyomi.data.connections.discord.DiscordAccount
+import eu.kanade.tachiyomi.data.connections.discord.DiscordRpcManager
+import eu.kanade.tachiyomi.data.connections.discord.DiscordTokenStore
 
 object SettingsDiscordScreen : ComposableSettings() {
 
@@ -76,7 +94,7 @@ object SettingsDiscordScreen : ComposableSettings() {
 
     @ReadOnlyComposable
     @Composable
-    override fun getTitleRes() = MR.strings.pref_category_connections
+    override fun getTitleRes() = MR.strings.connections_discord
 
     @Composable
     override fun RowScope.AppBarAction() {
@@ -98,6 +116,12 @@ object SettingsDiscordScreen : ComposableSettings() {
         val useChapterTitlesPref = connectionsPreferences.useChapterTitles()
         val discordRPCStatus = connectionsPreferences.discordRPCStatus()
 
+        var activeAccount by remember {
+            mutableStateOf(
+                connectionsManager.discord.getAccounts().find { it.isActive },
+            )
+        }
+
         val enableDRPC by enableDRPCPref.collectAsState()
 
         val customMessagePref = connectionsPreferences.discordCustomMessage()
@@ -111,6 +135,7 @@ object SettingsDiscordScreen : ComposableSettings() {
 
         var showCustomMessageDialog by rememberSaveable { mutableStateOf(false) }
         var tempCustomMessage by rememberSaveable { mutableStateOf(customMessagePref.get()) }
+        var showDiscordSettings by rememberSaveable { mutableStateOf(false) }
 
         if (showCustomMessageDialog) {
             AlertDialog(
@@ -174,12 +199,33 @@ object SettingsDiscordScreen : ComposableSettings() {
         }
 
         return listOf(
-            Preference.PreferenceItem.TextPreference(
-                title = stringResource(MR.strings.discord_accounts),
-                onClick = { navigator.push(DiscordAccountsScreen) },
-            ),
+            Preference.PreferenceItem.CustomPreference(
+                title = "",
+            ) {
+                DiscordAccountRow(
+                    account = activeAccount!!,
+                    onLogout = {
+                        dialog = LogoutConnectionsDialog(connectionsManager.discord)
+                    },
+                    onSettings = {
+                        showDiscordSettings = true
+                    },
+                )
+                if (showDiscordSettings) {
+                    DiscordAccountsDialog(
+                        onDismiss = {
+                            showDiscordSettings = false
+                        },
+                        onAccountChanged = {
+                            activeAccount = connectionsManager.discord
+                                .getAccounts()
+                                .find { it.isActive }
+                        },
+                    )
+                }
+            },
             Preference.PreferenceGroup(
-                title = stringResource(MR.strings.connections_discord),
+                title = stringResource(MR.strings.general),
                 preferenceItems = persistentListOf(
                     Preference.PreferenceItem.SwitchPreference(
                         pref = enableDRPCPref,
@@ -250,10 +296,6 @@ object SettingsDiscordScreen : ComposableSettings() {
                     ),
                 ),
             ),
-            Preference.PreferenceItem.TextPreference(
-                title = stringResource(MR.strings.log_out),
-                onClick = { dialog = LogoutConnectionsDialog(connectionsManager.discord) },
-            ),
         )
     }
 
@@ -312,6 +354,96 @@ object SettingsDiscordScreen : ComposableSettings() {
             ),
             enabled = enabled,
         )
+    }
+
+    @Composable
+    private fun DiscordAccountRow(
+        account: DiscordAccount,
+        onLogout: () -> Unit,
+        onSettings: () -> Unit,
+    ) {
+        val avatarUrl = account?.let {
+            it.avatarUrl ?: "https://cdn.discordapp.com/embed/avatars/${(it.id.toLong() shr 22) % 6}.png"
+        }
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+            )
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, end = 4.dp, top = 12.dp, bottom = 12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                if (avatarUrl != null) {
+                    AsyncImage(
+                        model = avatarUrl,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(48.dp)
+                            .clip(CircleShape),
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Filled.AccountCircle,
+                        contentDescription = null,
+                        modifier = Modifier.size(48.dp),
+                    )
+                }
+
+                Spacer(Modifier.width(16.dp))
+
+                Column(
+                    modifier = Modifier.weight(1f),
+                ) {
+                    Text(
+                        text = account.name
+                        ?.takeUnless { it.isBlank() || it.equals("null", ignoreCase = true) }
+                        ?: account.username,
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+
+                    Text(
+                        text = "@${account.username}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+
+                    Text(
+                        text = stringResource(MR.strings.connected),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+
+                Row(
+                    modifier = Modifier.padding(start = 8.dp),
+                ) {
+                    IconButton(
+                        onClick = onSettings,
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = stringResource(MR.strings.settings),
+                        )
+                    }
+
+                    IconButton(
+                        onClick = onLogout,
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.Logout,
+                            contentDescription = stringResource(MR.strings.log_out),
+                            tint = colorResource(R.color.holo_red),
+                        )
+                    }
+                }
+            }
+        }
     }
 
     @Composable
