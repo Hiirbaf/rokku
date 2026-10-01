@@ -74,8 +74,9 @@ class Discord(id: Long) : ConnectionsService(id) {
         saveAccounts(accounts)
         accounts.find { it.id == accountId }?.let { account ->
             connectionsPreferences.connectionsToken(this).set(account.token)
-            connectionsPreferences.enableDiscordRPC().set(false)
-            connectionsPreferences.enableDiscordRPC().set(true)
+            DiscordTokenStore.store(account.token)
+            DiscordRpcManager.clear()
+            DiscordRpcManager.reconnectWithToken(account.token)
         }
     }
 

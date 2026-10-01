@@ -422,13 +422,19 @@ object DiscordRpcManager {
                 Log.w(TAG, "reconnectWithToken: skipping — not initialized")
                 return
             }
-            Log.i(TAG, "reconnectWithToken: calling nativeSetTokenAndConnect (token length=${token.length})")
+
             accessToken = token
             _accessTokenFlow.value = token
             DiscordTokenStore.store(token)
+
+            readyInternal = false
+            authorizedInternal = false
             _connectionStatus.value = Status.Authorizing
         }
-        Log.i(TAG, "reconnectWithToken: set status=Authorizing, posting nativeConnect")
+
+        Log.i(TAG, "reconnectWithToken: disconnecting current session")
+
+        nativeDisconnect()
         nativeSetTokenAndConnect(token)
         Handler(Looper.getMainLooper()).post {
             Log.i(TAG, "reconnectWithToken: executing nativeConnect on main thread")
