@@ -1,6 +1,7 @@
 package eu.kanade.tachiyomi.ui.setting.controllers
 
 import android.content.Context
+import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -54,6 +55,10 @@ object SettingsConnectionsScreen : ComposableSettings() {
 
         val authStatus by DiscordRpcManager.connectionStatus.collectAsState()
         val isAuthorizing = authStatus == DiscordRpcManager.Status.Authorizing
+
+        LaunchedEffect(authStatus) {
+            Log.d("DiscordConnectionUI", "authStatus = $authStatus")
+        }
 
         var dialog by remember { mutableStateOf<Any?>(null) }
         dialog?.run {
