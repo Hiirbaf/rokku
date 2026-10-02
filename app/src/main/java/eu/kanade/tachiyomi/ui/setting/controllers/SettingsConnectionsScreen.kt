@@ -77,7 +77,7 @@ object SettingsConnectionsScreen : ComposableSettings() {
                         login = {
                             isDiscordLoggingIn = true
 
-                            DiscordAuthHelper.startLogin(context) { success ->
+                            DiscordAuthHelper.startLogin(context) {
                                 isDiscordLoggingIn = false
                             }
                         },
