@@ -40,7 +40,7 @@ fun ConnectionsPreferenceWidget(
         Row(
             modifier = modifier
                 .clickable(
-                    enabled = onClick != null,
+                    enabled = onClick != null && !isLoading,
                     onClick = { onClick?.invoke() },
                 )
                 .fillMaxWidth()
