@@ -52,7 +52,8 @@ object SettingsConnectionsScreen : ComposableSettings() {
         val connectionsManager = remember { Injekt.get<ConnectionsManager>() }
         val navigator = LocalNavigator.currentOrThrow
 
-        val isAuthorizing by DiscordRpcManager.connectionStatus.collectAsState()
+        val authStatus by DiscordRpcManager.connectionStatus.collectAsState()
+        val isAuthorizing = authStatus == DiscordRpcManager.Status.Authorizing
 
         var dialog by remember { mutableStateOf<Any?>(null) }
         dialog?.run {
