@@ -320,12 +320,6 @@
             </intent-filter>
         </activity>
 
-        <activity android:label="Discord Login"
-            android:name=".ui.setting.connections.DiscordLoginActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"
-            android:exported="false" />
-
         <activity
             android:name=".extension.util.ExtensionInstallActivity"
             android:icon="@mipmap/ic_launcher"
