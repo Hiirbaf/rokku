@@ -24,6 +24,7 @@ import dev.icerock.moko.resources.compose.stringResource
 import eu.kanade.tachiyomi.core.storage.preference.collectAsState
 import eu.kanade.tachiyomi.data.connections.ConnectionsManager
 import eu.kanade.tachiyomi.data.connections.ConnectionsService
+import eu.kanade.tachiyomi.data.connections.discord.DiscordAuthHelper
 import eu.kanade.tachiyomi.util.system.launchIO
 import eu.kanade.tachiyomi.util.system.openDiscordLoginActivity
 import eu.kanade.tachiyomi.util.system.toast
