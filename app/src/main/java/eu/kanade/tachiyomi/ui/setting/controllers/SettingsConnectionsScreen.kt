@@ -78,6 +78,7 @@ object SettingsConnectionsScreen : ComposableSettings() {
                         openSettings = {
                             navigator.push(SettingsDiscordScreen)
                         },
+                        isLoading = isAuthorizing,
                     ),
                     Preference.PreferenceItem.InfoPreference(stringResource(MR.strings.connections_discord_info)),
                 ),
