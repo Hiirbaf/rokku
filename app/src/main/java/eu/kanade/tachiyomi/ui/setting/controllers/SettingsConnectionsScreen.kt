@@ -25,7 +25,6 @@ import dev.icerock.moko.resources.compose.stringResource
 import eu.kanade.tachiyomi.core.storage.preference.collectAsState
 import eu.kanade.tachiyomi.data.connections.ConnectionsManager
 import eu.kanade.tachiyomi.data.connections.ConnectionsService
-import eu.kanade.tachiyomi.data.connections.discord.DiscordRpcManager
 import eu.kanade.tachiyomi.data.connections.discord.DiscordAuthHelper
 import eu.kanade.tachiyomi.util.system.launchIO
 import eu.kanade.tachiyomi.util.system.openDiscordLoginActivity
@@ -53,12 +52,7 @@ object SettingsConnectionsScreen : ComposableSettings() {
         val connectionsManager = remember { Injekt.get<ConnectionsManager>() }
         val navigator = LocalNavigator.currentOrThrow
 
-        val authStatus by DiscordRpcManager.connectionStatus.collectAsState()
-        val isAuthorizing = authStatus == DiscordRpcManager.Status.Authorizing
-
-        LaunchedEffect(authStatus) {
-            Log.d("DiscordConnectionUI", "authStatus = $authStatus")
-        }
+        var isDiscordLoggingIn by remember { mutableStateOf(false) }
 
         var dialog by remember { mutableStateOf<Any?>(null) }
         dialog?.run {
@@ -81,12 +75,16 @@ object SettingsConnectionsScreen : ComposableSettings() {
                         title = stringResource(connectionsManager.discord.nameRes()),
                         service = connectionsManager.discord,
                         login = {
-                            DiscordAuthHelper.startLogin(context)
+                            isDiscordLoggingIn = true
+
+                            DiscordAuthHelper.startLogin(context) { success ->
+                                isDiscordLoggingIn = false
+                            }
                         },
                         openSettings = {
                             navigator.push(SettingsDiscordScreen)
                         },
-                        isLoading = isAuthorizing,
+                        isLoading = isDiscordLoggingIn,
                     ),
                     Preference.PreferenceItem.InfoPreference(stringResource(MR.strings.connections_discord_info)),
                 ),
