@@ -50,6 +50,8 @@ object SettingsConnectionsScreen : ComposableSettings() {
         val connectionsManager = remember { Injekt.get<ConnectionsManager>() }
         val navigator = LocalNavigator.currentOrThrow
 
+        val isAuthorizing by DiscordRpcManager.connectionStatus.collectAsState()
+
         var dialog by remember { mutableStateOf<Any?>(null) }
         dialog?.run {
             when (this) {
@@ -71,7 +73,7 @@ object SettingsConnectionsScreen : ComposableSettings() {
                         title = stringResource(connectionsManager.discord.nameRes()),
                         service = connectionsManager.discord,
                         login = {
-                            context.openDiscordLoginActivity()
+                            DiscordAuthHelper.startLogin(context)
                         },
                         openSettings = {
                             navigator.push(SettingsDiscordScreen)
