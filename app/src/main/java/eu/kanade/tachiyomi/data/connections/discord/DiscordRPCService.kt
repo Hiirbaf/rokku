@@ -115,12 +115,7 @@ class DiscordRPCService : Service() {
             setWhen(since)
             setShowWhen(true)
             setUsesChronometer(true)
-
-            // Pause / resume RPC
             addAction(toggleIcon, toggleText, togglePauseResumePendingIntent(context))
-
-            // Open status dialog
-            addAction(R.drawable.ic_format_list_numbered_24dp, getString(R.string.status), openStatusDialogPendingIntent(context))
         }
 
         try {
@@ -138,19 +133,6 @@ class DiscordRPCService : Service() {
         return PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
     }
 
-    private fun openStatusDialogPendingIntent(context: Context): PendingIntent {
-        val intent = Intent(context, MainActivity::class.java).apply {
-            action = ACTION_DISCORD_SET_STATUS
-            addFlags(
-                Intent.FLAG_ACTIVITY_NEW_TASK or
-                Intent.FLAG_ACTIVITY_SINGLE_TOP or
-                Intent.FLAG_ACTIVITY_CLEAR_TOP,
-            )
-        }
-
-        return PendingIntent.getActivity(context, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-    }
-
     companion object {
 
         private val connectionsPreferences: ConnectionsPreferences by injectLazy()
@@ -159,8 +141,6 @@ class DiscordRPCService : Service() {
         internal var isPaused = false
 
         const val ACTION_DISCORD_TOGGLE_PAUSE_RESUME = "eu.kanade.tachiyomi.action.DISCORD_RPC_TOGGLE_PAUSE_RESUME"
-
-        const val ACTION_DISCORD_SET_STATUS = "eu.kanade.tachiyomi.action.DISCORD_SET_STATUS"
 
         private const val ACTIVITY_UPDATE_DELAY_MS = 5_000L
         private var pendingActivityUpdate: Job? = null
