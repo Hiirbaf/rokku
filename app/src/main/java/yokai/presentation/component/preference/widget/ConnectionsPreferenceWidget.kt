@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Done
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -17,13 +18,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import yokai.presentation.component.ConnectionsLogoIcon
-import yokai.presentation.component.preference.LocalPreferenceHighlighted
-import eu.kanade.tachiyomi.R
-import yokai.i18n.MR
 import dev.icerock.moko.resources.compose.stringResource
 import dev.icerock.moko.resources.StringResource
+import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.data.connections.ConnectionsService
+import yokai.i18n.MR
+import yokai.presentation.component.ConnectionsLogoIcon
+import yokai.presentation.component.preference.LocalPreferenceHighlighted
 
 @Composable
 fun ConnectionsPreferenceWidget(
@@ -31,17 +32,23 @@ fun ConnectionsPreferenceWidget(
     checked: Boolean,
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
+    isLoading: Boolean = false,
 ) {
     val highlighted = LocalPreferenceHighlighted.current
+
     Box(modifier = Modifier.highlightBackground(highlighted)) {
         Row(
             modifier = modifier
-                .clickable(enabled = onClick != null, onClick = { onClick?.invoke() })
+                .clickable(
+                    enabled = onClick != null && !isLoading,
+                    onClick = { onClick?.invoke() },
+                )
                 .fillMaxWidth()
                 .padding(horizontal = PrefsHorizontalPadding, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             ConnectionsLogoIcon(service)
+
             Text(
                 text = stringResource(service.nameRes()),
                 modifier = Modifier
@@ -51,15 +58,29 @@ fun ConnectionsPreferenceWidget(
                 style = MaterialTheme.typography.titleLarge,
                 fontSize = TitleFontSize,
             )
-            if (checked) {
-                Icon(
-                    imageVector = Icons.Outlined.Done,
-                    modifier = Modifier
-                        .padding(4.dp)
-                        .size(32.dp),
-                    tint = Color(0xFF4CAF50),
-                    contentDescription = stringResource(MR.strings.successfully_logged_in),
-                )
+
+            when {
+                isLoading -> {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .padding(4.dp)
+                            .size(24.dp),
+                        strokeWidth = 2.dp,
+                    )
+                }
+
+                checked -> {
+                    Icon(
+                        imageVector = Icons.Outlined.Done,
+                        modifier = Modifier
+                            .padding(4.dp)
+                            .size(32.dp),
+                        tint = Color(0xFF4CAF50),
+                        contentDescription = stringResource(
+                            MR.strings.successfully_logged_in,
+                        ),
+                    )
+                }
             }
         }
     }

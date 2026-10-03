@@ -172,6 +172,7 @@ sealed class Preference {
             override val title: String,
             val login: () -> Unit,
             val openSettings: () -> Unit,
+            val isLoading: Boolean = false,
         ) : PreferenceItem<String>() {
             override val enabled: Boolean = true
             override val subtitle: String? = null

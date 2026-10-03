@@ -298,10 +298,9 @@ object DiscordRpcManager {
                         this@DiscordRpcManager.accessToken = newAccessToken
                         _accessTokenFlow.value = newAccessToken
                         DiscordTokenStore.store(newAccessToken)
-                        nativeSetTokenAndConnect(newAccessToken)
-                        _connectionStatus.value = Status.Authorizing
                         Handler(Looper.getMainLooper()).post {
-                            Log.i(TAG, "exchange: posting nativeConnect to main thread")
+                            Log.i(TAG, "exchange: setting token and connecting on main thread")
+                            nativeSetTokenAndConnect(newAccessToken)
                             nativeConnect()
                             onComplete(true)
                         }

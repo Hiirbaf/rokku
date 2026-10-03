@@ -1,10 +1,6 @@
 package eu.kanade.tachiyomi.ui.setting.controllers
 
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -48,7 +44,7 @@ import coil3.compose.AsyncImage
 import dev.icerock.moko.resources.compose.stringResource
 import eu.kanade.tachiyomi.data.connections.ConnectionsManager
 import eu.kanade.tachiyomi.data.connections.discord.DiscordAccount
-import eu.kanade.tachiyomi.ui.setting.connections.DiscordLoginActivity
+import eu.kanade.tachiyomi.data.connections.discord.DiscordAuthHelper
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import uy.kohesive.injekt.Injekt
@@ -75,14 +71,7 @@ fun DiscordAccountsDialog(
 
     val noAccountsFoundString = stringResource(MR.strings.no_accounts_found)
 
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult(),
-    ) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            screenModel.refreshAccounts()
-            onAccountChanged()
-        }
-    }
+    var isDiscordLoggingIn by remember { mutableStateOf(false) }
 
     Dialog(
         onDismissRequest = onDismiss,
@@ -117,18 +106,30 @@ fun DiscordAccountsDialog(
 
                     IconButton(
                         onClick = {
-                            launcher.launch(
-                                Intent(
-                                    context,
-                                    DiscordLoginActivity::class.java,
-                                ),
-                            )
+                            isDiscordLoggingIn = true
+
+                            DiscordAuthHelper.startLogin(context) { success ->
+                                isDiscordLoggingIn = false
+
+                                if (success) {
+                                    screenModel.refreshAccounts()
+                                    onAccountChanged()
+                                }
+                            }
                         },
+                        enabled = !isDiscordLoggingIn,
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = stringResource(MR.strings.add),
-                        )
+                        if (isDiscordLoggingIn) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(20.dp),
+                                strokeWidth = 2.dp,
+                            )
+                        } else {
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = stringResource(MR.strings.add),
+                            )
+                        }
                     }
 
                     IconButton(
@@ -251,7 +252,7 @@ class DiscordAccountsScreenModel : StateScreenModel<DiscordAccountsScreenState>(
                 mutableState.update {
                     it.copy(
                         isLoading = false,
-                        error = e.message ?: context.getString(MR.strings.unknown_error)
+                        error = e.message ?: context.getString(MR.strings.unknown_error),
                     )
                 }
             }
@@ -274,7 +275,7 @@ class DiscordAccountsScreenModel : StateScreenModel<DiscordAccountsScreenState>(
                 mutableState.update {
                     it.copy(
                         isLoading = false,
-                        error = e.message ?: context.getString(MR.strings.unknown_error)
+                        error = e.message ?: context.getString(MR.strings.unknown_error),
                     )
                 }
             }
@@ -302,7 +303,7 @@ class DiscordAccountsScreenModel : StateScreenModel<DiscordAccountsScreenState>(
                 mutableState.update {
                     it.copy(
                         isLoading = false,
-                        error = e.message ?: context.getString(MR.strings.unknown_error)
+                        error = e.message ?: context.getString(MR.strings.unknown_error),
                     )
                 }
             }

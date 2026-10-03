@@ -186,6 +186,7 @@ internal fun PreferenceItem(
                         service = this,
                         checked = uName.isNotEmpty(),
                         onClick = { if (isLogged) item.openSettings() else item.login() },
+                        isLoading = item.isLoading,
                     )
                 }
             }
