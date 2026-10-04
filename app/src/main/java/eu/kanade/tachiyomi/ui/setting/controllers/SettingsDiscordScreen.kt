@@ -234,16 +234,6 @@ object SettingsDiscordScreen : ComposableSettings() {
                 connectionsPreferences = connectionsPreferences,
                 enabled = enableDRPC,
             ),
-            Preference.PreferenceItem.ListPreference(
-                pref = discordRPCStatus,
-                title = stringResource(MR.strings.pref_discord_status),
-                entries = persistentMapOf(
-                    -1 to stringResource(MR.strings.pref_discord_dnd),
-                    0 to stringResource(MR.strings.pref_discord_idle),
-                    1 to stringResource(MR.strings.pref_discord_online),
-                ),
-                enabled = enableDRPC,
-            ),
             Preference.PreferenceGroup(
                 title = stringResource(MR.strings.pref_category_discord_customization),
                 enabled = enableDRPC,
@@ -331,6 +321,16 @@ object SettingsDiscordScreen : ComposableSettings() {
         return Preference.PreferenceGroup(
             title = stringResource(MR.strings.categories),
             preferenceItems = persistentListOf(
+                Preference.PreferenceItem.ListPreference(
+                    pref = discordRPCStatus,
+                    title = stringResource(MR.strings.pref_discord_status),
+                    entries = persistentMapOf(
+                        -1 to stringResource(MR.strings.pref_discord_dnd),
+                        0 to stringResource(MR.strings.pref_discord_idle),
+                        1 to stringResource(MR.strings.pref_discord_online),
+                    ),
+                    enabled = enableDRPC,
+                ),
                 Preference.PreferenceItem.SwitchPreference(
                     pref = discordRPCIncognitoPref,
                     title = stringResource(MR.strings.pref_discord_incognito),
