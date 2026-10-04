@@ -228,23 +228,17 @@ object SettingsDiscordScreen : ComposableSettings() {
                         pref = enableDRPCPref,
                         title = stringResource(MR.strings.pref_enable_discord_rpc),
                     ),
-                    Preference.PreferenceItem.SwitchPreference(
-                        pref = useChapterTitlesPref,
-                        enabled = enableDRPC,
-                        title = stringResource(MR.strings.show_chapters_titles_title),
-                        subtitle = stringResource(MR.strings.show_chapters_titles_subtitle),
-                    ),
-                    Preference.PreferenceItem.ListPreference(
-                        pref = discordRPCStatus,
-                        title = stringResource(MR.strings.pref_discord_status),
-                        entries = persistentMapOf(
-                            -1 to stringResource(MR.strings.pref_discord_dnd),
-                            0 to stringResource(MR.strings.pref_discord_idle),
-                            1 to stringResource(MR.strings.pref_discord_online),
-                        ),
-                        enabled = enableDRPC,
-                    ),
                 ),
+            ),
+            Preference.PreferenceItem.ListPreference(
+                pref = discordRPCStatus,
+                title = stringResource(MR.strings.pref_discord_status),
+                entries = persistentMapOf(
+                    -1 to stringResource(MR.strings.pref_discord_dnd),
+                    0 to stringResource(MR.strings.pref_discord_idle),
+                    1 to stringResource(MR.strings.pref_discord_online),
+                ),
+                enabled = enableDRPC,
             ),
             getRPCIncognitoGroup(
                 connectionsPreferences = connectionsPreferences,
@@ -268,6 +262,12 @@ object SettingsDiscordScreen : ComposableSettings() {
                         pref = uploadLocalCoversPref,
                         title = stringResource(MR.strings.pref_discord_upload_local_covers),
                         subtitle = stringResource(MR.strings.pref_discord_upload_local_covers_summary),
+                    ),
+                    Preference.PreferenceItem.SwitchPreference(
+                        pref = useChapterTitlesPref,
+                        enabled = enableDRPC,
+                        title = stringResource(MR.strings.show_chapters_titles_title),
+                        subtitle = stringResource(MR.strings.show_chapters_titles_subtitle),
                     ),
                     Preference.PreferenceItem.SwitchPreference(
                         pref = showProgressPref,
