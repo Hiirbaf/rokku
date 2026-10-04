@@ -111,7 +111,6 @@ object SettingsDiscordScreen : ComposableSettings() {
         val connectionsManager = remember { Injekt.get<ConnectionsManager>() }
         val enableDRPCPref = connectionsPreferences.enableDiscordRPC()
         val useChapterTitlesPref = connectionsPreferences.useChapterTitles()
-        val discordRPCStatus = connectionsPreferences.discordRPCStatus()
 
         var activeAccount by remember {
             mutableStateOf(
@@ -293,6 +292,8 @@ object SettingsDiscordScreen : ComposableSettings() {
     ): Preference.PreferenceGroup {
         val getCategories = remember { Injekt.get<GetCategories>() }
         val allCategories by getCategories.subscribe().collectAsState(initial = runBlocking { getCategories.await() })
+
+        val discordRPCStatus = connectionsPreferences.discordRPCStatus()
 
         val discordRPCIncognitoPref = connectionsPreferences.discordRPCIncognito()
         val discordRPCIncognitoCategoriesPref = connectionsPreferences.discordRPCIncognitoCategories()
