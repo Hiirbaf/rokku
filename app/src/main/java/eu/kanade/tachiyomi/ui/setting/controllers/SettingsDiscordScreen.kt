@@ -294,7 +294,6 @@ object SettingsDiscordScreen : ComposableSettings() {
         val allCategories by getCategories.subscribe().collectAsState(initial = runBlocking { getCategories.await() })
 
         val discordRPCStatus = connectionsPreferences.discordRPCStatus()
-
         val discordRPCIncognitoPref = connectionsPreferences.discordRPCIncognito()
         val discordRPCIncognitoCategoriesPref = connectionsPreferences.discordRPCIncognitoCategories()
 
@@ -311,8 +310,7 @@ object SettingsDiscordScreen : ComposableSettings() {
                 onDismissRequest = { showDialog = false },
                 onValueChanged = { newIncluded, _ ->
                     discordRPCIncognitoCategoriesPref.set(
-                        newIncluded.fastMap { it.id.toString() }
-                            .toSet(),
+                        newIncluded.fastMap { it.id.toString() }.toSet(),
                     )
                     showDialog = false
                 },
@@ -330,7 +328,7 @@ object SettingsDiscordScreen : ComposableSettings() {
                         0 to stringResource(MR.strings.pref_discord_idle),
                         1 to stringResource(MR.strings.pref_discord_online),
                     ),
-                    enabled = enableDRPC,
+                    enabled = enabled,
                 ),
                 Preference.PreferenceItem.SwitchPreference(
                     pref = discordRPCIncognitoPref,
