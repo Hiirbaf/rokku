@@ -19,8 +19,23 @@ class Discord(id: Long) : ConnectionsService(id) {
     override fun getLogoColor() = Color.rgb(88, 101, 242)
 
     override fun logout() {
-        super.logout()
-        connectionsPreferences.connectionsToken(this).delete()
+        val accounts = getAccounts().toMutableList()
+        val activeAccount = accounts.find { it.isActive }
+
+        if (activeAccount != null) {
+            accounts.removeAll { it.id == activeAccount.id }
+        }
+
+        if (accounts.isEmpty()) {
+            super.logout()
+            connectionsPreferences.connectionsToken(this).delete()
+            return
+        }
+
+        saveAccounts(accounts)
+
+        val nextAccount = accounts.first()
+        setActiveAccount(nextAccount.id)
     }
 
     override suspend fun login(username: String, password: String) {
