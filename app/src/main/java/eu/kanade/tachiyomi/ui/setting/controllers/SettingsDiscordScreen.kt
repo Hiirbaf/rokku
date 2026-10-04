@@ -230,6 +230,10 @@ object SettingsDiscordScreen : ComposableSettings() {
                     ),
                 ),
             ),
+            getRPCIncognitoGroup(
+                connectionsPreferences = connectionsPreferences,
+                enabled = enableDRPC,
+            ),
             Preference.PreferenceItem.ListPreference(
                 pref = discordRPCStatus,
                 title = stringResource(MR.strings.pref_discord_status),
@@ -238,10 +242,6 @@ object SettingsDiscordScreen : ComposableSettings() {
                     0 to stringResource(MR.strings.pref_discord_idle),
                     1 to stringResource(MR.strings.pref_discord_online),
                 ),
-                enabled = enableDRPC,
-            ),
-            getRPCIncognitoGroup(
-                connectionsPreferences = connectionsPreferences,
                 enabled = enableDRPC,
             ),
             Preference.PreferenceGroup(
