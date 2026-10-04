@@ -215,9 +215,14 @@ class DiscordRPCService : Service() {
                 null
             }
 
+            val chapterText = if (showProgress && discordScreen == DiscordScreen.MANGA && !readerData.browsingOnly) {
+                getFormattedChapterTitle(context, readerData)
+            } else {
+                null
+            }
+
             val state = sanitizeField(
                 when {
-                    !showProgress -> null
                     readerData.browsingOnly -> readerData.mangaTitle
                     chapterText != null -> chapterText
                     else -> context.getString(discordScreen.state)
