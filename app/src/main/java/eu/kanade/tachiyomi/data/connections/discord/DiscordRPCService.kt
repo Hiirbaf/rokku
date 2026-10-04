@@ -209,12 +209,6 @@ class DiscordRPCService : Service() {
                 },
             )
 
-            val chapterText = if (discordScreen == DiscordScreen.MANGA && !readerData.browsingOnly) {
-                getFormattedChapterTitle(context, readerData)
-            } else {
-                null
-            }
-
             val chapterText = if (showProgress && discordScreen == DiscordScreen.MANGA && !readerData.browsingOnly) {
                 getFormattedChapterTitle(context, readerData)
             } else {
