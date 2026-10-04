@@ -209,8 +209,8 @@ class DiscordRPCService : Service() {
                 },
             )
 
-            val chapterText = if (showProgress && discordScreen == DiscordScreen.MANGA && !readerData.browsingOnly) {
-                getFormattedChapterTitle(context, readerData)
+            val chapterText = if (discordScreen == DiscordScreen.MANGA && !readerData.browsingOnly) {
+                getFormattedChapterTitle(context, readerData, showProgress)
             } else {
                 null
             }
@@ -334,27 +334,26 @@ class DiscordRPCService : Service() {
             return DiscordImageUploader.resolveImageUrl(context, thumbnailUrl) ?: fallback
         }
 
-        private fun getFormattedChapterTitle(context: Context, readerData: ReaderData): String? {
+        private fun getFormattedChapterTitle(context: Context, readerData: ReaderData, showProgress: Boolean): String? {
             if (readerData.incognitoMode) return null
 
-            val (currentPage, totalPages) = readerData.chapterProgress
-            val pageLabel = context.getString(
-                MR.strings.page_count,
-                currentPage.toString(),
-                totalPages.toString(),
-            )
-
-            return if (connectionsPreferences.useChapterTitles().get()) {
-                readerData.chapterTitle?.let { "$it ($pageLabel)" }
+            val pageSuffix = if (showProgress) {
+                val (currentPage, totalPages) = readerData.chapterProgress
+                " (${context.getString(MR.strings.page_count, currentPage.toString(), totalPages.toString())})"
             } else {
-                val chapterNum = formatChapterNumber(readerData.chapterNumber.toDouble())
-                val chapterLabel = context.getString(
-                    MR.strings.chapter_,
-                    chapterNum,
-                )
-
-                "$chapterLabel ($pageLabel)"
+                ""
             }
+
+            val chapterLabel = if (connectionsPreferences.useChapterTitles().get()) {
+                readerData.chapterTitle
+            } else {
+                context.getString(
+                    MR.strings.chapter_,
+                    formatChapterNumber(readerData.chapterNumber.toDouble()),
+                )
+            }
+
+            return chapterLabel?.let { "$it$pageSuffix" }
         }
 
         private fun sanitizeField(value: String?): String? {
