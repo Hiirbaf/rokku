@@ -170,7 +170,7 @@ class RecentsController(bundle: Bundle? = null) :
         super.onAttach(view)
         if (!isControllerVisible) return
         viewScope.launch {
-            DiscordRPCService.setScreen(activity ?: return@launch, DiscordScreen.HISTORY)
+            DiscordRPCService.setScreen(activity ?: return@launch, DiscordScreen.RECENTS)
         }
     }
 
