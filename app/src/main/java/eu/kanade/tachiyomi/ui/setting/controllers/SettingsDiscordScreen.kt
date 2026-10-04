@@ -125,8 +125,8 @@ object SettingsDiscordScreen : ComposableSettings() {
         val uploadLocalCoversPref = connectionsPreferences.discordUploadLocalCovers()
         val showProgressPref = connectionsPreferences.discordShowProgress()
         val showButtonsPref = connectionsPreferences.discordShowButtons()
-        val showDownloadButtonPref = connectionsPreferences.discordShowDownloadButton()
         val showMangaButtonPref = connectionsPreferences.discordShowMangaButton()
+        val showDownloadButtonPref = connectionsPreferences.discordShowDownloadButton()
         val showButtons by showButtonsPref.collectAsState()
 
         var showCustomMessageDialog by rememberSaveable { mutableStateOf(false) }
@@ -269,15 +269,15 @@ object SettingsDiscordScreen : ComposableSettings() {
                         subtitle = stringResource(MR.strings.pref_discord_show_buttons_summary),
                     ),
                     Preference.PreferenceItem.SwitchPreference(
-                        pref = showDownloadButtonPref,
-                        title = stringResource(MR.strings.pref_discord_show_download_button),
-                        subtitle = stringResource(MR.strings.pref_discord_show_download_button_summary),
-                        enabled = showButtons,
-                    ),
-                    Preference.PreferenceItem.SwitchPreference(
                         pref = showMangaButtonPref,
                         title = stringResource(MR.strings.pref_discord_show_manga_button),
                         subtitle = stringResource(MR.strings.pref_discord_show_manga_button_summary),
+                        enabled = showButtons,
+                    ),
+                    Preference.PreferenceItem.SwitchPreference(
+                        pref = showDownloadButtonPref,
+                        title = stringResource(MR.strings.pref_discord_show_download_button),
+                        subtitle = stringResource(MR.strings.pref_discord_show_download_button_summary),
                         enabled = showButtons,
                     ),
                 ),
