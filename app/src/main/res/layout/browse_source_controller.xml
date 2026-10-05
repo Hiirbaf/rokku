@@ -56,24 +56,30 @@
                 style="?attr/materialButtonStyle"
                 android:id="@+id/btn_group_popular"
                 android:text="@string/popular"
+                android:textColor="@color/bottom_nav_item_selector"
                 android:checkable="true"
                 app:icon="@drawable/ic_heart_outline_24dp"
+                app:iconTint="@color/bottom_nav_item_selector"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
             <com.google.android.material.button.MaterialButton
                 style="?attr/materialButtonStyle"
                 android:id="@+id/btn_group_latest"
                 android:text="@string/latest"
+                android:textColor="@color/bottom_nav_item_selector"
                 android:checkable="true"
                 app:icon="@drawable/ic_new_releases_outline_24dp"
+                app:iconTint="@color/bottom_nav_item_selector"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
             <com.google.android.material.button.MaterialButton
                 style="?attr/materialButtonStyle"
                 android:id="@+id/btn_group_filter"
                 android:text="@string/filter"
+                android:textColor="@color/bottom_nav_item_selector"
                 android:checkable="true"
                 app:icon="@drawable/ic_filter_list_24dp"
+                app:iconTint="@color/bottom_nav_item_selector"
                 android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
