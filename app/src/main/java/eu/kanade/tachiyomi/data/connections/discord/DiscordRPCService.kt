@@ -39,7 +39,14 @@ class DiscordRPCService : Service() {
     @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate() {
         super.onCreate()
-        // Initialize the native SDK if not already done
+        if (!notification(this)) return
+
+        if (!DiscordRpcManager.engineActivitySet) {
+            Log.w(TAG, "No engine activity in this process, stopping")
+            stopSelf()
+            return
+        }
+
         if (!DiscordRpcManager.isInitialized()) {
             DiscordRpcManager.init(applicationContext)
         }
@@ -91,7 +98,7 @@ class DiscordRPCService : Service() {
                 }
             }
         }
-        return START_STICKY
+        return START_NOT_STICKY
     }
 
     override fun onDestroy() {
@@ -118,11 +125,13 @@ class DiscordRPCService : Service() {
             addAction(toggleIcon, toggleText, togglePauseResumePendingIntent(context))
         }
 
-        try {
+        return try {
             startForeground(Notifications.ID_DISCORD_RPC, builder.build())
+            true
         } catch (_: Exception) {
             DiscordRpcManager.clear()
             stopSelf()
+            false
         }
     }
 
