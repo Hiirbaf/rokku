@@ -80,6 +80,7 @@ import eu.kanade.tachiyomi.data.database.models.vibrantCoverColor
 import eu.kanade.tachiyomi.data.download.DownloadJob
 import eu.kanade.tachiyomi.data.download.model.Download
 import eu.kanade.tachiyomi.data.notification.NotificationReceiver
+import eu.kanade.tachiyomi.data.preference.PreferencesHelper
 import eu.kanade.tachiyomi.data.track.model.TrackSearch
 import eu.kanade.tachiyomi.databinding.MangaDetailsControllerBinding
 import eu.kanade.tachiyomi.domain.manga.models.Manga
@@ -172,6 +173,7 @@ import java.io.IOException
 import java.util.Locale
 import kotlin.math.max
 import kotlin.math.roundToInt
+import uy.kohesive.injekt.injectLazy
 import android.R as AR
 import androidx.compose.ui.graphics.Color as ComposeColor
 
@@ -255,6 +257,8 @@ class MangaDetailsController :
     private var fullCoverActive = false
     var returningFromReader = false
     private var floatingActionMode: android.view.ActionMode? = null
+
+    private val preferences: PreferencesHelper by injectLazy()
 
     override fun getTitle(): String? {
         return manga?.title
