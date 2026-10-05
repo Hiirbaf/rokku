@@ -860,9 +860,13 @@ class MangaDetailsController :
                 val sourceUrl = (presenter.source as? HttpSource)?.let { source ->
                     try { source.getMangaUrl(presenter.manga) } catch (e: Exception) { null }
                 }
+                val incognito = preferences.incognitoMode().get() ||
+                isIncognitoModeForSource(m.source)
+
                 DiscordRPCService.setReaderActivity(
                     ctx,
                     ReaderData(
+                        incognitoMode = incognito,
                         mangaId = m.id,
                         mangaTitle = m.title,
                         thumbnailUrl = m.thumbnail_url,
