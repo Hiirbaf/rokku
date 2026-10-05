@@ -19,6 +19,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - An automatic backup that fails because its saved location is no longer accessible (folder deleted, permission revoked, storage removed) now shows a notification telling you to pick a new one, instead of failing silently
 
 ### Fixes
+- Made the status bar transparent instead of theme-colored, matching upstream (only visible on Android versions predating edge-to-edge enforcement)
 - Adjusted the accent color of the Tachiyomi, Flat Lime, Strawberries, and Yotsuba themes to match upstream
 - Fixed the Popular/Latest/Filter buttons in Browse rendering in the accent color instead of a neutral one
 - Fixed several dark themes showing white instead of black text/checkmarks on unread badges, checkboxes, filter chips, selected tabs, and default buttons, caused by using the accent color's own text color (`colorOnSecondary`) instead of the correctly calibrated `colorOnPrimary`
