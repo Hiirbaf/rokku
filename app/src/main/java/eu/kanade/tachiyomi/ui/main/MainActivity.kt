@@ -300,10 +300,7 @@ open class MainActivity : BaseActivity<MainActivityBinding>() {
 
         super.onCreate(savedInstanceState)
 
-        try {
-            com.discord.socialsdk.DiscordSocialSdkInit.setEngineActivity(this)
-        } catch (_: Exception) {}
-
+        DiscordRpcManager.setEngineActivity(this)
         DiscordRpcManager.init(applicationContext)
 
         lifecycleScope.launchUI {
