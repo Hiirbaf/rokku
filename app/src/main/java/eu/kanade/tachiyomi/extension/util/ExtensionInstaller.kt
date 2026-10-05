@@ -160,7 +160,14 @@ internal class ExtensionInstaller(private val context: Context) {
             )
             .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
 
-        val id = downloadManager.enqueue(request)
+        val id = try {
+            downloadManager.enqueue(request)
+        } catch (e: Exception) {
+            // Some OEM ROMs ship a DownloadManager without a working content://downloads
+            // provider, so enqueue() can throw instead of just failing the download.
+            Logger.e(e) { "Extension installation failed" }
+            return flowOf(ExtensionIntallInfo(InstallStep.Error, null))
+        }
         activeDownloads[pkgName] = id
 
         scope.launch {

@@ -53,6 +53,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Fixed the action mode toolbar (shown while selecting items) overlapping a display cutout/notch in landscape
 - Fixed a source showing without its language tag in lists/search results when that language was disabled in settings
 - Fixed a rare crash installing an extension (`HttpException.getCode()`) caused by a missing proguard keep rule for this extensions-lib API class
+- Fixed a crash installing an extension on devices whose DownloadManager doesn't expose a working `content://downloads` provider
 
 ### Other
 - Migrated FlexibleAdapter from JitPack to its MavenCentral release, removing a source of transient CI build failures when JitPack was unavailable
