@@ -80,6 +80,7 @@
     <string name="pref_discord_show_app_icon">Show App Icon</string>
     <string name="pref_discord_show_app_icon_summary">Display App icon in activity</string>
     <string name="pref_discord_show_buttons">Show Buttons</string>
+    <string name="pref_discord_buttons">Buttons</string>
     <string name="pref_discord_show_buttons_summary">Display buttons to download the app or join the Discord server</string>
     <string name="pref_discord_show_download_button">Show Download Button</string>
     <string name="pref_discord_show_download_button_summary">Displays a button to download the app</string>
