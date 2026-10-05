@@ -79,7 +79,6 @@ class DiscordRPCService : Service() {
                     }
                 }
             }
-            notification(this)
         } else {
             connectionsPreferences.enableDiscordRPC().set(false)
         }
@@ -110,7 +109,7 @@ class DiscordRPCService : Service() {
 
     override fun onBind(intent: Intent): IBinder? = null
 
-    private fun notification(context: Context) {
+    private fun notification(context: Context): Boolean {
         val toggleIcon = if (isPaused) R.drawable.ic_play_arrow_24dp else R.drawable.ic_pause_24dp
         val toggleText = if (isPaused) getString(R.string.resume) else getString(R.string.pause)
         val builder = context.notificationBuilder(Notifications.CHANNEL_DISCORD_RPC) {
