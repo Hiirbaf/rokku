@@ -16,7 +16,7 @@ import yokai.util.lang.getString
 class TrackLoginDialog(usernameLabelRes: StringResource? = null, bundle: Bundle? = null) :
     LoginDialogPreference(usernameLabelRes, bundle) {
 
-    private val service = Injekt.get<TrackManager>().getService(args.getLong("key"))!!
+    private val service = Injekt.get<TrackManager>().getService(args.getLong("key"))
 
     override var canLogout = true
 
@@ -24,6 +24,14 @@ class TrackLoginDialog(usernameLabelRes: StringResource? = null, bundle: Bundle?
         this(usernameLabelRes, Bundle().apply { putLong("key", service.id) })
 
     override fun setCredentialsOnView(view: View) = with(view) {
+        val service = service ?: run {
+            // The saved tracker id no longer matches a registered service (e.g. restored
+            // from a stale/killed process after the tracker list changed) - nothing to
+            // show. Deferred via post() so we don't mutate the backstack while Conductor
+            // is still in the middle of attaching this controller.
+            post { dismissDialog() }
+            return@with
+        }
         val serviceName = context.getString(service.nameRes())
         binding.dialogTitle.text = context.getString(MR.strings.log_in_to_, serviceName)
         binding.username.setText(service.getUsername())
@@ -31,6 +39,7 @@ class TrackLoginDialog(usernameLabelRes: StringResource? = null, bundle: Bundle?
     }
 
     override fun checkLogin() {
+        val service = service ?: return
         v?.apply {
             binding.login.startAnimation()
             if (binding.username.text.isNullOrBlank() || binding.password.text.isNullOrBlank()) {
@@ -72,6 +81,7 @@ class TrackLoginDialog(usernameLabelRes: StringResource? = null, bundle: Bundle?
 
     override fun onDialogClosed() {
         super.onDialogClosed()
+        val service = service ?: return
         (targetController as? Listener)?.trackLoginDialogClosed(service)
     }
 
