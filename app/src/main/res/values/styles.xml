@@ -349,7 +349,7 @@
     </style>
 
     <style name="Theme.Widget.Button.TextButton" parent="Widget.Material3.Button.TextButton">
-        <item name="android:textColor">?attr/colorSecondary</item>
+        <item name="android:textColor">?attr/colorPrimary</item>
     </style>
 
     <style name="Theme.Widget.ImageBorderless" parent="Widget.AppCompat.ImageButton">

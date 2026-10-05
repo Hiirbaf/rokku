@@ -287,14 +287,14 @@ private fun BoxScope.InLibraryBadge() {
             .align(Alignment.TopStart)
             .height(18.dp)
             .clip(shape)
-            .background(MaterialTheme.colorScheme.secondary)
+            .background(MaterialTheme.colorScheme.primary)
             .border(0.75.dp, MaterialTheme.colorScheme.outline, shape)
             .padding(horizontal = 8.dp),
         contentAlignment = Alignment.Center,
     ) {
         Text(
             text = stringResource(MR.strings.in_library),
-            color = MaterialTheme.colorScheme.onSecondary,
+            color = MaterialTheme.colorScheme.onPrimary,
             fontSize = 13.sp,
             style = TextStyle(
                 platformStyle = PlatformTextStyle(includeFontPadding = false),
@@ -320,7 +320,8 @@ private fun BoxScope.DuplicateBadge() {
     ) {
         Text(
             text = stringResource(MR.strings.duplicate_in_library),
-            color = MaterialTheme.colorScheme.onSecondary,
+            // Fixed, not colorScheme.onSecondary: the background above is always lightened toward white.
+            color = Color.Black,
             fontSize = 13.sp,
             style = TextStyle(
                 platformStyle = PlatformTextStyle(includeFontPadding = false),
