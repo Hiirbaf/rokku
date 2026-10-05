@@ -56,7 +56,6 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Fixed a crash installing an extension on devices whose DownloadManager doesn't expose a working `content://downloads` provider
 - Fixed a crash on app startup when restoring a tracker login dialog that was still open on the back stack after the process was killed and that tracker was no longer available
 - Fixed a crash changing a manga's cover when the picked image's URI had expired or become inaccessible
-- Fixed swiping a chapter row to mark it as read or bookmark it tinting the entire row instead of just the revealed strip, caused by the cover-based page tint making the row's background transparent (it masked the swipe reveal before)
 
 ### Other
 - Migrated FlexibleAdapter from JitPack to its MavenCentral release, removing a source of transient CI build failures when JitPack was unavailable
