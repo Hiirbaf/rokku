@@ -263,6 +263,12 @@ object SettingsDiscordScreen : ComposableSettings() {
                         title = stringResource(MR.strings.pref_discord_show_progress),
                         subtitle = stringResource(MR.strings.pref_discord_show_progress_summary),
                     ),
+                ),
+            ),
+            Preference.PreferenceGroup(
+                title = stringResource(MR.strings.pref_discord_buttons),
+                enabled = enableDRPC,
+                preferenceItems = persistentListOf(
                     Preference.PreferenceItem.SwitchPreference(
                         pref = showButtonsPref,
                         title = stringResource(MR.strings.pref_discord_show_buttons),
