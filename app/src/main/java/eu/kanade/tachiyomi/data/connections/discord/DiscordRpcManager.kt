@@ -76,6 +76,8 @@ object DiscordRpcManager {
     private val _settingsChanged = MutableStateFlow(0)
     val settingsChanged: StateFlow<Int> = _settingsChanged
 
+    private val mainHandler = Handler(Looper.getMainLooper())
+
     fun notifySettingsChanged() {
         _settingsChanged.value++
     }
@@ -447,9 +449,11 @@ object DiscordRpcManager {
 
         nativeDisconnect()
         nativeSetTokenAndConnect(token)
-        Handler(Looper.getMainLooper()).post {
-            Log.i(TAG, "reconnectWithToken: executing nativeConnect on main thread")
-            nativeConnect()
+        mainHandler.post {
+            synchronized(this@DiscordRpcManager) {
+                if (!initialized.get()) return@post
+                nativeConnect()
+            }
         }
     }
 
