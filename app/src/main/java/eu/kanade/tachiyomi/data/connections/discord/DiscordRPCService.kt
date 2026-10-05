@@ -217,7 +217,7 @@ class DiscordRPCService : Service() {
 
             val state = sanitizeField(
                 when {
-                    readerData.browsingOnly -> readerData.mangaTitle
+                    readerData.browsingOnly -> readerData.mangaTitle ?: context.getString(discordScreen.state)
                     chapterText != null -> chapterText
                     else -> context.getString(discordScreen.state)
                 },
