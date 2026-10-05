@@ -40,6 +40,7 @@
     <string name="show_chapters_titles_title">Show Chapters Titles</string>
     <string name="show_chapters_titles_subtitle">Show the title of the chapter you are reading</string>
     <string name="pref_enable_discord_rpc">Enable Discord Rich Presence</string>
+    <string name="pref_discord_privacy">Privacy</string>
     <string name="pref_discord_status">Discord Status</string>
     <string name="pref_discord_dnd">⛔ Do Not Disturb</string>
     <string name="pref_discord_idle">🌙 Idle</string>
