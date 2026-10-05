@@ -318,7 +318,7 @@ object SettingsDiscordScreen : ComposableSettings() {
         }
 
         return Preference.PreferenceGroup(
-            title = stringResource(MR.strings.categories),
+            title = stringResource(MR.strings.privacy),
             preferenceItems = persistentListOf(
                 Preference.PreferenceItem.ListPreference(
                     pref = discordRPCStatus,
