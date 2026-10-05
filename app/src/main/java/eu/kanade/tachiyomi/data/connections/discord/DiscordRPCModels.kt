@@ -46,7 +46,7 @@ private const val ROKKU_IMAGE_URL = "${CDN}emojis/1553410036825464893.webp?quali
 private const val LIBRARY_IMAGE_URL = "${CDN}emojis/1556127745619132456.webp?quality=lossless"
 private const val RECENTS_IMAGE_URL = "${CDN}emojis/1556127752191737906.webp?quality=lossless"
 private const val BROWSE_IMAGE_URL = "${CDN}emojis/1556127749855252540.webp?quality=lossless"
-private const val MANGA_IMAGE_URL = "${CDN}emojis/1556127752191737906.webp?quality=lossless"
+private const val MANGA_IMAGE_URL = "${CDN}emojis/1556127747686932521.webp?quality=lossless"
 
 // temporarily deactivated
 // private const val MORE_IMAGE_URL = "${CDN}emojis/1391947518224371772.webp?quality=lossless"
