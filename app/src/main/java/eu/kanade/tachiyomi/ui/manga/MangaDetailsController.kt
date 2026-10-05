@@ -860,9 +860,8 @@ class MangaDetailsController :
                 val sourceUrl = (presenter.source as? HttpSource)?.let { source ->
                     try { source.getMangaUrl(presenter.manga) } catch (e: Exception) { null }
                 }
-                DiscordRPCService.setScreen(
+                DiscordRPCService.setReaderActivity(
                     ctx,
-                    DiscordScreen.MANGA,
                     ReaderData(
                         mangaId = m.id,
                         mangaTitle = m.title,
