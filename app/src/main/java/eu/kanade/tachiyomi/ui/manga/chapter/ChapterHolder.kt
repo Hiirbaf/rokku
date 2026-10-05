@@ -149,6 +149,11 @@ class ChapterHolder(
     fun notifyStatus(status: Download.State, locked: Boolean, progress: Int, animated: Boolean = false) = with(
         binding.downloadButton.downloadButton,
     ) {
+        // frontView must stay opaque so it masks startView/endView outside the swiped-away
+        // sliver (see #183); apply the page tint as a tintList instead of a transparent
+        // background so the swipe reveal still only colors the dragged strip.
+        binding.frontView.backgroundTintList =
+            adapter.delegate.pageBackgroundColor()?.let { ColorStateList.valueOf(it) }
         adapter.delegate.accentColor()?.let {
             binding.startView.backgroundTintList = ColorStateList.valueOf(it)
             binding.bookmark.imageTintList = ColorStateList.valueOf(
