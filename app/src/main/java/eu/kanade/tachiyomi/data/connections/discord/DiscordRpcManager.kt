@@ -62,6 +62,9 @@ object DiscordRpcManager {
 
     @Volatile private var accessToken: String? = null
 
+    @Volatile var engineActivitySet = false
+    private set
+
     private val _accessTokenFlow = MutableStateFlow<String?>(null)
     val accessTokenFlow: StateFlow<String?> = _accessTokenFlow
 
@@ -83,6 +86,15 @@ object DiscordRpcManager {
         Online(0),
         Idle(3),
         Dnd(4),
+    }
+
+    fun setEngineActivity(activity: android.app.Activity) {
+        try {
+            com.discord.socialsdk.DiscordSocialSdkInit.setEngineActivity(activity)
+            engineActivitySet = true
+        } catch (e: Exception) {
+            Log.w(TAG, "setEngineActivity failed", e)
+        }
     }
 
     @JvmStatic
