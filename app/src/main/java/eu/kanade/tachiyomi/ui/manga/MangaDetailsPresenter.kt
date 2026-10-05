@@ -115,6 +115,7 @@ import yokai.i18n.MR
 import yokai.util.isLewd
 import yokai.util.lang.getString
 import java.io.File
+import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.OutputStream
 import java.util.Locale
@@ -1148,8 +1149,17 @@ class MangaDetailsPresenter(
     }
 
     fun editCoverWithStream(uri: Uri): Boolean {
-        val inputStream =
-            downloadManager.context.contentResolver.openInputStream(uri) ?: return false
+        val inputStream = try {
+            downloadManager.context.contentResolver.openInputStream(uri)
+        } catch (e: FileNotFoundException) {
+            // The photo picker's URI can expire/become invalid between selection and use
+            // (OEM gallery picker quirk) - not a Rokku bug, just fail the cover change.
+            Logger.e(e) { "Failed to open cover stream" }
+            null
+        } catch (e: SecurityException) {
+            Logger.e(e) { "Failed to open cover stream" }
+            null
+        } ?: return false
         if (manga.isLocal()) {
             LocalSource.updateCover(manga, inputStream)
             presenterScope.launchNonCancellableIO { manga.updateCoverLastModified() }
