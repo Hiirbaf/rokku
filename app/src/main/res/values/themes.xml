@@ -288,7 +288,7 @@
         <item name="colorOnSecondaryContainer">@color/onSecondaryContainerYotsuba</item>
         <item name="colorOnTertiaryContainer">@color/onTertiaryContainerYotsuba</item>
         <item name="colorSurfaceContainerLow">@color/surfaceContainerLowYotsuba</item>
-        <item name="colorSurfaceContainerLowest">@color/surface
+        <item name="colorSurfaceContainerLowest">@color/surfaceContainerLowestYotsuba</item>
     </style>
 
     <!--== Yin Yang theme ==-->
