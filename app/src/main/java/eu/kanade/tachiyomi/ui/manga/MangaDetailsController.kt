@@ -380,6 +380,15 @@ class MangaDetailsController :
             }
     }
 
+    @ColorInt
+    private fun makeBackgroundFrom(@ColorInt hueOf: Int, @ColorInt base: Int): Int {
+        val b = Hct.fromInt(base)
+        val hue = Hct.fromInt(hueOf).hue
+        val isNight = view?.context?.isInNightMode() == true
+        val tone = if (isNight) b.tone + 4 else b.tone - 4
+        return Hct.from(hue, b.chroma, tone.coerceIn(0.0, 100.0)).toInt()
+    }
+
     /**
      * Subtle tint for the rest of the details screen (everything below the backdrop behind the
      * cover): keeps the theme's own background saturation/luminance and only shifts its hue
@@ -393,7 +402,7 @@ class MangaDetailsController :
             presenter.preferences.themeMangaDetails().get() &&
             presenter.preferences.themeMangaDetailsBackground().get()
         ) {
-            (colorToUse ?: manga?.vibrantCoverColor)?.let { makeColorFrom(it, baseBackground) }
+            (colorToUse ?: manga?.vibrantCoverColor)?.let { makeBackgroundFrom(it, baseBackground) }
         } else {
             null
         }
