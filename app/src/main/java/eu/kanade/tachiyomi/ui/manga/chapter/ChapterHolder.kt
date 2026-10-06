@@ -6,6 +6,7 @@ import android.content.res.ColorStateList
 import android.view.View
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
+import androidx.core.graphics.ColorUtils
 import androidx.core.view.isVisible
 import androidx.core.widget.TextViewCompat
 import eu.kanade.tachiyomi.R
@@ -152,10 +153,17 @@ class ChapterHolder(
         // frontView must stay opaque so it masks startView/endView outside the swiped-away
         // sliver (see #183); apply the page tint as a tintList instead of a transparent
         // background so the swipe reveal still only colors the dragged strip.
-        binding.frontView.backgroundTintList =
-            adapter.delegate.pageBackgroundColor()?.let { ColorStateList.valueOf(it) }
         adapter.delegate.accentColor()?.let {
-            binding.startView.backgroundTintList = ColorStateList.valueOf(it)
+            binding.startView.setCardBackgroundColor(it)
+
+            val base = binding.chapterCard.context.getResourceColor(R.attr.colorSurfaceContainerLowest)
+            val bg = FloatArray(3)
+            val acc = FloatArray(3)
+            ColorUtils.colorToHSL(base, bg)
+            ColorUtils.colorToHSL(it, acc)
+            bg[0] = acc[0]
+            binding.chapterCard.setCardBackgroundColor(ColorUtils.HSLToColor(bg))
+
             binding.bookmark.imageTintList = ColorStateList.valueOf(
                 context.getResourceColor(AR.attr.textColorPrimaryInverse),
             )
@@ -167,7 +175,7 @@ class ChapterHolder(
         }
         if (locked) {
             isVisible = false
-            return
+            return@with
         }
         isVisible = !localSource
         setDownloadStatus(status, progress, animated)
