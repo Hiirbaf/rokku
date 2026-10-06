@@ -56,6 +56,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Fixed a crash installing an extension on devices whose DownloadManager doesn't expose a working `content://downloads` provider
 - Fixed a crash on app startup when restoring a tracker login dialog that was still open on the back stack after the process was killed and that tracker was no longer available
 - Fixed a crash changing a manga's cover when the picked image's URI had expired or become inaccessible
+- Fixed the manga details screen occasionally freezing (ANR) when opening the favorite/categories popup, caused by a blocking database read on the main thread
 
 ### Other
 - Migrated FlexibleAdapter from JitPack to its MavenCentral release, removing a source of transient CI build failures when JitPack was unavailable
@@ -65,6 +66,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Reduced Crashlytics noise by no longer reporting cover-loading, reader, browse, and backup failures that only reflect a source, the network, or the device misbehaving rather than a Rokku bug
 - Reduced Crashlytics noise further: handled extension-repo fetch failures, call timeouts/cancellations, dropped connections, unresolved WebView challenges, and broken local-library folders are no longer reported
 - Reduced Crashlytics noise by no longer reporting a JSON parse failure caused by a source answering with an HTML page (Cloudflare interstitial or error page) instead of data
+- Reduced Crashlytics noise further: premium/encrypted source content, an unconfigured self-hosted bridge extension (e.g. Tachidesk), a malformed search query (HTTP 400), an extension's bundled search database missing an index, a `multisrc` theme DTO failing to decode after a site change, Hikka's OAuth preference round-tripping as a literal "null", and an extension's source class missing from its installed APK are no longer reported
 - Bumped compileSdk to 37.2
 
 ## [1.7.1]
