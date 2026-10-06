@@ -88,6 +88,14 @@ class CrashlyticsLogWriterTest {
     }
 
     @Test
+    fun `stale chapter metadata is ignored regardless of exact wording`() {
+        ignored(IllegalStateException("Refresh Chapter List")) shouldBe true
+        ignored(IllegalStateException("Refresh the chapter list.")) shouldBe true
+        ignored(IllegalStateException("Could not find manga")) shouldBe true
+        ignored(IllegalStateException("Refresh manga")) shouldBe true
+    }
+
+    @Test
     fun `the whole cause chain is walked`() {
         val wrapped = IOException("failed to load cover", IOException("stream was reset: INTERNAL_ERROR"))
         ignored(wrapped) shouldBe true

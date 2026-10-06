@@ -194,7 +194,18 @@ class CrashlyticsLogWriter : LogWriter() {
                 }
             }
 
-            if (current.message == "Refresh Chapter List" || current.message == "Could not find manga" || current.message == "Refresh manga") return true
+            if (
+                current.message == "Refresh Chapter List" ||
+                current.message == "Could not find manga" ||
+                current.message == "Refresh manga" ||
+                // Extensions phrase this differently (e.g. "Refresh the chapter list."); match loosely.
+                (
+                    current.message?.contains("refresh", ignoreCase = true) == true &&
+                        current.message?.contains("chapter list", ignoreCase = true) == true
+                )
+            ) {
+                return true
+            }
             // A source's Cloudflare/WebView challenge not resolving in time, or a local-library
             // folder that was renamed/deleted or has a non-archive file in it - not a Rokku bug.
             if (current.message?.startsWith("Timed out waiting for WebView") == true) return true
