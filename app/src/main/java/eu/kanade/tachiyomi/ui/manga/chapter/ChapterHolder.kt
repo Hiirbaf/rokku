@@ -70,7 +70,7 @@ class ChapterHolder(
             statuses.add(chapter.scanlator!!)
         }
 
-        if (binding.frontView.translationX == 0f) {
+        if (binding.chapterCard.translationX == 0f) {
             binding.read.setImageResource(
                 if (item.read) R.drawable.ic_eye_off_24dp else R.drawable.ic_eye_24dp,
             )
@@ -109,7 +109,7 @@ class ChapterHolder(
         anim2.duration = 600
         anim2.startDelay = 500
         anim2.addUpdateListener {
-            if (binding.startView.isVisible && binding.frontView.translationX <= 0) {
+            if (binding.startView.isVisible && binding.chapterCard.translationX <= 0) {
                 binding.startView.isVisible = false
                 binding.endView.isVisible = true
             }
@@ -122,13 +122,11 @@ class ChapterHolder(
     }
 
     private fun slideAnimation(from: Float, to: Float): ObjectAnimator {
-        return ObjectAnimator.ofFloat(binding.frontView, View.TRANSLATION_X, from, to)
+        return ObjectAnimator.ofFloat(binding.chapterCard, View.TRANSLATION_X, from, to)
             .setDuration(300)
     }
 
-    override fun getFrontView(): View {
-        return binding.frontView
-    }
+    override fun getFrontView(): View = binding.chapterCard
 
     override fun getRearEndView(): View {
         return binding.endView
@@ -139,7 +137,7 @@ class ChapterHolder(
     }
 
     private fun resetFrontView() {
-        if (binding.frontView.translationX != 0f) {
+        if (binding.chapterCard.translationX != 0f) {
             itemView.post {
                 androidx.transition.TransitionManager.endTransitions(adapter.recyclerView)
                 adapter.notifyItemChanged(flexibleAdapterPosition)
@@ -150,9 +148,6 @@ class ChapterHolder(
     fun notifyStatus(status: Download.State, locked: Boolean, progress: Int, animated: Boolean = false) = with(
         binding.downloadButton.downloadButton,
     ) {
-        // frontView must stay opaque so it masks startView/endView outside the swiped-away
-        // sliver (see #183); apply the page tint as a tintList instead of a transparent
-        // background so the swipe reveal still only colors the dragged strip.
         adapter.delegate.accentColor()?.let {
             binding.startView.setCardBackgroundColor(it)
 
