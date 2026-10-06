@@ -204,6 +204,9 @@ class MangaDetailsPresenter(
 
     var allChapterScanlators: Set<String> = emptySet()
 
+    var allCategories: List<Category> = emptyList()
+        private set
+
     override val progressJobs: MutableMap<Download, Job> = mutableMapOf()
     override val queueListenerScope get() = presenterScope
 
@@ -229,6 +232,9 @@ class MangaDetailsPresenter(
         presenterScope.launchIO {
             downloadManager.queueState
                 .collectLatest(::onQueueUpdate)
+        }
+        presenterScope.launchIO {
+            getCategories.subscribe().collectLatest { allCategories = it }
         }
 
         runBlocking {
@@ -999,7 +1005,7 @@ class MangaDetailsPresenter(
      * @return List of categories, not including the default category
      */
     fun getCategories(): List<Category> {
-        return runBlocking { getCategories.await() }
+        return allCategories
     }
 
     fun confirmDeletion() {
