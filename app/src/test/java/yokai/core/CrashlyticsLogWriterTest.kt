@@ -88,6 +88,68 @@ class CrashlyticsLogWriterTest {
     }
 
     @Test
+    fun `a source extension's own login and token validation is ignored`() {
+        ignored(IOException("Missing username or password")) shouldBe true
+        ignored(IOException("Open webview to refresh token")) shouldBe true
+    }
+
+    @Test
+    fun `an extension's encrypted preference failing to decrypt before JSON parsing is ignored`() {
+        ignored(
+            SerializationException(
+                "Unexpected JSON token at offset 0: Expected start of the object '{', but had 'e' instead at path: \$\n" +
+                    "JSON input: enc:v1:abafd3384362e833:jMmsq9.....",
+            ),
+        ) shouldBe true
+    }
+
+    @Test
+    fun `a source rejecting a chapter or page request for reasons outside app control is ignored`() {
+        ignored(IOException("Premium chapter. Not available.")) shouldBe true
+        ignored(Exception("Chapter encryption unavailable")) shouldBe true
+        ignored(RuntimeException("Set Tachidesk server url in extension settings")) shouldBe true
+    }
+
+    @Test
+    fun `HttpException is ignored for malformed queries too`() {
+        ignored(HttpException(400)) shouldBe true
+    }
+
+    @Test
+    fun `an extension's bundled database missing an index is ignored`() {
+        ignored(
+            Exception(
+                "m0: select `s`.`mangaID` ... from `mh01` as `s` - Can't find FULLTEXT index matching the column list",
+            ),
+        ) shouldBe true
+    }
+
+    @Test
+    fun `a multisrc theme DTO missing fields is ignored`() {
+        ignored(
+            SerializationException(
+                "Fields [value, data] are required for type with serial name " +
+                    "'eu.kanade.tachiyomi.multisrc.mmrcms.SuggestionDto', but they were missing at path: \$[0]",
+            ),
+        ) shouldBe true
+    }
+
+    @Test
+    fun `Hikka's OAuth preference saved as the literal text null is ignored`() {
+        ignored(
+            SerializationException(
+                "Unexpected JSON token at offset 0: Expected start of the object '{', but had 'n' instead at path: \$\n" +
+                    "JSON input: null",
+            ),
+        ) shouldBe true
+    }
+
+    @Test
+    fun `an extension's own source class missing from its installed APK is ignored`() {
+        ignored(ClassNotFoundException("eu.kanade.tachiyomi.extension.ar.mangapro.ProComic")) shouldBe true
+    }
+
+    @Test
     fun `stale chapter metadata is ignored regardless of exact wording`() {
         ignored(IllegalStateException("Refresh Chapter List")) shouldBe true
         ignored(IllegalStateException("Refresh the chapter list.")) shouldBe true

@@ -93,6 +93,41 @@ class CrashlyticsLogWriter : LogWriter() {
      * meantime (chapter list refreshed, manga removed). HistoryRepositoryImpl already catches
      * this and skips the row; there's simply no chapter left to attach the history to.
      *
+     * Also skips a source extension's own login/token validation rejecting a request before it
+     * even reaches the network: missing login credentials the user never configured in the
+     * extension's preferences ("Missing username or password") and a tracker/extension
+     * signaling it needs an interactive webview relogin to refresh an expired token ("Open
+     * webview to refresh token", same category as MALTokenExpired above) - neither reflects a
+     * Rokku bug. Also skips a source extension's own encrypted preference (a saved cookie/token)
+     * failing to decrypt before being handed to the JSON decoder - e.g. the Android Keystore key
+     * that encrypted it was invalidated by a backup restore or reinstall - leaving the raw
+     * ciphertext ("enc:v1:...") to fail JSON parsing; not a Rokku bug either.
+     *
+     * Also skips a source extension rejecting a chapter/page request for a reason outside the
+     * app's control: content requiring a paid/premium account on the source's site ("Premium
+     * chapter. Not available.", same category as "Chapter locked" above), a chapter whose
+     * content is wrapped in a scheme the extension couldn't unwrap ("Chapter encryption
+     * unavailable"), and a self-hosted bridge extension (e.g. Tachidesk) that isn't configured
+     * yet ("Set Tachidesk server url in extension settings", same category as "Missing username
+     * or password" above) - none of these reflect a Rokku bug. Also skips a source's own search
+     * backend erroring out on a malformed query, whether as an HTTP 400 (HttpException) or as a
+     * raised SQL error from the extension's bundled database missing an index ("Can't find
+     * FULLTEXT index matching the column list").
+     *
+     * Also skips a `multisrc` theme shared by several Keiyoushi extensions failing to decode a
+     * site's response into one of its DTOs (MissingFieldException with a serial name under
+     * "eu.kanade.tachiyomi.multisrc.") - the site's own API/markup changed; not a Rokku bug.
+     * Also skips Hikka's OAuth token preference round-tripping through `saveOAuth(null)` (which
+     * encodes the literal text "null") and then failing to decode as an HKOAuth object on the
+     * next `loadOAuth()` - same already-handled "user never logged in" case as the EOF one above,
+     * just a different literal.
+     *
+     * Also skips an extension's own source class no longer existing in its installed APK
+     * (ClassNotFoundException for a class under "eu.kanade.tachiyomi.extension.", not just the
+     * empty-DexPathList race above) - ExtensionLoader.loadExtension already catches this per
+     * extension and marks it as a load error without crashing; the extension's packaging is
+     * simply out of sync with its repo metadata.
+     *
      * Also skips a batch of cover/reader/browse conditions that only reflect a source or the
      * network misbehaving, never a Rokku bug: MangaCoverFetcher raising a source's HTTP error
      * status ("HTTP 4xx/5xx …"), a missing/invalid cover URL in the source's metadata
@@ -136,7 +171,12 @@ class CrashlyticsLogWriter : LogWriter() {
                 is NoPagesException,
                 -> return true
 
-                is HttpException -> if (current.isAuthError || current.isServerError || current.code == 404 || current.code == 429) return true
+                is HttpException -> if (
+                    current.isAuthError || current.isServerError ||
+                    current.code == 400 || current.code == 404 || current.code == 429
+                ) {
+                    return true
+                }
 
                 is HttpStatusException -> if (current.statusCode in 500..599 || current.statusCode == 404) return true
 
@@ -160,6 +200,9 @@ class CrashlyticsLogWriter : LogWriter() {
                     current.message == "Chapter locked" ||
                     current.message == "Can't open InputStream" ||
                     current.message == "Failed to bypass Cloudflare" ||
+                    current.message == "Missing username or password" ||
+                    current.message == "Open webview to refresh token" ||
+                    current.message == "Premium chapter. Not available." ||
                     current.message?.startsWith("stream was reset: ") == true ||
                     current.message?.startsWith("Too many follow-up requests") == true ||
                     current.message?.startsWith("unexpected end of stream on ") == true ||
@@ -179,12 +222,29 @@ class CrashlyticsLogWriter : LogWriter() {
                     current.message?.contains("had 'EOF' instead") == true ||
                     // A source returned an HTML page (Cloudflare / error page) where JSON was expected.
                     current.message?.contains("<!DOCTYPE") == true ||
-                    current.message?.contains("<html") == true
+                    current.message?.contains("<html") == true ||
+                    // A source extension's own encrypted preference (cookie/token) failed to
+                    // decrypt and the raw ciphertext was handed to the JSON decoder instead.
+                    current.message?.contains("JSON input: enc:") == true ||
+                    // Hikka's saveOAuth(null) encodes the literal text "null" as the saved
+                    // token preference; decoding it back as HKOAuth fails the same way the
+                    // EOF case above does.
+                    current.message?.contains("JSON input: null") == true ||
+                    // A multisrc theme (shared by several extensions) failing to decode a
+                    // site's response into its own DTO - the site's API/markup changed.
+                    current.message?.contains("eu.kanade.tachiyomi.multisrc.") == true
                 ) {
                     return true
                 }
 
-                is ClassNotFoundException -> if (current.message?.contains("DexPathList[[]") == true) return true
+                is ClassNotFoundException -> if (
+                    current.message?.contains("DexPathList[[]") == true ||
+                    // The extension's installed APK no longer contains this source class -
+                    // ExtensionLoader.loadExtension already catches this per extension.
+                    current.message?.startsWith("eu.kanade.tachiyomi.extension.") == true
+                ) {
+                    return true
+                }
 
                 is IllegalArgumentException -> if (
                     current.message?.contains("is child of") == true &&
@@ -198,11 +258,15 @@ class CrashlyticsLogWriter : LogWriter() {
                 current.message == "Refresh Chapter List" ||
                 current.message == "Could not find manga" ||
                 current.message == "Refresh manga" ||
+                current.message == "Chapter encryption unavailable" ||
+                current.message == "Set Tachidesk server url in extension settings" ||
+                // The full message is "<prefix>: <raw SQL query> - Can't find FULLTEXT index ...".
+                current.message?.endsWith("Can't find FULLTEXT index matching the column list") == true ||
                 // Extensions phrase this differently (e.g. "Refresh the chapter list."); match loosely.
                 (
                     current.message?.contains("refresh", ignoreCase = true) == true &&
                         current.message?.contains("chapter list", ignoreCase = true) == true
-                )
+                    )
             ) {
                 return true
             }
