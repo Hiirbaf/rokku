@@ -137,6 +137,7 @@ import eu.kanade.tachiyomi.util.system.setCustomTitleAndMessage
 import eu.kanade.tachiyomi.util.system.timeSpanFromNow
 import eu.kanade.tachiyomi.util.system.toast
 import eu.kanade.tachiyomi.util.system.w
+import eu.kanade.tachiyomi.util.view.GroupedRowDivider
 import eu.kanade.tachiyomi.util.system.withUIContext
 import eu.kanade.tachiyomi.util.view.activityBinding
 import eu.kanade.tachiyomi.util.view.copyToClipboard
@@ -222,6 +223,7 @@ class MangaDetailsController :
     private var accentColor: Int? = null
     private var accentOnColor: Int? = null
     private var headerColor: Int? = null
+    private var chapterDivider: GroupedRowDivider? = null
     private var toolbarIsColored = false
     private var snack: Snackbar? = null
     val shouldLockIfNeeded: Boolean
@@ -350,6 +352,7 @@ class MangaDetailsController :
             null
         }
         accentOnColor = onColorToUse
+        chapterDivider?.accentColor = accentColor
     }
 
     private fun setCoverColorValue(colorToUse: Int? = null) {
@@ -553,9 +556,14 @@ class MangaDetailsController :
         binding.recycler.adapter = adapter
         adapter?.isSwipeEnabled = true
         binding.recycler.layoutManager = LinearLayoutManagerAccurateOffset(view.context)
-        binding.recycler.addItemDecoration(
-            MangaDetailsDivider(view.context),
+        val divider = GroupedRowDivider(
+            view.context,
+            isGroupedRow = { it is ChapterHolder },
+            maskGapWithBackground = false,
         )
+        divider.accentColor = accentColor
+        chapterDivider = divider
+        binding.recycler.addItemDecoration(divider)
         binding.recycler.setHasFixedSize(true)
         val appbarHeight = activityBinding?.appBar?.attrToolbarHeight ?: 0
         val offset = 10.dpToPx
@@ -800,6 +808,7 @@ class MangaDetailsController :
             }
         }
         accentOnColor = null
+        chapterDivider?.accentColor = accentColor
     }
 
     private fun setHeaderColorValueLegacy(colorToUse: Int, context: Context) {
