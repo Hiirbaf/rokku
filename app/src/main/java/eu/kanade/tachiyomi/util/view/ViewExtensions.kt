@@ -443,11 +443,13 @@ inline fun View.popupMenu(
 fun MaterialCardView.makeContainerShape(
     top: Boolean,
     bottom: Boolean,
+    clipContentTo: View? = null,
 ): ShapeAppearanceModel {
     val mainCornerRadius = resources.getDimension(R.dimen.container_main_corner)
     val subCornerRadius = resources.getDimension(R.dimen.container_sub_corner)
     val topRadius = if (top) mainCornerRadius else subCornerRadius
     val bottomRadius = if (bottom) mainCornerRadius else subCornerRadius
+    clipContentTo?.clipToRoundedCorners(topRadius, bottomRadius)
     return shapeAppearanceModel
         .toBuilder()
         .apply {
