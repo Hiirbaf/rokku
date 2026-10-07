@@ -1,22 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="Theme.Tachiyomi.Monet">
+        <!-- Rokku uses colorSecondary as the accent (J2K's colorPrimary), so monet_primary goes here -->
         <item name="colorPrimary">@android:color/system_accent1_500</item>
-        <item name="colorPrimaryInverse">@android:color/system_accent1_200</item>
-        <item name="colorPrimaryVariant">@android:color/system_neutral1_100</item>
-        <item name="colorSecondary">@android:color/system_accent1_600</item>
-        <item name="colorSecondaryVariant">@android:color/system_accent1_900</item>
+        <item name="colorPrimaryInverse">@color/monet_primary_inverse</item>
+        <item name="colorPrimaryVariant">@color/monet_surface_container</item>
+        <item name="colorSecondary">@color/monet_primary</item>
+        <item name="colorSecondaryVariant">@color/monet_secondary</item>
+        <item name="colorOnSecondary">@color/monet_on_primary</item>
         <item name="colorControlHighlight">@color/secondary_highlight</item>
-        <item name="colorTertiary">@android:color/system_accent3_300</item>
-        <item name="colorOnTertiary">@color/black</item>
-        <item name="colorSurface">@android:color/system_neutral1_50</item>
-        <item name="background">@android:color/system_neutral1_50</item>
-        <item name="colorOnBackground">@android:color/system_neutral1_900</item>
-        <item name="actionBarTintColor">@android:color/system_accent2_800</item>
-        <item name="colorSurfaceContainer">?colorPrimaryVariant</item>
-        <item name="colorPrimaryContainer">@android:color/system_accent1_100</item>
-        <item name="colorSecondaryContainer">@android:color/system_accent2_200</item>
-        <item name="colorOnSecondaryContainer">@android:color/system_accent2_800</item>
+        <item name="colorTertiary">@color/monet_tertiary</item>
+        <item name="colorOnTertiary">@color/monet_on_tertiary</item>
+        <item name="colorSurface">@color/monet_surface</item>
+        <item name="background">@color/monet_background</item>
+        <item name="colorOnBackground">@color/monet_on_background</item>
+        <item name="actionBarTintColor">@color/monet_action_bar_tint</item>
+        <item name="colorPrimaryContainer">@color/monet_primary_container</item>
+        <item name="colorSecondaryContainer">@color/monet_secondary_container</item>
+        <item name="colorOnSecondaryContainer">@color/monet_on_secondary_container</item>
+        <item name="colorSurfaceContainer">@color/monet_surface_container</item>
+        <item name="colorSurfaceContainerLowest">@color/monet_surface_container_lowest</item>
+        <item name="colorSurfaceContainerLow">@color/monet_surface_container_low</item>
+        <item name="colorSurfaceContainerHigh">@color/monet_surface_container_high</item>
+        <item name="colorSurfaceContainerHighest">@color/monet_surface_container_highest</item>
     </style>
 
     <style name="Theme.OSS" parent="Theme.Tachiyomi.Monet">
