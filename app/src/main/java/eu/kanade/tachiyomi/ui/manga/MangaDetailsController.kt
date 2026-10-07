@@ -405,7 +405,7 @@ class MangaDetailsController :
             presenter.preferences.themeMangaDetails().get() &&
             presenter.preferences.themeMangaDetailsBackground().get()
         ) {
-            (colorToUse ?: manga?.vibrantCoverColor)?.let { makeBackgroundFrom(it, baseBackground) }
+            (colorToUse ?: manga?.vibrantCoverColor)?.let { makeColorFrom(it, baseBackground) }
         } else {
             null
         }
