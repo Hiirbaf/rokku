@@ -6,6 +6,7 @@ import android.content.res.ColorStateList
 import android.view.View
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
+import androidx.core.graphics.ColorUtils
 import androidx.core.view.isVisible
 import androidx.core.widget.TextViewCompat
 import eu.kanade.tachiyomi.R
@@ -18,6 +19,7 @@ import eu.kanade.tachiyomi.util.chapter.ChapterUtil.Companion.preferredChapterNa
 import eu.kanade.tachiyomi.util.isLocal
 import eu.kanade.tachiyomi.util.system.dpToPx
 import eu.kanade.tachiyomi.util.system.getResourceColor
+import eu.kanade.tachiyomi.util.view.makeContainerShape
 import yokai.i18n.MR
 import yokai.util.lang.getString
 import android.R as AR
@@ -69,7 +71,7 @@ class ChapterHolder(
             statuses.add(chapter.scanlator!!)
         }
 
-        if (binding.frontView.translationX == 0f) {
+        if (binding.chapterCard.translationX == 0f) {
             binding.read.setImageResource(
                 if (item.read) R.drawable.ic_eye_off_24dp else R.drawable.ic_eye_24dp,
             )
@@ -108,7 +110,7 @@ class ChapterHolder(
         anim2.duration = 600
         anim2.startDelay = 500
         anim2.addUpdateListener {
-            if (binding.startView.isVisible && binding.frontView.translationX <= 0) {
+            if (binding.startView.isVisible && binding.chapterCard.translationX <= 0) {
                 binding.startView.isVisible = false
                 binding.endView.isVisible = true
             }
@@ -121,13 +123,11 @@ class ChapterHolder(
     }
 
     private fun slideAnimation(from: Float, to: Float): ObjectAnimator {
-        return ObjectAnimator.ofFloat(binding.frontView, View.TRANSLATION_X, from, to)
+        return ObjectAnimator.ofFloat(binding.chapterCard, View.TRANSLATION_X, from, to)
             .setDuration(300)
     }
 
-    override fun getFrontView(): View {
-        return binding.frontView
-    }
+    override fun getFrontView(): View = binding.chapterCard
 
     override fun getRearEndView(): View {
         return binding.endView
@@ -138,7 +138,7 @@ class ChapterHolder(
     }
 
     private fun resetFrontView() {
-        if (binding.frontView.translationX != 0f) {
+        if (binding.chapterCard.translationX != 0f) {
             itemView.post {
                 androidx.transition.TransitionManager.endTransitions(adapter.recyclerView)
                 adapter.notifyItemChanged(flexibleAdapterPosition)
@@ -149,13 +149,17 @@ class ChapterHolder(
     fun notifyStatus(status: Download.State, locked: Boolean, progress: Int, animated: Boolean = false) = with(
         binding.downloadButton.downloadButton,
     ) {
-        // frontView must stay opaque so it masks startView/endView outside the swiped-away
-        // sliver (see #183); apply the page tint as a tintList instead of a transparent
-        // background so the swipe reveal still only colors the dragged strip.
-        binding.frontView.backgroundTintList =
-            adapter.delegate.pageBackgroundColor()?.let { ColorStateList.valueOf(it) }
         adapter.delegate.accentColor()?.let {
-            binding.startView.backgroundTintList = ColorStateList.valueOf(it)
+            binding.startView.setCardBackgroundColor(it)
+
+            val base = binding.chapterCard.context.getResourceColor(R.attr.colorSurfaceContainerLowest)
+            val bg = FloatArray(3)
+            val acc = FloatArray(3)
+            ColorUtils.colorToHSL(base, bg)
+            ColorUtils.colorToHSL(it, acc)
+            bg[0] = acc[0]
+            binding.chapterCard.setCardBackgroundColor(ColorUtils.HSLToColor(bg))
+
             binding.bookmark.imageTintList = ColorStateList.valueOf(
                 context.getResourceColor(AR.attr.textColorPrimaryInverse),
             )
@@ -167,9 +171,16 @@ class ChapterHolder(
         }
         if (locked) {
             isVisible = false
-            return
+            return@with
         }
         isVisible = !localSource
         setDownloadStatus(status, progress, animated)
+    }
+
+    fun setCorners(top: Boolean, bottom: Boolean) {
+        val shapeModel = binding.chapterCard.makeContainerShape(top, bottom, clipContentTo = binding.frontView)
+        binding.chapterCard.shapeAppearanceModel = shapeModel
+        binding.startView.shapeAppearanceModel = shapeModel
+        binding.endView.shapeAppearanceModel = shapeModel
     }
 }
