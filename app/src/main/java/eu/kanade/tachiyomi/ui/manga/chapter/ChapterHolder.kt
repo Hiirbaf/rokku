@@ -19,6 +19,7 @@ import eu.kanade.tachiyomi.util.chapter.ChapterUtil.Companion.preferredChapterNa
 import eu.kanade.tachiyomi.util.isLocal
 import eu.kanade.tachiyomi.util.system.dpToPx
 import eu.kanade.tachiyomi.util.system.getResourceColor
+import eu.kanade.tachiyomi.util.view.makeContainerShape
 import yokai.i18n.MR
 import yokai.util.lang.getString
 import android.R as AR
@@ -174,5 +175,12 @@ class ChapterHolder(
         }
         isVisible = !localSource
         setDownloadStatus(status, progress, animated)
+    }
+
+    fun setCorners(top: Boolean, bottom: Boolean) {
+        val shapeModel = binding.chapterCard.makeContainerShape(top, bottom, clipContentTo = binding.frontView)
+        binding.chapterCard.shapeAppearanceModel = shapeModel
+        binding.startView.shapeAppearanceModel = shapeModel
+        binding.endView.shapeAppearanceModel = shapeModel
     }
 }
