@@ -409,7 +409,12 @@ class MangaDetailsController :
         } else {
             null
         }
-        binding.swipeRefresh.setBackgroundColor(pageBackgroundColor ?: baseBackground)
+        val bg = pageBackgroundColor ?: baseBackground
+        binding.root.setBackgroundColor(bg)
+        binding.swipeRefresh.setBackgroundColor(bg)
+        binding.recycler.setBackgroundColor(bg)
+        binding.tabletRecycler.setBackgroundColor(bg)
+        binding.tabletOverlay.setBackgroundColor(bg)
     }
 
     private fun setRefreshStyle() {
@@ -661,7 +666,7 @@ class MangaDetailsController :
         if (actionMode != null) {
             return
         }
-        val scrollingColor = headerColor ?: activity.getResourceColor(R.attr.colorPrimaryVariant)
+        val scrollingColor = headerColor ?: activity.getResourceColor(R.attr.colorSurfaceContainer)
         val topColor = ColorUtils.setAlphaComponent(scrollingColor, 0)
         val scrollingStatusColor =
             ColorUtils.setAlphaComponent(scrollingColor, (0.87f * 255).roundToInt())
@@ -812,7 +817,7 @@ class MangaDetailsController :
     }
 
     private fun setHeaderColorValueLegacy(colorToUse: Int, context: Context) {
-        val newColor = makeColorFrom(colorToUse, context.getResourceColor(R.attr.colorPrimaryVariant))
+        val newColor = makeColorFrom(colorToUse, context.getResourceColor(R.attr.colorSurfaceContainer))
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1 || context.isInNightMode()) {
             activity?.window?.navigationBarColor = ColorUtils.setAlphaComponent(
                 newColor,
@@ -825,7 +830,7 @@ class MangaDetailsController :
 
     private fun setStatusBarAndToolbar() {
         val topColor = Color.TRANSPARENT
-        val scrollingColor = headerColor ?: activity!!.getResourceColor(R.attr.colorPrimaryVariant)
+        val scrollingColor = headerColor ?: activity!!.getResourceColor(R.attr.colorSurfaceContainer)
         val scrollingStatusColor =
             ColorUtils.setAlphaComponent(scrollingColor, (0.87f * 255).roundToInt())
         activity?.window?.statusBarColor = if (toolbarIsColored) scrollingStatusColor else topColor
