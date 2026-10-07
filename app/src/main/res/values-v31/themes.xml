@@ -2,7 +2,9 @@
 <resources>
     <style name="Theme.Tachiyomi.Monet">
         <!-- Rokku uses colorSecondary as the accent (J2K's colorPrimary), so monet_primary goes here -->
-        <item name="colorPrimary">@android:color/system_accent1_500</item>
+        <!-- Material components (MaterialSwitch, checkbox) tint with colorPrimary; J2K's colorPrimary is the accent -->
+        <item name="colorPrimary">@color/monet_primary</item>
+        <item name="colorOnPrimary">@color/monet_on_primary</item>
         <item name="colorPrimaryInverse">@color/monet_primary_inverse</item>
         <item name="colorPrimaryVariant">@color/monet_surface_container</item>
         <item name="colorSecondary">@color/monet_primary</item>
