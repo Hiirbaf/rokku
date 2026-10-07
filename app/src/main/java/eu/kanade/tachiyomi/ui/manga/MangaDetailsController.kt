@@ -459,9 +459,17 @@ class MangaDetailsController :
      */
     @ColorInt
     private fun makeColorFrom(@ColorInt hueOf: Int, @ColorInt satAndLumOf: Int): Int {
-        val base = Hct.fromInt(satAndLumOf)
-        val hue = Hct.fromInt(hueOf).hue
-        return Hct.from(hue, base.chroma, base.tone).toInt()
+        val satLumArray = FloatArray(3)
+        val hueArray = FloatArray(3)
+        ColorUtils.colorToHSL(satAndLumOf, satLumArray)
+        ColorUtils.colorToHSL(hueOf, hueArray)
+        return ColorUtils.HSLToColor(
+            floatArrayOf(
+                hueArray[0],
+                satLumArray[1],
+                satLumArray[2],
+            ),
+        )
     }
 
     private fun setItemColors() {
