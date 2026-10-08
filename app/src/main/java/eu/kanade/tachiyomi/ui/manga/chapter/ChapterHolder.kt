@@ -131,7 +131,9 @@ class ChapterHolder(
             .setDuration(300)
     }
 
-    override fun getFrontView(): View = binding.chapterCard
+    override fun getFrontView(): View {
+        return binding.chapterCard
+    }
 
     override fun getRearEndView(): View {
         return binding.endView
