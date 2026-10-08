@@ -100,6 +100,17 @@ class SettingsAppearanceController : SettingsLegacyController() {
                     true
                 }
             }
+
+            switchPreference {
+                key = Keys.tintedControls
+                titleRes = MR.strings.tinted_controls
+                defaultValue = false
+
+                onChange {
+                    (activity as? MainActivity)?.recreateFully() ?: activity?.recreate()
+                    true
+                }
+            }
         }
 
         preferenceCategory {
@@ -144,6 +155,10 @@ class SettingsAppearanceController : SettingsLegacyController() {
                 preferences.themeMangaDetails().changesIn(viewScope) { enabled ->
                     isVisible = enabled
                 }
+            }
+            switchPreference {
+                bindTo(preferences.groupedChapterCards())
+                titleRes = MR.strings.grouped_chapter_cards
             }
             intListPreference(activity) {
                 key = Keys.coverThemeStyle

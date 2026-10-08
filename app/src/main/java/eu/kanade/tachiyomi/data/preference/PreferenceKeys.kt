@@ -224,6 +224,10 @@ object PreferenceKeys {
 
     const val themeMangaDetailsBackground = "theme_manga_details_background"
 
+    const val groupedChapterCards = "grouped_chapter_cards"
+
+    const val tintedControls = "tinted_controls"
+
     const val coverThemeStyle = "pref_cover_theme_style"
 
     const val renderDescriptionImages = "render_description_images"

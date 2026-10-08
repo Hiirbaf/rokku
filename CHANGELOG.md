@@ -14,9 +14,12 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - The manga details screen background can now pick up a subtle tint from the cover, extending the accent already used for the header/buttons through the rest of the screen (off by default, toggle separately under Settings > Appearance > Details page > Theme background based on cover)
 - Local source now reads Year, Month, and Day fields from a chapter's ComicInfo.xml to set its displayed date, and downloaded chapters now write these fields when generating ComicInfo.xml
 - Browse and Global Search now keep a recent search history and let you save searches (scoped to one source or all sources), with incognito-aware suggestions ([@Hiirbaf](https://github.com/Hiirbaf))
+- Added an option to group the manga details chapter list into rounded cards like TachiyomiJ2K, tinted with the cover's color when the cover theme is on (off by default, under Settings > Appearance > Details page > Group chapters into cards) ([@Hiirbaf](https://github.com/Hiirbaf))
+- Added an option to tint switch tracks and outlines with each theme's color instead of a neutral gray (off by default, under Settings > Appearance > Tint switches and outlines with theme color) ([@Hiirbaf](https://github.com/Hiirbaf))
 
 ### Changes
 - An automatic backup that fails because its saved location is no longer accessible (folder deleted, permission revoked, storage removed) now shows a notification telling you to pick a new one, instead of failing silently
+- Aligned the accent and surface colors of the app themes with TachiyomiJ2K ([@Hiirbaf](https://github.com/Hiirbaf))
 
 ### Fixes
 - Made the status bar transparent instead of theme-colored, matching upstream (only visible on Android versions predating edge-to-edge enforcement)

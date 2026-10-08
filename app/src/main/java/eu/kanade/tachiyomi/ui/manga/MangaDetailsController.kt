@@ -1,7 +1,7 @@
 package eu.kanade.tachiyomi.ui.manga
 
-import android.annotation.SuppressLint
 import android.animation.ValueAnimator
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.PendingIntent
 import android.content.ClipData
@@ -137,8 +137,8 @@ import eu.kanade.tachiyomi.util.system.setCustomTitleAndMessage
 import eu.kanade.tachiyomi.util.system.timeSpanFromNow
 import eu.kanade.tachiyomi.util.system.toast
 import eu.kanade.tachiyomi.util.system.w
-import eu.kanade.tachiyomi.util.view.GroupedRowDivider
 import eu.kanade.tachiyomi.util.system.withUIContext
+import eu.kanade.tachiyomi.util.view.GroupedRowDivider
 import eu.kanade.tachiyomi.util.view.activityBinding
 import eu.kanade.tachiyomi.util.view.copyToClipboard
 import eu.kanade.tachiyomi.util.view.findChild
@@ -223,6 +223,8 @@ class MangaDetailsController :
     private var accentColor: Int? = null
     private var accentOnColor: Int? = null
     private var chapterDivider: GroupedRowDivider? = null
+    private var chapterDecoration: RecyclerView.ItemDecoration? = null
+    private var groupedChapterCards = false
     private var headerColor: Int? = null
     private var toolbarIsColored = false
     private var snack: Snackbar? = null
@@ -442,18 +444,17 @@ class MangaDetailsController :
     }
 
     /**
-     * Transplants [hueOf]'s hue onto [satAndLumOf]'s saturation and lightness (HSL)
-     * so the result keeps the theme's own brightness and only shifts its tint
-     * towards the cover's.
+     * Transplants [hueOf]'s hue onto [satAndLumOf]'s chroma/tone using HCT rather than HSL:
+     * HSL's saturation isn't perceptually uniform across hues, so a cool hue (blue/cyan) at the
+     * same numeric saturation as a warm one (red/orange) reads as noticeably less colorful --
+     * HCT's chroma is built to look equally vivid regardless of hue, so themed covers of any
+     * colour tint the page by a consistent amount instead of blues barely showing up at all.
      */
     @ColorInt
     private fun makeColorFrom(@ColorInt hueOf: Int, @ColorInt satAndLumOf: Int): Int {
-        val hsl = FloatArray(3)
-        val hueHsl = FloatArray(3)
-        ColorUtils.colorToHSL(satAndLumOf, hsl)
-        ColorUtils.colorToHSL(hueOf, hueHsl)
-        hsl[0] = hueHsl[0]
-        return ColorUtils.HSLToColor(hsl)
+        val base = Hct.fromInt(satAndLumOf)
+        val hue = Hct.fromInt(hueOf).hue
+        return Hct.from(hue, base.chroma, base.tone).toInt()
     }
 
     private fun setItemColors() {
@@ -553,14 +554,7 @@ class MangaDetailsController :
         binding.recycler.adapter = adapter
         adapter?.isSwipeEnabled = true
         binding.recycler.layoutManager = LinearLayoutManagerAccurateOffset(view.context)
-        val divider = GroupedRowDivider(
-            view.context,
-            isGroupedRow = { it is ChapterHolder },
-            maskGapWithBackground = false,
-        )
-        divider.accentColor = accentColor
-        chapterDivider = divider
-        binding.recycler.addItemDecoration(divider)
+        installChapterDivider(view.context)
         binding.recycler.setHasFixedSize(true)
         val appbarHeight = activityBinding?.appBar?.attrToolbarHeight ?: 0
         val offset = 10.dpToPx
@@ -861,8 +855,33 @@ class MangaDetailsController :
         }
     }
 
+    private fun installChapterDivider(context: Context) {
+        chapterDecoration?.let { binding.recycler.removeItemDecoration(it) }
+        val grouped = presenter.preferences.groupedChapterCards().get()
+        groupedChapterCards = grouped
+        val decoration = if (grouped) {
+            GroupedRowDivider(
+                context,
+                isGroupedRow = { it is ChapterHolder },
+                maskGapWithBackground = false,
+            ).also {
+                it.accentColor = accentColor
+                chapterDivider = it
+            }
+        } else {
+            chapterDivider = null
+            MangaDetailsDivider(context)
+        }
+        chapterDecoration = decoration
+        binding.recycler.addItemDecoration(decoration)
+    }
+
     override fun onAttach(view: View) {
         super.onAttach(view)
+        if (groupedChapterCards != presenter.preferences.groupedChapterCards().get()) {
+            installChapterDivider(view.context)
+            adapter?.notifyDataSetChanged()
+        }
         presenter.refreshRelatedMangaFavorites()
         if (!returningFromReader) return
         returningFromReader = false

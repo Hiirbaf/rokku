@@ -3,11 +3,14 @@ package eu.kanade.tachiyomi.ui.manga.chapter
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.view.View
+import android.view.ViewGroup
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
 import androidx.core.graphics.ColorUtils
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import androidx.core.widget.TextViewCompat
 import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.data.download.model.Download
@@ -151,17 +154,9 @@ class ChapterHolder(
     fun notifyStatus(status: Download.State, locked: Boolean, progress: Int, animated: Boolean = false) = with(
         binding.downloadButton.downloadButton,
     ) {
+        applyCardBackground()
         adapter.delegate.accentColor()?.let {
             binding.startView.setCardBackgroundColor(it)
-
-            val base = binding.chapterCard.context.getResourceColor(R.attr.colorSurfaceContainerLowest)
-            val bg = FloatArray(3)
-            val acc = FloatArray(3)
-            ColorUtils.colorToHSL(base, bg)
-            ColorUtils.colorToHSL(it, acc)
-            bg[0] = acc[0]
-            binding.chapterCard.setCardBackgroundColor(ColorUtils.HSLToColor(bg))
-
             binding.bookmark.imageTintList = ColorStateList.valueOf(
                 context.getResourceColor(AR.attr.textColorPrimaryInverse),
             )
@@ -180,9 +175,49 @@ class ChapterHolder(
     }
 
     fun setCorners(top: Boolean, bottom: Boolean) {
-        val shapeModel = binding.chapterCard.makeContainerShape(top, bottom, clipContentTo = binding.frontView)
-        binding.chapterCard.shapeAppearanceModel = shapeModel
-        binding.startView.shapeAppearanceModel = shapeModel
-        binding.endView.shapeAppearanceModel = shapeModel
+        val grouped = adapter.preferences.groupedChapterCards().get()
+        val cards = listOf(binding.chapterCard, binding.startView, binding.endView)
+        val horizontalMargin = if (grouped) 10.dpToPx else 0
+        cards.forEach { card ->
+            card.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                marginStart = horizontalMargin
+                marginEnd = horizontalMargin
+            }
+        }
+        if (grouped) {
+            val shapeModel = binding.chapterCard.makeContainerShape(top, bottom, clipContentTo = binding.frontView)
+            cards.forEach { it.shapeAppearanceModel = shapeModel }
+            binding.frontView.setBackgroundResource(R.drawable.transparent_item_selector)
+        } else {
+            val flat = binding.chapterCard.shapeAppearanceModel.toBuilder().setAllCornerSizes(0f).build()
+            cards.forEach { it.shapeAppearanceModel = flat }
+            binding.frontView.clipToOutline = false
+            binding.frontView.setBackgroundResource(R.drawable.list_item_selector)
+        }
+        applyCardBackground()
+    }
+
+    /**
+     * Grouped cards tint a surface container with the cover's hue. Flat rows keep the original
+     * opaque front view, tinted with the page background, so it still masks startView/endView
+     * outside the swiped-away sliver (see #183).
+     */
+    private fun applyCardBackground() {
+        if (!adapter.preferences.groupedChapterCards().get()) {
+            binding.chapterCard.setCardBackgroundColor(Color.TRANSPARENT)
+            binding.frontView.backgroundTintList =
+                adapter.delegate.pageBackgroundColor()?.let { ColorStateList.valueOf(it) }
+            return
+        }
+        binding.frontView.backgroundTintList = null
+        adapter.delegate.accentColor()?.let {
+            val base = binding.chapterCard.context.getResourceColor(R.attr.colorSurfaceContainerLowest)
+            val bg = FloatArray(3)
+            val acc = FloatArray(3)
+            ColorUtils.colorToHSL(base, bg)
+            ColorUtils.colorToHSL(it, acc)
+            bg[0] = acc[0]
+            binding.chapterCard.setCardBackgroundColor(ColorUtils.HSLToColor(bg))
+        }
     }
 }

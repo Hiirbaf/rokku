@@ -85,6 +85,9 @@ fun AppCompatActivity.getThemeWithExtras(theme: Resources.Theme, preferences: Pr
             return oldTheme
         }
     }
+    if (preferences.tintedControls().get()) {
+        getPrefTheme(preferences).tintedControlsOverlay()?.let { theme.applyStyle(it, true) }
+    }
     if (useAmoled) {
         theme.applyStyle(R.style.ThemeOverlay_Tachiyomi_Amoled, true)
     }

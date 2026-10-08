@@ -25,11 +25,9 @@
         <item name="colorSecondaryContainer">@color/secondaryContainerTachiyomi</item>
         <item name="colorSurfaceContainer">@color/tachiyomi_surfaceContainer</item>
         <item name="colorSurfaceContainerHigh">@color/tachiyomi_surfaceContainerHigh</item>
-        <item name="colorSurfaceContainerHighest">@color/tachiyomi_surfaceContainerHighest</item>
         <item name="colorSurfaceContainerLow">@color/tachiyomi_surfaceContainerLow</item>
         <item name="colorSurfaceContainerLowest">@color/tachiyomi_surfaceContainerLowest</item>
         <item name="colorOnSurfaceVariant">@color/tachiyomi_onSurfaceVariant</item>
-        <item name="colorOutline">@color/tachiyomi_outline</item>
         <item name="colorOutlineVariant">@color/tachiyomi_outlineVariant</item>
         <item name="colorOnPrimaryContainer">@color/tachiyomi_onPrimaryContainer</item>
         <item name="colorOnSecondaryContainer">@color/tachiyomi_onSecondaryContainer</item>
@@ -98,6 +96,44 @@
         <item name="android:windowLightNavigationBar" tools:targetApi="27">@bool/isLightMode</item>
     </style>
 
+    <!-- Optional theme-tinted switch tracks and outlines, applied per theme by getThemeWithExtras -->
+    <style name="ThemeOverlay.Tachiyomi.TintedControls" parent="">
+        <item name="colorSurfaceContainerHighest">@color/tachiyomi_surfaceContainerHighest</item>
+        <item name="colorOutline">@color/tachiyomi_outline</item>
+    </style>
+    <style name="ThemeOverlay.Tachiyomi.TintedControls.FlatLime" parent="">
+        <item name="colorSurfaceContainerHighest">@color/surfaceContainerHighestLime</item>
+        <item name="colorOutline">@color/outlineLime</item>
+    </style>
+    <style name="ThemeOverlay.Tachiyomi.TintedControls.MidnightDusk" parent="">
+        <item name="colorSurfaceContainerHighest">@color/surfaceContainerHighestDuskDawn</item>
+        <item name="colorOutline">@color/outlineDuskDawn</item>
+    </style>
+    <style name="ThemeOverlay.Tachiyomi.TintedControls.SapphireDusk" parent="">
+        <item name="colorSurfaceContainerHighest">@color/surfaceContainerHighestTealSapphire</item>
+        <item name="colorOutline">@color/outlineTealSapphire</item>
+    </style>
+    <style name="ThemeOverlay.Tachiyomi.TintedControls.Lavender" parent="">
+        <item name="colorSurfaceContainerHighest">@color/lavender_surface_container_highest</item>
+        <item name="colorOutline">@color/lavender_outline</item>
+    </style>
+    <style name="ThemeOverlay.Tachiyomi.TintedControls.Strawberries" parent="">
+        <item name="colorSurfaceContainerHighest">@color/surfaceContainerHighestStrawberry</item>
+        <item name="colorOutline">@color/outlineStrawberry</item>
+    </style>
+    <style name="ThemeOverlay.Tachiyomi.TintedControls.Tako" parent="">
+        <item name="colorSurfaceContainerHighest">@color/surfaceContainerHighestTako</item>
+        <item name="colorOutline">@color/outlineTako</item>
+    </style>
+    <style name="ThemeOverlay.Tachiyomi.TintedControls.Yotsuba" parent="">
+        <item name="colorSurfaceContainerHighest">@color/surfaceContainerHighestYotsuba</item>
+        <item name="colorOutline">@color/outlineYotsuba</item>
+    </style>
+    <style name="ThemeOverlay.Tachiyomi.TintedControls.YinYang" parent="">
+        <item name="colorSurfaceContainerHighest">@color/surfaceContainerHighestYinYang</item>
+        <item name="colorOutline">@color/outlineYinYang</item>
+    </style>
+
     <style name="Theme.Tachiyomi" parent="Theme.Base"/>
 
     <style name="ThemeOverlay.Tachiyomi.Amoled" parent="">
@@ -132,8 +168,6 @@
         <item name="colorSecondaryContainer">@color/secondaryContainerLime</item>
         <item name="colorSurfaceContainer">@color/surfaceContainerLime</item>
         <item name="colorSurfaceContainerHigh">@color/surfaceContainerHighLime</item>
-        <item name="colorSurfaceContainerHighest">@color/surfaceContainerHighestLime</item>
-        <item name="colorOutline">@color/outlineLime</item>
         <item name="colorOutlineVariant">@color/outlineVariantLime</item>
         <item name="colorOnPrimaryContainer">@color/onPrimaryContainerLime</item>
         <item name="colorOnSecondaryContainer">@color/onSecondaryContainerLime</item>
@@ -161,8 +195,6 @@
         <item name="colorSecondaryContainer">@color/secondaryContainerDuskDawn</item>
         <item name="colorSurfaceContainer">@color/surfaceContainerDuskDawn</item>
         <item name="colorSurfaceContainerHigh">@color/surfaceContainerHighDuskDawn</item>
-        <item name="colorSurfaceContainerHighest">@color/surfaceContainerHighestDuskDawn</item>
-        <item name="colorOutline">@color/outlineDuskDawn</item>
         <item name="colorOnPrimaryContainer">@color/onPrimaryContainerDuskDawn</item>
         <item name="colorOnSecondaryContainer">@color/onSecondaryContainerDuskDawn</item>
         <item name="colorOnTertiaryContainer">@color/onTertiaryContainerDuskDawn</item>
@@ -191,8 +223,6 @@
         <item name="colorSecondaryContainer">@color/secondaryContainerTealSapphire</item>
         <item name="colorSurfaceContainer">@color/surfaceContainerTealSapphire</item>
         <item name="colorSurfaceContainerHigh">@color/surfaceContainerHighTealSapphire</item>
-        <item name="colorSurfaceContainerHighest">@color/surfaceContainerHighestTealSapphire</item>
-        <item name="colorOutline">@color/outlineTealSapphire</item>
         <item name="colorOnPrimaryContainer">@color/onPrimaryContainerTealSapphire</item>
         <item name="colorOnSecondaryContainer">@color/onSecondaryContainerTealSapphire</item>
         <item name="colorOnTertiaryContainer">@color/onTertiaryContainerTealSapphire</item>
@@ -222,8 +252,6 @@
         <item name="colorSecondaryContainer">@color/lavender_secondary_container</item>
         <item name="colorSurfaceContainer">@color/lavender_surface_container</item>
         <item name="colorSurfaceContainerHigh">@color/lavender_surface_container_high</item>
-        <item name="colorSurfaceContainerHighest">@color/lavender_surface_container_highest</item>
-        <item name="colorOutline">@color/lavender_outline</item>
         <item name="colorOutlineVariant">@color/lavender_outline_variant</item>
         <item name="colorOnPrimaryContainer">@color/lavender_on_primary_container</item>
         <item name="colorOnSecondaryContainer">@color/lavender_on_secondary_container</item>
@@ -249,8 +277,6 @@
         <item name="colorSecondaryContainer">@color/secondaryContainerStrawberry</item>
         <item name="colorSurfaceContainer">@color/surfaceContainerStrawberry</item>
         <item name="colorSurfaceContainerHigh">@color/surfaceContainerHighStrawberry</item>
-        <item name="colorSurfaceContainerHighest">@color/surfaceContainerHighestStrawberry</item>
-        <item name="colorOutline">@color/outlineStrawberry</item>
         <item name="colorOutlineVariant">@color/outlineVariantStrawberry</item>
         <item name="colorOnPrimaryContainer">@color/onPrimaryContainerStrawberry</item>
         <item name="colorOnSecondaryContainer">@color/onSecondaryContainerStrawberry</item>
@@ -283,8 +309,6 @@
         <item name="colorSecondaryContainer">@color/secondaryContainerTako</item>
         <item name="colorSurfaceContainer">@color/surfaceContainerTako</item>
         <item name="colorSurfaceContainerHigh">@color/surfaceContainerHighTako</item>
-        <item name="colorSurfaceContainerHighest">@color/surfaceContainerHighestTako</item>
-        <item name="colorOutline">@color/outlineTako</item>
         <item name="colorOnPrimaryContainer">@color/onPrimaryContainerTako</item>
         <item name="colorOnSecondaryContainer">@color/onSecondaryContainerTako</item>
         <item name="colorOnTertiaryContainer">@color/onTertiaryContainerTako</item>
@@ -306,8 +330,6 @@
         <item name="colorSecondaryContainer">@color/secondaryContainerYotsuba</item>
         <item name="colorSurfaceContainer">@color/surfaceContainerYotsuba</item>
         <item name="colorSurfaceContainerHigh">@color/surfaceContainerHighYotsuba</item>
-        <item name="colorSurfaceContainerHighest">@color/surfaceContainerHighestYotsuba</item>
-        <item name="colorOutline">@color/outlineYotsuba</item>
         <item name="colorOnPrimaryContainer">@color/onPrimaryContainerYotsuba</item>
         <item name="colorOnSecondaryContainer">@color/onSecondaryContainerYotsuba</item>
         <item name="colorOnTertiaryContainer">@color/onTertiaryContainerYotsuba</item>
@@ -333,8 +355,6 @@
         <item name="colorSecondaryContainer">@color/secondaryContainerYinYang</item>
         <item name="colorSurfaceContainer">@color/surfaceContainerYinYang</item>
         <item name="colorSurfaceContainerHigh">@color/surfaceContainerHighYinYang</item>
-        <item name="colorSurfaceContainerHighest">@color/surfaceContainerHighestYinYang</item>
-        <item name="colorOutline">@color/outlineYinYang</item>
         <item name="colorOnPrimaryContainer">@color/onPrimaryContainerYinYang</item>
         <item name="colorOnSecondaryContainer">@color/onSecondaryContainerYinYang</item>
         <item name="colorOnTertiaryContainer">@color/onTertiaryContainerYinYang</item>

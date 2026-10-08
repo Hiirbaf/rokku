@@ -85,4 +85,18 @@ enum class Themes(
     val followsSystem = nightMode == AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
 
     val darkNameRes: StringResource = altNameRes ?: nameRes
+
+    @StyleRes
+    fun tintedControlsOverlay(): Int? = when (this) {
+        MONET -> null
+        DEFAULT, DOKI -> R.style.ThemeOverlay_Tachiyomi_TintedControls
+        SPRING_AND_DUSK -> R.style.ThemeOverlay_Tachiyomi_TintedControls_MidnightDusk
+        STRAWBERRIES -> R.style.ThemeOverlay_Tachiyomi_TintedControls_Strawberries
+        TEAL_AND_SAPPHIRE -> R.style.ThemeOverlay_Tachiyomi_TintedControls_SapphireDusk
+        LAVENDER -> R.style.ThemeOverlay_Tachiyomi_TintedControls_Lavender
+        TAKO -> R.style.ThemeOverlay_Tachiyomi_TintedControls_Tako
+        YIN_AND_YANG -> R.style.ThemeOverlay_Tachiyomi_TintedControls_YinYang
+        LIME -> R.style.ThemeOverlay_Tachiyomi_TintedControls_FlatLime
+        YOTSUBA -> R.style.ThemeOverlay_Tachiyomi_TintedControls_Yotsuba
+    }
 }

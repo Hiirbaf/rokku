@@ -469,6 +469,8 @@ class PreferencesHelper(val context: Context, val preferenceStore: PreferenceSto
 
     fun themeMangaDetails() = preferenceStore.getBoolean(Keys.themeMangaDetails, true)
     fun themeMangaDetailsBackground() = preferenceStore.getBoolean(Keys.themeMangaDetailsBackground, false)
+    fun groupedChapterCards() = preferenceStore.getBoolean(Keys.groupedChapterCards, false)
+    fun tintedControls() = preferenceStore.getBoolean(Keys.tintedControls, false)
     fun coverThemeStyle() = preferenceStore.getInt(Keys.coverThemeStyle, coverThemeOptions.indexOf(null))
 
     fun renderDescriptionImages() = preferenceStore.getBoolean(Keys.renderDescriptionImages, true)
