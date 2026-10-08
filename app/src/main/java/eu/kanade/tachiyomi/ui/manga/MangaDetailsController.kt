@@ -1,7 +1,7 @@
 package eu.kanade.tachiyomi.ui.manga
 
-import android.animation.ValueAnimator
 import android.annotation.SuppressLint
+import android.animation.ValueAnimator
 import android.app.Activity
 import android.app.PendingIntent
 import android.content.ClipData
@@ -442,10 +442,10 @@ class MangaDetailsController :
     }
 
     /**
-    * Transplants [hueOf]'s hue onto [satAndLumOf]'s saturation and lightness (HSL)
-    * so the result keeps the theme's own brightness and only shifts its tint
-    * towards the cover's.
-        */
+     * Transplants [hueOf]'s hue onto [satAndLumOf]'s saturation and lightness (HSL)
+     * so the result keeps the theme's own brightness and only shifts its tint
+     * towards the cover's.
+     */
     @ColorInt
     private fun makeColorFrom(@ColorInt hueOf: Int, @ColorInt satAndLumOf: Int): Int {
         val hsl = FloatArray(3)
