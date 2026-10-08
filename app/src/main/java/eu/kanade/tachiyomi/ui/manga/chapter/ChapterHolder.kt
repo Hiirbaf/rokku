@@ -37,6 +37,9 @@ class ChapterHolder(
             adapter.delegate.startDownloadRange(flexibleAdapterPosition)
             true
         }
+        binding.expandedDownloadTarget.setOnTouchListener { _, event ->
+            binding.downloadButton.downloadButton.onTouchEvent(event)
+        }
     }
 
     fun bind(item: ChapterItem, manga: Manga) {
@@ -49,7 +52,8 @@ class ChapterHolder(
         binding.downloadButton.downloadButton.isVisible = !manga.isLocal() && !isLocked
         localSource = manga.isLocal()
 
-        ChapterUtil.setTextViewForChapter(binding.chapterTitle, item, hideStatus = isLocked)
+        val accent = adapter.delegate.themeColors().accent
+        ChapterUtil.setTextViewForChapter(binding.chapterTitle, item, hideStatus = isLocked, accent = accent)
 
         val statuses = mutableListOf<String>()
 
@@ -71,7 +75,7 @@ class ChapterHolder(
             statuses.add(chapter.scanlator!!)
         }
 
-        if (binding.chapterCard.translationX == 0f) {
+        if (getFrontView().translationX == 0f) {
             binding.read.setImageResource(
                 if (item.read) R.drawable.ic_eye_off_24dp else R.drawable.ic_eye_24dp,
             )
@@ -110,7 +114,7 @@ class ChapterHolder(
         anim2.duration = 600
         anim2.startDelay = 500
         anim2.addUpdateListener {
-            if (binding.startView.isVisible && binding.chapterCard.translationX <= 0) {
+            if (binding.startView.isVisible && getFrontView().translationX <= 0) {
                 binding.startView.isVisible = false
                 binding.endView.isVisible = true
             }
@@ -123,7 +127,7 @@ class ChapterHolder(
     }
 
     private fun slideAnimation(from: Float, to: Float): ObjectAnimator {
-        return ObjectAnimator.ofFloat(binding.chapterCard, View.TRANSLATION_X, from, to)
+        return ObjectAnimator.ofFloat(getFrontView(), View.TRANSLATION_X, from, to)
             .setDuration(300)
     }
 
@@ -138,7 +142,7 @@ class ChapterHolder(
     }
 
     private fun resetFrontView() {
-        if (binding.chapterCard.translationX != 0f) {
+        if (getFrontView().translationX != 0f) {
             itemView.post {
                 androidx.transition.TransitionManager.endTransitions(adapter.recyclerView)
                 adapter.notifyItemChanged(flexibleAdapterPosition)
@@ -149,24 +153,21 @@ class ChapterHolder(
     fun notifyStatus(status: Download.State, locked: Boolean, progress: Int, animated: Boolean = false) = with(
         binding.downloadButton.downloadButton,
     ) {
-        adapter.delegate.accentColor()?.let {
+        adapter.delegate.themeColors().accent?.let {
             binding.startView.setCardBackgroundColor(it)
 
-            val base = binding.chapterCard.context.getResourceColor(R.attr.colorSurfaceContainerLowest)
-            val bg = FloatArray(3)
-            val acc = FloatArray(3)
-            ColorUtils.colorToHSL(base, bg)
-            ColorUtils.colorToHSL(it, acc)
-            bg[0] = acc[0]
-            binding.chapterCard.setCardBackgroundColor(ColorUtils.HSLToColor(bg))
+            val color = binding.chapterCard.context.getResourceColor(R.attr.colorSurfaceContainerLowest)
+            val bgArray = FloatArray(3)
+            val accentArray = FloatArray(3)
+            ColorUtils.colorToHSL(color, bgArray)
+            ColorUtils.colorToHSL(it, accentArray)
+            bgArray[0] = accentArray[0]
+            binding.chapterCard.setCardBackgroundColor(ColorUtils.HSLToColor(bgArray))
 
             binding.bookmark.imageTintList = ColorStateList.valueOf(
                 context.getResourceColor(AR.attr.textColorPrimaryInverse),
             )
-            TextViewCompat.setCompoundDrawableTintList(
-                binding.chapterTitle,
-                ColorStateList.valueOf(it),
-            )
+            ChapterUtil.tintBookmarkDrawable(binding.chapterTitle, it)
             accentColor = it
         }
         if (locked) {
