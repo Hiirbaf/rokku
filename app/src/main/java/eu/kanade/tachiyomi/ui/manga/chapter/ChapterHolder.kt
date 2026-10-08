@@ -37,9 +37,6 @@ class ChapterHolder(
             adapter.delegate.startDownloadRange(flexibleAdapterPosition)
             true
         }
-        binding.expandedDownloadTarget.setOnTouchListener { _, event ->
-            binding.downloadButton.downloadButton.onTouchEvent(event)
-        }
     }
 
     fun bind(item: ChapterItem, manga: Manga) {
@@ -52,8 +49,7 @@ class ChapterHolder(
         binding.downloadButton.downloadButton.isVisible = !manga.isLocal() && !isLocked
         localSource = manga.isLocal()
 
-        val accent = adapter.delegate.themeColors().accent
-        ChapterUtil.setTextViewForChapter(binding.chapterTitle, item, hideStatus = isLocked, accent = accent)
+        ChapterUtil.setTextViewForChapter(binding.chapterTitle, item, hideStatus = isLocked)
 
         val statuses = mutableListOf<String>()
 
