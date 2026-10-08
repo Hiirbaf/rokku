@@ -37,6 +37,9 @@ class ChapterHolder(
             adapter.delegate.startDownloadRange(flexibleAdapterPosition)
             true
         }
+        binding.expandedDownloadTarget.setOnTouchListener { _, event ->
+            binding.downloadButton.downloadButton.onTouchEvent(event)
+        }
     }
 
     fun bind(item: ChapterItem, manga: Manga) {
