@@ -90,29 +90,29 @@
     <color name="backgroundStrawberries">#1a1716</color>
 
     <!-- Flat Lime Theme -->
-    <color name="primaryLime">#7CF7A5</color>
-    <color name="secondaryLime">#7CF7A5</color>
+    <color name="primaryLime">#4AF88A</color>
+    <color name="secondaryLime">#4AF88A</color>
     <color name="primaryVariantLime">@color/primaryVariantTachiyomi</color>
     <color name="onPrimaryLime">#043314</color>
     <color name="primaryInverseLime">#09933c</color>
     <color name="backgroundLime">#202125</color>
     <color name="secondaryVariantLime">#cbffe0</color>
     <color name="downloadBadgeLime">#304E51</color>
-    <color name="onSurfaceVariantLime">#BECABC</color>
-    <color name="surfaceContainerHighLime">#1C2920</color>
-    <color name="surfaceContainerHighestLime">#27382B</color>
-    <color name="outlineLime">#889487</color>
-    <color name="outlineVariantLime">#3F493F</color>
-    <color name="onPrimaryContainerLime">#FFFFFF</color>
-    <color name="onSecondaryContainerLime">#FFFFFF</color>
-    <color name="onTertiaryContainerLime">#FFFFFF</color>
-    <color name="surfaceContainerLowLime">#0E140F</color>
-    <color name="surfaceContainerLowestLime">#010201</color>
-    <color name="surfaceContainerLime">#121A14</color>
-    <color name="primaryContainerLime">#1A4227</color>
-    <color name="secondaryContainerLime">#324C3F</color>
-    <color name="surfaceDimLime">#0F1510</color>
-    <color name="surfaceBrightLime">#353B35</color>
+    <color name="onSurfaceVariantLime">@color/m3_sys_color_dark_on_surface_variant</color>
+    <color name="surfaceContainerHighLime">@color/m3_sys_color_dark_surface_container_high</color>
+    <color name="surfaceContainerHighestLime">@color/m3_sys_color_dark_surface_container_highest</color>
+    <color name="outlineLime">@color/m3_sys_color_dark_outline</color>
+    <color name="outlineVariantLime">@color/m3_sys_color_dark_outline_variant</color>
+    <color name="onPrimaryContainerLime">@color/m3_sys_color_dark_on_primary_container</color>
+    <color name="onSecondaryContainerLime">@color/m3_sys_color_dark_on_secondary_container</color>
+    <color name="onTertiaryContainerLime">@color/m3_sys_color_dark_on_tertiary_container</color>
+    <color name="surfaceContainerLowLime">@color/m3_sys_color_dark_surface_container_low</color>
+    <color name="surfaceContainerLowestLime">@color/m3_sys_color_dark_surface_container_lowest</color>
+    <color name="surfaceContainerLime">@color/primaryVariantLime</color>
+    <color name="primaryContainerLime">@color/primaryVariantLime</color>
+    <color name="secondaryContainerLime">#334AF88A</color>
+    <color name="surfaceDimLime">@color/m3_sys_color_dark_surface_dim</color>
+    <color name="surfaceBrightLime">@color/m3_sys_color_dark_surface_bright</color>
 
     <!-- Tako Theme -->
     <color name="primaryTako">#F3B375</color>
