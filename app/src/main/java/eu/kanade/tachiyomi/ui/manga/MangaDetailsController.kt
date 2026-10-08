@@ -137,6 +137,7 @@ import eu.kanade.tachiyomi.util.system.setCustomTitleAndMessage
 import eu.kanade.tachiyomi.util.system.timeSpanFromNow
 import eu.kanade.tachiyomi.util.system.toast
 import eu.kanade.tachiyomi.util.system.w
+import eu.kanade.tachiyomi.util.view.GroupedRowDivider
 import eu.kanade.tachiyomi.util.system.withUIContext
 import eu.kanade.tachiyomi.util.view.activityBinding
 import eu.kanade.tachiyomi.util.view.copyToClipboard
@@ -221,6 +222,7 @@ class MangaDetailsController :
     private var pageBackgroundColor: Int? = null
     private var accentColor: Int? = null
     private var accentOnColor: Int? = null
+    private var chapterDivider: GroupedRowDivider? = null
     private var headerColor: Int? = null
     private var toolbarIsColored = false
     private var snack: Snackbar? = null
@@ -350,6 +352,7 @@ class MangaDetailsController :
             null
         }
         accentOnColor = onColorToUse
+        chapterDivider?.accentColor = accentColor
     }
 
     private fun setCoverColorValue(colorToUse: Int? = null) {
@@ -397,7 +400,12 @@ class MangaDetailsController :
         } else {
             null
         }
-        binding.swipeRefresh.setBackgroundColor(pageBackgroundColor ?: baseBackground)
+        val bg = pageBackgroundColor ?: baseBackground
+        binding.root.setBackgroundColor(bg)
+        binding.swipeRefresh.setBackgroundColor(bg)
+        binding.recycler.setBackgroundColor(bg)
+        binding.tabletRecycler.setBackgroundColor(bg)
+        binding.tabletOverlay.setBackgroundColor(bg)
     }
 
     private fun setRefreshStyle() {
@@ -434,17 +442,18 @@ class MangaDetailsController :
     }
 
     /**
-     * Transplants [hueOf]'s hue onto [satAndLumOf]'s chroma/tone using HCT rather than HSL:
-     * HSL's saturation isn't perceptually uniform across hues, so a cool hue (blue/cyan) at the
-     * same numeric saturation as a warm one (red/orange) reads as noticeably less colorful --
-     * HCT's chroma is built to look equally vivid regardless of hue, so themed covers of any
-     * colour tint the page by a consistent amount instead of blues barely showing up at all.
-     */
+    * Transplants [hueOf]'s hue onto [satAndLumOf]'s saturation and lightness (HSL)
+    * so the result keeps the theme's own brightness and only shifts its tint
+    * towards the cover's.
+        */
     @ColorInt
     private fun makeColorFrom(@ColorInt hueOf: Int, @ColorInt satAndLumOf: Int): Int {
-        val base = Hct.fromInt(satAndLumOf)
-        val hue = Hct.fromInt(hueOf).hue
-        return Hct.from(hue, base.chroma, base.tone).toInt()
+        val hsl = FloatArray(3)
+        val hueHsl = FloatArray(3)
+        ColorUtils.colorToHSL(satAndLumOf, hsl)
+        ColorUtils.colorToHSL(hueOf, hueHsl)
+        hsl[0] = hueHsl[0]
+        return ColorUtils.HSLToColor(hsl)
     }
 
     private fun setItemColors() {
@@ -544,9 +553,14 @@ class MangaDetailsController :
         binding.recycler.adapter = adapter
         adapter?.isSwipeEnabled = true
         binding.recycler.layoutManager = LinearLayoutManagerAccurateOffset(view.context)
-        binding.recycler.addItemDecoration(
-            MangaDetailsDivider(view.context),
+        val divider = GroupedRowDivider(
+            view.context,
+            isGroupedRow = { it is ChapterHolder },
+            maskGapWithBackground = false,
         )
+        divider.accentColor = accentColor
+        chapterDivider = divider
+        binding.recycler.addItemDecoration(divider)
         binding.recycler.setHasFixedSize(true)
         val appbarHeight = activityBinding?.appBar?.attrToolbarHeight ?: 0
         val offset = 10.dpToPx
@@ -644,7 +658,7 @@ class MangaDetailsController :
         if (actionMode != null) {
             return
         }
-        val scrollingColor = headerColor ?: activity.getResourceColor(R.attr.colorPrimaryVariant)
+        val scrollingColor = headerColor ?: activity.getResourceColor(R.attr.colorSurfaceContainer)
         val topColor = ColorUtils.setAlphaComponent(scrollingColor, 0)
         val scrollingStatusColor =
             ColorUtils.setAlphaComponent(scrollingColor, (0.87f * 255).roundToInt())
@@ -791,10 +805,11 @@ class MangaDetailsController :
             }
         }
         accentOnColor = null
+        chapterDivider?.accentColor = accentColor
     }
 
     private fun setHeaderColorValueLegacy(colorToUse: Int, context: Context) {
-        val newColor = makeColorFrom(colorToUse, context.getResourceColor(R.attr.colorPrimaryVariant))
+        val newColor = makeColorFrom(colorToUse, context.getResourceColor(R.attr.colorSurfaceContainer))
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1 || context.isInNightMode()) {
             activity?.window?.navigationBarColor = ColorUtils.setAlphaComponent(
                 newColor,
@@ -807,7 +822,7 @@ class MangaDetailsController :
 
     private fun setStatusBarAndToolbar() {
         val topColor = Color.TRANSPARENT
-        val scrollingColor = headerColor ?: activity!!.getResourceColor(R.attr.colorPrimaryVariant)
+        val scrollingColor = headerColor ?: activity!!.getResourceColor(R.attr.colorSurfaceContainer)
         val scrollingStatusColor =
             ColorUtils.setAlphaComponent(scrollingColor, (0.87f * 255).roundToInt())
         activity?.window?.statusBarColor = if (toolbarIsColored) scrollingStatusColor else topColor
