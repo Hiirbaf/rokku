@@ -96,7 +96,6 @@
         <item name="android:windowLightNavigationBar" tools:targetApi="27">@bool/isLightMode</item>
     </style>
 
-    <!-- Optional theme-tinted switch tracks and outlines, applied per theme by getThemeWithExtras -->
     <style name="ThemeOverlay.Tachiyomi.TintedControls" parent="">
         <item name="colorSurfaceContainerHighest">@color/tachiyomi_surfaceContainerHighest</item>
         <item name="colorOutline">@color/tachiyomi_outline</item>

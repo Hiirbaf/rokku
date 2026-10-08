@@ -197,11 +197,6 @@ class ChapterHolder(
         applyCardBackground()
     }
 
-    /**
-     * Grouped cards tint a surface container with the cover's hue. Flat rows keep the original
-     * opaque front view, tinted with the page background, so it still masks startView/endView
-     * outside the swiped-away sliver (see #183).
-     */
     private fun applyCardBackground() {
         if (!adapter.preferences.groupedChapterCards().get()) {
             binding.chapterCard.setCardBackgroundColor(Color.TRANSPARENT)
