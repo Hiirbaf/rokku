@@ -155,7 +155,7 @@ class ChapterHolder(
     fun notifyStatus(status: Download.State, locked: Boolean, progress: Int, animated: Boolean = false) = with(
         binding.downloadButton.downloadButton,
     ) {
-        adapter.delegate.themeColors().accent?.let {
+        adapter.delegate.accentColor()?.let {
             binding.startView.setCardBackgroundColor(it)
 
             val color = binding.chapterCard.context.getResourceColor(R.attr.colorSurfaceContainerLowest)
@@ -169,7 +169,10 @@ class ChapterHolder(
             binding.bookmark.imageTintList = ColorStateList.valueOf(
                 context.getResourceColor(AR.attr.textColorPrimaryInverse),
             )
-            ChapterUtil.tintBookmarkDrawable(binding.chapterTitle, it)
+            TextViewCompat.setCompoundDrawableTintList(
+                binding.chapterTitle,
+                ColorStateList.valueOf(it),
+            )
             accentColor = it
         }
         if (locked) {
