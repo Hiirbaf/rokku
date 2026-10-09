@@ -5,7 +5,7 @@ import yokai.i18n.MR
 
 const val RICH_PRESENCE_TAG = "discord_rpc"
 
-val DOWNLOAD_BUTTON_LABEL = MR.strings.download
+val DOWNLOAD_BUTTON_LABEL = MR.strings.download_app
 const val DOWNLOAD_BUTTON_URL = "https://github.com/rokku-app/rokku/releases"
 
 val READ_CHAPTER_BUTTON_LABEL = MR.strings.read_chapter_button
