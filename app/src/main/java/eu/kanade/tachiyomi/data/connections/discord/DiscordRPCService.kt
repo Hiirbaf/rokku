@@ -264,10 +264,12 @@ class DiscordRPCService : Service() {
                 null
             }
 
+            val isReading = discordScreen == DiscordScreen.MANGA && !readerData.browsingOnly
+
             DiscordRpcManager.setActivity(
                 DiscordNativeActivity(
                     activityType = DiscordNativeActivity.TYPE_WATCHING,
-                    name = appName,
+                    name = if (isReading) details ?: appName else appName,
                     details = details,
                     state = state,
                     startTimestamp = since / 1000L,
@@ -279,7 +281,7 @@ class DiscordRPCService : Service() {
                     button1Url = button1Url,
                     button2Label = button2Label,
                     button2Url = button2Url,
-                    statusDisplayType = if (discordScreen == DiscordScreen.MANGA && !readerData.browsingOnly) {
+                    statusDisplayType = if (isReading) {
                         DiscordNativeActivity.STATUS_DISPLAY_DETAILS
                     } else {
                         DiscordNativeActivity.STATUS_DISPLAY_NAME
