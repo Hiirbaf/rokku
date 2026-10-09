@@ -19,7 +19,6 @@ data class DiscordNativeActivity(
     val button1Url: String? = null,
     val button2Label: String? = null,
     val button2Url: String? = null,
-    val statusDisplayType: Int = STATUS_DISPLAY_NAME,
 ) {
     companion object {
         const val TYPE_PLAYING = 0
@@ -28,8 +27,5 @@ data class DiscordNativeActivity(
         const val TYPE_WATCHING = 3
         const val TYPE_CUSTOM_STATUS = 4
         const val TYPE_COMPETING = 5
-        const val STATUS_DISPLAY_NAME = 0
-        const val STATUS_DISPLAY_STATE = 1
-        const val STATUS_DISPLAY_DETAILS = 2
     }
 }
