@@ -58,6 +58,8 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Fixed the action mode toolbar (shown while selecting items) overlapping a display cutout/notch in landscape
 - Fixed a source showing without its language tag in lists/search results when that language was disabled in settings
 - Fixed a rare crash installing an extension (`HttpException.getCode()`) caused by a missing proguard keep rule for this extensions-lib API class
+- Fixed extension installation getting stuck on "Installing" when using the Shizuku installer, including in release builds where R8 stripped the methods Shizuku calls externally (ported from Mihon [#3630](https://github.com/mihonapp/mihon/pull/3630) and [#3676](https://github.com/mihonapp/mihon/pull/3676))
+- Fixed Shizuku forks that use a different package name (e.g. a "hidden" build) being reported as "Shizuku is not running"; Shizuku is now detected by its API permission instead of its package name, following Mihon [#3565](https://github.com/mihonapp/mihon/pull/3565)
 - Fixed a crash installing an extension on devices whose DownloadManager doesn't expose a working `content://downloads` provider
 - Fixed a crash on app startup when restoring a tracker login dialog that was still open on the back stack after the process was killed and that tracker was no longer available
 - Fixed a crash changing a manga's cover when the picked image's URI had expired or become inaccessible

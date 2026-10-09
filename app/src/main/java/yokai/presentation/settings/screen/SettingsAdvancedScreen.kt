@@ -42,7 +42,7 @@ import eu.kanade.tachiyomi.util.CrashLogUtil
 import eu.kanade.tachiyomi.util.compose.LocalDialogHostState
 import eu.kanade.tachiyomi.util.compose.LocalRouter
 import eu.kanade.tachiyomi.util.compose.currentOrThrow
-import eu.kanade.tachiyomi.util.system.isPackageInstalled
+import eu.kanade.tachiyomi.util.system.isShizukuInstalled
 import eu.kanade.tachiyomi.util.system.launchIO
 import eu.kanade.tachiyomi.util.system.localeContext
 import eu.kanade.tachiyomi.util.system.openInBrowser
@@ -53,7 +53,6 @@ import kotlinx.collections.immutable.toImmutableMap
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.launch
 import okhttp3.Headers
-import rikka.sui.Sui
 import uy.kohesive.injekt.injectLazy
 import yokai.domain.base.BasePreferences
 import yokai.domain.simple
@@ -366,9 +365,7 @@ object SettingsAdvancedScreen : ComposableSettings() {
                         .toImmutableMap(),
                     onValueChanged = onChange@{
                         if (it == BasePreferences.ExtensionInstaller.SHIZUKU) {
-                            return@onChange if (!context.isPackageInstalled(ShizukuInstaller.shizukuPkgName) &&
-                                !Sui.isSui()
-                            ) {
+                            return@onChange if (!context.isShizukuInstalled) {
                                 scope.launch {
                                     alertDialog.simple {
                                         titleRes = MR.strings.ext_installer_shizuku
