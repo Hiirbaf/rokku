@@ -16,7 +16,7 @@ import eu.kanade.tachiyomi.data.connections.ConnectionsManager
 import eu.kanade.tachiyomi.data.notification.NotificationReceiver
 import eu.kanade.tachiyomi.data.notification.Notifications
 import eu.kanade.tachiyomi.ui.main.MainActivity
-import eu.kanade.tachiyomi.ui.reader.formatChapterNumber
+import eu.kanade.tachiyomi.util.chapter.ChapterUtil
 import eu.kanade.tachiyomi.util.system.notificationBuilder
 import eu.kanade.tachiyomi.util.system.launchIO
 import eu.kanade.tachiyomi.util.system.withIOContext
@@ -359,7 +359,7 @@ class DiscordRPCService : Service() {
             } else {
                 context.getString(
                     MR.strings.chapter_,
-                    formatChapterNumber(readerData.chapterNumber.toDouble()),
+                    ChapterUtil.formatChapterNumber(readerData.chapterNumber.toDouble()),
                 )
             }
 
