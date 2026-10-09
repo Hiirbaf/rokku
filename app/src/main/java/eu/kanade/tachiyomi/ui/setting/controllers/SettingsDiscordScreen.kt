@@ -353,7 +353,7 @@ object SettingsDiscordScreen : ComposableSettings() {
                     },
                     onClick = { showDialog = true },
                 ),
-                Preference.PreferenceItem.InfoPreference(stringResource(MR.strings.pref_discord_incognito_categories_details)),
+                Preference.PreferenceItem.TextPreference(title = stringResource(MR.strings.pref_discord_incognito_categories_details)),
             ),
             enabled = enabled,
         )
