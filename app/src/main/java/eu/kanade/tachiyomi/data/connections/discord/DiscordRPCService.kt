@@ -264,14 +264,14 @@ class DiscordRPCService : Service() {
                 null
             }
 
-            val isReading = discordScreen == DiscordScreen.MANGA && !readerData.browsingOnly
+            val isReading = discordScreen == DiscordScreen.MANGA && !readerData.browsingOnly && !readerData.incognitoMode
 
             DiscordRpcManager.setActivity(
                 DiscordNativeActivity(
                     activityType = DiscordNativeActivity.TYPE_WATCHING,
-                    name = if (isReading) details ?: appName else appName,
-                    details = details,
-                    state = state,
+                    name = if (isReading) readerData.mangaTitle ?: appName else appName,
+                    details = if (isReading) getChapterLabel(context, readerData) else details,
+                    state = if (isReading) getProgressText(context, readerData, progressMode) else state,
                     startTimestamp = since / 1000L,
                     largeImage = imageUrl,
                     largeText = appName,
@@ -281,11 +281,7 @@ class DiscordRPCService : Service() {
                     button1Url = button1Url,
                     button2Label = button2Label,
                     button2Url = button2Url,
-                    statusDisplayType = if (isReading) {
-                        DiscordNativeActivity.STATUS_DISPLAY_DETAILS
-                    } else {
-                        DiscordNativeActivity.STATUS_DISPLAY_NAME
-                    },
+                    statusDisplayType = DiscordNativeActivity.STATUS_DISPLAY_NAME,
                 ),
             )
         }
@@ -352,6 +348,34 @@ class DiscordRPCService : Service() {
             if (thumbnailUrl.startsWith("http://") || thumbnailUrl.startsWith("https://")) return thumbnailUrl
             if (!connectionsPreferences.discordUploadLocalCovers().get()) return fallback
             return DiscordImageUploader.resolveImageUrl(context, thumbnailUrl) ?: fallback
+        }
+
+        private fun getChapterLabel(context: Context, readerData: ReaderData): String? =
+        if (connectionsPreferences.useChapterTitles().get()) {
+            readerData.chapterTitle
+        } else {
+            context.getString(
+                MR.strings.chapter_,
+                ChapterUtil.formatChapterNumber(readerData.chapterNumber.toDouble()),
+            )
+        }
+
+        private fun getProgressText(context: Context, readerData: ReaderData, progressMode: Int): String? =
+        when (progressMode) {
+            DiscordProgressMode.PAGES -> {
+                val (currentPage, totalPages) = readerData.chapterProgress
+                context.getString(MR.strings.page_count, currentPage.toString(), totalPages.toString())
+            }
+            DiscordProgressMode.CHAPTERS -> if (readerData.totalChapters > 0) {
+                context.getString(
+                    MR.strings.chapter_progress,
+                    readerData.chapterIndex.toString(),
+                    readerData.totalChapters.toString(),
+                )
+            } else {
+                null
+            }
+            else -> null
         }
 
         private fun getFormattedChapterTitle(context: Context, readerData: ReaderData, progressMode: Int): String? {
