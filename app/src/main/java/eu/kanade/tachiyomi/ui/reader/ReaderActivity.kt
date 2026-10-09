@@ -170,6 +170,7 @@ import kotlinx.coroutines.withContext
 import uy.kohesive.injekt.injectLazy
 import yokai.domain.base.BasePreferences
 import yokai.domain.connections.service.ConnectionsPreferences
+import yokai.domain.connections.service.DiscordProgressMode
 import yokai.domain.ui.settings.ReaderPreferences
 import yokai.domain.ui.settings.ReaderPreferences.LandscapeCutoutBehaviour
 import yokai.i18n.MR
@@ -540,7 +541,7 @@ class ReaderActivity : BaseActivity<ReaderActivityBinding>() {
                 val position = chapters.indexOfFirst { it.chapter.id == chapter.id }
                 if (position >= 0) {
                     totalChapters = chapters.size
-                    chapterIndex = if (manga.sortDescending(preferences)) chapters.size - position else position + 1
+                    chapterIndex = if (manga.sortDescending) chapters.size - position else position + 1
                 }
             }
 
