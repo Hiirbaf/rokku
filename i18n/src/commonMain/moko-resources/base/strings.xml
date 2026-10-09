@@ -89,7 +89,7 @@
     <string name="pref_discord_show_progress">Show Progress</string>
     <string name="pref_discord_show_progress_summary">Display the current chapter progress</string>
     <string name="pref_discord_buttons">RPC Buttons</string>
-    <string name="pref_discord_show_buttons_summary">The buttons to show on the RPC.</string>
+    <string name="pref_discord_buttons_summary">The buttons to show on the RPC.</string>
     <string name="pref_discord_button_manga">View Manga/Chapter</string>
     <string name="tracking_guide">Tracking guide</string>
     <string name="action_ok">Ok</string>
