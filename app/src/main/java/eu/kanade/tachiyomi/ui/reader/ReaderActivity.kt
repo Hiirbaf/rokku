@@ -532,6 +532,18 @@ class ReaderActivity : BaseActivity<ReaderActivityBinding>() {
             isIncognitoModeForSource(manga.source)
 
         lifecycleScope.launchIO {
+            var chapterIndex = 0
+            var totalChapters = 0
+
+            if (connectionsPreferences.discordProgressMode().get() == DiscordProgressMode.CHAPTERS) {
+                val chapters = viewModel.getChapters()
+                val position = chapters.indexOfFirst { it.chapter.id == chapter.id }
+                if (position >= 0) {
+                    totalChapters = chapters.size
+                    chapterIndex = if (manga.sortDescending(preferences)) chapters.size - position else position + 1
+                }
+            }
+
             DiscordRPCService.updateReaderActivity(
                 context = this@ReaderActivity,
                 readerData = ReaderData(
@@ -540,6 +552,8 @@ class ReaderActivity : BaseActivity<ReaderActivityBinding>() {
                     mangaTitle = manga.title,
                     chapterNumber = chapter.chapter_number,
                     chapterProgress = Pair(currentPage, totalPages),
+                    chapterIndex = chapterIndex,
+                    totalChapters = totalChapters,
                     chapterTitle = chapter.preferredChapterName(this@ReaderActivity, manga, preferences),
                     thumbnailUrl = manga.thumbnail_url,
                     sourceUrl = viewModel.getChapterUrl(),
