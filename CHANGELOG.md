@@ -60,6 +60,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Fixed a crash on app startup when restoring a tracker login dialog that was still open on the back stack after the process was killed and that tracker was no longer available
 - Fixed a crash changing a manga's cover when the picked image's URI had expired or become inaccessible
 - Fixed the manga details screen occasionally freezing (ANR) when opening the favorite/categories popup, caused by a blocking database read on the main thread
+- Added a missing R8 keep rule for `JavaScriptEngine`, which could have its public API stripped in release/beta/nightly builds, breaking extensions that rely on it
 
 ### Other
 - Migrated FlexibleAdapter from JitPack to its MavenCentral release, removing a source of transient CI build failures when JitPack was unavailable

@@ -29,6 +29,7 @@
 -keep,allowoptimization class eu.kanade.tachiyomi.network.OkHttpExtensionsKt { public protected *; }
 -keep,allowoptimization class eu.kanade.tachiyomi.network.RequestsKt { public protected *; }
 -keep,allowoptimization class eu.kanade.tachiyomi.network.HttpException { public protected *; }
+-keep,allowoptimization class eu.kanade.tachiyomi.network.JavaScriptEngine { public protected *; }
 -keep,allowoptimization class eu.kanade.tachiyomi.AppInfo { public protected *; }
 
 -keep class com.hippo.image.** { *; }
