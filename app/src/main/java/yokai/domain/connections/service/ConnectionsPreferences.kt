@@ -45,7 +45,15 @@ class ConnectionsPreferences(
 
     fun discordShowButtons() = preferenceStore.getBoolean("pref_discord_show_buttons", true)
 
-    fun discordShowDownloadButton() = preferenceStore.getBoolean("pref_discord_show_download_button", true)
+    fun discordButtons() = preferenceStore.getStringSet(
+        "pref_discord_buttons",
+        buildSet {
+            if (discordShowButtons().get()) {
+                if (discordShowMangaButton().get()) add(DiscordButton.MANGA)
+                if (discordShowDownloadButton().get()) add(DiscordButton.DOWNLOAD)
+            }
+        },
+    )
 
     fun discordShowMangaButton() = preferenceStore.getBoolean("pref_discord_show_manga_button", true)
 
@@ -65,4 +73,9 @@ object DiscordProgressMode {
         const val OFF = 0
         const val PAGES = 1
         const val CHAPTERS = 2
+}
+
+object DiscordButton {
+    const val MANGA = "manga"
+    const val DOWNLOAD = "download"
 }
