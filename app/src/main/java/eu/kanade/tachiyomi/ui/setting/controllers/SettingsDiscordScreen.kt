@@ -291,9 +291,11 @@ object SettingsDiscordScreen : ComposableSettings() {
                     Preference.PreferenceItem.MultiSelectListPreference(
                         pref = connectionsPreferences.discordButtons(),
                         title = stringResource(MR.strings.pref_discord_buttons),
+                        subtitle = stringResource(MR.strings.pref_buttons_selected) + "\n" +
+                            stringResource(MR.strings.pref_discord_buttons_summary),
                         entries = persistentMapOf(
                             DiscordButton.MANGA to stringResource(MR.strings.pref_discord_button_manga),
-                            DiscordButton.DOWNLOAD to stringResource(MR.strings.pref_discord_button_download),
+                            DiscordButton.DOWNLOAD to stringResource(MR.strings.download_app),
                         ),
                     ),
                 ),
