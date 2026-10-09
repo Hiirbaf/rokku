@@ -124,7 +124,7 @@ object SettingsDiscordScreen : ComposableSettings() {
         val customMessagePref = connectionsPreferences.discordCustomMessage()
         val showAppIconPref = connectionsPreferences.discordShowAppIcon()
         val uploadLocalCoversPref = connectionsPreferences.discordUploadLocalCovers()
-        val showProgressPref = connectionsPreferences.discordShowProgress()
+        val progressModePref = connectionsPreferences.discordProgressMode()
         val showButtonsPref = connectionsPreferences.discordShowButtons()
         val showMangaButtonPref = connectionsPreferences.discordShowMangaButton()
         val showDownloadButtonPref = connectionsPreferences.discordShowDownloadButton()
@@ -275,10 +275,14 @@ object SettingsDiscordScreen : ComposableSettings() {
                         title = stringResource(MR.strings.show_chapters_titles_title),
                         subtitle = stringResource(MR.strings.show_chapters_titles_subtitle),
                     ),
-                    Preference.PreferenceItem.SwitchPreference(
-                        pref = showProgressPref,
+                    Preference.PreferenceItem.ListPreference(
+                        pref = progressModePref,
                         title = stringResource(MR.strings.pref_discord_show_progress),
-                        subtitle = stringResource(MR.strings.pref_discord_show_progress_summary),
+                        entries = persistentMapOf(
+                            DiscordProgressMode.OFF to stringResource(MR.strings.pref_discord_progress_off),
+                            DiscordProgressMode.PAGES to stringResource(MR.strings.pref_discord_progress_pages),
+                            DiscordProgressMode.CHAPTERS to stringResource(MR.strings.pref_discord_progress_chapters),
+                        ),
                     ),
                 ),
             ),
