@@ -270,7 +270,6 @@ void DiscordBridge::SetActivity(
         if (name) activity.SetName(std::string(name));
         if (state) activity.SetState(std::string(state));
         if (details) activity.SetDetails(std::string(details));
-        if (details) activity.SetDetails(std::string(details));
         activity.SetStatusDisplayType(static_cast<discordpp::StatusDisplayTypes>(statusDisplayType));
 
         if (startSecs > 0 || endSecs > 0) {
