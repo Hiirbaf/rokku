@@ -404,6 +404,7 @@ object DiscordRpcManager {
             activity.smallImage, activity.smallText,
             activity.button1Label, activity.button1Url,
             activity.button2Label, activity.button2Url,
+            activity.statusDisplayType,
         )
     }
 
