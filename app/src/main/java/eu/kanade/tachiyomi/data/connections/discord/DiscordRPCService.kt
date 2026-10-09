@@ -26,6 +26,7 @@ import kotlinx.coroutines.delay
 import yokai.domain.category.interactor.GetCategories
 import yokai.domain.category.models.Category.Companion.UNCATEGORIZED_ID
 import yokai.domain.connections.service.ConnectionsPreferences
+import yokai.domain.connections.service.DiscordProgressMode
 import yokai.i18n.MR
 import yokai.util.lang.getString
 import uy.kohesive.injekt.Injekt
@@ -203,7 +204,7 @@ class DiscordRPCService : Service() {
             val appName = context.getString(MR.strings.app_name)
             val customMessage = connectionsPreferences.discordCustomMessage().get()
             val showAppIcon = connectionsPreferences.discordShowAppIcon().get()
-            val showProgress = connectionsPreferences.discordShowProgress().get()
+            val progressMode = connectionsPreferences.discordProgressMode().get()
             val showButtons = connectionsPreferences.discordShowButtons().get()
             val showMangaButton = connectionsPreferences.discordShowMangaButton().get()
             val showDownloadButton = connectionsPreferences.discordShowDownloadButton().get()
@@ -218,7 +219,7 @@ class DiscordRPCService : Service() {
             )
 
             val chapterText = if (discordScreen == DiscordScreen.MANGA && !readerData.browsingOnly) {
-                getFormattedChapterTitle(context, readerData, showProgress)
+                getFormattedChapterTitle(context, readerData, progressMode)
             } else {
                 null
             }
@@ -312,6 +313,8 @@ class DiscordRPCService : Service() {
                     mangaTitle = mangaTitle,
                     chapterNumber = readerData.chapterNumber,
                     chapterProgress = readerData.chapterProgress,
+                    chapterIndex = readerData.chapterIndex,
+                    totalChapters = readerData.totalChapters,
                     chapterTitle = readerData.chapterTitle,
                     thumbnailUrl = mangaThumbnail,
                     sourceUrl = sourceUrl,
@@ -344,14 +347,20 @@ class DiscordRPCService : Service() {
             return DiscordImageUploader.resolveImageUrl(context, thumbnailUrl) ?: fallback
         }
 
-        private fun getFormattedChapterTitle(context: Context, readerData: ReaderData, showProgress: Boolean): String? {
+        private fun getFormattedChapterTitle(context: Context, readerData: ReaderData, progressMode: Int): String? {
             if (readerData.incognitoMode) return null
 
-            val pageSuffix = if (showProgress) {
-                val (currentPage, totalPages) = readerData.chapterProgress
-                " (${context.getString(MR.strings.page_count, currentPage.toString(), totalPages.toString())})"
-            } else {
-                ""
+            val progressSuffix = when (progressMode) {
+                DiscordProgressMode.PAGES -> {
+                    val (currentPage, totalPages) = readerData.chapterProgress
+                    " (${context.getString(MR.strings.page_count, currentPage.toString(), totalPages.toString())})"
+                }
+                DiscordProgressMode.CHAPTERS -> if (readerData.totalChapters > 0) {
+                    " (${context.getString(MR.strings.chapter_progress, readerData.chapterIndex.toString(), readerData.totalChapters.toString())})"
+                } else {
+                    ""
+                }
+                else -> ""
             }
 
             val chapterLabel = if (connectionsPreferences.useChapterTitles().get()) {
@@ -363,7 +372,7 @@ class DiscordRPCService : Service() {
                 )
             }
 
-            return chapterLabel?.let { "$it$pageSuffix" }
+            return chapterLabel?.let { "$it$progressSuffix" }
         }
 
         private fun sanitizeField(value: String?): String? {
