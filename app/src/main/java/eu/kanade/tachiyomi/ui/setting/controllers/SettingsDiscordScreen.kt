@@ -235,7 +235,7 @@ object SettingsDiscordScreen : ComposableSettings() {
                 enabled = enableDRPC,
             ),
             Preference.PreferenceGroup(
-                title = stringResource(MR.strings.pref_discord_presence),
+                title = stringResource(MR.strings.pref_category_discord_presence),
                 enabled = enableDRPC,
                 preferenceItems = persistentListOf(
                     Preference.PreferenceItem.SwitchPreference(
@@ -283,7 +283,7 @@ object SettingsDiscordScreen : ComposableSettings() {
                 ),
             ),
             Preference.PreferenceGroup(
-                title = stringResource(MR.strings.pref_discord_buttons),
+                title = stringResource(MR.strings.pref_category_discord_buttons),
                 enabled = enableDRPC,
                 preferenceItems = persistentListOf(
                     Preference.PreferenceItem.SwitchPreference(
