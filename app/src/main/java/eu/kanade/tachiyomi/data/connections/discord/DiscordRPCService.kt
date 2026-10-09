@@ -26,6 +26,7 @@ import kotlinx.coroutines.delay
 import yokai.domain.category.interactor.GetCategories
 import yokai.domain.category.models.Category.Companion.UNCATEGORIZED_ID
 import yokai.domain.connections.service.ConnectionsPreferences
+import yokai.domain.connections.service.DiscordButton
 import yokai.domain.connections.service.DiscordProgressMode
 import yokai.i18n.MR
 import yokai.util.lang.getString
@@ -205,9 +206,9 @@ class DiscordRPCService : Service() {
             val customMessage = connectionsPreferences.discordCustomMessage().get()
             val showAppIcon = connectionsPreferences.discordShowAppIcon().get()
             val progressMode = connectionsPreferences.discordProgressMode().get()
-            val showButtons = connectionsPreferences.discordShowButtons().get()
-            val showMangaButton = connectionsPreferences.discordShowMangaButton().get()
-            val showDownloadButton = connectionsPreferences.discordShowDownloadButton().get()
+            val buttons = connectionsPreferences.discordButtons().get()
+            val showMangaButton = DiscordButton.MANGA in buttons
+            val showDownloadButton = DiscordButton.DOWNLOAD in buttons
 
             val details = sanitizeField(
                 when {
@@ -234,7 +235,7 @@ class DiscordRPCService : Service() {
 
             val imageUrl = resolveDisplayImage(context, readerData, discordScreen.imageUrl)
 
-            val button1Label = if (showButtons && showMangaButton && readerData.sourceUrl != null) {
+            val button1Label = if (showMangaButton && readerData.sourceUrl != null) {
                 if (discordScreen == DiscordScreen.MANGA && !readerData.browsingOnly) {
                     context.getString(READ_CHAPTER_BUTTON_LABEL)
                 } else {
@@ -246,19 +247,19 @@ class DiscordRPCService : Service() {
                 null
             }
 
-            val button1Url = if (showButtons && showMangaButton && readerData.sourceUrl != null) {
+            val button1Url = if (showMangaButton && readerData.sourceUrl != null) {
                 readerData.sourceUrl
             } else {
                 null
             }
 
-            val button2Label = if (showButtons && showDownloadButton) {
+            val button2Label = if (showDownloadButton) {
                 context.getString(DOWNLOAD_BUTTON_LABEL)
             } else {
                 null
             }
 
-            val button2Url = if (showButtons && showDownloadButton) {
+            val button2Url = if (showDownloadButton) {
                 DOWNLOAD_BUTTON_URL
             } else {
                 null
