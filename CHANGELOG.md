@@ -63,6 +63,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Added a missing R8 keep rule for `JavaScriptEngine`, which could have its public API stripped in release/beta/nightly builds, breaking extensions that rely on it
 - Fixed the webtoon reader leaving a gap after zooming in once the window had been resized (split-screen, foldables), caused by only measuring its height once
 - Fixed Global Search (and the migration search) occasionally dropping a source's results from the list when several sources finished searching at nearly the same time
+- Fixed a download notification occasionally showing a leftover error's styling or category after a warning, pause, or new download, caused by all download notification states sharing one builder
 
 ### Other
 - Migrated FlexibleAdapter from JitPack to its MavenCentral release, removing a source of transient CI build failures when JitPack was unavailable

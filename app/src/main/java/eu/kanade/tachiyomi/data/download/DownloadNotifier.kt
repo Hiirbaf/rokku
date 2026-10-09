@@ -123,6 +123,7 @@ internal class DownloadNotifier(private val context: Context) {
             }
             setProgress(0, 0, true)
             setStyle(null)
+            setCategory(null)
             setGroup(Notifications.GROUP_DOWNLOADS)
         }
         return notification
@@ -174,6 +175,7 @@ internal class DownloadNotifier(private val context: Context) {
                 setContentText(downloadingProgressText)
             }
             setStyle(null)
+            setCategory(null)
             setProgress(download.pages!!.size, download.downloadedImages, false)
             setGroup(Notifications.GROUP_DOWNLOADS)
 
@@ -193,6 +195,8 @@ internal class DownloadNotifier(private val context: Context) {
             setContentTitle(context.getString(MR.strings.paused))
             setContentText(context.getString(MR.strings.download_paused))
             setSmallIcon(R.drawable.ic_pause_24dp)
+            setStyle(null)
+            setCategory(null)
             setAutoCancel(false)
             setOngoing(false)
             setProgress(0, 0, false)
@@ -234,6 +238,8 @@ internal class DownloadNotifier(private val context: Context) {
             setContentText(reason)
             color = ContextCompat.getColor(context, R.color.secondaryTachiyomi)
             setSmallIcon(R.drawable.ic_warning_white_24dp)
+            setStyle(null)
+            setCategory(null)
             setOngoing(false)
             setAutoCancel(true)
             clearActions()
