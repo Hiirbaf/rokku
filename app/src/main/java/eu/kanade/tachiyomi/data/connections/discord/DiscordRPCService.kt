@@ -281,7 +281,6 @@ class DiscordRPCService : Service() {
                     button1Url = button1Url,
                     button2Label = button2Label,
                     button2Url = button2Url,
-                    statusDisplayType = DiscordNativeActivity.STATUS_DISPLAY_NAME,
                 ),
             )
         }
