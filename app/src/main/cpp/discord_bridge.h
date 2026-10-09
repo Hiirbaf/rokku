@@ -22,8 +22,7 @@ public:
         const char* largeImage, const char* largeText,
         const char* smallImage, const char* smallText,
         const char* button1Label, const char* button1Url,
-        const char* button2Label, const char* button2Url,
-        int statusDisplayType
+        const char* button2Label, const char* button2Url
     );
     void SetOnlineStatus(int statusType);
     void Clear();
