@@ -8,6 +8,7 @@ import android.util.AttributeSet
 import android.view.HapticFeedbackConstants
 import android.view.MotionEvent
 import android.view.ViewConfiguration
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.animation.DecelerateInterpolator
 import androidx.recyclerview.widget.RecyclerView
 import eu.kanade.tachiyomi.ui.reader.viewer.GestureDetectorWithLongTap
@@ -29,7 +30,6 @@ open class WebtoonRecyclerView @JvmOverloads constructor(
     private var halfHeight = 0
     var originalHeight = 0
         private set
-    private var heightSet = false
     private var firstVisibleItemPosition = 0
     private var lastVisibleItemPosition = 0
     private var currentScale = DEFAULT_RATE
@@ -54,9 +54,9 @@ open class WebtoonRecyclerView @JvmOverloads constructor(
     override fun onMeasure(widthSpec: Int, heightSpec: Int) {
         halfWidth = MeasureSpec.getSize(widthSpec) / 2
         halfHeight = MeasureSpec.getSize(heightSpec) / 2
-        if (!heightSet) {
+        // While zoomed out the height is set by zooming, not by the window
+        if (layoutParams?.height == MATCH_PARENT) {
             originalHeight = MeasureSpec.getSize(heightSpec)
-            heightSet = true
         }
         super.onMeasure(widthSpec, heightSpec)
     }
@@ -193,12 +193,13 @@ open class WebtoonRecyclerView @JvmOverloads constructor(
 
         setScaleRate(currentScale)
 
-        layoutParams.height = if (currentScale < 1) {
-            (originalHeight / currentScale).toInt()
+        if (currentScale < 1) {
+            layoutParams.height = (originalHeight / currentScale).toInt()
+            halfHeight = layoutParams.height / 2
         } else {
-            originalHeight
+            layoutParams.height = MATCH_PARENT
+            halfHeight = originalHeight / 2
         }
-        halfHeight = layoutParams.height / 2
 
         if (currentScale != DEFAULT_RATE) {
             x = getPositionX(x)
