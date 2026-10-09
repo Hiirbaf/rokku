@@ -111,6 +111,7 @@ object SettingsDiscordScreen : ComposableSettings() {
         val connectionsManager = remember { Injekt.get<ConnectionsManager>() }
         val enableDRPCPref = connectionsPreferences.enableDiscordRPC()
         val useChapterTitlesPref = connectionsPreferences.useChapterTitles()
+        val discordRPCStatus = connectionsPreferences.discordRPCStatus()
 
         var activeAccount by remember {
             mutableStateOf(
@@ -234,19 +235,35 @@ object SettingsDiscordScreen : ComposableSettings() {
                 enabled = enableDRPC,
             ),
             Preference.PreferenceGroup(
-                title = stringResource(MR.strings.pref_category_discord_customization),
+                title = stringResource(MR.strings.pref_discord_presence),
                 enabled = enableDRPC,
                 preferenceItems = persistentListOf(
-                    Preference.PreferenceItem.TextPreference(
-                        title = stringResource(MR.strings.pref_discord_custom_message),
-                        subtitle = stringResource(MR.strings.pref_discord_custom_message_summary),
-                        onClick = { showCustomMessageDialog = true },
-                    ),
                     Preference.PreferenceItem.SwitchPreference(
                         pref = showAppIconPref,
                         title = stringResource(MR.strings.pref_discord_show_app_icon),
                         subtitle = stringResource(MR.strings.pref_discord_show_app_icon_summary),
                     ),
+                    Preference.PreferenceItem.TextPreference(
+                        title = stringResource(MR.strings.pref_discord_custom_message),
+                        subtitle = stringResource(MR.strings.pref_discord_custom_message_summary),
+                        onClick = { showCustomMessageDialog = true },
+                    ),
+                    Preference.PreferenceItem.ListPreference(
+                        pref = discordRPCStatus,
+                        title = stringResource(MR.strings.pref_discord_status),
+                        entries = persistentMapOf(
+                            -1 to stringResource(MR.strings.pref_discord_dnd),
+                            0 to stringResource(MR.strings.pref_discord_idle),
+                            1 to stringResource(MR.strings.pref_discord_online),
+                        ),
+                        enabled = enableDRPC,
+                    ),
+                ),
+            ),
+            Preference.PreferenceGroup(
+                title = stringResource(MR.strings.pref_category_discord_customization),
+                enabled = enableDRPC,
+                preferenceItems = persistentListOf(
                     Preference.PreferenceItem.SwitchPreference(
                         pref = uploadLocalCoversPref,
                         title = stringResource(MR.strings.pref_discord_upload_local_covers),
@@ -299,7 +316,6 @@ object SettingsDiscordScreen : ComposableSettings() {
         val getCategories = remember { Injekt.get<GetCategories>() }
         val allCategories by getCategories.subscribe().collectAsState(initial = runBlocking { getCategories.await() })
 
-        val discordRPCStatus = connectionsPreferences.discordRPCStatus()
         val discordRPCIncognitoPref = connectionsPreferences.discordRPCIncognito()
         val discordRPCIncognitoCategoriesPref = connectionsPreferences.discordRPCIncognitoCategories()
 
@@ -326,16 +342,6 @@ object SettingsDiscordScreen : ComposableSettings() {
         return Preference.PreferenceGroup(
             title = stringResource(MR.strings.pref_discord_privacy),
             preferenceItems = persistentListOf(
-                Preference.PreferenceItem.ListPreference(
-                    pref = discordRPCStatus,
-                    title = stringResource(MR.strings.pref_discord_status),
-                    entries = persistentMapOf(
-                        -1 to stringResource(MR.strings.pref_discord_dnd),
-                        0 to stringResource(MR.strings.pref_discord_idle),
-                        1 to stringResource(MR.strings.pref_discord_online),
-                    ),
-                    enabled = enabled,
-                ),
                 Preference.PreferenceItem.SwitchPreference(
                     pref = discordRPCIncognitoPref,
                     title = stringResource(MR.strings.pref_discord_incognito),
