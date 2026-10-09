@@ -39,6 +39,7 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastMap
 import yokai.domain.connections.service.ConnectionsPreferences
+import yokai.domain.connections.service.DiscordButton
 import yokai.domain.connections.service.DiscordProgressMode
 import yokai.presentation.component.preference.Preference
 import yokai.presentation.component.preference.widget.TriStateListDialog
@@ -126,10 +127,6 @@ object SettingsDiscordScreen : ComposableSettings() {
         val showAppIconPref = connectionsPreferences.discordShowAppIcon()
         val uploadLocalCoversPref = connectionsPreferences.discordUploadLocalCovers()
         val progressModePref = connectionsPreferences.discordProgressMode()
-        val showButtonsPref = connectionsPreferences.discordShowButtons()
-        val showMangaButtonPref = connectionsPreferences.discordShowMangaButton()
-        val showDownloadButtonPref = connectionsPreferences.discordShowDownloadButton()
-        val showButtons by showButtonsPref.collectAsState()
 
         var showCustomMessageDialog by rememberSaveable { mutableStateOf(false) }
         var tempCustomMessage by rememberSaveable { mutableStateOf(customMessagePref.get()) }
@@ -291,22 +288,13 @@ object SettingsDiscordScreen : ComposableSettings() {
                 title = stringResource(MR.strings.pref_category_discord_buttons),
                 enabled = enableDRPC,
                 preferenceItems = persistentListOf(
-                    Preference.PreferenceItem.SwitchPreference(
-                        pref = showButtonsPref,
-                        title = stringResource(MR.strings.pref_discord_show_buttons),
-                        subtitle = stringResource(MR.strings.pref_discord_show_buttons_summary),
-                    ),
-                    Preference.PreferenceItem.SwitchPreference(
-                        pref = showMangaButtonPref,
-                        title = stringResource(MR.strings.pref_discord_show_manga_button),
-                        subtitle = stringResource(MR.strings.pref_discord_show_manga_button_summary),
-                        enabled = showButtons,
-                    ),
-                    Preference.PreferenceItem.SwitchPreference(
-                        pref = showDownloadButtonPref,
-                        title = stringResource(MR.strings.pref_discord_show_download_button),
-                        subtitle = stringResource(MR.strings.pref_discord_show_download_button_summary),
-                        enabled = showButtons,
+                    Preference.PreferenceItem.MultiSelectListPreference(
+                        pref = connectionsPreferences.discordButtons(),
+                        title = stringResource(MR.strings.pref_discord_buttons),
+                        entries = persistentMapOf(
+                            DiscordButton.MANGA to stringResource(MR.strings.pref_discord_button_manga),
+                            DiscordButton.DOWNLOAD to stringResource(MR.strings.pref_discord_button_download),
+                        ),
                     ),
                 ),
             ),
