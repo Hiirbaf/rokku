@@ -34,6 +34,8 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Fixed a rare crash in Recents ("Two different ViewHolders have the same stable ID") caused by a section header's id colliding with a chapter row's
 - Fixed a page failing to render in the paged reader when a double-page spread couldn't be decoded for merging
 - Fixed the library update job silently failing (and spamming Crashlytics) when the OS refused to promote it to a foreground service
+- Stopped reporting an extension failing to decode a site's changed API response (missing JSON field) or failing to find its reader signer bindings to Crashlytics, since neither is actionable from the app
+- Fixed the app freezing (ANR) while installing an extension when the system download provider was slow to respond
 - Fixed a crash opening a chapter in the webtoon reader when its saved resume position was out of range
 - Fixed a crash sharing a reader page when its cached image had already been evicted from disk
 - Fixed a crash when saving reading history for a chapter that was removed from the library in the meantime (chapter list refreshed, manga removed)

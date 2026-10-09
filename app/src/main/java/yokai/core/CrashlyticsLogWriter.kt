@@ -107,7 +107,7 @@ class CrashlyticsLogWriter : LogWriter() {
      * app's control: content requiring a paid/premium account on the source's site ("Premium
      * chapter. Not available.", same category as "Chapter locked" above), a chapter whose
      * content is wrapped in a scheme the extension couldn't unwrap ("Chapter encryption
-     * unavailable"), and a self-hosted bridge extension (e.g. Tachidesk) that isn't configured
+     * unavailable", "Reader signer bindings not found"), and a self-hosted bridge extension (e.g. Tachidesk) that isn't configured
      * yet ("Set Tachidesk server url in extension settings", same category as "Missing username
      * or password" above) - none of these reflect a Rokku bug. Also skips a source's own search
      * backend erroring out on a malformed query, whether as an HTTP 400 (HttpException) or as a
@@ -116,7 +116,8 @@ class CrashlyticsLogWriter : LogWriter() {
      *
      * Also skips a `multisrc` theme shared by several Keiyoushi extensions failing to decode a
      * site's response into one of its DTOs (MissingFieldException with a serial name under
-     * "eu.kanade.tachiyomi.multisrc.") - the site's own API/markup changed; not a Rokku bug.
+     * "eu.kanade.tachiyomi.multisrc.", or a single extension's own DTO under
+     * "eu.kanade.tachiyomi.extension.") - the site's own API/markup changed; not a Rokku bug.
      * Also skips Hikka's OAuth token preference round-tripping through `saveOAuth(null)` (which
      * encodes the literal text "null") and then failing to decode as an HKOAuth object on the
      * next `loadOAuth()` - same already-handled "user never logged in" case as the EOF one above,
@@ -203,6 +204,7 @@ class CrashlyticsLogWriter : LogWriter() {
                     current.message == "Missing username or password" ||
                     current.message == "Open webview to refresh token" ||
                     current.message == "Premium chapter. Not available." ||
+                    current.message == "Reader signer bindings not found" ||
                     current.message?.startsWith("stream was reset: ") == true ||
                     current.message?.startsWith("Too many follow-up requests") == true ||
                     current.message?.startsWith("unexpected end of stream on ") == true ||
@@ -232,7 +234,9 @@ class CrashlyticsLogWriter : LogWriter() {
                     current.message?.contains("JSON input: null") == true ||
                     // A multisrc theme (shared by several extensions) failing to decode a
                     // site's response into its own DTO - the site's API/markup changed.
-                    current.message?.contains("eu.kanade.tachiyomi.multisrc.") == true
+                    current.message?.contains("eu.kanade.tachiyomi.multisrc.") == true ||
+                    // Same for a single extension's own DTO.
+                    current.message?.contains("serial name 'eu.kanade.tachiyomi.extension.") == true
                 ) {
                     return true
                 }
