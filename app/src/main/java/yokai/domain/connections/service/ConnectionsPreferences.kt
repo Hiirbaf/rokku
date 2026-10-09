@@ -41,16 +41,7 @@ class ConnectionsPreferences(
 
     fun discordShowProgress() = preferenceStore.getBoolean("pref_discord_show_progress", true)
 
-    fun discordProgressMode() = preferenceStore.getInt(
-        "pref_discord_progress_mode",
-        if (discordShowProgress().get()) DiscordProgressMode.PAGES else DiscordProgressMode.OFF,
-    )
-
-    object DiscordProgressMode {
-        const val OFF = 0
-        const val PAGES = 1
-        const val CHAPTERS = 2
-    }
+    fun discordProgressMode() = preferenceStore.getInt("pref_discord_progress_mode", if (discordShowProgress().get()) DiscordProgressMode.PAGES else DiscordProgressMode.OFF)
 
     fun discordShowButtons() = preferenceStore.getBoolean("pref_discord_show_buttons", true)
 
@@ -68,4 +59,10 @@ class ConnectionsPreferences(
 
         private fun connectionsToken(syncId: Long) = "connection_token_$syncId"
     }
+}
+
+object DiscordProgressMode {
+        const val OFF = 0
+        const val PAGES = 1
+        const val CHAPTERS = 2
 }
