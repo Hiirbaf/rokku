@@ -243,8 +243,7 @@ void DiscordBridge::SetActivity(
     const char* largeImage, const char* largeText,
     const char* smallImage, const char* smallText,
     const char* button1Label, const char* button1Url,
-    const char* button2Label, const char* button2Url,
-    int statusDisplayType
+    const char* button2Label, const char* button2Url
 ) {
     std::lock_guard<std::mutex> lock(mutex_);
     if (!client_) { LOGW("SetActivity: no client, skipping"); return; }
@@ -270,7 +269,6 @@ void DiscordBridge::SetActivity(
         if (name) activity.SetName(std::string(name));
         if (state) activity.SetState(std::string(state));
         if (details) activity.SetDetails(std::string(details));
-        activity.SetStatusDisplayType(static_cast<discordpp::StatusDisplayTypes>(statusDisplayType));
 
         if (startSecs > 0 || endSecs > 0) {
             discordpp::ActivityTimestamps ts;
@@ -583,8 +581,7 @@ Java_eu_kanade_tachiyomi_data_connections_discord_DiscordRpcManager_nativeSetAct
     jstring largeImage, jstring largeText,
     jstring smallImage, jstring smallText,
     jstring button1Label, jstring button1Url,
-    jstring button2Label, jstring button2Url,
-    jint statusDisplayType
+    jstring button2Label, jstring button2Url
 ) {
     const char* cName = name ? env->GetStringUTFChars(name, nullptr) : nullptr;
     const char* cState = state ? env->GetStringUTFChars(state, nullptr) : nullptr;
@@ -603,8 +600,7 @@ Java_eu_kanade_tachiyomi_data_connections_discord_DiscordRpcManager_nativeSetAct
         cName, cState, cDetails,
         static_cast<int64_t>(startSecs), static_cast<int64_t>(endSecs),
         cLargeImage, cLargeText, cSmallImage, cSmallText,
-        cBtn1Label, cBtn1Url, cBtn2Label, cBtn2Url,
-        static_cast<int>(statusDisplayType)
+        cBtn1Label, cBtn1Url, cBtn2Label, cBtn2Url
     );
 
     if (cName) env->ReleaseStringUTFChars(name, cName);
