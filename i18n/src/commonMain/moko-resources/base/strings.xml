@@ -62,10 +62,11 @@
     <string name="connected">Connected</string>
     
     <!-- Discord section -->
+    <string name="download_app">Download App</string>
     <string name="view_series">View %1$s</string>
+    <string name="read_chapter_button">Read Chapter</string>
     <string name="page_count">Page %1$s/%2$s</string>
     <string name="browsing">Browsing</string>
-    <string name="read_chapter_button">Read Chapter</string>
     <string name="scrolling">Scrolling through</string>
     <string name="messing">Messing around with</string>
     
@@ -86,6 +87,7 @@
     <string name="pref_discord_show_download_button_summary">Displays a button to download the app</string>
     <string name="pref_discord_show_manga_button">Show Manga/Chapter Button</string>
     <string name="pref_discord_show_manga_button_summary">Displays a button to open the link to the current manga/chapter.</string>
+    <string name="pref_discord_presence">Presence</string>
     <string name="tracking_guide">Tracking guide</string>
     <string name="action_ok">Ok</string>
 
