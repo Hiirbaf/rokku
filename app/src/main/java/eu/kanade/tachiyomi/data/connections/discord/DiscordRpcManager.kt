@@ -133,6 +133,7 @@ object DiscordRpcManager {
         button1Url: String?,
         button2Label: String?,
         button2Url: String?,
+        statusDisplayType: Int,
     )
     private external fun nativeSetOnlineStatus(statusType: Int)
     private external fun nativeClear()
