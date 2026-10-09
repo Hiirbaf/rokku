@@ -39,9 +39,7 @@ class ConnectionsPreferences(
 
     fun discordShowAppIcon() = preferenceStore.getBoolean("pref_discord_show_app_icon", true)
 
-    fun discordShowProgress() = preferenceStore.getBoolean("pref_discord_show_progress", true)
-
-    fun discordProgressMode() = preferenceStore.getInt("pref_discord_progress_mode", if (discordShowProgress().get()) DiscordProgressMode.PAGES else DiscordProgressMode.OFF)
+    fun discordProgressMode() = preferenceStore.getInt("pref_discord_progress_mode", DiscordProgressMode.PAGES)
 
     fun discordShowButtons() = preferenceStore.getBoolean("pref_discord_show_buttons", true)
 
