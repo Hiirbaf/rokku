@@ -64,7 +64,7 @@ import coil3.compose.AsyncImage
 import eu.kanade.tachiyomi.data.connections.discord.DiscordAccount
 import eu.kanade.tachiyomi.data.connections.discord.DiscordRpcManager
 import eu.kanade.tachiyomi.data.connections.discord.DiscordTokenStore
- import android.R as AR
+import android.R as AR
 
 object SettingsDiscordScreen : ComposableSettings() {
 
