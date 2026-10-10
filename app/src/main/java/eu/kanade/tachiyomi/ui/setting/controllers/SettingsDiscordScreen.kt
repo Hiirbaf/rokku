@@ -230,7 +230,7 @@ object SettingsDiscordScreen : ComposableSettings() {
             ) {
                 DiscordAccountRow(
                     account = activeAccount!!,
-                    showConnected = enableDRPC
+                    showConnected = enableDRPC,
                     onLogout = {
                         dialog = LogoutConnectionsDialog(connectionsManager.discord)
                     },
@@ -263,7 +263,7 @@ object SettingsDiscordScreen : ComposableSettings() {
             getRPCIncognitoGroup(
                 connectionsPreferences = connectionsPreferences,
                 enabled = enableDRPC,
-            ),
+            ).asCard(),
             Preference.PreferenceGroup(
                 title = stringResource(MR.strings.pref_category_discord_presence),
                 enabled = enableDRPC,
