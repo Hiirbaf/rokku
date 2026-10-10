@@ -29,10 +29,9 @@
     <string name="invalid_location_generic">Invalid location</string>
 
     <!--Models-->
-    <string name="action_web_view" translatable="false">WebView</string>
-    <string name="pref_category_connections">Connections</string>
 
     <!-- Connections section -->
+    <string name="pref_category_connections">Connections</string>
     <string name="special_services">Special Services</string>
     <string name="connections_discord">Discord</string>
     <string name="connections_discord_info">Rokku connects to Discord using the official Discord Social SDK.\n\nYour account is authorized through the Discord app itself — Rokku never receives or stores your Discord password.</string>
