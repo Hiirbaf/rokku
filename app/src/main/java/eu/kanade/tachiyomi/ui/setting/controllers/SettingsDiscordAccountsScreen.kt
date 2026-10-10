@@ -190,10 +190,6 @@ fun DiscordAccountsDialog(
             }
         }
     }
-
-    LaunchedEffect(Unit) {
-        screenModel.refreshAccounts()
-    }
 }
 
 class DiscordAccountsScreenModel : StateScreenModel<DiscordAccountsScreenState>(
@@ -208,8 +204,6 @@ class DiscordAccountsScreenModel : StateScreenModel<DiscordAccountsScreenState>(
             connectionsPreferences.discordAccounts().changes()
                 .collect { loadAccounts() }
         }
-
-        loadAccounts()
     }
 
     private fun loadAccounts() {
@@ -252,7 +246,6 @@ class DiscordAccountsScreenModel : StateScreenModel<DiscordAccountsScreenState>(
 
             runCatching {
                 discord.removeAccount(accountId)
-                loadAccounts()
             }.onFailure { e ->
                 mutableState.update {
                     it.copy(
@@ -278,7 +271,6 @@ class DiscordAccountsScreenModel : StateScreenModel<DiscordAccountsScreenState>(
 
             runCatching {
                 discord.setActiveAccount(accountId)
-                loadAccounts()
             }.onSuccess {
                 onSuccess()
             }.onFailure { e ->
