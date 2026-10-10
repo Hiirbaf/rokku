@@ -69,8 +69,6 @@ fun DiscordAccountsDialog(
     val screenModel = remember { DiscordAccountsScreenModel() }
     val state by screenModel.state.collectAsState()
 
-    val noAccountsFoundString = stringResource(MR.strings.no_accounts_found)
-
     var isDiscordLoggingIn by remember { mutableStateOf(false) }
 
     Dialog(
@@ -229,7 +227,8 @@ class DiscordAccountsScreenModel : StateScreenModel<DiscordAccountsScreenState>(
                 mutableState.update {
                     it.copy(
                         accounts = accounts,
-                        isLoading = false)
+                        isLoading = false,
+                    )
                 }
             }.onFailure { e ->
                 mutableState.update {
