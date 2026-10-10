@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
-import androidx.core.graphics.ColorUtils
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.core.widget.TextViewCompat
@@ -22,6 +21,7 @@ import eu.kanade.tachiyomi.util.chapter.ChapterUtil.Companion.preferredChapterNa
 import eu.kanade.tachiyomi.util.isLocal
 import eu.kanade.tachiyomi.util.system.dpToPx
 import eu.kanade.tachiyomi.util.system.getResourceColor
+import.eu.kanade.tachiyomi.util.system.isInNightMode
 import eu.kanade.tachiyomi.util.view.makeContainerShape
 import yokai.i18n.MR
 import yokai.util.lang.getString
@@ -206,13 +206,11 @@ class ChapterHolder(
         }
         binding.frontView.backgroundTintList = null
         adapter.delegate.accentColor()?.let {
-            val base = binding.chapterCard.context.getResourceColor(R.attr.colorSurfaceContainerLowest)
-            val bg = FloatArray(3)
-            val acc = FloatArray(3)
-            ColorUtils.colorToHSL(base, bg)
-            ColorUtils.colorToHSL(it, acc)
-            bg[0] = acc[0]
-            binding.chapterCard.setCardBackgroundColor(ColorUtils.HSLToColor(bg))
+            val context = binding.chapterCard.context
+            val page = adapter.delegate.pageBackgroundColor() ?: context.getResourceColor(R.attr.background)
+            val base = Hct.fromInt(page)
+            val tone = (base.tone + if (context.isInNightMode()) -4 else 4).coerceIn(0.0, 100.0)
+            binding.chapterCard.setCardBackgroundColor(Hct.from(Hct.fromInt(it).hue, base.chroma, tone).toInt())
         }
     }
 }
