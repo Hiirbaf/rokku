@@ -1,21 +1,24 @@
 package eu.kanade.tachiyomi.ui.setting.controllers
 
-import androidx.compose.ui.res.colorResource
-import androidx.compose.material.icons.automirrored.filled.Logout
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.automirrored.outlined.HelpOutline
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -35,35 +38,33 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.dp
-import yokai.domain.connections.service.ConnectionsPreferences
-import yokai.domain.connections.service.DiscordButton
-import yokai.domain.connections.service.DiscordProgressMode
-import yokai.presentation.component.preference.Preference
-import eu.kanade.tachiyomi.data.connections.ConnectionsManager
+import coil3.compose.AsyncImage
+import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.collections.immutable.toImmutableMap
 import kotlinx.coroutines.runBlocking
-import yokai.domain.category.interactor.GetCategories
-import yokai.i18n.MR
-import dev.icerock.moko.resources.compose.stringResource
-import eu.kanade.tachiyomi.R
-import eu.kanade.tachiyomi.core.storage.preference.collectAsState
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
-import yokai.presentation.settings.ComposableSettings
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.ui.res.stringResource
-import coil3.compose.AsyncImage
+import eu.kanade.tachiyomi.R
+import eu.kanade.tachiyomi.core.storage.preference.collectAsState
+import eu.kanade.tachiyomi.data.connections.ConnectionsManager
 import eu.kanade.tachiyomi.data.connections.discord.DiscordAccount
 import eu.kanade.tachiyomi.data.connections.discord.DiscordRpcManager
 import eu.kanade.tachiyomi.data.connections.discord.DiscordTokenStore
+import yokai.domain.category.interactor.GetCategories
+import yokai.domain.connections.service.ConnectionsPreferences
+import yokai.domain.connections.service.DiscordButton
+import yokai.domain.connections.service.DiscordProgressMode
+import yokai.presentation.component.preference.Preference
+import yokai.presentation.settings.ComposableSettings
+import yokai.i18n.MR
 import android.R as AR
 
 object SettingsDiscordScreen : ComposableSettings() {
@@ -188,6 +189,7 @@ object SettingsDiscordScreen : ComposableSettings() {
             ) {
                 DiscordAccountRow(
                     account = activeAccount!!,
+                    showConnected = DiscordRpcManager.connectionStatus.collectAsState()
                     onLogout = {
                         dialog = LogoutConnectionsDialog(connectionsManager.discord)
                     },
@@ -323,9 +325,12 @@ object SettingsDiscordScreen : ComposableSettings() {
     @Composable
     private fun DiscordAccountRow(
         account: DiscordAccount,
+        showConnected: Boolean,
         onLogout: () -> Unit,
         onSettings: () -> Unit,
     ) {
+        val status by DiscordRpcManager.connectionStatus.collectAsState()
+        val isConnected = showConnected && status == DiscordRpcManager.Status.Connected
         val avatarUrl = account?.let {
             it.avatarUrl ?: "https://cdn.discordapp.com/embed/avatars/${(it.id.toLong() shr 22) % 6}.png"
         }
@@ -377,11 +382,13 @@ object SettingsDiscordScreen : ComposableSettings() {
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
 
-                    Text(
-                        text = stringResource(MR.strings.connected),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
+                    if (isConnected) {
+                        Text(
+                            text = stringResource(MR.strings.connected),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color(0xFF4CAF50)
+                        )
+                    }
                 }
 
                 Row(
