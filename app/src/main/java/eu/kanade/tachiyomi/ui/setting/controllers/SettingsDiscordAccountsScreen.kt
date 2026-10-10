@@ -194,7 +194,6 @@ fun DiscordAccountsDialog(
     }
 
     LaunchedEffect(Unit) {
-        screenModel.setNoAccountsFoundString(noAccountsFoundString)
         screenModel.refreshAccounts()
     }
 }
@@ -205,7 +204,6 @@ class DiscordAccountsScreenModel : StateScreenModel<DiscordAccountsScreenState>(
     private val discord = Injekt.get<ConnectionsManager>().discord
     private val connectionsPreferences = Injekt.get<ConnectionsPreferences>()
     private val context: Context by injectLazy()
-    private var noAccountsFoundString: String = ""
 
     init {
         screenModelScope.launch {
@@ -214,10 +212,6 @@ class DiscordAccountsScreenModel : StateScreenModel<DiscordAccountsScreenState>(
         }
 
         loadAccounts()
-    }
-
-    fun setNoAccountsFoundString(value: String) {
-        noAccountsFoundString = value
     }
 
     private fun loadAccounts() {
@@ -230,23 +224,12 @@ class DiscordAccountsScreenModel : StateScreenModel<DiscordAccountsScreenState>(
             }
 
             runCatching {
-                val accounts = discord.getAccounts()
-
-                if (accounts.isEmpty()) {
-                    mutableState.update {
-                        it.copy(
-                            accounts = emptyList(),
-                            isLoading = false,
-                            error = noAccountsFoundString,
-                        )
-                    }
-                } else {
-                    mutableState.update {
-                        it.copy(
-                            accounts = accounts,
-                            isLoading = false,
-                        )
-                    }
+                discord.getAccounts()
+            }.onSuccess { accounts ->
+                mutableState.update {
+                    it.copy(
+                        accounts = accounts,
+                        isLoading = false)
                 }
             }.onFailure { e ->
                 mutableState.update {
