@@ -1,5 +1,10 @@
 package eu.kanade.tachiyomi.ui.setting.controllers
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -63,6 +68,7 @@ import yokai.domain.connections.service.ConnectionsPreferences
 import yokai.domain.connections.service.DiscordButton
 import yokai.domain.connections.service.DiscordProgressMode
 import yokai.presentation.component.preference.Preference
+import yokai.presentation.component.preference.PreferenceItem
 import yokai.presentation.settings.ComposableSettings
 import yokai.i18n.MR
 import android.R as AR
@@ -73,6 +79,41 @@ object SettingsDiscordScreen : ComposableSettings() {
 
     fun requestDiscordStatusDialog() {
         showDiscordStatusDialog = true
+    }
+
+    @Composable
+    private fun PreferenceGroupCard(group: Preference.PreferenceGroup) {
+        AnimatedVisibility(
+            visible = group.enabled,
+            enter = expandVertically() + fadeIn(),
+            exit = shrinkVertically() + fadeOut(),
+        ) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                ),
+            ) {
+                Column(modifier = Modifier.padding(vertical = 8.dp)) {
+                    Text(
+                        text = group.title,
+                        style = MaterialTheme.typography.titleSmall,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    )
+                    group.preferenceItems.forEach { item ->
+                        PreferenceItem(item = item, highlightKey = null)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun Preference.PreferenceGroup.asCard() =
+    Preference.PreferenceItem.CustomPreference(title = "") {
+        PreferenceGroupCard(this@asCard)
     }
 
     @Composable
@@ -218,7 +259,7 @@ object SettingsDiscordScreen : ComposableSettings() {
                         title = stringResource(MR.strings.pref_enable_discord_rpc),
                     ),
                 ),
-            ),
+            ).asCard(),
             getRPCIncognitoGroup(
                 connectionsPreferences = connectionsPreferences,
                 enabled = enableDRPC,
@@ -248,7 +289,7 @@ object SettingsDiscordScreen : ComposableSettings() {
                         enabled = enableDRPC,
                     ),
                 ),
-            ),
+            ).asCard(),
             Preference.PreferenceGroup(
                 title = stringResource(MR.strings.pref_category_discord_customization),
                 enabled = enableDRPC,
@@ -274,7 +315,7 @@ object SettingsDiscordScreen : ComposableSettings() {
                         ),
                     ),
                 ),
-            ),
+            ).asCard(),
             Preference.PreferenceGroup(
                 title = stringResource(MR.strings.pref_category_discord_buttons),
                 enabled = enableDRPC,
@@ -290,7 +331,7 @@ object SettingsDiscordScreen : ComposableSettings() {
                         ),
                     ),
                 ),
-            ),
+            ).asCard(),
         )
     }
 
