@@ -344,16 +344,21 @@ object SettingsDiscordScreen : ComposableSettings() {
                 ),
                 Preference.PreferenceItem.TextPreference(
                     title = stringResource(MR.strings.categories),
-                    subtitle = if (includedManga.isEmpty()) {
-                        stringResource(MR.strings.none)
-                    } else {
-                        allCategories
-                            .filter { it.id.toString() in includedManga }
-                            .joinToString { it.name }
+                    subtitle = buildString {
+                        append(
+                            if (includedManga.isEmpty()) {
+                                stringResource(MR.strings.none)
+                            } else {
+                                allCategories
+                                    .filter { it.id.toString() in includedManga }
+                                    .joinToString { it.name }
+                            },
+                        )
+                        append("\n\n")
+                        append(stringResource(MR.strings.pref_discord_incognito_categories_details))
                     },
                     onClick = { showDialog = true },
                 ),
-                Preference.PreferenceItem.TextPreference(title = stringResource(MR.strings.pref_discord_incognito_categories_details)),
             ),
             enabled = enabled,
         )
