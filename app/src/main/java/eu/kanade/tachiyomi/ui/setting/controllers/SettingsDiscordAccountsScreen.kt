@@ -53,6 +53,7 @@ import uy.kohesive.injekt.injectLazy
 import yokai.domain.connections.service.ConnectionsPreferences
 import yokai.i18n.MR
 import yokai.util.lang.getString
+import android.R as AR
 
 data class DiscordAccountsScreenState(
     val accounts: List<DiscordAccount> = emptyList(),
@@ -326,7 +327,7 @@ private fun DiscordAccountItem(
                         onSetActive()
                     },
                 ) {
-                    Text(stringResource(MR.strings.action_ok))
+                    Text(stringResource(AR.string.ok))
                 }
             },
             dismissButton = {
@@ -335,7 +336,7 @@ private fun DiscordAccountItem(
                         showSwitchDialog = false
                     },
                 ) {
-                    Text(stringResource(MR.strings.cancel))
+                    Text(stringResource(AR.string.cancel))
                 }
             },
         )
