@@ -42,10 +42,10 @@ import yokai.domain.connections.service.ConnectionsPreferences
 import yokai.domain.connections.service.DiscordButton
 import yokai.domain.connections.service.DiscordProgressMode
 import yokai.presentation.component.preference.Preference
-import yokai.presentation.component.preference.widget.TriStateListDialog
 import eu.kanade.tachiyomi.data.connections.ConnectionsManager
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentMapOf
+import kotlinx.collections.immutable.toImmutableMap
 import kotlinx.coroutines.runBlocking
 import yokai.domain.category.interactor.GetCategories
 import yokai.i18n.MR
@@ -291,7 +291,7 @@ object SettingsDiscordScreen : ComposableSettings() {
                     Preference.PreferenceItem.MultiSelectListPreference(
                         pref = connectionsPreferences.discordButtons(),
                         title = stringResource(MR.strings.pref_discord_buttons),
-                        subtitle = stringResource(MR.strings.pref_buttons_selected) + "\n" +
+                        subtitle = stringResource(MR.strings.pref_buttons_selected) + "\n\n" +
                             stringResource(MR.strings.pref_discord_buttons_summary),
                         entries = persistentMapOf(
                             DiscordButton.MANGA to stringResource(MR.strings.pref_discord_button_manga),
@@ -311,53 +311,20 @@ object SettingsDiscordScreen : ComposableSettings() {
         val getCategories = remember { Injekt.get<GetCategories>() }
         val allCategories by getCategories.subscribe().collectAsState(initial = runBlocking { getCategories.await() })
 
-        val discordRPCIncognitoPref = connectionsPreferences.discordRPCIncognito()
-        val discordRPCIncognitoCategoriesPref = connectionsPreferences.discordRPCIncognitoCategories()
-
-        val includedManga by discordRPCIncognitoCategoriesPref.collectAsState()
-        var showDialog by rememberSaveable { mutableStateOf(false) }
-        if (showDialog) {
-            TriStateListDialog(
-                title = stringResource(MR.strings.categories),
-                message = stringResource(MR.strings.pref_discord_incognito_categories_details),
-                items = allCategories,
-                initialChecked = includedManga.mapNotNull { id -> allCategories.find { it.id.toString() == id } },
-                initialInversed = includedManga.mapNotNull { allCategories.find { false } },
-                itemLabel = { it.name },
-                onDismissRequest = { showDialog = false },
-                onValueChanged = { newIncluded, _ ->
-                    discordRPCIncognitoCategoriesPref.set(
-                        newIncluded.fastMap { it.id.toString() }.toSet(),
-                    )
-                    showDialog = false
-                },
-            )
-        }
-
         return Preference.PreferenceGroup(
             title = stringResource(MR.strings.pref_discord_privacy),
             preferenceItems = persistentListOf(
                 Preference.PreferenceItem.SwitchPreference(
-                    pref = discordRPCIncognitoPref,
+                    pref = connectionsPreferences.discordRPCIncognito(),
                     title = stringResource(MR.strings.pref_discord_incognito),
                     subtitle = stringResource(MR.strings.pref_discord_incognito_summary),
                 ),
-                Preference.PreferenceItem.TextPreference(
+                Preference.PreferenceItem.MultiSelectListPreference(
+                    pref = connectionsPreferences.discordRPCIncognitoCategories(),
                     title = stringResource(MR.strings.categories),
-                    subtitle = buildString {
-                        append(
-                            if (includedManga.isEmpty()) {
-                                stringResource(MR.strings.none)
-                            } else {
-                                allCategories
-                                    .filter { it.id.toString() in includedManga }
-                                    .joinToString { it.name }
-                            },
-                        )
-                        append("\n\n")
-                        append(stringResource(MR.strings.pref_discord_incognito_categories_details))
-                    },
-                    onClick = { showDialog = true },
+                    subtitle = stringResource(MR.strings.pref_buttons_selected) + "\n\n" +
+                        stringResource(MR.strings.pref_discord_incognito_categories_details),
+                    entries = allCategories.associate { it.id.toString() to it.name }.toImmutableMap(),
                 ),
             ),
             enabled = enabled,
