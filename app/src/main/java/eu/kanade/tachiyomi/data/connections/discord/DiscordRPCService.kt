@@ -382,34 +382,6 @@ class DiscordRPCService : Service() {
             else -> null
         }
 
-        private fun getFormattedChapterTitle(context: Context, readerData: ReaderData, progressMode: Int): String? {
-            if (readerData.incognitoMode) return null
-
-            val progressSuffix = when (progressMode) {
-                DiscordProgressMode.PAGES -> {
-                    val (currentPage, totalPages) = readerData.chapterProgress
-                    " (${context.getString(MR.strings.page_count, currentPage.toString(), totalPages.toString())})"
-                }
-                DiscordProgressMode.CHAPTERS -> if (readerData.totalChapters > 0) {
-                    " (${context.getString(MR.strings.chapter_progress, readerData.chapterIndex.toString(), readerData.totalChapters.toString())})"
-                } else {
-                    ""
-                }
-                else -> ""
-            }
-
-            val chapterLabel = if (connectionsPreferences.useChapterTitles().get()) {
-                readerData.chapterTitle
-            } else {
-                context.getString(
-                    MR.strings.chapter_,
-                    ChapterUtil.formatChapterNumber(readerData.chapterNumber.toDouble()),
-                )
-            }
-
-            return chapterLabel?.let { "$it$progressSuffix" }
-        }
-
         private fun sanitizeField(value: String?): String? {
             if (value == null) return null
             val trimmed = value.trim()
