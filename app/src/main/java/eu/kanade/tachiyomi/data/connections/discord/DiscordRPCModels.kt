@@ -36,9 +36,9 @@ enum class DiscordScreen(
     RECENTS(MR.strings.app_name, MR.strings.scrolling, MR.strings.recents, RECENTS_IMAGE_URL),
     BROWSE(MR.strings.app_name, MR.strings.browsing, MR.strings.browse, BROWSE_IMAGE_URL),
     MANGA(MR.strings.app_name, MR.strings.comic, MR.strings.reading, MANGA_IMAGE_URL),
+    MORE(MR.strings.app_name, MR.strings.messing, MR.strings.settings, MORE_IMAGE_URL),
 
     // temporarily deactivated
-    // MORE(MR.strings.app_name, MR.strings.messing, MR.strings.settings, MORE_IMAGE_URL),
     // WEBVIEW(MR.strings.app_name, MR.strings.browsing, MR.strings.action_web_view, WEBVIEW_IMAGE_URL),
     // UPDATES(MR.strings.app_name, MR.strings.scrolling, MR.strings.recents, updatesImageUrl),
 }
@@ -49,8 +49,8 @@ private const val LIBRARY_IMAGE_URL = "${CDN}emojis/1556127745619132456.webp?qua
 private const val RECENTS_IMAGE_URL = "${CDN}emojis/1556127752191737906.webp?quality=lossless"
 private const val BROWSE_IMAGE_URL = "${CDN}emojis/1556127749855252540.webp?quality=lossless"
 private const val MANGA_IMAGE_URL = "${CDN}emojis/1556127747686932521.webp?quality=lossless"
+private const val MORE_IMAGE_URL = "${CDN}emojis/1558387170761375824.webp?quality=lossless"
 
 // temporarily deactivated
-// private const val MORE_IMAGE_URL = "${CDN}emojis/1391947518224371772.webp?quality=lossless"
 // private const val WEBVIEW_IMAGE_URL = "${CDN}emojis/1391952048223817791.webp?quality=lossless"
 // private const val updatesImageUrl = "${CDN}emojis/1391945005194674237.webp?quality=lossless"
