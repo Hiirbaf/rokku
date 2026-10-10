@@ -219,16 +219,9 @@ class DiscordRPCService : Service() {
                 },
             )
 
-            val chapterText = if (discordScreen == DiscordScreen.MANGA && !readerData.browsingOnly) {
-                getFormattedChapterTitle(context, readerData, progressMode)
-            } else {
-                null
-            }
-
             val state = sanitizeField(
                 when {
                     readerData.browsingOnly -> readerData.mangaTitle ?: context.getString(discordScreen.state)
-                    chapterText != null -> chapterText
                     else -> context.getString(discordScreen.state)
                 },
             )
@@ -267,12 +260,23 @@ class DiscordRPCService : Service() {
 
             val isReading = discordScreen == DiscordScreen.MANGA && !readerData.browsingOnly && !readerData.incognitoMode
 
+            val readingDetails = sanitizeField(getChapterLabel(context, readerData))
+            ?: sanitizeField(
+                context.getString(
+                    MR.strings.chapter_,
+                    ChapterUtil.formatChapterNumber(readerData.chapterNumber.toDouble()),
+                ),
+            )
+
+            val readingState = sanitizeField(getProgressText(context, readerData, progressMode))
+            ?: sanitizeField(context.getString(discordScreen.state))
+
             DiscordRpcManager.setActivity(
                 DiscordNativeActivity(
                     activityType = DiscordNativeActivity.TYPE_WATCHING,
                     name = if (isReading) readerData.mangaTitle ?: appName else appName,
-                    details = if (isReading) getChapterLabel(context, readerData) else details,
-                    state = if (isReading) getProgressText(context, readerData, progressMode) else state,
+                    details = if (isReading) readingDetails else details,
+                    state = if (isReading) readingState else state,
                     startTimestamp = since / 1000L,
                     largeImage = imageUrl,
                     largeText = appName,
