@@ -64,6 +64,7 @@ import coil3.compose.AsyncImage
 import eu.kanade.tachiyomi.data.connections.discord.DiscordAccount
 import eu.kanade.tachiyomi.data.connections.discord.DiscordRpcManager
 import eu.kanade.tachiyomi.data.connections.discord.DiscordTokenStore
+ import android.R as AR
 
 object SettingsDiscordScreen : ComposableSettings() {
 
@@ -152,7 +153,7 @@ object SettingsDiscordScreen : ComposableSettings() {
                         customMessagePref.set(tempCustomMessage)
                         showCustomMessageDialog = false
                     }) {
-                        Text(stringResource(MR.strings.action_ok))
+                        Text(stringResource(AR.string.ok))
                     }
                 },
                 dismissButton = {
@@ -160,7 +161,7 @@ object SettingsDiscordScreen : ComposableSettings() {
                         showCustomMessageDialog = false
                         tempCustomMessage = customMessagePref.get()
                     }) {
-                        Text(stringResource(MR.strings.cancel))
+                        Text(stringResource(AR.string.cancel))
                     }
                 },
             )
