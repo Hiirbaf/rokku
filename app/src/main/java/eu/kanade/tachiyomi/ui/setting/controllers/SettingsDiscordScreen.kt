@@ -390,7 +390,16 @@ object SettingsDiscordScreen : ComposableSettings() {
         onSettings: () -> Unit,
     ) {
         val status by DiscordRpcManager.connectionStatus.collectAsState()
-        val isConnected = showConnected && status == DiscordRpcManager.Status.Connected
+        val connectedColor = Color(0xFF4CAF50)
+        val connectingColor = MaterialTheme.colorScheme.onSurfaceVariant
+        val statusLabel: Pair<String, Color>? = when {
+            !showConnected -> null
+            status == DiscordRpcManager.Status.Connected ->
+            stringResource(MR.strings.connected) to connectedColor
+            status == DiscordRpcManager.Status.Authorizing ->
+            stringResource(MR.strings.connecting) to connectingColor
+            else -> null
+        }
         val avatarUrl = account?.let {
             it.avatarUrl ?: "https://cdn.discordapp.com/embed/avatars/${(it.id.toLong() shr 22) % 6}.png"
         }
@@ -442,11 +451,11 @@ object SettingsDiscordScreen : ComposableSettings() {
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
 
-                    if (isConnected) {
+                    statusLabel?.let { (text, color) ->
                         Text(
-                            text = stringResource(MR.strings.connected),
+                            text = text,
                             style = MaterialTheme.typography.bodySmall,
-                            color = Color(0xFF4CAF50)
+                            color = color,
                         )
                     }
                 }
