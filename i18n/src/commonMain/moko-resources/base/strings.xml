@@ -55,7 +55,7 @@
     <string name="delete_account">Delete account</string>
     <string name="delete_account_confirmation">Are you sure you want to delete the account %1$s?</string>
     <string name="connected">Connected</string>
-    <string name="disconnected">Disconnected</string>
+    <string name="connecting">Connecting...</string>
     
     <!-- Discord section -->
     <string name="browsing">Browsing</string>
