@@ -230,7 +230,7 @@ object SettingsDiscordScreen : ComposableSettings() {
             ) {
                 DiscordAccountRow(
                     account = activeAccount!!,
-                    showConnected = DiscordRpcManager.connectionStatus.collectAsState()
+                    showConnected = enableDRPC
                     onLogout = {
                         dialog = LogoutConnectionsDialog(connectionsManager.discord)
                     },
