@@ -81,6 +81,8 @@ class RecentMangaAdapter(val delegate: RecentsInterface) :
         }
     }
 
+    fun onHideSourceClicked(sourceId: Long)
+
     fun setPreferenceFlows() {
         recentsPreferences.showRecentsDownloads().register { showDownloads = it }
         recentsPreferences.showRecentsRemHistory().register { showRemoveHistory = it }
