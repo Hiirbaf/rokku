@@ -39,7 +39,7 @@ object SettingsConnectionsScreen : ComposableSettings() {
 
     @ReadOnlyComposable
     @Composable
-    override fun getTitleRes() = MR.strings.pref_category_connections
+    override fun getTitleRes() = MR.strings.connections
 
     @Composable
     override fun getPreferences(): List<Preference> {
