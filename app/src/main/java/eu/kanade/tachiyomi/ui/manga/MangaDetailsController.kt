@@ -951,6 +951,17 @@ class MangaDetailsController :
             if (router.backstack.lastOrNull()?.controller is DialogController) {
                 return
             }
+
+            if (type == ControllerChangeType.POP_EXIT &&
+                    router.backstack.lastOrNull()?.controller !is MangaDetailsController
+               ) {
+                val ctx = activity
+                if (ctx != null) {
+                    viewScope.launch {
+                        DiscordRPCService.setScreen(ctx, DiscordRPCService.lastUsedScreen)
+                    }
+                }
+            }
             colorAnimator?.cancel()
 
             getHeader()?.clearDescFocus()
