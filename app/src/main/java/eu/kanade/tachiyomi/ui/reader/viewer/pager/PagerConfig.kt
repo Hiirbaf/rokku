@@ -33,6 +33,14 @@ class PagerConfig(
     var usePageTransitions = false
         private set
 
+    var pageTransitionEffect = PagerPageTransition.EFFECT_SLIDE
+        private set
+
+    var pageTransitionSpeed = 0
+        private set
+
+    var pageTransitionChangedListener: (() -> Unit)? = null
+
     var imageScaleType = 1
         private set
 
@@ -78,6 +86,12 @@ class PagerConfig(
 
     init {
         preferences.pageTransitions().register({ usePageTransitions = it })
+
+        readerPreferences.pageTransitionEffect()
+            .register({ pageTransitionEffect = it }, { pageTransitionChangedListener?.invoke() })
+
+        readerPreferences.pageTransitionSpeed()
+            .register({ pageTransitionSpeed = it }, { pageTransitionChangedListener?.invoke() })
 
         preferences.fullscreen().register({ isFullscreen = it })
 

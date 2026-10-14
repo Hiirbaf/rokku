@@ -1,5 +1,5 @@
 [versions]
-aboutlibraries = "15.2.0"
+aboutlibraries = "15.3.0"
 chucker = "4.3.1"
 fast_adapter = "5.7.0"
 moko = "0.26.4"
@@ -115,7 +115,7 @@ aboutlibraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "abo
 aboutlibraries-android = { id = "com.mikepenz.aboutlibraries.plugin.android", version.ref = "aboutlibraries" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version = "3.0.8" }
 google-services = { id = "com.google.gms.google-services", version = "4.5.0" }
-gradle-versions = { id = "com.github.ben-manes.versions", version = "0.65.0" }
+gradle-versions = { id = "com.github.ben-manes.versions", version = "0.66.0" }
 kotlinter = { id = "org.jmailen.kotlinter", version = "5.7.0" }
 moko = { id = "dev.icerock.mobile.multiplatform-resources", version.ref = "moko" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }

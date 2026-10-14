@@ -85,6 +85,8 @@ object PreferenceKeys {
 
     const val preloadSize = "preload_size"
 
+    const val preloadOnlyOnWifi = "preload_only_on_wifi"
+
     const val webtoonSidePadding = "webtoon_side_padding"
 
     const val webtoonEnableZoomOut = "webtoon_enable_zoom_out"

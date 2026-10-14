@@ -122,13 +122,18 @@ class Shikimori(private val context: Context, id: Long) : TrackService(id) {
             val oauth = api.accessToken(code)
             interceptor.newAuth(oauth)
             val user = api.getCurrentUser()
-            saveCredentials(user.toString(), oauth.accessToken)
+            saveDisplayUsername(user.nickname)
+            saveCredentials(user.id.toString(), oauth.accessToken)
             true
         } catch (e: java.lang.Exception) {
             Logger.e(e) { "Unable to login" }
             logout()
             false
         }
+    }
+
+    override suspend fun updateUserConfig() {
+        saveDisplayUsername(api.getCurrentUser().nickname)
     }
 
     fun saveToken(oauth: SMOAuth?) {

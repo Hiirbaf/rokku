@@ -20,6 +20,7 @@ import eu.kanade.tachiyomi.ui.main.FloatingSearchInterface
 import eu.kanade.tachiyomi.ui.more.AboutController
 import eu.kanade.tachiyomi.ui.setting.SettingsLegacyController
 import eu.kanade.tachiyomi.ui.setting.controllers.legacy.SettingsAdvancedLegacyController
+import eu.kanade.tachiyomi.ui.setting.controllers.legacy.SettingsTrackingLegacyController
 import eu.kanade.tachiyomi.ui.setting.controllers.search.SettingsSearchController
 import eu.kanade.tachiyomi.ui.setting.controllers.SettingsConnectionsScreen
 import eu.kanade.tachiyomi.ui.setting.iconRes
@@ -87,11 +88,15 @@ class SettingsMainController : SettingsLegacyController(), FloatingSearchInterfa
             titleRes = MR.strings.browse
             onClick { navigateTo(SettingsBrowseController()) }
         }
-        preference {
+        preferenceLongClickable {
             iconRes = R.drawable.ic_sync_24dp
             iconTint = tintColor
             titleRes = MR.strings.tracking
             onClick { navigateTo(SettingsTrackingController()) }
+            onLongClick {
+                navigateTo(SettingsTrackingLegacyController())
+                context.toast(MR.strings.tracking_legacy_notice)
+            }
         }
         preference {
             iconRes = R.drawable.ic_link_24dp
@@ -118,7 +123,7 @@ class SettingsMainController : SettingsLegacyController(), FloatingSearchInterfa
             onClick { navigateTo(SettingsAdvancedLegacyController()) }
             onLongClick {
                 navigateTo(SettingsAdvancedController())
-                context.toast("You're entering experimental version of 'Advanced'")
+                context.toast(MR.strings.advanced_experimental_notice)
             }
         }
         preference {

@@ -7,17 +7,25 @@ import eu.kanade.tachiyomi.data.track.bangumi.dto.BGMCollectionResponse
 import eu.kanade.tachiyomi.data.track.bangumi.dto.BGMOAuth
 import eu.kanade.tachiyomi.data.track.bangumi.dto.BGMSearchItem
 import eu.kanade.tachiyomi.data.track.bangumi.dto.BGMSearchResult
+import eu.kanade.tachiyomi.data.track.bangumi.dto.BGMUser
 import eu.kanade.tachiyomi.data.track.model.TrackSearch
 import eu.kanade.tachiyomi.network.GET
 import eu.kanade.tachiyomi.network.POST
 import eu.kanade.tachiyomi.network.awaitSuccess
+import eu.kanade.tachiyomi.network.jsonMime
 import eu.kanade.tachiyomi.network.parseAs
 import eu.kanade.tachiyomi.util.system.withIOContext
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.add
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
+import kotlinx.serialization.json.putJsonArray
+import kotlinx.serialization.json.putJsonObject
 import okhttp3.CacheControl
 import okhttp3.FormBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
 import uy.kohesive.injekt.injectLazy
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
@@ -70,23 +78,24 @@ class BangumiApi(
 
     suspend fun search(search: String): List<TrackSearch> {
         return withIOContext {
-            val url = "$API_URL/search/subject/${URLEncoder.encode(search, StandardCharsets.UTF_8.name())}"
-                .toUri()
-                .buildUpon()
-                .appendQueryParameter("type", "1")
-                .appendQueryParameter("responseGroup", "large")
-                .appendQueryParameter("max_results", "20")
-                .build()
-            authClient.newCall(GET(url.toString()))
+            val url = "$API_URL/v0/search/subjects?limit=20"
+            val body = buildJsonObject {
+                put("keyword", search)
+                put("sort", "match")
+                putJsonObject("filter") {
+                    putJsonArray("type") {
+                        add(1)
+                    }
+                }
+            }
+                .toString()
+                .toRequestBody(jsonMime)
+            authClient.newCall(POST(url, body = body))
                 .awaitSuccess()
                 .parseAs<BGMSearchResult>()
-                .let { result ->
-                    if (result.code == 404) emptyList<TrackSearch>()
-
-                    result.list
-                        ?.map { it.toTrackSearch(trackId) }
-                        .orEmpty()
-                }
+                .data
+                .filter { it.platform == null || it.platform == "漫画" }
+                .map { it.toTrackSearch(trackId) }
         }
     }
 
@@ -121,6 +130,14 @@ class BangumiApi(
                     track.private = it.private == 1
                     track
                 }
+        }
+    }
+
+    suspend fun getCurrentUser(): BGMUser {
+        return withIOContext {
+            authClient.newCall(GET("$API_URL/v0/me"))
+                .awaitSuccess()
+                .parseAs<BGMUser>()
         }
     }
 

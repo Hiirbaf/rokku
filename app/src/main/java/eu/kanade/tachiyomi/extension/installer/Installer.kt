@@ -101,7 +101,10 @@ abstract class Installer(
      */
     fun cancelQueue(downloadId: Long) {
         val waitingInstall = this.waitingInstall.get()
-        val toCancel = queue.find { it.downloadId == downloadId } ?: waitingInstall ?: return
+        // Every new install cancels its own previous attempt first, which mustn't hit another extension's install
+        val toCancel = queue.find { it.downloadId == downloadId }
+            ?: waitingInstall?.takeIf { it.downloadId == downloadId }
+            ?: return
         if (cancelEntry(toCancel)) {
             queue.remove(toCancel)
             if (waitingInstall == toCancel) {

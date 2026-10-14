@@ -1,5 +1,6 @@
 package eu.kanade.tachiyomi.extension.installer
 
+import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Context
@@ -14,7 +15,6 @@ import co.touchlab.kermit.Logger
 import eu.kanade.tachiyomi.BuildConfig
 import eu.kanade.tachiyomi.extension.installer.shizuku.IShellInterface
 import eu.kanade.tachiyomi.extension.installer.shizuku.ShellInterface
-import eu.kanade.tachiyomi.util.system.isShizukuInstalled
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -39,7 +39,15 @@ class ShizukuInstaller(
             .processNameSuffix("shizuku_service")
             .debuggable(BuildConfig.DEBUG)
             .daemon(false)
+            .version(2)
     }
+
+    private val statusIntent = PendingIntent.getBroadcast(
+        context.applicationContext,
+        0,
+        Intent(ACTION_INSTALL_RESULT).setPackage(BuildConfig.APPLICATION_ID),
+        PendingIntent.FLAG_MUTABLE,
+    )
 
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
@@ -89,7 +97,7 @@ class ShizukuInstaller(
 
     init {
         Shizuku.addBinderDeadListener(shizukuDeadListener)
-        require(Shizuku.pingBinder() && context.isShizukuInstalled) {
+        require(Shizuku.pingBinder()) {
             finishedQueue(this)
             context.getString(MR.strings.ext_installer_shizuku_stopped)
         }
@@ -114,7 +122,7 @@ class ShizukuInstaller(
         ioScope.launch {
             try {
                 context.contentResolver.openAssetFileDescriptor(entry.uri, "r").use {
-                    shellInterface?.install(it) ?: throw IllegalStateException("Shizuku service not connected")
+                    shellInterface?.install(it, statusIntent.intentSender) ?: throw IllegalStateException("Shizuku service not connected")
                 }
             } catch (e: Exception) {
                 Logger.e(e) { "Failed to install extension ${entry.downloadId} ${entry.uri}" }
@@ -146,7 +154,6 @@ class ShizukuInstaller(
     }
 
     companion object {
-        const val shizukuPkgName = "moe.shizuku.privileged.api"
         const val downloadLink = "https://shizuku.rikka.app/download"
         private const val SHIZUKU_PERMISSION_REQUEST_CODE = 14045
         fun isShizukuRunning(): Boolean {

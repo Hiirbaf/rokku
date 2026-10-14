@@ -8,6 +8,7 @@ import eu.kanade.tachiyomi.data.track.kitsu.dto.KitsuCurrentUserResult
 import eu.kanade.tachiyomi.data.track.kitsu.dto.KitsuListSearchResult
 import eu.kanade.tachiyomi.data.track.kitsu.dto.KitsuOAuth
 import eu.kanade.tachiyomi.data.track.kitsu.dto.KitsuSearchResult
+import eu.kanade.tachiyomi.data.track.kitsu.dto.KitsuUser
 import eu.kanade.tachiyomi.data.track.model.TrackSearch
 import eu.kanade.tachiyomi.network.DELETE
 import eu.kanade.tachiyomi.network.GET
@@ -220,7 +221,7 @@ class KitsuApi(private val client: OkHttpClient, interceptor: KitsuInterceptor) 
         }
     }
 
-    suspend fun getCurrentUser(): String {
+    suspend fun getCurrentUser(): KitsuUser {
         return withIOContext {
             val url = "${BASE_URL}users".toUri().buildUpon()
                 .encodedQuery("filter[self]=true")
@@ -229,7 +230,6 @@ class KitsuApi(private val client: OkHttpClient, interceptor: KitsuInterceptor) 
                 .awaitSuccess()
                 .parseAs<KitsuCurrentUserResult>()
                 .data[0]
-                .id
         }
     }
 
@@ -248,7 +248,7 @@ class KitsuApi(private val client: OkHttpClient, interceptor: KitsuInterceptor) 
             "https://AWQO5J657S-dsn.algolia.net/1/indexes/production_media/query/"
         private const val ALGOLIA_APP_ID = "AWQO5J657S"
         private const val ALGOLIA_FILTER =
-            "&facetFilters=%5B%22kind%3Amanga%22%5D&attributesToRetrieve=%5B%22synopsis%22%2C%22canonicalTitle%22%2C%22chapterCount%22%2C%22posterImage%22%2C%22startDate%22%2C%22subtype%22%2C%22endDate%22%2C%20%22id%22%5D"
+            "&facetFilters=%5B%22kind%3Amanga%22%5D&attributesToRetrieve=%5B%22synopsis%22%2C%22canonicalTitle%22%2C%22chapterCount%22%2C%22posterImage%22%2C%22startDate%22%2C%22subtype%22%2C%22endDate%22%2C%22averageRating%22%2C%20%22id%22%5D"
 
         private const val VND_API_JSON = "application/vnd.api+json"
         private val VND_JSON_MEDIA_TYPE = VND_API_JSON.toMediaType()

@@ -20,31 +20,34 @@ class BangumiInterceptor(val bangumi: Bangumi) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest = chain.request()
 
-        val currAuth = oauth ?: throw Exception("Not authenticated with Bangumi")
+        var currAuth = oauth ?: throw Exception("Not authenticated with Bangumi")
 
         if (currAuth.isExpired()) {
             val response = chain.proceed(BangumiApi.refreshTokenRequest(currAuth.refreshToken!!))
             if (response.isSuccessful) {
                 newAuth(json.decodeFromString<BGMOAuth>(response.body.string()))
+                currAuth = oauth ?: currAuth
             } else {
                 response.close()
             }
         }
 
-        val authRequest = if (originalRequest.method == "GET") {
-            originalRequest.newBuilder()
-                .header("User-Agent", "thiago8rocha/rokku/${BuildConfig.VERSION_NAME} (${BuildConfig.APPLICATION_ID})")
-                .url(
-                    originalRequest.url.newBuilder()
-                        .addQueryParameter("access_token", currAuth.accessToken).build(),
-                )
-                .build()
-        } else {
-            originalRequest.newBuilder()
-                .post(addToken(currAuth.accessToken, originalRequest.body as FormBody))
-                .header("User-Agent", "thiago8rocha/rokku/${BuildConfig.VERSION_NAME} (${BuildConfig.APPLICATION_ID})")
-                .build()
-        }
+        val body = originalRequest.body
+        val authRequest = originalRequest.newBuilder()
+            .header("User-Agent", "thiago8rocha/rokku/${BuildConfig.VERSION_NAME} (${BuildConfig.APPLICATION_ID})")
+            .header("Authorization", "Bearer ${currAuth.accessToken}")
+            .apply {
+                if (originalRequest.method == "GET") {
+                    url(
+                        originalRequest.url.newBuilder()
+                            .addQueryParameter("access_token", currAuth.accessToken)
+                            .build(),
+                    )
+                } else if (body is FormBody) {
+                    post(addToken(currAuth.accessToken, body))
+                }
+            }
+            .build()
 
         return chain.proceed(authRequest)
     }

@@ -21,6 +21,13 @@ import java.text.DecimalFormat
 
 class Kitsu(private val context: Context, id: Long) : TrackService(id) {
 
+    private data class RatingSystem(
+        val name: String,
+        val scoreList: List<String>,
+        // Values on the Rokku scale (0–10). Kitsu uses a 2–20 scale, and toApiScore() multiplies the value by 2 upon submission.
+        val tenScale: List<Float>,
+    )
+
     companion object {
         const val READING = 1
         const val COMPLETED = 2
@@ -30,6 +37,33 @@ class Kitsu(private val context: Context, id: Long) : TrackService(id) {
 
         const val DEFAULT_STATUS = READING
         const val DEFAULT_SCORE = 0f
+
+        const val RATING_SIMPLE = "simple"
+        const val RATING_REGULAR = "regular"
+        const val RATING_ADVANCED = "advanced"
+
+        private val ratingSystems = mapOf(
+            // Smileys
+            RATING_SIMPLE to RatingSystem(
+                name = RATING_SIMPLE,
+                scoreList = listOf("-", "😡", "😐", "😊", "😀"),
+                tenScale = listOf(1f, 4f, 7f, 10f), // 2, 8, 14, 20 on Kitsu
+            ),
+            // DecimalFormatter is not thread safe, so new formatters for each map instead of extracted val attribute
+            // to not incite reuse
+            // Stars (0.5-5 step 0.5)
+            RATING_REGULAR to RatingSystem(
+                name = RATING_REGULAR,
+                scoreList = (0..10).map { it / 2.0 }.map(DecimalFormat("0.#")::format).map { "$it ★" },
+                tenScale = (1..10).map { it.toFloat() }, // 2, 4, ..., 20 on Kitsu
+            ),
+            // 10 point decimal (step 0.5, starting at 1) + 0 for our "not rated" placeholder
+            RATING_ADVANCED to RatingSystem(
+                name = RATING_ADVANCED,
+                scoreList = listOf("0") + (2..20).map { it / 2.0 }.map(DecimalFormat("0.#")::format),
+                tenScale = (2..20).map { it / 2f }, // 2, 3, ..., 20 on Kitsu
+            ),
+        )
     }
 
     override fun nameRes() = MR.strings.kitsu
@@ -43,6 +77,8 @@ class Kitsu(private val context: Context, id: Long) : TrackService(id) {
     private val interceptor by lazy { KitsuInterceptor(this) }
 
     private val api by lazy { KitsuApi(client, interceptor) }
+
+    private val scorePreference by lazy { trackPreferences.kitsuScoreType() }
 
     override fun getLogo() = R.drawable.ic_tracker_kitsu
 
@@ -82,18 +118,26 @@ class Kitsu(private val context: Context, id: Long) : TrackService(id) {
         }
     }
 
+    private fun getCurrentRatingSystem(): RatingSystem {
+        val ratingSystem = scorePreference.get().lowercase()
+        return ratingSystems[ratingSystem] ?: throw Exception("Unknown score type $ratingSystem")
+    }
+
     override fun getScoreList(): ImmutableList<String> {
-        val df = DecimalFormat("0.#")
-        return (listOf("0") + IntRange(2, 20).map { df.format(it / 2f) }).toImmutableList()
+        return getCurrentRatingSystem().scoreList.toImmutableList()
     }
 
     override fun indexToScore(index: Int): Float {
-        return if (index > 0) (index + 1) / 2f else 0f
+        if (index == 0) return 0f
+        return getCurrentRatingSystem().tenScale[index - 1]
     }
 
     override fun displayScore(track: Track): String {
-        val df = DecimalFormat("0.#")
-        return df.format(track.score)
+        val ratingSystem = getCurrentRatingSystem()
+        // Since Kitsu's valid score range is 2-20, unset values of -1.0 or 0.0 will both return -1 from indexOfLast
+        // which is turned into index 0 of the scoreList, giving us the "unset" display score (- or 0).
+        // Proper scores are "rounded down" to the nearest value of the scale (also what Kitsu's website does)
+        return ratingSystem.scoreList[ratingSystem.tenScale.indexOfLast { it <= track.score } + 1]
     }
 
     override suspend fun update(track: Track, setToRead: Boolean): Track {
@@ -140,12 +184,30 @@ class Kitsu(private val context: Context, id: Long) : TrackService(id) {
         return try {
             val oauth = api.login(username, password)
             interceptor.newAuth(oauth)
-            val userId = api.getCurrentUser()
-            saveCredentials(username, userId)
+            val currentUser = api.getCurrentUser()
+            applyRatingSystem(currentUser.ratingSystem)
+            saveDisplayUsername(currentUser.name)
+            saveCredentials(username, currentUser.id)
             true
         } catch (e: Exception) {
             Logger.e(e) { "Unable to login" }
             false
+        }
+    }
+
+    override suspend fun updateUserConfig() {
+        val currentUser = api.getCurrentUser()
+        applyRatingSystem(currentUser.ratingSystem)
+        saveDisplayUsername(currentUser.name)
+    }
+
+    private fun applyRatingSystem(ratingSystem: String) {
+        val system = ratingSystem.lowercase()
+        if (system in listOf(RATING_SIMPLE, RATING_REGULAR, RATING_ADVANCED)) {
+            scorePreference.set(system)
+        } else {
+            Logger.e(Exception("Unsupported Kitsu score type: $ratingSystem"))
+            scorePreference.set(RATING_ADVANCED)
         }
     }
 

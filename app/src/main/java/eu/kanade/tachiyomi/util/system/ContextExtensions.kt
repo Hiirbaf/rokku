@@ -45,6 +45,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
+import rikka.shizuku.ShizukuProvider
 import rikka.sui.Sui
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
@@ -217,7 +218,22 @@ fun Context.isPackageInstalled(packageName: String): Boolean {
     }
 }
 
-val Context.isShizukuInstalled get() = isPackageInstalled("moe.shizuku.privileged.api") || Sui.isSui()
+/**
+ * Detected through the permission Shizuku declares rather than its package name, so forks that
+ * rename their package (e.g. a "hidden" build) are still recognized.
+ */
+val Context.isShizukuInstalled: Boolean
+    get() = isShizukuAvailable(packageManager)
+
+internal fun isShizukuAvailable(packageManager: PackageManager, isSui: () -> Boolean = Sui::isSui): Boolean {
+    val hasPermission = try {
+        packageManager.getPermissionInfo(ShizukuProvider.PERMISSION, 0)
+        true
+    } catch (_: PackageManager.NameNotFoundException) {
+        false
+    }
+    return hasPermission || isSui()
+}
 
 /**
  * Property to get the notification manager from the context.

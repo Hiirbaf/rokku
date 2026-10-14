@@ -2,6 +2,7 @@ package eu.kanade.tachiyomi.data.track.mangaupdates
 
 import eu.kanade.tachiyomi.data.database.models.Track
 import eu.kanade.tachiyomi.data.track.mangaupdates.dto.MUContext
+import eu.kanade.tachiyomi.data.track.mangaupdates.dto.MUCurrentUser
 import eu.kanade.tachiyomi.data.track.mangaupdates.dto.MUListItem
 import eu.kanade.tachiyomi.data.track.mangaupdates.dto.MULoginResponse
 import eu.kanade.tachiyomi.data.track.mangaupdates.dto.MURating
@@ -98,6 +99,16 @@ class MangaUpdatesApi(
                 put("chapter", track.last_chapter_read.toInt())
             }
         }
+    }
+
+    suspend fun getCurrentUser(): MUCurrentUser {
+        return authClient.newCall(
+            GET(
+                url = "$BASE_URL/v1/account/profile",
+            ),
+        )
+            .awaitSuccess()
+            .parseAs<MUCurrentUser>()
     }
 
     private suspend fun getSeriesRating(track: Track): MURating? {

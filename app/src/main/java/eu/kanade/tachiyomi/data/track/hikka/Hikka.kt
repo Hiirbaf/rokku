@@ -147,6 +147,7 @@ class Hikka(private val context: Context, id: Long) : TrackService(id) {
             val oauth = api.accessToken(reference)
             interceptor.setAuth(oauth)
             val user = api.getCurrentUser()
+            saveDisplayUsername(user.username)
             saveCredentials(user.username, oauth.accessToken)
             true
         } catch (e: Exception) {
@@ -154,6 +155,10 @@ class Hikka(private val context: Context, id: Long) : TrackService(id) {
             logout()
             false
         }
+    }
+
+    override suspend fun updateUserConfig() {
+        saveDisplayUsername(api.getCurrentUser().username)
     }
 
     override fun logout() {

@@ -61,7 +61,7 @@ import eu.kanade.tachiyomi.util.lang.addBetaTag
 import eu.kanade.tachiyomi.util.system.GLUtil
 import eu.kanade.tachiyomi.util.system.ImageUtil
 import eu.kanade.tachiyomi.util.system.disableItems
-import eu.kanade.tachiyomi.util.system.isPackageInstalled
+import eu.kanade.tachiyomi.util.system.isShizukuInstalled
 import eu.kanade.tachiyomi.util.system.launchIO
 import eu.kanade.tachiyomi.util.system.launchUI
 import eu.kanade.tachiyomi.util.system.localeContext
@@ -82,7 +82,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import okhttp3.Headers
-import rikka.sui.Sui
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 import uy.kohesive.injekt.injectLazy
@@ -332,9 +331,7 @@ class SettingsAdvancedLegacyController : SettingsLegacyController() {
 
                 onChange {
                     if (it == BasePreferences.ExtensionInstaller.SHIZUKU) {
-                        return@onChange if (!context.isPackageInstalled(ShizukuInstaller.Companion.shizukuPkgName) &&
-                            !Sui.isSui()
-                        ) {
+                        return@onChange if (!context.isShizukuInstalled) {
                             context.materialAlertDialog()
                                 .setTitle(MR.strings.ext_installer_shizuku)
                                 .setMessage(MR.strings.ext_installer_shizuku_unavailable_dialog)

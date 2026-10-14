@@ -1,7 +1,9 @@
 package eu.kanade.tachiyomi.data.updater
 
+import eu.kanade.tachiyomi.core.preference.Preference
 import eu.kanade.tachiyomi.data.preference.PreferencesHelper
 import eu.kanade.tachiyomi.network.NetworkHelper
+import io.mockk.every
 import io.mockk.mockk
 import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -93,6 +95,25 @@ class AppUpdateCheckerTest {
 
         assertFalse(isNewVersion("1.2.3-r1", "1.2.3-r1"))
         assertFalse(isNewVersion("r1", "1.2.4-r1"))
+    }
+
+    @Test
+    fun `Only the skipped version is skipped`() {
+        val skipped = mockk<Preference<String>> { every { get() } returns "1.2.3" }
+        val preferences = mockk<PreferencesHelper> { every { skippedAppUpdate() } returns skipped }
+        val checker = AppUpdateChecker(mockk(), mockk(), preferences)
+
+        assertTrue(checker.isSkipped("1.2.3"))
+        assertFalse(checker.isSkipped("1.2.4"))
+    }
+
+    @Test
+    fun `Nothing is skipped by default`() {
+        val skipped = mockk<Preference<String>> { every { get() } returns "" }
+        val preferences = mockk<PreferencesHelper> { every { skippedAppUpdate() } returns skipped }
+        val checker = AppUpdateChecker(mockk(), mockk(), preferences)
+
+        assertFalse(checker.isSkipped("1.2.3"))
     }
 
     private fun isNewVersion(newVersion: String, currentVersion: String): Boolean {

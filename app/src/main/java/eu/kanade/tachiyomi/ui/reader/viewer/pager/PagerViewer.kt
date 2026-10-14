@@ -80,6 +80,8 @@ abstract class PagerViewer(val activity: ReaderActivity) : BaseViewer {
 
     var hasMoved = false
 
+    private var hasPageTransformer = false
+
     /**
      * Variable used to hold the forward pos for reader activity shared transitions
      * Without this var landscapezoom wont work with activity transitions
@@ -147,6 +149,9 @@ abstract class PagerViewer(val activity: ReaderActivity) : BaseViewer {
             activity.isScrollingThroughPagesOrChapters = false
         }
 
+        config.pageTransitionChangedListener = { applyPageTransition() }
+        applyPageTransition()
+
         config.reloadChapterListener = {
             activity.reloadChapters(it)
         }
@@ -162,6 +167,30 @@ abstract class PagerViewer(val activity: ReaderActivity) : BaseViewer {
      * Creates a new ViewPager.
      */
     abstract fun createPager(): Pager
+
+    /**
+     * Applies the page transition effect and speed chosen in the settings. The default slide at the
+     * default speed leaves the pager untouched.
+     */
+    private fun applyPageTransition() {
+        val isHorizontal = this !is VerticalPagerViewer
+        val isReversed = this is R2LPagerViewer
+        val transformer = PagerPageTransition.createTransformer(
+            effect = config.pageTransitionEffect,
+            isHorizontal = isHorizontal,
+            leavingIsNegative = !isReversed,
+        )
+        if (transformer != null) {
+            val isDepth = config.pageTransitionEffect == PagerPageTransition.EFFECT_DEPTH
+            pager.setPageTransformer(isDepth && !isReversed, transformer, View.LAYER_TYPE_NONE)
+            hasPageTransformer = true
+        } else if (hasPageTransformer) {
+            pager.setPageTransformer(false, null)
+            pager.children.forEach { PagerPageTransition.reset(it) }
+            hasPageTransformer = false
+        }
+        pager.setScrollDuration(PagerPageTransition.durationFor(config.pageTransitionSpeed))
+    }
 
     /**
      * Returns the view this viewer uses.

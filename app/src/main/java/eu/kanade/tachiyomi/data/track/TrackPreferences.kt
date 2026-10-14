@@ -3,11 +3,17 @@ package eu.kanade.tachiyomi.data.track
 import eu.kanade.tachiyomi.core.preference.Preference
 import eu.kanade.tachiyomi.core.preference.PreferenceStore
 import eu.kanade.tachiyomi.data.track.anilist.Anilist
+import eu.kanade.tachiyomi.data.track.kitsu.Kitsu
 import eu.kanade.tachiyomi.data.track.mangabaka.MangaBaka
 
 class TrackPreferences(
     private val preferenceStore: PreferenceStore,
 ) {
+
+    fun trackDisplayUsername(sync: TrackService) = preferenceStore.getString(
+        Preference.privateKey("pref_mangasync_displayname_${sync.id}"),
+        "",
+    )
 
     fun trackUsername(sync: TrackService) = preferenceStore.getString(trackUsername(sync.id), "")
 
@@ -33,6 +39,8 @@ class TrackPreferences(
     fun mangabakaOAuthVerifier() = preferenceStore.getString(Preference.privateKey("mangabaka_oauth_verifier"), "")
 
     fun mangabakaOAuthState() = preferenceStore.getString(Preference.privateKey("mangabaka_oauth_state"), "")
+
+    fun kitsuScoreType() = preferenceStore.getString("kitsu_score_type", Kitsu.RATING_ADVANCED)
 
     fun autoUpdateTrack() = preferenceStore.getBoolean("pref_auto_update_manga_sync_key", true)
 

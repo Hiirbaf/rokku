@@ -130,6 +130,7 @@ class MyAnimeList(private val context: Context, id: Long) : TrackService(id) {
             val oauth = api.getAccessToken(authCode)
             interceptor.setAuth(oauth)
             val username = api.getCurrentUser()
+            saveDisplayUsername(username)
             saveCredentials(username, oauth.accessToken)
             true
         } catch (e: Exception) {
@@ -137,6 +138,10 @@ class MyAnimeList(private val context: Context, id: Long) : TrackService(id) {
             logout()
             false
         }
+    }
+
+    override suspend fun updateUserConfig() {
+        saveDisplayUsername(api.getCurrentUser())
     }
 
     override fun logout() {

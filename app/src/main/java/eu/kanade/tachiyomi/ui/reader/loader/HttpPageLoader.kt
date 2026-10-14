@@ -6,6 +6,7 @@ import eu.kanade.tachiyomi.source.model.Page
 import eu.kanade.tachiyomi.source.online.HttpSource
 import eu.kanade.tachiyomi.ui.reader.model.ReaderChapter
 import eu.kanade.tachiyomi.ui.reader.model.ReaderPage
+import eu.kanade.tachiyomi.util.system.connectivityManager
 import eu.kanade.tachiyomi.util.system.launchIO
 import eu.kanade.tachiyomi.util.system.withIOContext
 import kotlinx.coroutines.CancellationException
@@ -121,7 +122,7 @@ class HttpPageLoader(
         if (page.status is Page.State.Queue) {
             queuedPages += PriorityPage(page, 1).also { queue.offer(it) }
         }
-        queuedPages += preloadNextPages(page, preloadSize)
+        queuedPages += preloadNextPages(page, if (canPreload()) preloadSize else 0)
 
         suspendCancellableCoroutine<Nothing> { continuation ->
             continuation.invokeOnCancellation {
@@ -132,6 +133,10 @@ class HttpPageLoader(
                 }
             }
         }
+    }
+
+    private fun canPreload(): Boolean {
+        return !preferences.preloadOnlyOnWifi().get() || !preferences.context.connectivityManager.isActiveNetworkMetered
     }
 
     /**

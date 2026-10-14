@@ -35,7 +35,7 @@ class AppUpdateChecker(
             // Nightly releases are always published as GitHub prereleases, so
             // `releases/latest` (which excludes prereleases) 404s for that repo -
             // always use the list endpoint there regardless of the beta preference.
-            val result = if (preferences.checkForBetas().get() || BuildConfig.NIGHTLY) {
+            val checkResult = if (preferences.checkForBetas().get() || BuildConfig.NIGHTLY) {
                 networkService.client
                     .newCall(GET("https://api.github.com/repos/$repo/releases"))
                     .awaitSuccess()
@@ -76,6 +76,12 @@ class AppUpdateChecker(
                         }
                     }
             }
+            // A manual check always shows the latest version, even one that was skipped
+            val result = if (!isUserPrompt && checkResult is AppUpdateResult.NewUpdate && isSkipped(checkResult.release.version)) {
+                AppUpdateResult.NoNewUpdate
+            } else {
+                checkResult
+            }
             if (doExtrasAfterNewUpdate && result is AppUpdateResult.NewUpdate) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
                     preferences.appShouldAutoUpdate().get() != AppDownloadInstallJob.NEVER
@@ -88,6 +94,9 @@ class AppUpdateChecker(
             result
         }
     }
+
+    @VisibleForTesting
+    fun isSkipped(version: String): Boolean = preferences.skippedAppUpdate().get() == version
 
     @VisibleForTesting
     fun isNewVersion(newVersion: String, currentVersion: String = BuildConfig.VERSION_NAME): Boolean =

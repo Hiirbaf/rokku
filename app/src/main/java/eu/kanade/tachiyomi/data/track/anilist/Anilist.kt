@@ -235,13 +235,20 @@ class Anilist(private val context: Context, id: Long) : TrackService(id) {
 
     override suspend fun login(username: String, password: String) = login(password)
 
+    override suspend fun updateUserConfig() {
+        val currentUser = api.getCurrentUser()
+        scorePreference.set(currentUser.scoreFormat)
+        saveDisplayUsername(currentUser.name)
+    }
+
     suspend fun login(token: String): Boolean {
         return try {
             val oauth = api.createOAuth(token)
             interceptor.setAuth(oauth)
-            val (username, scoreType) = api.getCurrentUser()
-            scorePreference.set(scoreType)
-            saveCredentials(username.toString(), oauth.accessToken)
+            val currentUser = api.getCurrentUser()
+            scorePreference.set(currentUser.scoreFormat)
+            saveDisplayUsername(currentUser.name)
+            saveCredentials(currentUser.id.toString(), oauth.accessToken)
             true
         } catch (e: Exception) {
             Logger.e(e)
@@ -252,8 +259,8 @@ class Anilist(private val context: Context, id: Long) : TrackService(id) {
 
     suspend fun updatingScoring(): Pair<Boolean, Exception?> {
         return try {
-            val (_, scoreType) = api.getCurrentUser()
-            scorePreference.set(scoreType)
+            val currentUser = api.getCurrentUser()
+            scorePreference.set(currentUser.scoreFormat)
             true to null
         } catch (e: Exception) {
             Logger.e(e) { "Failed to update scoring" }

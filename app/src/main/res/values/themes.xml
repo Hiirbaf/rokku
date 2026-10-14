@@ -97,8 +97,12 @@
     </style>
 
     <style name="ThemeOverlay.Tachiyomi.TintedControls" parent="">
-        <item name="colorSurfaceContainerHighest">@color/tachiyomi_surfaceContainerHighest</item>
-        <item name="colorOutline">@color/tachiyomi_outline</item>
+        <item name="colorSurfaceContainerHighest">@color/surfaceContainerHighestDefault</item>
+        <item name="colorOutline">@color/outlineDefault</item>
+    </style>
+    <style name="ThemeOverlay.Tachiyomi.TintedControls.Doki" parent="">
+        <item name="colorSurfaceContainerHighest">@color/surfaceContainerHighestDoki</item>
+        <item name="colorOutline">@color/outlineDoki</item>
     </style>
     <style name="ThemeOverlay.Tachiyomi.TintedControls.FlatLime" parent="">
         <item name="colorSurfaceContainerHighest">@color/surfaceContainerHighestLime</item>

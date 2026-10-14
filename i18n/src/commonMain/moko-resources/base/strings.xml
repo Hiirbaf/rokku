@@ -183,6 +183,7 @@
     <string name="updating_">Updating %1$s</string>
     <string name="update_available">Update available</string>
     <string name="new_version_available">New version available!</string>
+    <string name="skip_this_version">Skip this version</string>
     <string name="new_beta_version_available">New beta version available!</string>
     <string name="no_new_updates_available">No new updates available</string>
     <string name="searching_for_updates">Searching for updates…</string>
@@ -487,11 +488,21 @@
     <!-- Reader settings -->
     <string name="fullscreen">Fullscreen</string>
     <string name="animate_page_transitions">Animate page transitions</string>
+    <string name="page_transition_effect">Page transition effect</string>
+    <string name="page_transition_speed">Page transition speed</string>
+    <string name="slide">Slide</string>
+    <string name="fade">Fade</string>
+    <string name="depth">Depth</string>
+    <string name="zoom_out">Zoom out</string>
+    <string name="slow">Slow</string>
+    <string name="very_slow">Very slow</string>
     <string name="enable_zoom_out">Enable zoom out</string>
     <string name="double_tap_anim_speed">Double tap animation speed</string>
     <string name="show_page_number">Show page number</string>
     <string name="true_32bit_color">32-bit color</string>
     <string name="page_preload_amount">Page preload amount</string>
+    <string name="preload_only_on_wifi">Preload only on Wi-Fi</string>
+    <string name="preload_only_on_wifi_summary">Saves mobile data by loading only the page you're reading while on a metered connection</string>
     <string name="amount_of_pages_to_preload">The amount of pages to preload when reading. Higher values will result in a smoother reading experience, at the cost of higher cache and network usage</string>
     <string name="reduces_banding_impacts_performance">Reduces banding, but may impact
         performance</string>
@@ -677,6 +688,8 @@
     <string name="not_tracked">Not tracked</string>
     <string name="services">Services</string>
     <string name="tracking_info">One-way sync to update the chapter progress in tracking services. Set up tracking for individual entries from their tracking button</string>
+    <string name="tracking_legacy_notice">You\'re entering the legacy version of \'Tracking\'</string>
+    <string name="advanced_experimental_notice">You\'re entering experimental version of \'Advanced\'</string>
     <string name="enhanced_services">Enhanced services</string>
     <string name="enhanced_tracking_info">Services that provide enhanced features for specific sources. Entries are automatically tracked when added to your library</string>
     <string name="update_tracking_after_reading">Update tracking after reading</string>
@@ -1180,6 +1193,8 @@
     <string name="information_cloudflare_help">Tap here for help with Cloudflare</string>
     <string name="please_update_webview">Please update the WebView app for better compatibility</string>
     <string name="information_webview_required">WebView is required for the app to function</string>
+    <!-- Do not translate "WebView" -->
+    <string name="information_webview_crashed">WebView stopped working and the page was closed</string>
     <!-- Do not translate "WebView" -->
     <string name="webview_is_required">WebView is required for Tachiyomi</string>
     <string name="action_webview_back">Back</string>

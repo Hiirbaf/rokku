@@ -45,6 +45,10 @@ class ReaderPreferences(private val preferenceStore: PreferenceStore) {
         }
     }
 
+    fun pageTransitionEffect() = preferenceStore.getInt("page_transition_effect", 0)
+
+    fun pageTransitionSpeed() = preferenceStore.getInt("page_transition_speed", 0)
+
     fun webtoonDoubleTapZoomEnabled() = preferenceStore.getBoolean("pref_enable_double_tap_zoom_webtoon", true)
 
     fun debugMode() = preferenceStore.getBoolean("pref_enable_reader_debug_mode", BuildConfig.DEBUG)

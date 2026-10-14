@@ -10,4 +10,14 @@ data class KitsuCurrentUserResult(
 @Serializable
 data class KitsuUser(
     val id: String,
+    val attributes: KitsuUserAttributes = KitsuUserAttributes(),
+) {
+    val name: String get() = attributes.name
+    val ratingSystem: String get() = attributes.ratingSystem
+}
+
+@Serializable
+data class KitsuUserAttributes(
+    val name: String = "",
+    val ratingSystem: String = "advanced",
 )

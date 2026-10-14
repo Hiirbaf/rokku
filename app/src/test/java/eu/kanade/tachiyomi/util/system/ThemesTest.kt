@@ -20,13 +20,8 @@ class ThemesTest {
     }
 
     @Test
-    fun `default and doki share the base overlay`() {
-        assertEquals(Themes.DEFAULT.tintedControlsOverlay(), Themes.DOKI.tintedControlsOverlay())
-    }
-
-    @Test
     fun `every theme with its own palette gets its own overlay`() {
-        val own = Themes.entries.filter { it != Themes.MONET && it != Themes.DOKI }
+        val own = Themes.entries.filter { it != Themes.MONET }
         val overlays = own.map { it.tintedControlsOverlay() }
 
         assertEquals(own.size, overlays.toSet().size)

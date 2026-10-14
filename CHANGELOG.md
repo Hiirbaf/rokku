@@ -16,8 +16,13 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Browse and Global Search now keep a recent search history and let you save searches (scoped to one source or all sources), with incognito-aware suggestions ([@Hiirbaf](https://github.com/Hiirbaf))
 - Added an option to group the manga details chapter list into rounded cards like TachiyomiJ2K, tinted with the cover's color when the cover theme is on (off by default, under Settings > Appearance > Details page > Group chapters into cards) ([@Hiirbaf](https://github.com/Hiirbaf))
 - Added an option to tint switch tracks and outlines with each theme's color instead of a neutral gray (off by default, under Settings > Appearance > Tint switches and outlines with theme color) ([@Hiirbaf](https://github.com/Hiirbaf))
+- Added a page transition effect (Slide, Fade, Depth, Zoom out) and speed for the paged reader, in the reader settings next to Animate page transitions
+- Added a new Compose tracking settings screen that shows the logged-in account name under each tracker and a refresh button to re-fetch the profile and scoring type (the previous screen is still available by long-pressing Tracking in Settings). Kitsu now supports its simple, regular and advanced rating systems, tracker search results show the score, and Bangumi search now only lists manga ([@Sacha1016](https://github.com/Sacha1016))
+- Added a "Skip this version" button to the new app update dialog, so an update you don't want stops being offered at launch and in the background until a newer version comes out (checking manually from About still shows it)
+- Added a "Preload only on Wi-Fi" option in the reader settings that, on a metered connection such as mobile data, loads only the page you're reading instead of preloading the next pages (off by default)
 
 ### Changes
+- The Doki, Dark (default) and Flat Lime themes now tint switch tracks and outlines with their own colors when "Tint switches and outlines" is on, instead of a generic gray
 - An automatic backup that fails because its saved location is no longer accessible (folder deleted, permission revoked, storage removed) now shows a notification telling you to pick a new one, instead of failing silently
 - Aligned the accent and surface colors of the app themes with TachiyomiJ2K ([@Hiirbaf](https://github.com/Hiirbaf))
 
@@ -25,6 +30,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Made the status bar transparent instead of theme-colored, matching upstream (only visible on Android versions predating edge-to-edge enforcement)
 - Adjusted the accent color of the Tachiyomi, Flat Lime, Strawberries, and Yotsuba themes to match upstream
 - Fixed the Popular/Latest/Filter buttons in Browse rendering in the accent color instead of a neutral one
+- Fixed the switch thumb and checkmark being white in the Chocolate Strawberries theme instead of dark like the other dark themes
 - Fixed several dark themes showing white instead of black text/checkmarks on unread badges, checkboxes, filter chips, selected tabs, and default buttons, caused by using the accent color's own text color (`colorOnSecondary`) instead of the correctly calibrated `colorOnPrimary`
 - Fixed the manga details screen's unmarked "Add to Library"/"Tracking" buttons and the "More" fade-out keeping the plain theme background instead of the cover-based page tint, leaving a visible seam when "Theme background based on cover" was on
 - Fixed cool-hued covers (blue/cyan/green) barely tinting the manga details page compared to warm ones, caused by HSL's saturation not being perceptually uniform across hues; the cover-tint blend now uses HCT instead
@@ -34,6 +40,8 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Fixed a rare crash in Recents ("Two different ViewHolders have the same stable ID") caused by a section header's id colliding with a chapter row's
 - Fixed a page failing to render in the paged reader when a double-page spread couldn't be decoded for merging
 - Fixed the library update job silently failing (and spamming Crashlytics) when the OS refused to promote it to a foreground service
+- Stopped reporting an extension failing to decode a site's changed API response (missing JSON field) or failing to find its reader signer bindings to Crashlytics, since neither is actionable from the app
+- Fixed the app freezing (ANR) while installing an extension when the system download provider was slow to respond
 - Fixed a crash opening a chapter in the webtoon reader when its saved resume position was out of range
 - Fixed a crash sharing a reader page when its cached image had already been evicted from disk
 - Fixed a crash when saving reading history for a chapter that was removed from the library in the meantime (chapter list refreshed, manga removed)
@@ -56,6 +64,8 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Fixed the action mode toolbar (shown while selecting items) overlapping a display cutout/notch in landscape
 - Fixed a source showing without its language tag in lists/search results when that language was disabled in settings
 - Fixed a rare crash installing an extension (`HttpException.getCode()`) caused by a missing proguard keep rule for this extensions-lib API class
+- Fixed extension installation getting stuck on "Installing" when using the Shizuku installer, including in release builds where R8 stripped the methods Shizuku calls externally (ported from Mihon [#3630](https://github.com/mihonapp/mihon/pull/3630) and [#3676](https://github.com/mihonapp/mihon/pull/3676))
+- Fixed Shizuku forks that use a different package name (e.g. a "hidden" build) being reported as "Shizuku is not running"; Shizuku is now detected by its API permission instead of its package name, following Mihon [#3565](https://github.com/mihonapp/mihon/pull/3565)
 - Fixed a crash installing an extension on devices whose DownloadManager doesn't expose a working `content://downloads` provider
 - Fixed a crash on app startup when restoring a tracker login dialog that was still open on the back stack after the process was killed and that tracker was no longer available
 - Fixed a crash changing a manga's cover when the picked image's URI had expired or become inaccessible
@@ -64,6 +74,15 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Fixed the webtoon reader leaving a gap after zooming in once the window had been resized (split-screen, foldables), caused by only measuring its height once
 - Fixed Global Search (and the migration search) occasionally dropping a source's results from the list when several sources finished searching at nearly the same time
 - Fixed a download notification occasionally showing a leftover error's styling or category after a warning, pause, or new download, caused by all download notification states sharing one builder
+- Added missing R8 keep rules for the default methods of the source interfaces (`Source`, `CatalogueSource`, `ConfigurableSource`), which release builds could strip and crash extensions compiled the older way that call them
+- Fixed cancelling one extension install also cancelling the install of another extension that was in progress
+- Fixed pausing and resuming downloads quickly leaving duplicate page files ("(1)") and failed chapters, because the new download job started while the cancelled one was still writing pages
+- Fixed the app closing when a WebView's renderer process died, in the in-app WebView and during Cloudflare checks (now the page is closed with a message, or the check fails)
+- Fixed the paged reader ignoring the next tap after a press on a reader button was cancelled (for example when it turned into a scroll)
+- Fixed the webtoon reader's zoom and panning counting the side padding as part of the page, which let the page be dragged too far or showed a gap
+- Fixed the Local source being left out of Global Search when its language ("Other") wasn't enabled
+- Fixed concurrent requests to a site behind a Cloudflare check each opening their own WebView, causing slowdowns and memory pressure; they now wait for a single check. Requests that aren't GET (such as logins) now solve the check on the site's root page
+- Cloudflare checks are now detected with Cloudflare's `cf-mitigated` response header instead of parsing the page
 
 ### Other
 - Migrated FlexibleAdapter from JitPack to its MavenCentral release, removing a source of transient CI build failures when JitPack was unavailable

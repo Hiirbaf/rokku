@@ -124,12 +124,11 @@ class ShikimoriApi(
         }
     }
 
-    suspend fun getCurrentUser(): Int {
+    suspend fun getCurrentUser(): SMUser {
         return withIOContext {
             authClient.newCall(GET("$API_URL/users/whoami"))
                 .awaitSuccess()
                 .parseAs<SMUser>()
-                .id
         }
     }
 

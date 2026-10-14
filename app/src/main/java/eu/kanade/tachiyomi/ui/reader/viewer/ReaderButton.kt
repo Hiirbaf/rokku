@@ -26,7 +26,7 @@ class ReaderButton @JvmOverloads constructor(
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
         viewer?.pager?.setGestureDetectorEnabled(false)
-        if (event.actionMasked == MotionEvent.ACTION_UP) {
+        if (event.actionMasked == MotionEvent.ACTION_UP || event.actionMasked == MotionEvent.ACTION_CANCEL) {
             viewer?.pager?.setGestureDetectorEnabled(true)
         }
         return super.onTouchEvent(event)

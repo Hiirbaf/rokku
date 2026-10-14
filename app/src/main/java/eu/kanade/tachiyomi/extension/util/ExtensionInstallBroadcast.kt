@@ -21,6 +21,7 @@ import eu.kanade.tachiyomi.extension.util.ExtensionInstallBroadcast.Companion.PA
 import eu.kanade.tachiyomi.extension.util.ExtensionInstallBroadcast.Companion.packageInstallStep
 import eu.kanade.tachiyomi.util.system.DeviceUtil
 import eu.kanade.tachiyomi.util.system.getParcelableCompat
+import eu.kanade.tachiyomi.util.system.launchIO
 import eu.kanade.tachiyomi.util.system.notificationBuilder
 import eu.kanade.tachiyomi.util.system.notificationManager
 import eu.kanade.tachiyomi.util.system.toast
@@ -248,7 +249,9 @@ class ExtensionInstallActivity : Activity() {
             val extensionManager: ExtensionManager by injectLazy()
             extensionManager.setInstalling(downloadId, sessionId)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                (getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager).remove(downloadId)
+                // Binder call into the download provider, which can block long enough to cause an ANR
+                val downloadManager = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+                launchIO { runCatching { downloadManager.remove(downloadId) } }
             }
             data.close()
         } catch (error: Exception) {

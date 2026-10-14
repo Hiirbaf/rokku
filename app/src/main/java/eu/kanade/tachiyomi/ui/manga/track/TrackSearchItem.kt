@@ -80,6 +80,15 @@ class TrackSearchItem(val trackSearch: TrackSearch) : AbstractItem<TrackSearchIt
             } else {
                 binding.trackSearchStartResult.text = track.start_date
             }
+
+            if (track.score <= 0f) {
+                binding.trackSearchScore.isVisible = false
+                binding.trackSearchScoreResult.isVisible = false
+            } else {
+                binding.trackSearchScore.isVisible = true
+                binding.trackSearchScoreResult.isVisible = true
+                binding.trackSearchScoreResult.text = track.score.toString()
+            }
         }
 
         override fun unbindView(item: TrackSearchItem) {

@@ -179,6 +179,8 @@ class PreferencesHelper(val context: Context, val preferenceStore: PreferenceSto
 
     fun preloadSize() = preferenceStore.getInt(Keys.preloadSize, 6)
 
+    fun preloadOnlyOnWifi() = preferenceStore.getBoolean(Keys.preloadOnlyOnWifi, false)
+
     fun autoUpdateTrack() = preferenceStore.getBoolean(Keys.autoUpdateTrack, true)
 
     fun trackMarkedAsRead() = preferenceStore.getBoolean(Keys.trackMarkedAsRead, false)
@@ -401,6 +403,8 @@ class PreferencesHelper(val context: Context, val preferenceStore: PreferenceSto
     fun lastExtCheck() = preferenceStore.getLong("last_ext_check", 0)
 
     fun lastAppCheck() = preferenceStore.getLong("last_app_check", 0)
+
+    fun skippedAppUpdate() = preferenceStore.getString("skipped_app_update", "")
 
     fun checkForBetas() = preferenceStore.getBoolean("check_for_betas", BuildConfig.BETA)
 

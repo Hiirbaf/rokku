@@ -4,6 +4,7 @@ import android.animation.Animator
 import android.animation.AnimatorSet
 import android.animation.ValueAnimator
 import android.content.Context
+import android.content.res.Resources
 import android.util.AttributeSet
 import android.view.HapticFeedbackConstants
 import android.view.MotionEvent
@@ -40,6 +41,15 @@ open class WebtoonRecyclerView @JvmOverloads constructor(
                 zoom(currentScale, DEFAULT_RATE, x, 0f, y, 0f)
             }
         }
+    var sidePaddingPercent = 0
+        set(value) {
+            field = value
+            x = getPositionX(x)
+        }
+
+    val sidePaddingPixels: Int
+        get() = (Resources.getSystem().displayMetrics.widthPixels * (sidePaddingPercent / 100f)).toInt()
+
     var doubleTapZoom = true
 
     private val minRate
@@ -59,6 +69,7 @@ open class WebtoonRecyclerView @JvmOverloads constructor(
             originalHeight = MeasureSpec.getSize(heightSpec)
         }
         super.onMeasure(widthSpec, heightSpec)
+        x = getPositionX(x)
     }
 
     override fun onTouchEvent(e: MotionEvent): Boolean {
@@ -87,7 +98,7 @@ open class WebtoonRecyclerView @JvmOverloads constructor(
         if (currentScale < 1) {
             return 0f
         }
-        val maxPositionX = halfWidth * (currentScale - 1)
+        val maxPositionX = ((halfWidth - sidePaddingPixels) * currentScale - halfWidth).coerceAtLeast(0f)
         return positionX.coerceIn(-maxPositionX, maxPositionX)
     }
 
@@ -110,7 +121,7 @@ open class WebtoonRecyclerView @JvmOverloads constructor(
         isZooming = true
         val animatorSet = AnimatorSet()
         val translationXAnimator = ValueAnimator.ofFloat(fromX, toX)
-        translationXAnimator.addUpdateListener { animation -> x = animation.animatedValue as Float }
+        translationXAnimator.addUpdateListener { animation -> x = getPositionX(animation.animatedValue as Float) }
 
         val translationYAnimator = ValueAnimator.ofFloat(fromY, toY)
         translationYAnimator.addUpdateListener { animation -> y = animation.animatedValue as Float }
@@ -182,6 +193,7 @@ open class WebtoonRecyclerView @JvmOverloads constructor(
     private fun setScaleRate(rate: Float) {
         scaleX = rate
         scaleY = rate
+        x = getPositionX(x)
     }
 
     fun onScale(scaleFactor: Float) {

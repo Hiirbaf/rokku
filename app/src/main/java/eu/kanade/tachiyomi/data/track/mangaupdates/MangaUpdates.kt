@@ -144,9 +144,16 @@ class MangaUpdates(private val context: Context, id: Long) : TrackService(id) {
 
     override suspend fun login(username: String, password: String): Boolean {
         val authenticated = api.authenticate(username, password) ?: throw Throwable("Unable to login")
-        saveCredentials(authenticated.uid.toString(), authenticated.sessionToken)
         interceptor.newAuth(authenticated.sessionToken)
+        val currentUser = api.getCurrentUser()
+        saveDisplayUsername(currentUser.username)
+        saveCredentials(authenticated.uid.toString(), authenticated.sessionToken)
         return true
+    }
+
+    override suspend fun updateUserConfig() {
+        val currentUser = api.getCurrentUser()
+        saveDisplayUsername(currentUser.username)
     }
 
     fun restoreSession(): String? {

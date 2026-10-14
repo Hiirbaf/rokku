@@ -56,15 +56,23 @@ abstract class WebViewInterceptor(
             return response
         }
 
+        if (!prepareWebView()) return response
+
+        return intercept(chain, request, response)
+    }
+
+    /**
+     * Returns false, after telling the user, when there is no WebView to solve the challenge with.
+     */
+    protected fun prepareWebView(): Boolean {
         if (!WebViewUtil.supportsWebView(context)) {
             launchUI {
                 context.toast(MR.strings.webview_is_required, Toast.LENGTH_LONG)
             }
-            return response
+            return false
         }
         initWebView
-
-        return intercept(chain, request, response)
+        return true
     }
 
     fun parseHeaders(headers: Headers): Map<String, String> {

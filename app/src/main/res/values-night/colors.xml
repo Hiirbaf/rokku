@@ -27,6 +27,8 @@
     <color name="secondaryContainerTachiyomi">#21354A</color>
     <color name="tachiyomi_outline">#8F9099</color>
     <color name="tachiyomi_outlineVariant">#44464F</color>
+    <color name="surfaceContainerHighestDefault">#3A4152</color>
+    <color name="outlineDefault">#8A90A2</color>
     <color name="tachiyomi_error">#FFB4AB</color>
     <color name="tachiyomi_onError">#690005</color>
     <color name="tachiyomi_errorContainer">#93000A</color>
@@ -67,7 +69,7 @@
     <!-- Chocolate Strawberries Theme -->
     <color name="primaryStrawberry">@color/holo_red</color>
     <color name="primaryInverseStrawberry">#9f1414</color>
-    <color name="onPrimaryStrawberry">#FFFFFF</color>
+    <color name="onPrimaryStrawberry">#371912</color>
     <color name="secondaryStrawberry">@color/holo_red</color>
     <color name="rippleColorStrawberry">#1FAA2200</color>
     <color name="secondaryVariantStrawberry">#f9bab2</color>
@@ -100,8 +102,8 @@
     <color name="downloadBadgeLime">#304E51</color>
     <color name="onSurfaceVariantLime">@color/m3_sys_color_dark_on_surface_variant</color>
     <color name="surfaceContainerHighLime">@color/m3_sys_color_dark_surface_container_high</color>
-    <color name="surfaceContainerHighestLime">@color/m3_sys_color_dark_surface_container_highest</color>
-    <color name="outlineLime">@color/m3_sys_color_dark_outline</color>
+    <color name="surfaceContainerHighestLime">#37473D</color>
+    <color name="outlineLime">#8C9A90</color>
     <color name="outlineVariantLime">@color/m3_sys_color_dark_outline_variant</color>
     <color name="onPrimaryContainerLime">@color/m3_sys_color_dark_on_primary_container</color>
     <color name="onSecondaryContainerLime">@color/m3_sys_color_dark_on_secondary_container</color>

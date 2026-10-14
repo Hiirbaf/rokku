@@ -1088,7 +1088,7 @@ open class MainActivity : BaseActivity<MainActivityBinding>() {
                         withUIContext {
                             showNotificationPermissionPrompt()
                             AppUpdateNotifier.releasePageUrl = result.release.releaseLink
-                            AboutController.NewUpdateDialogController(body, url, isBeta).showDialog(router)
+                            AboutController.NewUpdateDialogController(body, url, isBeta, result.release.version).showDialog(router)
                         }
                     }
                 } catch (error: Exception) {

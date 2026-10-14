@@ -1186,4 +1186,6 @@
     <string name="has_results">Com resultados</string>
     <string name="pinned_only">Somente fixadas</string>
     <string name="show_on">Mostrar em</string>
+    <string name="tinted_controls">Colorir interruptores e contornos com a cor do tema</string>
+    <string name="grouped_chapter_cards">Agrupar capítulos em cartões</string>
 </resources>

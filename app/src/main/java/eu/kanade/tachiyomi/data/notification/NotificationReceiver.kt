@@ -470,13 +470,15 @@ class NotificationReceiver : BroadcastReceiver() {
          * @param context context of application
          * @param notes notes of the release
          * @param downloadLink download link to the apk
+         * @param version version of the release
          */
-        internal fun openUpdatePendingActivity(context: Context, notes: String, downloadLink: String): PendingIntent {
+        internal fun openUpdatePendingActivity(context: Context, notes: String, downloadLink: String, version: String): PendingIntent {
             val newIntent =
                 Intent(context, MainActivity::class.java).setPackage(context.packageName).setAction(MainActivity.SHORTCUT_UPDATE_NOTES)
                     .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
                     .putExtra(AboutController.NewUpdateDialogController.BODY_KEY, notes)
                     .putExtra(AboutController.NewUpdateDialogController.URL_KEY, downloadLink)
+                    .putExtra(AboutController.NewUpdateDialogController.VERSION_KEY, version)
             return PendingIntent.getActivity(
                 context,
                 downloadLink.hashCode(),

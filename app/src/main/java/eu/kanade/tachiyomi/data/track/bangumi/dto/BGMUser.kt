@@ -21,3 +21,9 @@ data class User(
     val userGroup: Int? = 0,
     val username: String? = "",
 )
+
+@Serializable
+data class BGMUser(
+    val username: String = "",
+    val nickname: String? = null,
+)

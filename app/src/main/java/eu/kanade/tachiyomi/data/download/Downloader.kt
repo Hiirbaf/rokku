@@ -29,6 +29,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -49,6 +50,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.supervisorScope
+import kotlinx.coroutines.withContext
 import nl.adaptivity.xmlutil.serialization.XML
 import okhttp3.Response
 import uy.kohesive.injekt.Injekt
@@ -189,7 +191,12 @@ class Downloader(
     private fun launchDownloaderJob() {
         if (isRunning) return
 
+        val previousJob = downloaderJob
         downloaderJob = scope.launch {
+            // Page writes block, so a canceled job can still be writing the pages this one would start on. Not
+            // cancelable, so a job canceled while waiting still finishes after the one before it.
+            withContext(NonCancellable) { previousJob?.join() }
+
             val activeDownloadsFlow = combine(
                 queueState,
                 downloadPreferences.parallelSourceLimit().changes(),
@@ -264,7 +271,6 @@ class Downloader(
      */
     private fun cancelDownloaderJob() {
         downloaderJob?.cancel()
-        downloaderJob = null
     }
 
     /**

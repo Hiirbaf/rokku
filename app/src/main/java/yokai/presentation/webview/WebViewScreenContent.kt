@@ -5,8 +5,10 @@ import android.graphics.Bitmap
 import android.os.Message
 import android.webkit.JsPromptResult
 import android.webkit.JsResult
+import android.webkit.RenderProcessGoneDetail
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -42,6 +44,7 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.stack.mutableStateStackOf
+import co.touchlab.kermit.Logger
 import com.kevinnzou.web.AccompanistWebChromeClient
 import com.kevinnzou.web.AccompanistWebViewClient
 import com.kevinnzou.web.LoadingState
@@ -56,6 +59,7 @@ import eu.kanade.tachiyomi.util.system.extensionIntentForText
 import eu.kanade.tachiyomi.util.system.getHtml
 import eu.kanade.tachiyomi.util.system.setDefaultSettings
 import eu.kanade.tachiyomi.util.system.setUserAgent
+import eu.kanade.tachiyomi.util.system.toast
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 import yokai.i18n.MR
@@ -163,6 +167,14 @@ fun WebViewScreenContent(
                 }
 
                 return false
+            }
+
+            override fun onRenderProcessGone(view: WebView, detail: RenderProcessGoneDetail): Boolean {
+                // Not handling it kills the app along with the page
+                Logger.e { "WebView renderer gone: crashed=${detail.didCrash()}, url=$currentUrl" }
+                view.context.toast(MR.strings.information_webview_crashed, Toast.LENGTH_LONG)
+                onNavigateUp()
+                return true
             }
         }
     }

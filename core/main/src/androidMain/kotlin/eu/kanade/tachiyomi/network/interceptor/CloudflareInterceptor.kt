@@ -2,23 +2,27 @@ package eu.kanade.tachiyomi.network.interceptor
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.webkit.RenderProcessGoneDetail
 import android.webkit.WebView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import co.touchlab.kermit.Logger
 import eu.kanade.tachiyomi.network.AndroidCookieJar
 import eu.kanade.tachiyomi.util.system.WebViewClientCompat
 import eu.kanade.tachiyomi.util.system.isOutdated
 import eu.kanade.tachiyomi.util.system.toast
-import okhttp3.Cookie
-import okhttp3.HttpUrl.Companion.toHttpUrl
+import okhttp3.HttpUrl
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
-import org.jsoup.Jsoup
 import yokai.i18n.MR
 import yokai.util.lang.getString
 import java.io.IOException
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CountDownLatch
+import java.util.concurrent.locks.ReentrantReadWriteLock
+import kotlin.concurrent.read
+import kotlin.concurrent.write
 
 class CloudflareInterceptor(
     private val context: Context,
@@ -28,35 +32,60 @@ class CloudflareInterceptor(
 
     private val executor = ContextCompat.getMainExecutor(context)
 
-    override fun shouldIntercept(response: Response): Boolean {
-        // Check if Cloudflare anti-bot is on
-        return if (response.code in ERROR_CODES && response.header("Server") in SERVER_CHECK) {
-            val document = Jsoup.parse(
-                response.peekBody(Long.MAX_VALUE).string(),
-                response.request.url.toString(),
-            )
+    // Requests to a host share its lock while a challenge is solved under it alone, so concurrent requests wait for
+    // one WebView instead of each opening their own
+    private val hostLocks = ConcurrentHashMap<String, ReentrantReadWriteLock>()
 
-            // solve with webview only on captcha, not on geo block
-            document.getElementById("challenge-error-title") != null ||
-                document.getElementById("challenge-error-text") != null
-        } else {
-            false
-        }
+    override fun shouldIntercept(response: Response): Boolean {
+        // Checking the cf-mitigated header is the official way to detect a Cloudflare challenge:
+        // https://developers.cloudflare.com/cloudflare-challenges/challenge-types/challenge-pages/detect-response/
+        return response.header("cf-mitigated") == "challenge" && response.header("Server") in SERVER_CHECK
     }
 
-    override fun intercept(
-        chain: Interceptor.Chain,
-        request: Request,
-        response: Response,
-    ): Response {
+    override fun intercept(chain: Interceptor.Chain): Response {
+        val request = chain.request()
+        val lock = hostLocks.computeIfAbsent(request.url.host) { ReentrantReadWriteLock() }
+
+        val (response, clearance) = lock.read {
+            val response = chain.proceed(request)
+            if (!shouldIntercept(response)) return response
+            response to clearance(request.url)
+        }
+
+        // write releases the read hold of a request made from within another to the same host, like an extension
+        // refreshing a token, which would otherwise wait on itself
+        lock.write {
+            // Another request may have solved the challenge while this one waited
+            if (isCleared(request.url, clearance)) {
+                response.close()
+            } else {
+                if (!prepareWebView()) return response
+                solve(request, response, clearance)
+            }
+        }
+
+        return chain.proceed(request)
+    }
+
+    override fun intercept(chain: Interceptor.Chain, request: Request, response: Response): Response {
+        solve(request, response, clearance(request.url))
+        return chain.proceed(request)
+    }
+
+    private fun clearance(url: HttpUrl): String? {
+        return cookieManager.get(url).firstOrNull { it.name == "cf_clearance" }?.value
+    }
+
+    private fun isCleared(url: HttpUrl, previousClearance: String?): Boolean {
+        val clearance = clearance(url)
+        return !clearance.isNullOrBlank() && clearance != previousClearance
+    }
+
+    private fun solve(request: Request, response: Response, clearance: String?) {
         try {
             response.close()
             cookieManager.remove(request.url, COOKIE_NAMES, 0)
-            val oldCookie = cookieManager.get(request.url)
-                .firstOrNull { it.name == "cf_clearance" }
-            resolveWithWebView(request, oldCookie)
-
-            return chain.proceed(request)
+            resolveWithWebView(request, clearance)
         }
         // Because OkHttp's enqueue only handles IOExceptions, wrap the exception so that
         // we don't crash the entire app
@@ -68,7 +97,7 @@ class CloudflareInterceptor(
     }
 
     @SuppressLint("SetJavaScriptEnabled")
-    private fun resolveWithWebView(originalRequest: Request, oldCookie: Cookie?) {
+    private fun resolveWithWebView(originalRequest: Request, originalClearance: String?) {
         // We need to lock this thread until the WebView finds the challenge solution url, because
         // OkHttp doesn't support asynchronous interceptors.
         val latch = CountDownLatch(1)
@@ -78,8 +107,17 @@ class CloudflareInterceptor(
         var challengeFound = false
         var cloudflareBypassed = false
         var isWebViewOutdated = false
+        var isRenderProcessGone = false
 
         val origRequestUrl = originalRequest.url.toString()
+        // A WebView can only load a page with GET, and loading the url of another method usually reaches an
+        // endpoint that answers GET without a challenge to solve. The clearance covers the whole site, so it's
+        // earned on the site's root page instead.
+        val challengeUrl = if (originalRequest.method == "GET") {
+            origRequestUrl
+        } else {
+            originalRequest.url.newBuilder().encodedPath("/").query(null).fragment(null).build().toString()
+        }
         val headers = parseHeaders(originalRequest.headers)
 
         executor.execute {
@@ -87,18 +125,12 @@ class CloudflareInterceptor(
 
             webview.webViewClient = object : WebViewClientCompat() {
                 override fun onPageFinished(view: WebView, url: String) {
-                    fun isCloudFlareBypassed(): Boolean {
-                        return cookieManager.get(origRequestUrl.toHttpUrl())
-                            .firstOrNull { it.name == "cf_clearance" }
-                            .let { it != null && it != oldCookie }
-                    }
-
-                    if (isCloudFlareBypassed()) {
+                    if (isCleared(originalRequest.url, originalClearance)) {
                         cloudflareBypassed = true
                         latch.countDown()
                     }
 
-                    if (url == origRequestUrl && !challengeFound) {
+                    if (url == challengeUrl && !challengeFound) {
                         // The first request didn't return the challenge, abort.
                         latch.countDown()
                     }
@@ -121,20 +153,32 @@ class CloudflareInterceptor(
                         }
                     }
                 }
+
+                override fun onRenderProcessGone(view: WebView, detail: RenderProcessGoneDetail): Boolean {
+                    // Not handling it kills the app, failing the bypass is enough
+                    Logger.e {
+                        "WebView renderer gone during Cloudflare bypass: crashed=${detail.didCrash()}, " +
+                            "priority=${detail.rendererPriorityAtExit()}, url=$origRequestUrl"
+                    }
+                    isRenderProcessGone = true
+                    latch.countDown()
+                    return true
+                }
             }
 
-            webview.loadUrl(origRequestUrl, headers)
+            webview.loadUrl(challengeUrl, headers)
         }
 
         latch.awaitFor30Seconds()
 
         executor.execute {
-            if (!cloudflareBypassed) {
+            // Only destroy can be called on a WebView whose renderer is gone
+            if (!cloudflareBypassed && !isRenderProcessGone) {
                 isWebViewOutdated = webview?.isOutdated() == true
             }
 
             webview?.run {
-                stopLoading()
+                if (!isRenderProcessGone) stopLoading()
                 destroy()
             }
         }

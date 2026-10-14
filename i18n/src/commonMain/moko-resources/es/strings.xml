@@ -842,7 +842,7 @@
     <string name="enhanced_tracking_info">Servicios que ofrecen funciones mejoradas para fuentes específicas. Las entradas se rastrean automáticamente cuando se añaden a tu biblioteca.</string>
     <string name="scoring_type_updated">Tipo de puntuación actualizado</string>
     <string name="could_not_update_scoring_">No se pudo actualizar el tipo de puntuación: %1$s</string>
-    <string name="update_tracking_scoring_type">Actualizando el %1$s de la puntuación</string>
+    <string name="update_tracking_scoring_type">Actualizar el sistema de puntuación de %1$s</string>
     <string name="language_badge">Insignias de idioma</string>
     <string name="check_for_beta_releases">Buscar versiones beta</string>
     <string name="zoom_double_page_spreads">Hacer zoom en páginas dobles</string>

@@ -17,6 +17,7 @@ data class ALUserViewer(
 @Serializable
 data class ALUserViewerData(
     val id: Int,
+    val name: String,
     val mediaListOptions: ALUserListOptions,
 )
 
@@ -29,4 +30,10 @@ data class ALUserListOptions(
 @Serializable
 data class ALMediaListTypeOptions(
     val customLists: List<String>? = null,
+)
+
+data class ALUser(
+    val id: Int,
+    val name: String,
+    val scoreFormat: String,
 )

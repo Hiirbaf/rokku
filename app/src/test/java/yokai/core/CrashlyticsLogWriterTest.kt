@@ -135,6 +135,21 @@ class CrashlyticsLogWriterTest {
     }
 
     @Test
+    fun `an extension failing to find its reader signer bindings is ignored`() {
+        ignored(IOException("Reader signer bindings not found")) shouldBe true
+    }
+
+    @Test
+    fun `an extension's own DTO missing a field is ignored`() {
+        ignored(
+            SerializationException(
+                "Field 'baseUrl' is required for type with serial name " +
+                    "'eu.kanade.tachiyomi.extension.en.comix.ChapterResponse.Pages', but it was missing at path: \$.result.pages",
+            ),
+        ) shouldBe true
+    }
+
+    @Test
     fun `Hikka's OAuth preference saved as the literal text null is ignored`() {
         ignored(
             SerializationException(

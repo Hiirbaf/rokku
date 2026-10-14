@@ -7,6 +7,7 @@ import eu.kanade.tachiyomi.data.track.anilist.dto.ALAddMangaResult
 import eu.kanade.tachiyomi.data.track.anilist.dto.ALCurrentUserResult
 import eu.kanade.tachiyomi.data.track.anilist.dto.ALOAuth
 import eu.kanade.tachiyomi.data.track.anilist.dto.ALSearchResult
+import eu.kanade.tachiyomi.data.track.anilist.dto.ALUser
 import eu.kanade.tachiyomi.data.track.anilist.dto.ALUserListMangaQueryResult
 import eu.kanade.tachiyomi.data.track.model.TrackSearch
 import eu.kanade.tachiyomi.network.POST
@@ -168,7 +169,7 @@ class AnilistApi(val client: OkHttpClient, interceptor: AnilistInterceptor) {
     fun createOAuth(token: String): ALOAuth =
         ALOAuth(token, "Bearer", System.currentTimeMillis() + 31536000000, 31536000000)
 
-    suspend fun getCurrentUser(): Pair<Int, String> {
+    suspend fun getCurrentUser(): ALUser {
         return withIOContext {
             val payload = buildJsonObject {
                 put("query", currentUserQuery())
@@ -184,7 +185,11 @@ class AnilistApi(val client: OkHttpClient, interceptor: AnilistInterceptor) {
                     .parseAs<ALCurrentUserResult>()
                     .let {
                         val viewer = it.data.viewer
-                        Pair(viewer.id, viewer.mediaListOptions.scoreFormat)
+                        ALUser(
+                            id = viewer.id,
+                            name = viewer.name,
+                            scoreFormat = viewer.mediaListOptions.scoreFormat,
+                        )
                     }
             }
         }
@@ -379,6 +384,7 @@ class AnilistApi(val client: OkHttpClient, interceptor: AnilistInterceptor) {
             |query User {
                 |Viewer {
                     |id
+                    |name
                     |mediaListOptions {
                         |scoreFormat
                         |mangaList {

@@ -109,6 +109,30 @@ open class Pager(
         return false
     }
 
+    private var durationScroller: DurationScroller? = null
+
+    /**
+     * Forces the duration in milliseconds of the settle animation, or restores the default
+     * distance based one when [duration] is null.
+     */
+    fun setScrollDuration(duration: Int?) {
+        if (duration == null && durationScroller == null) return
+        val scroller = durationScroller ?: installDurationScroller() ?: return
+        scroller.fixedDuration = duration
+    }
+
+    // The scroller is private in the library, so it can only be replaced through reflection.
+    private fun installDurationScroller(): DurationScroller? {
+        return runCatching {
+            val field = DirectionalViewPager::class.java.getDeclaredField("mScroller")
+            field.isAccessible = true
+            DurationScroller(context).also {
+                field.set(this, it)
+                durationScroller = it
+            }
+        }.getOrNull()
+    }
+
     /**
      * Enables or disables the gesture detector.
      */

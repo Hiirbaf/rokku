@@ -82,6 +82,12 @@ class SettingsReaderController : SettingsLegacyController() {
                 defaultValue = 6
                 summaryRes = MR.strings.amount_of_pages_to_preload
             }
+            switchPreference {
+                key = Keys.preloadOnlyOnWifi
+                titleRes = MR.strings.preload_only_on_wifi
+                summaryRes = MR.strings.preload_only_on_wifi_summary
+                defaultValue = false
+            }
             multiSelectListPreferenceMat(activity) {
                 key = Keys.readerBottomButtons
                 titleRes = MR.strings.display_buttons_bottom_reader

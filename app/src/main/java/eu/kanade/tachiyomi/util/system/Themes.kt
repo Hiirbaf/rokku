@@ -89,7 +89,8 @@ enum class Themes(
     @StyleRes
     fun tintedControlsOverlay(): Int? = when (this) {
         MONET -> null
-        DEFAULT, DOKI -> R.style.ThemeOverlay_Tachiyomi_TintedControls
+        DEFAULT -> R.style.ThemeOverlay_Tachiyomi_TintedControls
+        DOKI -> R.style.ThemeOverlay_Tachiyomi_TintedControls_Doki
         SPRING_AND_DUSK -> R.style.ThemeOverlay_Tachiyomi_TintedControls_MidnightDusk
         STRAWBERRIES -> R.style.ThemeOverlay_Tachiyomi_TintedControls_Strawberries
         TEAL_AND_SAPPHIRE -> R.style.ThemeOverlay_Tachiyomi_TintedControls_SapphireDusk

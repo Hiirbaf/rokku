@@ -87,7 +87,7 @@ class MyAnimeListApi(private val client: OkHttpClient, interceptor: MyAnimeListI
                 .appendPath(id.toString())
                 .appendQueryParameter(
                     "fields",
-                    "id,title,synopsis,num_chapters,main_picture,status,media_type,start_date",
+                    "id,title,synopsis,num_chapters,mean,main_picture,status,media_type,start_date",
                 )
                 .build()
             authClient.newCall(GET(url.toString()))
@@ -99,6 +99,7 @@ class MyAnimeListApi(private val client: OkHttpClient, interceptor: MyAnimeListI
                         title = it.title
                         summary = it.synopsis
                         total_chapters = it.numChapters
+                        score = it.mean.toFloat()
                         cover_url = (it.covers?.large ?: it.covers?.medium).orEmpty()
                         tracking_url = "https://myanimelist.net/manga/$media_id"
                         publishing_status = it.status.replace("_", " ")

@@ -77,6 +77,7 @@ class WebtoonViewer(val activity: ReaderActivity, val hasMargins: Boolean = fals
     val config = WebtoonConfig(scope)
 
     init {
+        recycler.sidePaddingPercent = config.sidePadding
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) recycler.setItemViewCacheSize(RECYCLER_VIEW_CACHE_SIZE)
         recycler.isVisible = false // Don't let the recycler layout yet
         recycler.layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT)
@@ -139,6 +140,7 @@ class WebtoonViewer(val activity: ReaderActivity, val hasMargins: Boolean = fals
         }
 
         config.imagePropertyChangedListener = {
+            recycler.sidePaddingPercent = config.sidePadding
             refreshAdapter()
         }
 
