@@ -246,7 +246,7 @@ object Notifications {
             },
             NotificationChannel(
                 CHANNEL_DISCORD_RPC,
-                context.getString(MR.strings.pref_discord_rpc),
+                context.getString(MR.strings.discord_rpc),
                 NotificationManager.IMPORTANCE_LOW,
             ).apply {
                 setShowBadge(false)
