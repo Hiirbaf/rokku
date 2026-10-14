@@ -117,7 +117,7 @@ class DiscordRPCService : Service() {
         val builder = context.notificationBuilder(Notifications.CHANNEL_DISCORD_RPC) {
             setLargeIcon(BitmapFactory.decodeResource(context.resources, R.mipmap.ic_launcher))
             setSmallIcon(R.drawable.ic_discord_24dp)
-            setContentText(context.resources.getString(R.string.pref_discord_rpc))
+            setContentText(context.resources.getString(R.string.discord_rpc))
             setAutoCancel(false)
             setOngoing(true)
             setWhen(since)
