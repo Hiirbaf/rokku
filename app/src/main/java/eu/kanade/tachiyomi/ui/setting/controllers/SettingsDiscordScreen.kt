@@ -284,7 +284,7 @@ object SettingsDiscordScreen : ComposableSettings() {
                 enabled = enableDRPC,
             ).asCard(),
             Preference.PreferenceGroup(
-                title = stringResource(MR.strings.pref_category_discord_presence),
+                title = stringResource(MR.strings.pref_category_discord_customization),
                 enabled = enableDRPC,
                 preferenceItems = persistentListOf(
                     Preference.PreferenceItem.SwitchPreference(
@@ -310,7 +310,7 @@ object SettingsDiscordScreen : ComposableSettings() {
                 ),
             ).asCard(),
             Preference.PreferenceGroup(
-                title = stringResource(MR.strings.pref_category_discord_customization),
+                title = stringResource(MR.strings.pref_behavior),
                 enabled = enableDRPC,
                 preferenceItems = persistentListOf(
                     Preference.PreferenceItem.SwitchPreference(
@@ -327,6 +327,7 @@ object SettingsDiscordScreen : ComposableSettings() {
                     Preference.PreferenceItem.ListPreference(
                         pref = progressModePref,
                         title = stringResource(MR.strings.pref_discord_show_progress),
+                        subtitle = stringResource(MR.strings.pref_buttons_selected),
                         entries = persistentMapOf(
                             DiscordProgressMode.OFF to stringResource(MR.strings.pref_discord_progress_off),
                             DiscordProgressMode.PAGES to stringResource(MR.strings.pref_discord_progress_pages),
