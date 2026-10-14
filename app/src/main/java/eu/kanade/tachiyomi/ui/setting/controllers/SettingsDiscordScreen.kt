@@ -275,7 +275,7 @@ object SettingsDiscordScreen : ComposableSettings() {
                 preferenceItems = persistentListOf(
                     Preference.PreferenceItem.SwitchPreference(
                         pref = enableDRPCPref,
-                        title = stringResource(MR.strings.pref_enable_discord_rpc),
+                        title = stringResource(MR.strings.enable_discord_rpc),
                     ),
                 ),
             ).asCard(),
@@ -299,11 +299,11 @@ object SettingsDiscordScreen : ComposableSettings() {
                     ),
                     Preference.PreferenceItem.ListPreference(
                         pref = discordRPCStatus,
-                        title = stringResource(MR.strings.pref_discord_status),
+                        title = stringResource(MR.strings.discord_status),
                         entries = persistentMapOf(
-                            -1 to stringResource(MR.strings.pref_discord_dnd),
-                            0 to stringResource(MR.strings.pref_discord_idle),
-                            1 to stringResource(MR.strings.pref_discord_online),
+                            -1 to stringResource(MR.strings.discord_dnd),
+                            0 to stringResource(MR.strings.discord_idle),
+                            1 to stringResource(MR.strings.discord_online),
                         ),
                         enabled = enableDRPC,
                     ),
@@ -363,18 +363,18 @@ object SettingsDiscordScreen : ComposableSettings() {
         val allCategories by getCategories.subscribe().collectAsState(initial = runBlocking { getCategories.await() })
 
         return Preference.PreferenceGroup(
-            title = stringResource(MR.strings.pref_discord_privacy),
+            title = stringResource(MR.strings.discord_privacy),
             preferenceItems = persistentListOf(
                 Preference.PreferenceItem.SwitchPreference(
                     pref = connectionsPreferences.discordRPCIncognito(),
-                    title = stringResource(MR.strings.pref_discord_incognito),
-                    subtitle = stringResource(MR.strings.pref_discord_incognito_summary),
+                    title = stringResource(MR.strings.discord_incognito),
+                    subtitle = stringResource(MR.strings.discord_incognito_summary),
                 ),
                 Preference.PreferenceItem.MultiSelectListPreference(
                     pref = connectionsPreferences.discordRPCIncognitoCategories(),
                     title = stringResource(MR.strings.categories),
                     subtitle = stringResource(MR.strings.pref_buttons_selected) + "\n\n" +
-                        stringResource(MR.strings.pref_discord_incognito_categories_details),
+                        stringResource(MR.strings.discord_incognito_categories_details),
                     entries = allCategories.associate { it.id.toString() to it.name }.toImmutableMap(),
                 ),
             ),
@@ -493,14 +493,14 @@ object SettingsDiscordScreen : ComposableSettings() {
         onValueChange: (Int) -> Unit,
     ) {
         val entries = persistentMapOf(
-            -1 to stringResource(MR.strings.pref_discord_dnd),
-            0 to stringResource(MR.strings.pref_discord_idle),
-            1 to stringResource(MR.strings.pref_discord_online),
+            -1 to stringResource(MR.strings.discord_dnd),
+            0 to stringResource(MR.strings.discord_idle),
+            1 to stringResource(MR.strings.discord_online),
         )
 
         AlertDialog(
             onDismissRequest = onDismissRequest,
-            title = { Text(text = stringResource(MR.strings.pref_discord_status)) },
+            title = { Text(text = stringResource(MR.strings.discord_status)) },
             text = {
                 Column {
                     entries.forEach { current ->
