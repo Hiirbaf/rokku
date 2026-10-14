@@ -64,7 +64,7 @@ object SettingsConnectionsScreen : ComposableSettings() {
 
         return listOf(
             Preference.PreferenceGroup(
-                title = stringResource(MR.strings.special_services),
+                title = stringResource(MR.strings.services),
                 preferenceItems = persistentListOf(
                     Preference.PreferenceItem.ConnectionsPreference(
                         title = stringResource(connectionsManager.discord.nameRes()),
