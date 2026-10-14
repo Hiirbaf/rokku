@@ -122,8 +122,22 @@
 -keep class eu.kanade.tachiyomi.data.connections.discord.DiscordRpcManager {
     *;
 }
--keepclassmembers class eu.kanade.tachiyomi.data.connections.discord.DiscordRpcManager {
-    static <methods>;
+
+-keep class eu.kanade.tachiyomi.data.connections.discord.DiscordNativeActivity {
+    *;
 }
--keep class eu.kanade.tachiyomi.data.connections.discord.DiscordNativeActivity { *; }
--keep class eu.kanade.tachiyomi.data.connections.discord.DiscordUser { *; }
+
+-keep class eu.kanade.tachiyomi.data.connections.discord.DiscordUser {
+    *;
+}
+
+# Methods called by Shizuku only
+-keepclassmembers class eu.kanade.tachiyomi.extension.installer.shizuku.ShellInterface {
+    public <init>();
+    public void destroy();
+}
+
+# Replaced through reflection to control the page transition speed
+-keepclassmembers class androidx.viewpager.widget.DirectionalViewPager {
+    private android.widget.Scroller mScroller;
+}
