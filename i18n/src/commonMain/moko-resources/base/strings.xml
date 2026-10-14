@@ -31,21 +31,20 @@
     <!--Models-->
 
     <!-- Connections section -->
-    <string name="pref_category_connections">Connections</string>
-    <string name="special_services">Special Services</string>
+    <string name="connections">Connections</string>
     <string name="connections_discord">Discord</string>
     <string name="connections_discord_info">Rokku connects to Discord using the official Discord Social SDK.\n\nYour account is authorized through the Discord app itself — Rokku never receives or stores your Discord password.</string>
-    <string name="pref_discord_rpc">Discord Rich Presence</string>
-    <string name="pref_enable_discord_rpc">Enable Discord Rich Presence</string>
-    <string name="pref_discord_privacy">Privacy</string>
-    <string name="pref_discord_status">Discord Status</string>
-    <string name="pref_discord_dnd">⛔ Do Not Disturb</string>
-    <string name="pref_discord_idle">🌙 Idle</string>
-    <string name="pref_discord_online">🟢 Online</string>
-    <string name="pref_category_discord_incognito">RPC Incognito</string>
-    <string name="pref_discord_incognito">Discord Incognito mode</string>
-    <string name="pref_discord_incognito_summary">Overridden when Incognito Mode is enabled</string>
-    <string name="pref_discord_incognito_categories_details">Entries in included categories will not be displayed in Discord</string>
+    <string name="discord_rpc">Discord Rich Presence</string>
+    <string name="enable_discord_rpc">Enable Discord Rich Presence</string>
+    <string name="discord_privacy">Privacy</string>
+    <string name="discord_status">Discord Status</string>
+    <string name="discord_dnd">⛔ Do Not Disturb</string>
+    <string name="discord_idle">🌙 Idle</string>
+    <string name="discord_online">🟢 Online</string>
+    <string name="category_discord_incognito">RPC Incognito</string>
+    <string name="discord_incognito">Discord Incognito mode</string>
+    <string name="discord_incognito_summary">Overridden when Incognito Mode is enabled</string>
+    <string name="discord_incognito_categories_details">Entries in included categories will not be displayed in Discord</string>
     
     <!-- Discord accounts -->
     <string name="discord_accounts">Discord Accounts</string>
