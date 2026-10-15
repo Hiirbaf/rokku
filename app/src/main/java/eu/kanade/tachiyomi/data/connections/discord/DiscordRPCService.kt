@@ -212,7 +212,6 @@ class DiscordRPCService : Service() {
 
             val details = sanitizeField(
                 when {
-                    customMessage.isNotBlank() -> customMessage
                     readerData.browsingOnly -> context.getString(MR.strings.browsing)
                     readerData.mangaTitle != null -> readerData.mangaTitle
                     else -> context.getString(discordScreen.details)
@@ -271,10 +270,14 @@ class DiscordRPCService : Service() {
             val readingState = sanitizeField(getProgressText(context, readerData, progressMode))
             ?: sanitizeField(context.getString(discordScreen.state))
 
+            val customTitle = sanitizeField(customMessage)
+            val title = customTitle
+                ?: if (isReading) readerData.mangaTitle ?: appName else appName
+
             DiscordRpcManager.setActivity(
                 DiscordNativeActivity(
                     activityType = DiscordNativeActivity.TYPE_WATCHING,
-                    name = if (isReading) readerData.mangaTitle ?: appName else appName,
+                    name = title,
                     details = if (isReading) readingDetails else details,
                     state = if (isReading) readingState else state,
                     startTimestamp = since / 1000L,
