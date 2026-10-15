@@ -20,9 +20,11 @@ import eu.kanade.tachiyomi.util.chapter.ChapterUtil
 import eu.kanade.tachiyomi.util.system.notificationBuilder
 import eu.kanade.tachiyomi.util.system.launchIO
 import eu.kanade.tachiyomi.util.system.withIOContext
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.delay
+import.kotlinx.coroutines.withContext
 import yokai.domain.category.interactor.GetCategories
 import yokai.domain.category.models.Category.Companion.UNCATEGORIZED_ID
 import yokai.domain.connections.service.ConnectionsPreferences
@@ -55,10 +57,16 @@ class DiscordRPCService : Service() {
 
         // Get stored OAuth token for the native SDK
         val effectiveToken = DiscordTokenStore.retrieve()
+        val hasRefresh = !DiscordTokenStore.retrieveRefreshToken().isNullOrBlank()
 
-        if (!effectiveToken.isNullOrBlank()) {
+        if (!effectiveToken.isNullOrBlank() || hasRefresh) {
             if (!DiscordRpcManager.isAuthorized()) {
-                DiscordRpcManager.reconnectWithToken(effectiveToken)
+                launchIO {
+                    val token = refreshIfNeeded() ?: effectiveToken
+                    if (!token.isNullOrBlank()) {
+                        withContext(Dispatchers.Main) { DiscordRpcManager.reconnectWithToken(token) }
+                    }
+                }
             }
 
             // Listen for connection ready state and update RPC automatically when established
@@ -78,6 +86,8 @@ class DiscordRPCService : Service() {
                         } catch (e: Exception) {
                             Log.e(TAG, "Error updating presence on connection ready: ${e.message}", e)
                         }
+                    } else if (status == DiscordRpcManager.Status.Disconnected) {
+                        ensureTokenValid()
                     }
                 }
             }
@@ -188,6 +198,7 @@ class DiscordRPCService : Service() {
             readerData: ReaderData = ReaderData(),
         ) {
             if (!connectionsPreferences.enableDiscordRPC().get()) return
+            ensureTokenValid()
             currentScreen = discordScreen
             if (discordScreen != DiscordScreen.MANGA) {
                 lastUsedScreen = discordScreen
@@ -195,6 +206,24 @@ class DiscordRPCService : Service() {
             }
             if (!DiscordRpcManager.isReady() || isPaused) return
             updateDiscordRPC(context, readerData, discordScreen)
+        }
+        private var lastRefreshAttempt = 0L
+
+        private suspend fun refreshIfNeeded(): String? {
+            if (!DiscordTokenStore.isExpired() ||
+                    DiscordTokenStore.retrieveRefreshToken().isNullOrBlank()
+               ) return null
+
+            val now = System.currentTimeMillis()
+            if (now - lastRefreshAttempt < 60_000L) return null
+            lastRefreshAttempt = now
+
+            return withIOContext { DiscordRpcManager.refreshAccessToken() }
+        }
+
+        internal suspend fun ensureTokenValid() {
+            val newToken = refreshIfNeeded() ?: return
+            withContext(Dispatchers.Main) { DiscordRpcManager.reconnectWithToken(newToken) }
         }
 
         private suspend fun updateDiscordRPC(
