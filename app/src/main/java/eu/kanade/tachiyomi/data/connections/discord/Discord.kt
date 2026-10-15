@@ -29,6 +29,7 @@ class Discord(id: Long) : ConnectionsService(id) {
         if (accounts.isEmpty()) {
             super.logout()
             connectionsPreferences.connectionsToken(this).delete()
+            DiscordRpcManager.logout()
             return
         }
 
@@ -64,6 +65,7 @@ class Discord(id: Long) : ConnectionsService(id) {
         if (account.isActive) {
             accounts.replaceAll { it.copy(isActive = false) }
             connectionsPreferences.connectionsToken(this).set(account.token)
+            syncTokenStore(account)
         }
 
         val index = accounts.indexOfFirst { it.id == account.id }
@@ -89,9 +91,32 @@ class Discord(id: Long) : ConnectionsService(id) {
         saveAccounts(accounts)
         accounts.find { it.id == accountId }?.let { account ->
             connectionsPreferences.connectionsToken(this).set(account.token)
-            DiscordTokenStore.store(account.token)
+            syncTokenStore(account)
             DiscordRpcManager.clear()
             DiscordRpcManager.reconnectWithToken(account.token)
+        }
+    }
+
+    fun updateToken(token: String, refreshToken: String?, expiresAt: Long) {
+        val accounts = getAccounts().toMutableList()
+        val activeIndex = accounts.indexOfFirst { it.isActive }
+        if (activeIndex >= 0) {
+            val active = accounts[activeIndex]
+            accounts[activeIndex] = active.copy(
+                token = token,
+                refreshToken = refreshToken ?: active.refreshToken,
+                expiresAt = if (expiresAt > 0) expiresAt else active.expiresAt,
+            )
+            connectionsPreferences.connectionsToken(this).set(token)
+            saveAccounts(accounts)
+        }
+    }
+
+    private fun syncTokenStore(account: DiscordAccount) {
+        DiscordTokenStore.clear()
+        DiscordTokenStore.store(account.token, account.refreshToken)
+        if (account.expiresAt > 0L) {
+            DiscordTokenStore.storeExpiresAt(account.expiresAt)
         }
     }
 
