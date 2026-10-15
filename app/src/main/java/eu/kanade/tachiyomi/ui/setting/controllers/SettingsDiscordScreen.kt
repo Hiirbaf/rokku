@@ -188,13 +188,13 @@ object SettingsDiscordScreen : ComposableSettings() {
                     showCustomMessageDialog = false
                     tempCustomMessage = customMessagePref.get()
                 },
-                title = { Text(stringResource(MR.strings.pref_discord_custom_message)) },
+                title = { Text(stringResource(MR.strings.pref_discord_custom_title)) },
                 text = {
                     Column {
                         OutlinedTextField(
                             value = tempCustomMessage,
                             onValueChange = { tempCustomMessage = it },
-                            label = { Text(stringResource(MR.strings.pref_discord_custom_message_summary)) },
+                            label = { Text(stringResource(MR.strings.pref_discord_custom_title_summary)) },
                             modifier = Modifier.fillMaxWidth(),
                             singleLine = true,
                         )
@@ -293,8 +293,8 @@ object SettingsDiscordScreen : ComposableSettings() {
                         subtitle = stringResource(MR.strings.pref_discord_show_app_icon_summary),
                     ),
                     Preference.PreferenceItem.TextPreference(
-                        title = stringResource(MR.strings.pref_discord_custom_message),
-                        subtitle = stringResource(MR.strings.pref_discord_custom_message_summary),
+                        title = stringResource(MR.strings.pref_discord_custom_title),
+                        subtitle = stringResource(MR.strings.pref_discord_custom_title_summary),
                         onClick = { showCustomMessageDialog = true },
                     ),
                     Preference.PreferenceItem.ListPreference(
