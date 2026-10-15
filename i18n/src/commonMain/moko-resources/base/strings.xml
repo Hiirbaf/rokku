@@ -74,8 +74,8 @@
     <string name="pref_category_discord_presence">Presence</string>
     <string name="pref_discord_show_app_icon">Show Rokku Icon</string>
     <string name="pref_discord_show_app_icon_summary">Show Small Rokku Icon on the RPC</string>
-    <string name="pref_discord_custom_message">Custom Message</string>
-    <string name="pref_discord_custom_message_summary">Custom message that will be displayed on Discord</string>
+    <string name="pref_discord_custom_title">Custom Title</string>
+    <string name="pref_discord_custom_title_summary">Custom title that will be displayed on Discord</string>
     <string name="pref_discord_upload_local_covers">Upload local/custom covers</string>
     <string name="pref_discord_upload_local_covers_summary">Mangas with local/custom covers, upload the image to an external host so it can be shown on Discord.</string>
     <string name="show_chapters_titles_title">Show Chapters Titles</string>
