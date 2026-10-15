@@ -1,4 +1,3 @@
-// AM (DISCORD) -->
 package eu.kanade.tachiyomi.data.connections.discord
 
 import android.content.Context
@@ -55,4 +54,3 @@ object DiscordTokenStore {
         prefs?.edit()?.remove(TOKEN_KEY)?.apply()
     }
 }
-// <-- AM (DISCORD)
