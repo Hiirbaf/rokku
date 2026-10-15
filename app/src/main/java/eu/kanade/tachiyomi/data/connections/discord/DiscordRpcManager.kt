@@ -8,6 +8,7 @@ import android.util.Log
 import com.discord.socialsdk.AuthenticationClientCallback
 import com.discord.socialsdk.NativeCalls
 import eu.kanade.tachiyomi.BuildConfig
+import eu.kanade.tachiyomi.data.connections.ConnectionsManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -17,7 +18,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import uy.kohesive.injekt.Injekt
+import uy.kohesive.injekt.api.get
 import java.io.OutputStreamWriter
 import java.net.HttpURLConnection
 import java.net.URL
@@ -303,6 +309,8 @@ object DiscordRpcManager {
 
                 if (responseCode in 200..299) {
                     val json = JSONObject(responseBody)
+                    val newRefreshToken = json.optString("refresh_token").takeIf { it.isNotEmpty() }
+                    val expiresIn = json.optLong("expires_in", 604800L)
                     val newAccessToken = json.optString("access_token")
                     if (newAccessToken.isNotEmpty()) {
                         Log.i(
@@ -311,7 +319,8 @@ object DiscordRpcManager {
                         )
                         this@DiscordRpcManager.accessToken = newAccessToken
                         _accessTokenFlow.value = newAccessToken
-                        DiscordTokenStore.store(newAccessToken)
+                        DiscordTokenStore.clear()
+                        DiscordTokenStore.store(newAccessToken, newRefreshToken, expiresIn)
                         Handler(Looper.getMainLooper()).post {
                             Log.i(TAG, "exchange: setting token and connecting on main thread")
                             nativeSetTokenAndConnect(newAccessToken)
@@ -427,6 +436,74 @@ object DiscordRpcManager {
         }
         Log.i(TAG, "clear: calling nativeClear")
         nativeClear()
+    }
+
+    private val refreshMutex = Mutex()
+
+    suspend fun refreshAccessToken(): String? {
+        val tokenBefore = accessToken
+        return refreshMutex.withLock {
+            val current = accessToken
+            if (current != null && current != tokenBefore) return@withLock current
+            withContext(Dispatchers.IO) { requestNewToken() }
+        }
+    }
+
+    private fun requestNewToken(): String? {
+        val currentRefresh = DiscordTokenStore.retrieveRefreshToken()
+        if (currentRefresh.isNullOrBlank()) {
+            Log.w(TAG, "refresh: no refresh token available")
+            return null
+        }
+        return try {
+            val body = "client_id=$APP_ID" +
+                "&grant_type=refresh_token" +
+                "&refresh_token=${java.net.URLEncoder.encode(currentRefresh, "UTF-8")}"
+
+            val conn = URL(TOKEN_URL).openConnection() as HttpURLConnection
+            conn.connectTimeout = 10_000
+            conn.readTimeout = 10_000
+            conn.requestMethod = "POST"
+            conn.doOutput = true
+            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded")
+            OutputStreamWriter(conn.outputStream).use { it.write(body) }
+
+            val code = conn.responseCode
+            val response = if (code in 200..299) {
+                conn.inputStream.bufferedReader().readText()
+            } else {
+                conn.errorStream?.bufferedReader()?.readText() ?: ""
+            }
+            conn.disconnect()
+
+            if (code !in 200..299) {
+                Log.w(TAG, "refresh: HTTP $code body=${response.take(200)}")
+                return null
+            }
+
+            val json = JSONObject(response)
+            val newAccess = json.optString("access_token").takeIf { it.isNotEmpty() } ?: return null
+            val newRefresh = json.optString("refresh_token").takeIf { it.isNotEmpty() } ?: currentRefresh
+            val expiresIn = json.optLong("expires_in", 604800L)
+
+            accessToken = newAccess
+            _accessTokenFlow.value = newAccess
+            DiscordTokenStore.store(newAccess, newRefresh, expiresIn)
+
+            try {
+                Injekt.get<ConnectionsManager>().discord.updateToken(
+                    newAccess,
+                    newRefresh,
+                    System.currentTimeMillis() + expiresIn * 1000L,
+                )
+            } catch (e: Exception) {
+                Log.w(TAG, "refresh: could not update the saved account", e)
+            }
+            newAccess
+        } catch (e: Exception) {
+            Log.e(TAG, "refresh: exception", e)
+            null
+        }
     }
 
     fun reconnectWithToken(token: String) {
