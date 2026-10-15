@@ -101,7 +101,7 @@ class SettingsMainController : SettingsLegacyController(), FloatingSearchInterfa
         preference {
             iconRes = R.drawable.ic_link_24dp
             iconTint = tintColor
-            titleRes = MR.strings.pref_category_connections
+            titleRes = MR.strings.connections
             onClick { navigateTo(SettingsConnectionsController()) }
         }
         preference {
