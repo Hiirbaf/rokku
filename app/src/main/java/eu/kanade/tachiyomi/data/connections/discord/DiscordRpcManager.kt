@@ -144,7 +144,6 @@ object DiscordRpcManager {
     fun getAccessToken(): String? = accessToken
 
     fun getRefreshToken(): String? {
-        refreshToken?.let { return it }
         val stored = DiscordTokenStore.retrieveRefreshToken()
         if (!stored.isNullOrBlank()) {
             refreshToken = stored
@@ -166,7 +165,6 @@ object DiscordRpcManager {
     }
 
     fun getExpiresAt(): Long {
-        if (expiresAt > 0L) return expiresAt
         val stored = DiscordTokenStore.retrieveExpiresAt()
         if (stored > 0L) {
             expiresAt = stored
