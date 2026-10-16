@@ -399,6 +399,7 @@ object DiscordRpcManager {
                     val newAccessToken = json.optString("access_token")
                     val newRefreshToken = json.optString("refresh_token").takeIf { it.isNotEmpty() }
                     val expiresIn = json.optLong("expires_in", 604800L)
+                    Log.i(TAG, "exchange: refresh token present=${newRefreshToken != null} expiresIn=$expiresIn")
                     if (newAccessToken.isNotEmpty()) {
                         Log.i(
                             TAG,
@@ -411,6 +412,7 @@ object DiscordRpcManager {
                             expiresAt = newExpiresAt
                             _accessTokenFlow.value = newAccessToken
                         }
+                        DiscordTokenStore.clear()
                         DiscordTokenStore.store(newAccessToken, newRefreshToken, expiresIn)
                         Handler(Looper.getMainLooper()).post {
                             Log.i(TAG, "exchange: setting token and connecting on main thread")
