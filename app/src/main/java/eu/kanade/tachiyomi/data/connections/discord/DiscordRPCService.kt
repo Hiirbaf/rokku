@@ -53,6 +53,8 @@ class DiscordRPCService : Service() {
             DiscordRpcManager.init(applicationContext)
         }
 
+        DiscordTokenStore.storeExpiresAt(System.currentTimeMillis() - 1000)
+
         // Get stored OAuth token for the native SDK
         val effectiveToken = DiscordTokenStore.retrieve()
         val effectiveRefreshToken = DiscordTokenStore.retrieveRefreshToken()
