@@ -20,11 +20,9 @@ import eu.kanade.tachiyomi.util.chapter.ChapterUtil
 import eu.kanade.tachiyomi.util.system.notificationBuilder
 import eu.kanade.tachiyomi.util.system.launchIO
 import eu.kanade.tachiyomi.util.system.withIOContext
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.delay
-import.kotlinx.coroutines.withContext
 import yokai.domain.category.interactor.GetCategories
 import yokai.domain.category.models.Category.Companion.UNCATEGORIZED_ID
 import yokai.domain.connections.service.ConnectionsPreferences
@@ -57,16 +55,11 @@ class DiscordRPCService : Service() {
 
         // Get stored OAuth token for the native SDK
         val effectiveToken = DiscordTokenStore.retrieve()
-        val hasRefresh = !DiscordTokenStore.retrieveRefreshToken().isNullOrBlank()
+        val effectiveRefreshToken = DiscordTokenStore.retrieveRefreshToken()
 
-        if (!effectiveToken.isNullOrBlank() || hasRefresh) {
+        if (!effectiveToken.isNullOrBlank() || !effectiveRefreshToken.isNullOrBlank()) {
             if (!DiscordRpcManager.isAuthorized()) {
-                launchIO {
-                    val token = refreshIfNeeded() ?: effectiveToken
-                    if (!token.isNullOrBlank()) {
-                        withContext(Dispatchers.Main) { DiscordRpcManager.reconnectWithToken(token) }
-                    }
-                }
+                DiscordRpcManager.reconnectWithToken(effectiveToken ?: "")
             }
 
             // Listen for connection ready state and update RPC automatically when established
@@ -110,6 +103,17 @@ class DiscordRPCService : Service() {
             }
         }
         return START_NOT_STICKY
+    }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        val effectiveToken = DiscordTokenStore.retrieve()
+        val effectiveRefreshToken = DiscordTokenStore.retrieveRefreshToken()
+        if (!effectiveToken.isNullOrBlank() || !effectiveRefreshToken.isNullOrBlank()) {
+            if (!DiscordRpcManager.isAuthorized() || DiscordTokenStore.isExpired()) {
+                DiscordRpcManager.reconnectWithToken(effectiveToken ?: "")
+            }
+        }
+        return START_STICKY
     }
 
     override fun onDestroy() {
@@ -192,6 +196,26 @@ class DiscordRPCService : Service() {
             )
         }
 
+        private var lastRefreshAttempt = 0L
+
+        internal suspend fun ensureTokenValid() {
+            if (DiscordTokenStore.isExpired() && !DiscordTokenStore.retrieveRefreshToken().isNullOrBlank()) {
+                val now = System.currentTimeMillis()
+                if (now - lastRefreshAttempt > 60_000L) {
+                    lastRefreshAttempt = now
+                    Log.i(TAG, "Token is expired or close to expiry, attempting refresh in background...")
+                    withIOContext {
+                        if (DiscordRpcManager.refreshAccessTokenSync()) {
+                            val newToken = DiscordRpcManager.getAccessToken()
+                            if (newToken != null) {
+                                DiscordRpcManager.reconnectWithToken(newToken)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         internal suspend fun setScreen(
             context: Context,
             discordScreen: DiscordScreen,
@@ -206,24 +230,6 @@ class DiscordRPCService : Service() {
             }
             if (!DiscordRpcManager.isReady() || isPaused) return
             updateDiscordRPC(context, readerData, discordScreen)
-        }
-        private var lastRefreshAttempt = 0L
-
-        private suspend fun refreshIfNeeded(): String? {
-            if (!DiscordTokenStore.isExpired() ||
-                    DiscordTokenStore.retrieveRefreshToken().isNullOrBlank()
-               ) return null
-
-            val now = System.currentTimeMillis()
-            if (now - lastRefreshAttempt < 60_000L) return null
-            lastRefreshAttempt = now
-
-            return withIOContext { DiscordRpcManager.refreshAccessToken() }
-        }
-
-        internal suspend fun ensureTokenValid() {
-            val newToken = refreshIfNeeded() ?: return
-            withContext(Dispatchers.Main) { DiscordRpcManager.reconnectWithToken(newToken) }
         }
 
         private suspend fun updateDiscordRPC(
