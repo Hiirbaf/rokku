@@ -124,11 +124,10 @@ object DiscordRpcManager {
                 val rt = getRefreshToken()
                 val now = System.currentTimeMillis()
 
-                if (
-                    !rt.isNullOrBlank() &&
+                if (!rt.isNullOrBlank() &&
                         DiscordTokenStore.isExpired() &&
                         now - lastAutoRefreshTime > 60_000L
-                ) {
+                   ) {
                     lastAutoRefreshTime = now
                     Log.i(
                         TAG,
