@@ -301,7 +301,10 @@ open class MainActivity : BaseActivity<MainActivityBinding>() {
         super.onCreate(savedInstanceState)
 
         DiscordRpcManager.setEngineActivity(this)
-        DiscordRpcManager.init(applicationContext)
+        DiscordTokenStore.init(applicationContext)
+        if (connectionsPreferences.enableDiscordRPC().get()) {
+            DiscordRpcManager.init(applicationContext)
+        }
 
         lifecycleScope.launchUI {
             if (connectionsPreferences.enableDiscordRPC().get()) {
