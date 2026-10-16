@@ -60,7 +60,7 @@ class Discord(id: Long) : ConnectionsService(id) {
 
     fun addAccount(account: DiscordAccount) {
         val accounts = getAccounts().toMutableList()
-        Logger.d("Discord") { "Adding account: $account" }
+        Logger.d("Discord") { "Adding account: ${account.username}" }
 
         if (account.isActive) {
             accounts.replaceAll { it.copy(isActive = false) }
@@ -75,7 +75,7 @@ class Discord(id: Long) : ConnectionsService(id) {
             accounts.add(account)
         }
 
-        Logger.d("Discord") { "Updated accounts: $accounts" }
+        Logger.d("Discord") { "Updated accounts: ${accounts.map { it.username }}" }
         saveAccounts(accounts)
     }
 
