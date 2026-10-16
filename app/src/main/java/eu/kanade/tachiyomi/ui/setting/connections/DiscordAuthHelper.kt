@@ -5,8 +5,8 @@ import android.util.Log
 import eu.kanade.tachiyomi.data.connections.ConnectionsManager
 import eu.kanade.tachiyomi.util.system.launchIO
 import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.withContext
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import uy.kohesive.injekt.injectLazy
 import yokai.domain.connections.service.ConnectionsPreferences
 
@@ -34,6 +34,9 @@ object DiscordAuthHelper {
                     onResult(false)
                     return@launchIO
                 }
+                val refreshToken = DiscordRpcManager.getRefreshToken()
+                val expiresAt = DiscordRpcManager.getExpiresAt()
+
                 val user = withContext(Dispatchers.IO) {
                     DiscordRpcManager.fetchCurrentUser(token)
                 }
@@ -46,12 +49,12 @@ object DiscordAuthHelper {
                     username = user.username,
                     avatarUrl = user.avatar,
                     token = token,
+                    refreshToken = refreshToken,
+                    expiresAt = expiresAt,
                     isActive = true,
                 )
                 connectionsManager.discord.addAccount(account)
-                connectionsPreferences.connectionsToken(connectionsManager.discord).set(token)
                 connectionsPreferences.setConnectionsCredentials(connectionsManager.discord, "Discord", "Logged In")
-                DiscordTokenStore.store(token)
                 if (connectionsPreferences.enableDiscordRPC().get()) {
                     DiscordRPCService.start(context.applicationContext)
                 }
