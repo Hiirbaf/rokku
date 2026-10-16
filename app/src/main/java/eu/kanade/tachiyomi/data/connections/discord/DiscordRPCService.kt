@@ -105,17 +105,6 @@ class DiscordRPCService : Service() {
         return START_NOT_STICKY
     }
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val effectiveToken = DiscordTokenStore.retrieve()
-        val effectiveRefreshToken = DiscordTokenStore.retrieveRefreshToken()
-        if (!effectiveToken.isNullOrBlank() || !effectiveRefreshToken.isNullOrBlank()) {
-            if (!DiscordRpcManager.isAuthorized() || DiscordTokenStore.isExpired()) {
-                DiscordRpcManager.reconnectWithToken(effectiveToken ?: "")
-            }
-        }
-        return START_STICKY
-    }
-
     override fun onDestroy() {
         NotificationReceiver.dismissNotification(this, Notifications.ID_DISCORD_RPC)
         DiscordRpcManager.destroy()
