@@ -119,14 +119,20 @@ object DiscordRpcManager {
                 statusCode == 0 || (!ready && !authorized) -> Status.Disconnected
                 else -> Status.Authorizing
             }
+
             if (!authorized && !ready && initialized.get()) {
                 val rt = getRefreshToken()
                 val now = System.currentTimeMillis()
-                if (!rt.isNullOrBlank() && (now - lastAutoRefreshTime > 60_000L)) {
+
+                if (
+                    !rt.isNullOrBlank() &&
+                        DiscordTokenStore.isExpired() &&
+                        now - lastAutoRefreshTime > 60_000L
+                ) {
                     lastAutoRefreshTime = now
                     Log.i(
                         TAG,
-                        "onNativeStatusChanged: disconnected & unauthorized with refresh token available, attempting auto-refresh",
+                        "onNativeStatusChanged: disconnected & unauthorized with expired access token and refresh token available, attempting auto-refresh",
                     )
                     CoroutineScope(Dispatchers.IO).launch {
                         if (refreshAccessTokenSync()) {
