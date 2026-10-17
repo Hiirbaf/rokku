@@ -404,7 +404,6 @@ object DiscordRpcManager {
                     val newAccessToken = json.optString("access_token")
                     val newRefreshToken = json.optString("refresh_token").takeIf { it.isNotEmpty() }
                     val expiresIn = json.optLong("expires_in", 604800L)
-                    Log.i(TAG, "exchange: refresh token present=${newRefreshToken != null} expires_in raw=${json.opt("expires_in")}")
                     if (newAccessToken.isNotEmpty()) {
                         Log.i(
                             TAG,
