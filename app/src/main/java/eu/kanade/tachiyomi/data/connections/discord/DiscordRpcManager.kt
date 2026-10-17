@@ -542,7 +542,19 @@ object DiscordRpcManager {
      *
      * @return true if token refresh was successful, false otherwise.
      */
+
+    private val refreshLock = Any()
+
     fun refreshAccessTokenSync(): Boolean {
+
+        val tokenBefore = accessToken
+        synchronized(refreshLock) {
+            if (accessToken != null && accessToken != tokenBefore) return true
+            return doRefreshAccessToken()
+        }
+    }
+
+    private fun doRefreshAccessToken(): Boolean {
         val currentRefreshToken = getRefreshToken()
         if (currentRefreshToken.isNullOrBlank()) {
             Log.w(TAG, "refreshAccessToken: no refresh token available")
@@ -666,6 +678,7 @@ object DiscordRpcManager {
     }
 
     private fun applyTokenAndConnect(token: String) {
+        if (token.isBlank()) return
         synchronized(this) {
             Log.i(TAG, "applyTokenAndConnect: calling nativeSetTokenAndConnect (token length=${token.length})")
             accessToken = token
