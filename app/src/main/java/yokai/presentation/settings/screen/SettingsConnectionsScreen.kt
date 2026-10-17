@@ -1,4 +1,4 @@
-package eu.kanade.tachiyomi.ui.setting.controllers
+package yokai.presentation.settings.screen
 
 import android.content.Context
 import android.util.Log
