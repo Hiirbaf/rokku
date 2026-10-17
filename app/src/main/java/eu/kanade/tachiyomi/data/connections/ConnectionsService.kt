@@ -4,10 +4,10 @@ import androidx.annotation.CallSuper
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import dev.icerock.moko.resources.StringResource
-import yokai.domain.connections.service.ConnectionsPreferences
 import eu.kanade.tachiyomi.network.NetworkHelper
 import okhttp3.OkHttpClient
 import uy.kohesive.injekt.injectLazy
+import yokai.domain.connections.service.ConnectionsPreferences
 
 abstract class ConnectionsService(val id: Long) {
 
@@ -17,7 +17,6 @@ abstract class ConnectionsService(val id: Long) {
     open val client: OkHttpClient
         get() = networkService.client
 
-    // Name of the connection service to display
     abstract fun nameRes(): StringResource
 
     @DrawableRes
