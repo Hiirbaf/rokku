@@ -1,4 +1,4 @@
-package eu.kanade.tachiyomi.ui.setting.controllers
+package yokai.presentation.settings.screen
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
