@@ -210,7 +210,6 @@ class DiscordRPCService : Service() {
             readerData: ReaderData = ReaderData(),
         ) {
             if (!connectionsPreferences.enableDiscordRPC().get()) return
-            DiscordTokenStore.storeExpiresAt(System.currentTimeMillis() - 1000)
             ensureTokenValid()
             currentScreen = discordScreen
             if (discordScreen != DiscordScreen.MANGA) {
