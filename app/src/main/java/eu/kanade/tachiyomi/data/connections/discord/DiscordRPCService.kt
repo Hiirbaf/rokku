@@ -20,9 +20,12 @@ import eu.kanade.tachiyomi.util.chapter.ChapterUtil
 import eu.kanade.tachiyomi.util.system.notificationBuilder
 import eu.kanade.tachiyomi.util.system.launchIO
 import eu.kanade.tachiyomi.util.system.withIOContext
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import uy.kohesive.injekt.Injekt
+import uy.kohesive.injekt.api.get
+import uy.kohesive.injekt.injectLazy
 import yokai.domain.category.interactor.GetCategories
 import yokai.domain.category.models.Category.Companion.UNCATEGORIZED_ID
 import yokai.domain.connections.service.ConnectionsPreferences
@@ -30,9 +33,6 @@ import yokai.domain.connections.service.DiscordButton
 import yokai.domain.connections.service.DiscordProgressMode
 import yokai.i18n.MR
 import yokai.util.lang.getString
-import uy.kohesive.injekt.Injekt
-import uy.kohesive.injekt.api.get
-import uy.kohesive.injekt.injectLazy
 
 class DiscordRPCService : Service() {
 
