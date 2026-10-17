@@ -4,10 +4,6 @@ import android.content.Context
 import android.net.Uri
 import co.touchlab.kermit.Logger
 import eu.kanade.tachiyomi.network.NetworkHelper
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.InputStream
-import java.util.concurrent.ConcurrentHashMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -17,6 +13,10 @@ import okhttp3.MultipartBody
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import uy.kohesive.injekt.injectLazy
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.InputStream
+import java.util.concurrent.ConcurrentHashMap
 
 private const val TAG = "DiscordImageUploader"
 private const val MAX_COVER_BYTES = 10 * 1024 * 1024
