@@ -9,8 +9,8 @@ import android.os.Build
 import androidx.core.app.NotificationManagerCompat
 import dev.icerock.moko.resources.compose.stringResource
 import eu.kanade.tachiyomi.R
-import eu.kanade.tachiyomi.util.system.notificationManager
 import eu.kanade.tachiyomi.data.connections.discord.RICH_PRESENCE_TAG
+import eu.kanade.tachiyomi.util.system.notificationManager
 import yokai.i18n.MR
 import yokai.util.lang.getString
 
