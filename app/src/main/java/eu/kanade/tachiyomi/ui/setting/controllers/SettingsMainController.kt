@@ -22,14 +22,12 @@ import eu.kanade.tachiyomi.ui.setting.SettingsLegacyController
 import eu.kanade.tachiyomi.ui.setting.controllers.legacy.SettingsAdvancedLegacyController
 import eu.kanade.tachiyomi.ui.setting.controllers.legacy.SettingsTrackingLegacyController
 import eu.kanade.tachiyomi.ui.setting.controllers.search.SettingsSearchController
-import eu.kanade.tachiyomi.ui.setting.controllers.SettingsConnectionsScreen
 import eu.kanade.tachiyomi.ui.setting.iconRes
 import eu.kanade.tachiyomi.ui.setting.iconTint
 import eu.kanade.tachiyomi.ui.setting.onClick
 import eu.kanade.tachiyomi.ui.setting.onLongClick
 import eu.kanade.tachiyomi.ui.setting.preference
 import eu.kanade.tachiyomi.ui.setting.preferenceLongClickable
-import eu.kanade.tachiyomi.ui.setting.titleMRes as titleRes
 import eu.kanade.tachiyomi.util.system.getResourceColor
 import eu.kanade.tachiyomi.util.system.toast
 import eu.kanade.tachiyomi.util.view.activityBinding
@@ -38,8 +36,10 @@ import eu.kanade.tachiyomi.util.view.openInBrowser
 import eu.kanade.tachiyomi.util.view.withFadeTransaction
 import kotlinx.coroutines.launch
 import yokai.i18n.MR
-import yokai.util.lang.getString
 import yokai.presentation.settings.ComposableSettings
+import yokai.presentation.settings.screen.SettingsConnectionsScreen.SettingsConnectionsScreen
+import yokai.util.lang.getString
+import eu.kanade.tachiyomi.ui.setting.titleMRes as titleRes
 
 class SettingsMainController : SettingsLegacyController(), FloatingSearchInterface {
 
