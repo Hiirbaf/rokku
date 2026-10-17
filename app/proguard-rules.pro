@@ -118,7 +118,7 @@
 -keep class com.google.firebase.installations.** { *; }
 -keep interface com.google.firebase.installations.** { *; }
 
-# Discord Social SDK - JNI callbacks, invocados desde discord_bridge.cpp
+# Discord Social SDK - JNI callbacks, invoked from discord_bridge.cpp
 -keep class eu.kanade.tachiyomi.data.connections.discord.DiscordRpcManager {
     *;
 }
