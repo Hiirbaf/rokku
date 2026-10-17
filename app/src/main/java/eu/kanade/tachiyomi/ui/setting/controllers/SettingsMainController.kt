@@ -37,7 +37,6 @@ import eu.kanade.tachiyomi.util.view.withFadeTransaction
 import kotlinx.coroutines.launch
 import yokai.i18n.MR
 import yokai.presentation.settings.ComposableSettings
-import yokai.presentation.settings.screen.SettingsConnectionsScreen
 import yokai.util.lang.getString
 import eu.kanade.tachiyomi.ui.setting.titleMRes as titleRes
 
