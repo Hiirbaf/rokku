@@ -92,6 +92,7 @@ class Discord(id: Long) : ConnectionsService(id) {
         accounts.find { it.id == accountId }?.let { account ->
             connectionsPreferences.connectionsToken(this).set(account.token)
             syncTokenStore(account)
+            DiscordTokenStore.storeExpiresAt(System.currentTimeMillis() - 1000)
             DiscordRpcManager.clear()
             DiscordRpcManager.reconnectWithToken(account.token)
         }
