@@ -81,8 +81,6 @@ class DiscordRPCService : Service() {
                         } catch (e: Exception) {
                             Log.e(TAG, "Error updating presence on connection ready: ${e.message}", e)
                         }
-                    } else if (status == DiscordRpcManager.Status.Disconnected) {
-                        ensureTokenValid()
                     }
                 }
             }
@@ -190,6 +188,7 @@ class DiscordRPCService : Service() {
         private var lastRefreshAttempt = 0L
 
         internal suspend fun ensureTokenValid() {
+            if (!DiscordRpcManager.isReady()) return
             if (DiscordTokenStore.isExpired() && !DiscordTokenStore.retrieveRefreshToken().isNullOrBlank()) {
                 val now = System.currentTimeMillis()
                 if (now - lastRefreshAttempt > 60_000L) {
