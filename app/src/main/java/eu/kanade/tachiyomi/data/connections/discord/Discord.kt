@@ -6,9 +6,9 @@ import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.data.connections.ConnectionsService
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import yokai.i18n.MR
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
+import yokai.i18n.MR
 
 class Discord(id: Long) : ConnectionsService(id) {
 
