@@ -27,6 +27,7 @@ import eu.kanade.tachiyomi.util.system.getResourceColor
 import eu.kanade.tachiyomi.util.system.timeSpanFromNow
 import eu.kanade.tachiyomi.util.view.resetStrokeColor
 import eu.kanade.tachiyomi.util.view.setText
+import yokai.domain.extension.repo.model.ContentWarning
 import yokai.i18n.MR
 import yokai.util.lang.getString
 import java.util.*
@@ -112,10 +113,7 @@ class ExtensionHolder(view: View, val adapter: ExtensionAdapter) :
 
         binding.version.text = infoText.joinToString(" • ")
         binding.lang.text = LocaleHelper.getLocalizedDisplayName(extension.lang)
-        binding.warning.text = when {
-            extension.isNsfw -> itemView.context.getString(MR.strings.nsfw_short)
-            else -> ""
-        }.plusRepo(extension).uppercase(Locale.ROOT)
+        binding.warning.text = warningText(extension)
         binding.installProgress.progress = item.sessionProgress ?: 0
         binding.installProgress.isVisible = item.sessionProgress != null
         binding.cancelButton.isVisible = item.sessionProgress != null
@@ -171,20 +169,29 @@ class ExtensionHolder(view: View, val adapter: ExtensionAdapter) :
         bindButton(item)
     }
 
-    private fun String.plusRepo(extension: Extension): String {
-        val repoText = when {
-            extension is Extension.Untrusted -> itemView.context.getString(MR.strings.untrusted)
-            extension is Extension.Installed && extension.isObsolete -> itemView.context.getString(MR.strings.obsolete)
-            else -> ""
+    private fun warningText(extension: Extension): CharSequence {
+        val errorColor = context.getResourceColor(R.attr.colorError)
+        val primaryColor = context.getResourceColor(R.attr.colorPrimary)
+
+        val warnings = listOfNotNull(
+            when (extension.contentWarning) {
+                ContentWarning.SAFE -> null
+                ContentWarning.MIXED -> MR.strings.ext_content_warning_mixed to primaryColor
+                ContentWarning.NSFW -> MR.strings.nsfw_short to errorColor
+            },
+            when {
+                extension is Extension.Untrusted -> MR.strings.untrusted to errorColor
+                extension is Extension.Installed && extension.isObsolete -> MR.strings.obsolete to errorColor
+                else -> null
+            },
+    )
+
+    return buildSpannedString {
+        warnings.forEachIndexed { index, (res, tint) ->
+            if (index > 0) append(" • ")
+            color(tint) { append(context.getString(res).uppercase(Locale.ROOT)) }
         }
-
-        if (repoText.isEmpty()) return this
-
-        return if (isEmpty()) {
-            this
-        } else {
-            "$this • "
-        } + repoText
+    }
     }
 
     @Suppress("ResourceType")
