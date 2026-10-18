@@ -373,6 +373,7 @@
     <string name="version_">Version: %1$s</string>
     <string name="language_">Language: %1$s</string>
     <string name="nsfw_short">18+</string>
+    <string name="ext_content_warning_mixed">Mixed</string>
     <string name="installed_">Installed %1$s</string>
     <string name="unofficial">Unofficial</string>
     <string name="extensions_miui_warning">MIUI Optimization must be disabled to install extensions.</string>
