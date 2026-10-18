@@ -358,20 +358,8 @@ void DiscordBridge::Clear() {
     }
     LOGI("Clear: clearing rich presence");
     try {
-        discordpp::Activity activity;
-        LOGI("Clear: calling client_->UpdateRichPresence with empty activity...");
-        client_->UpdateRichPresence(
-            std::move(activity),
-            [](discordpp::ClientResult r) {
-                if (!r.Successful()) {
-                    LOGE("Clear: UpdateRichPresence failed: err=%s errCode=%d",
-                         r.Error().c_str(), r.ErrorCode());
-                } else {
-                    LOGI("Clear: UpdateRichPresence succeeded");
-                }
-            }
-        );
-        LOGI("Clear: UpdateRichPresence call returned (async)");
+        client_->ClearRichPresence();
+        LOGI("Clear: ClearRichPresence called");
     } catch (const std::exception& e) {
         LOGE("Clear threw exception: %s", e.what());
     } catch (...) {
