@@ -53,26 +53,26 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import dev.icerock.moko.resources.compose.stringResource
-import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.persistentMapOf
-import kotlinx.collections.immutable.toImmutableMap
-import kotlinx.coroutines.runBlocking
-import uy.kohesive.injekt.Injekt
-import uy.kohesive.injekt.api.get
 import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.core.storage.preference.collectAsState
 import eu.kanade.tachiyomi.data.connections.ConnectionsManager
 import eu.kanade.tachiyomi.data.connections.discord.DiscordAccount
 import eu.kanade.tachiyomi.data.connections.discord.DiscordRpcManager
 import eu.kanade.tachiyomi.data.connections.discord.DiscordTokenStore
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentMapOf
+import kotlinx.collections.immutable.toImmutableMap
+import kotlinx.coroutines.runBlocking
+import uy.kohesive.injekt.Injekt
+import uy.kohesive.injekt.api.get
 import yokai.domain.category.interactor.GetCategories
 import yokai.domain.connections.service.ConnectionsPreferences
 import yokai.domain.connections.service.DiscordButton
 import yokai.domain.connections.service.DiscordProgressMode
+import yokai.i18n.MR
 import yokai.presentation.component.preference.Preference
 import yokai.presentation.component.preference.PreferenceItem
 import yokai.presentation.settings.ComposableSettings
-import yokai.i18n.MR
 import android.R as AR
 
 object SettingsDiscordScreen : ComposableSettings() {
