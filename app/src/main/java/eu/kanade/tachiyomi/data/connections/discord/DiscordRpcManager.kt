@@ -72,7 +72,7 @@ object DiscordRpcManager {
     @Volatile private var lastAutoRefreshTime = 0L
 
     @Volatile var engineActivitySet = false
-    private set
+        private set
 
     private val _accessTokenFlow = MutableStateFlow<String?>(null)
     val accessTokenFlow: StateFlow<String?> = _accessTokenFlow
@@ -125,9 +125,9 @@ object DiscordRpcManager {
                 val now = System.currentTimeMillis()
 
                 if (!rt.isNullOrBlank() &&
-                        DiscordTokenStore.isExpired() &&
-                        now - lastAutoRefreshTime > 60_000L
-                   ) {
+                    DiscordTokenStore.isExpired() &&
+                    now - lastAutoRefreshTime > 60_000L
+                ) {
                     lastAutoRefreshTime = now
                     Log.i(
                         TAG,
@@ -254,7 +254,7 @@ object DiscordRpcManager {
             expiresAt = storedExpiresAt
             _accessTokenFlow.value = storedToken
             Log.i(TAG, "init: populated accessTokenFlow with stored token (length=${storedToken.length})")
-            } else {
+        } else {
             try {
                 val connectionsManager = Injekt.get<ConnectionsManager>()
                 val activeAccount = connectionsManager.discord.getAccounts().firstOrNull { it.isActive }
@@ -545,7 +545,6 @@ object DiscordRpcManager {
     private val refreshLock = Any()
 
     fun refreshAccessTokenSync(): Boolean {
-
         val tokenBefore = accessToken
         synchronized(refreshLock) {
             if (accessToken != null && accessToken != tokenBefore) return true

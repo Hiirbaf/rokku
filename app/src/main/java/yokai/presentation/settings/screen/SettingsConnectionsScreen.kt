@@ -218,7 +218,7 @@ internal fun ConnectionsLogoutDialog(
     onDismissRequest: () -> Unit,
 ) {
     val context = LocalContext.current
-    val navigator = LocalNavigator.currentOrThrow  // reemplaza router
+    val navigator = LocalNavigator.currentOrThrow
     AlertDialog(
         onDismissRequest = onDismissRequest,
         title = {
@@ -242,7 +242,7 @@ internal fun ConnectionsLogoutDialog(
                         service.logout()
                         onDismissRequest()
                         context.toast(MR.strings.successfully_logged_out)
-                        navigator.pop()  // reemplaza router.popCurrentController()
+                        navigator.pop()
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.error,

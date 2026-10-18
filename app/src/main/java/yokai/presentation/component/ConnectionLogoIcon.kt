@@ -29,7 +29,7 @@ fun ConnectionsLogoIcon(
     val modifier = if (onClick != null) {
         Modifier.clickableNoIndication(
             interactionSource = interactionSource,
-            onClick = onClick
+            onClick = onClick,
         )
     } else {
         Modifier

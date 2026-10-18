@@ -49,8 +49,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.collections.immutable.persistentListOf
@@ -131,9 +131,9 @@ object SettingsDiscordScreen : ComposableSettings() {
     }
 
     private fun Preference.PreferenceGroup.asCard() =
-    Preference.PreferenceItem.CustomPreference(title = "") {
-        PreferenceGroupCard(this@asCard)
-    }
+        Preference.PreferenceItem.CustomPreference(title = "") {
+            PreferenceGroupCard(this@asCard)
+        }
 
     @Composable
     fun DiscordStatusDialogHost() {
@@ -393,12 +393,16 @@ object SettingsDiscordScreen : ComposableSettings() {
         val status by DiscordRpcManager.connectionStatus.collectAsState()
         val connectedColor = Color(0xFF4CAF50)
         val connectingColor = MaterialTheme.colorScheme.onSurfaceVariant
+
         val statusLabel: Pair<String, Color>? = when {
             !showConnected -> null
+
             status == DiscordRpcManager.Status.Connected ->
-            stringResource(MR.strings.connected) to connectedColor
+                stringResource(MR.strings.connected) to connectedColor
+
             status == DiscordRpcManager.Status.Authorizing ->
-            stringResource(MR.strings.connecting) to connectingColor
+                stringResource(MR.strings.connecting) to connectingColor
+
             else -> null
         }
         val avatarUrl = account?.let {
@@ -410,7 +414,7 @@ object SettingsDiscordScreen : ComposableSettings() {
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.secondaryContainer,
-            )
+            ),
         ) {
             Row(
                 modifier = Modifier
@@ -441,8 +445,8 @@ object SettingsDiscordScreen : ComposableSettings() {
                 ) {
                     Text(
                         text = account.name
-                        ?.takeUnless { it.isBlank() || it.equals("null", ignoreCase = true) }
-                        ?: account.username,
+                            ?.takeUnless { it.isBlank() || it.equals("null", ignoreCase = true) }
+                            ?: account.username,
                         style = MaterialTheme.typography.titleMedium,
                     )
 

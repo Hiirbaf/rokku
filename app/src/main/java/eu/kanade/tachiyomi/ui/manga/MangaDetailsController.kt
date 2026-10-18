@@ -162,8 +162,8 @@ import eu.kanade.tachiyomi.util.view.snack
 import eu.kanade.tachiyomi.util.view.toolbarHeight
 import eu.kanade.tachiyomi.util.view.withFadeTransaction
 import eu.kanade.tachiyomi.widget.LinearLayoutManagerAccurateOffset
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeoutOrNull
 import uy.kohesive.injekt.injectLazy
 import yokai.domain.manga.models.cover
@@ -897,10 +897,14 @@ class MangaDetailsController :
             viewScope.launch {
                 val ctx = activity ?: return@launch
                 val sourceUrl = (presenter.source as? HttpSource)?.let { source ->
-                    try { source.getMangaUrl(presenter.manga) } catch (e: Exception) { null }
+                    try {
+                        source.getMangaUrl(presenter.manga)
+                    } catch (e: Exception) {
+                        null
+                    }
                 }
                 val incognito = preferences.incognitoMode().get() ||
-                isIncognitoModeForSource(m.source)
+                    isIncognitoModeForSource(m.source)
 
                 DiscordRPCService.setReaderActivity(
                     ctx,
@@ -953,8 +957,8 @@ class MangaDetailsController :
             }
 
             if (type == ControllerChangeType.POP_EXIT &&
-                    router.backstack.lastOrNull()?.controller !is MangaDetailsController
-               ) {
+                router.backstack.lastOrNull()?.controller !is MangaDetailsController
+            ) {
                 val ctx = activity
                 if (ctx != null) {
                     viewScope.launch {

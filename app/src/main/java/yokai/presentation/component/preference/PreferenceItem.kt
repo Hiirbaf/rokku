@@ -12,8 +12,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.structuralEqualityPolicy
 import androidx.compose.ui.unit.dp
-import eu.kanade.tachiyomi.core.storage.preference.collectAsState
 import eu.kanade.tachiyomi.core.preference.PreferenceStore
+import eu.kanade.tachiyomi.core.storage.preference.collectAsState
 import eu.kanade.tachiyomi.data.track.TrackPreferences
 import kotlinx.coroutines.launch
 import uy.kohesive.injekt.Injekt
