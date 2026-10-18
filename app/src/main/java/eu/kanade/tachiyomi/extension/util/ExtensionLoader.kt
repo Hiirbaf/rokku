@@ -23,6 +23,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import uy.kohesive.injekt.injectLazy
 import yokai.domain.extension.interactor.TrustExtension
+import yokai.domain.extension.repo.model.ContentWarning
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.attribute.BasicFileAttributes
@@ -35,8 +36,8 @@ internal object ExtensionLoader {
 
     private val preferences: PreferencesHelper by injectLazy()
     private val trustExtension: TrustExtension by injectLazy()
-    private val loadNsfwSource by lazy {
-        preferences.showNsfwSources().get()
+    private val enabledContentWarnings by lazy {
+        preferences.enabledContentWarnings().get()
     }
 
     private const val EXTENSION_FEATURE = "tachiyomi.extension"
@@ -325,10 +326,17 @@ internal object ExtensionLoader {
 
         // Repositories publish this metadata as either a String or Int.
         val contentWarning = metaData.get(METADATA_CONTENT_WARNING)?.toString()?.toIntOrNull()
-            ?: 0
-        val isNsfw = contentWarning > 0 || metaData.getInt(METADATA_NSFW) == 1
-        if (!loadNsfwSource && isNsfw) {
-            Logger.w { "NSFW extension $pkgName not allowed" }
+        ?.let {
+            when (it) {
+                0 -> ContentWarning.SAFE
+                1 -> ContentWarning.MIXED
+                else -> ContentWarning.NSFW
+            }
+        }
+        ?: if (metaData.getInt(METADATA_NSFW) == 1) ContentWarning.NSFW else ContentWarning.SAFE
+
+        if (contentWarning.name !in enabledContentWarnings) {
+            Logger.w { "Extension $pkgName not allowed ($contentWarning)" }
             return LoadResult.Error
         }
 
@@ -381,7 +389,7 @@ internal object ExtensionLoader {
             versionCode = versionCode,
             libVersion = libVersion,
             lang = lang,
-            isNsfw = isNsfw,
+            contentWarning = contentWarning,
             sources = sources,
             pkgFactory = metaData.getString(METADATA_SOURCE_FACTORY),
             icon = appInfo.loadIcon(pkgManager),
