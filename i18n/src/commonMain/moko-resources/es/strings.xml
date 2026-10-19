@@ -1091,4 +1091,22 @@
     <string name="pref_hardware_bitmap_threshold">Elegir un tamaño máximo con el que decodificar imágenes por hardware</string>
     <string name="pref_hardware_bitmap_threshold_default">Predeterminado (%d)</string>
     <string name="custom_filter">Filtros</string>
+    <string name="skipped_reason_not_in_release_period">No se ha comprobado ninguna actualización hoy al no prever ninguna</string>
+    <string name="pref_library_update_smart_update">Actualizaciones inteligentes</string>
+    <string name="manga_interval_expected_update">Se espera que el siguiente número salga en aproximadamente %1$s, la aplicación busca actualizaciones cada %2$s.</string>
+    <string name="manga_interval_expected_update_null">Este manga está terminado o no hay fecha de publicación prevista.</string>
+    <string name="pref_update_only_in_release_period">Intentar predecir cuándo sale el siguiente número</string>
+    <string name="hide_missing_chapter_indicators">Ocultar los indicadores de capítulos que falten</string>
+    <string name="long_strip">Tira larga</string>
+    <string name="page_flash_white">Blanco</string>
+    <string name="page_flash_black">Negro</string>
+    <string name="pref_legacy_cutout">Abre los ajustes de recortes heredados</string>
+    <string name="track_privately">Seguir de forma privada</string>
+    <string name="track_publicly">Seguir públicamente</string>
+    <string name="legacy_theme">Clásico</string>
+    <string name="palette_style_monochrome">Monocromo</string>
+    <string name="render_description_images">Ver imágenes en las descripciones de manga</string>
+    <string name="action_webview_close_tab">Cerrar lengüeta</string>
+    <string name="has_results">Con resultados</string>
+    <string name="replace">Reemplazar</string>
 </resources>
