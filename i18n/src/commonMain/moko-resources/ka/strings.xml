@@ -323,4 +323,26 @@
     <string name="gray_background">ნაცრისფერი</string>
     <string name="library_entries">ბიბლიოთეკის ჩანაწერები</string>
     <string name="clear_database_summary">ისტორიიდან წაიშლება ჩანაწერები, რომლებიც თქვენს ბიბლიოთეკაში არაა შენახული</string>
+    <string name="unknown_status">უცნობი სტატუსი</string>
+    <string name="comfortable_grid">კომფორტული ბადე</string>
+    <string name="compact_grid">კომპაქტური ბადე</string>
+    <string name="grid_size">ნივთები რიგში</string>
+    <string name="label_recent_updates">განახლებები</string>
+    <string name="in_library">ბიბლიოთეკაშია</string>
+    <string name="ext_installer_packageinstaller">ნაგულისხმევი</string>
+    <string name="long_strip">ვებ კომიქსი</string>
+    <string name="page_flash_white">თეთრი</string>
+    <string name="page_flash_black">შავი</string>
+    <string name="pref_cutout_short">კონტენტის ჩვენება ჩამოჭრილ ადგილზე</string>
+    <string name="add_to_library">ბიბლიოთეკაში დამატება</string>
+    <string name="dark">ჩართული</string>
+    <string name="trackers">სერვისები</string>
+    <string name="action_webview_back">უკან</string>
+    <string name="action_webview_forward">წინ</string>
+    <string name="action_webview_refresh">განახლება</string>
+    <string name="menu">მენიუ</string>
+    <string name="next">შემდეგი:</string>
+    <string name="previous">წინა:</string>
+    <string name="webtoon">ვებ კომიქსი</string>
+    <string name="refresh">განახლება</string>
 </resources>
