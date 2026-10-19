@@ -123,4 +123,9 @@
     <string name="searching_for_updates">ଅଦ୍ୟତନ ପାଇଁ ସନ୍ଧାନ କରୁଛି…</string>
     <string name="helpful_translation_links">ଉପଯୋଗୀ ଅନୁଵାଦ ଲିଙ୍କ୍</string>
     <string name="no_new_updates_available">କୌଣସି ନୂତନ ଅଦ୍ୟତନ ଉପଲବ୍ଧ ନାହିଁ</string>
+    <string name="ext_installer_packageinstaller">ଡିଫଲ୍ଟ</string>
+    <string name="page_flash_white">ଧଳା</string>
+    <string name="page_flash_black">କଳା</string>
+    <string name="next">ପରବର୍ତ୍ତୀ:</string>
+    <string name="previous">ପୂର୍ବବର୍ତ୍ତୀ:</string>
 </resources>
