@@ -222,6 +222,8 @@ object PreferenceKeys {
 
     const val showNsfwSource = "show_nsfw_source"
 
+    const val enabledContentWarnings = "enabled_content_warnings"
+
     const val themeMangaDetails = "theme_manga_details"
 
     const val themeMangaDetailsBackground = "theme_manga_details_background"
