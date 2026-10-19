@@ -1083,4 +1083,21 @@
     <string name="pref_hardware_bitmap_threshold_summary">Si le lecteur charge une image vide, réduisez progressivement le seuil.\nActuellement : %s</string>
     <string name="pref_verbose_logging">Journalisation explicite</string>
     <string name="pref_behavior">Comportement</string>
+    <string name="skipped_reason_not_in_release_period">Ignoré car aucune sortie n\'était attendue aujourd\'hui</string>
+    <string name="pref_library_update_smart_update">Mise à jour intelligente</string>
+    <string name="manga_interval_expected_update">De nouveaux chapitres sont prédits dans environ %1$s, mise à jour prévu tous les %2$s.</string>
+    <string name="manga_interval_expected_update_null">Cette série est soit terminée, soit il n\'y a pas de date de sortie prévue.</string>
+    <string name="pref_update_only_in_release_period">Prédiction de la prochaine date sortie</string>
+    <string name="hide_missing_chapter_indicators">Masquer les indicateurs de chapitre manquants</string>
+    <string name="page_flash_white">Blanc</string>
+    <string name="page_flash_black">Noir</string>
+    <string name="track_privately">Suivre en privé</string>
+    <string name="track_publicly">Suivre publiquement</string>
+    <string name="legacy_theme">Hérité</string>
+    <string name="render_description_images">Rendre les images dans les descriptions de mangas</string>
+    <string name="action_webview_close_tab">Fermer l\'onglet</string>
+    <string name="has_results">A des résultats</string>
+    <string name="replace">Remplacer</string>
+    <string name="crash_screen_restart_application">Redémarrer l\'application</string>
+    <string name="refresh">Rafraîchir</string>
 </resources>
