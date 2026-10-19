@@ -68,6 +68,11 @@ class LocalSource(private val context: Context) : CatalogueSource, UnmeteredSour
             }
         }
 
+        fun isImportable(extension: String?): Boolean {
+            extension ?: return false
+            return extension.lowercase() in SUPPORTED_ARCHIVE_TYPES || extension.equals("epub", true)
+        }
+
         fun getMangaLang(manga: SManga, context: Context = Injekt.get<Application>()): String {
             return langMap.getOrPut(manga.url) {
                 // Modified: check all directories for language info
