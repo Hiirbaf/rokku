@@ -1060,4 +1060,25 @@
     <string name="pref_mark_as_read_duplicate_read_chapter_existing">Matapos basahin ang kabanata</string>
     <string name="pref_mark_as_read_duplicate_read_chapter_new">Pagkatapos kumuha ng bagong kabanata</string>
     <string name="pref_mark_as_read_duplicate_read_chapter">Markahan ang duplikadong nabasang kabanata bilang nabasa na</string>
+    <string name="skip_this_version">Laktawan ang bersyon na ito</string>
+    <string name="skipped_reason_not_in_release_period">Nilaktawan dahil walang inaasahang release ngayong araw</string>
+    <string name="pref_library_update_smart_update">Matalas na pag-update</string>
+    <string name="manga_interval_expected_update">Mga bagong kabanata na nahulaang ilalabas sa loob ng %1$s, na tumitingin bawat %2$s.</string>
+    <string name="manga_interval_expected_update_null">Ang manga na ito ay nakumpleto na, o walang nahulaang petsa ng paglabas.</string>
+    <string name="pref_update_only_in_release_period">Hulaan ang susunod na oras ng release</string>
+    <string name="hide_missing_chapter_indicators">Itago ang mga indikasyon ng nawawalang kabanata</string>
+    <string name="fade">Kupas</string>
+    <string name="page_flash_white">Puti</string>
+    <string name="page_flash_black">Itim</string>
+    <string name="custom_filter">Mga Filter</string>
+    <string name="considering">Pinag-iisipan</string>
+    <string name="track_privately">Pribadong I-track</string>
+    <string name="track_publicly">Publikong I-track</string>
+    <string name="legacy_theme">Legasiya</string>
+    <string name="palette_style_monochrome">Monokromatiko</string>
+    <string name="render_description_images">I-render ang mga imahe sa mga paglalarawan ng manga</string>
+    <string name="information_webview_crashed">Huminto sa paggana ang WebView at isinarado ang pahina</string>
+    <string name="action_webview_close_tab">Isara ang tab</string>
+    <string name="has_results">May mga resulta</string>
+    <string name="replace">Palitan</string>
 </resources>
