@@ -1132,4 +1132,12 @@
     <string name="replace">Ganti</string>
     <string name="clear_selection">Hapus pilihan</string>
     <string name="information_no_library_update_errors">Tidak ada kesalahan pembaruan pustaka</string>
+    <string name="skip_this_version">Lewati versi ini</string>
+    <string name="skipped_reason_not_in_release_period">Dilewati karena tidak ada rilis yang diharapkan hari ini</string>
+    <string name="pref_library_update_smart_update">Pembauan pintar</string>
+    <string name="manga_interval_expected_update">Bab baru diperkirakan akan dirils sekitar %1$s, diperiksa setiap sekitar %2$s.</string>
+    <string name="manga_interval_expected_update_null">Manga ini sudah selesai, atau belum ada tanggal rilis yang diperkirakan.</string>
+    <string name="pref_update_only_in_release_period">Prediksikan waktu rilis selanjutnya</string>
+    <string name="fade">Memudar</string>
+    <string name="information_webview_crashed">WebView berhenti berfungsi dan halaman tersebut ditutup</string>
 </resources>
