@@ -28,4 +28,8 @@
         <item quantity="one">Por 1 titoloPor %d titoloj</item>
         <item quantity="other"/>
     </plurals>
+    <plurals name="next_unread_chapters">
+        <item quantity="one">Sekva nelegita ĉapitro</item>
+        <item quantity="other">Sekvaj %d nelegitaj ĉapitroj</item>
+    </plurals>
 </resources>
