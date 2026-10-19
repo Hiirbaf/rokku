@@ -469,7 +469,7 @@ class PreferencesHelper(val context: Context, val preferenceStore: PreferenceSto
     fun sideNavIconAlignment() = preferenceStore.getInt(Keys.sideNavIconAlignment, 1)
 
     // TODO: SourcePref
-    fun enabledContentWarnings() = preferenceStore.getStringSet("enabled_content_warnings", ContentWarning.entries.map { it.name }.toSet())
+    fun enabledContentWarnings() = preferenceStore.getStringSet(Keys.enabledContentWarnings, ContentWarning.entries.map { it.name }.toSet())
 
     fun themeMangaDetails() = preferenceStore.getBoolean(Keys.themeMangaDetails, true)
     fun themeMangaDetailsBackground() = preferenceStore.getBoolean(Keys.themeMangaDetailsBackground, false)
