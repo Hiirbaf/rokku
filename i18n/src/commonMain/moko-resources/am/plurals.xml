@@ -1,3 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <plurals name="restore_completed_message">
+        <item quantity="one">ከ %2$s ስህተት ጋር በ %1$s ውስጥ ተከናውኗል</item>
+        <item quantity="other">ከ %2$s ስህተት ጋር በ %1$s ውስጥ ተከናውኗል</item>
+    </plurals>
 </resources>
