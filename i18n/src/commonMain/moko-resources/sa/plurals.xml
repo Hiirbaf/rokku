@@ -1,3 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <plurals name="missing_chapters_warning">
+        <item quantity="one">Skipping %d अध्यायः, स्रोतः तस्य अभावः वा तस्य निष्कासनं अस्ति</item>
+        <item quantity="other">Skipping %d अध्यायाः, स्रोतः तेषां अभावः वा तेषां निष्कासनं अस्ति</item>
+    </plurals>
+    <plurals name="next_unread_chapters">
+        <item quantity="one">अगला अपठितः अध्यायः</item>
+        <item quantity="other">अगले %d अपठिताः अध्यायाः</item>
+    </plurals>
+    <plurals name="restore_completed_message">
+        <item quantity="one">%1$s मध्ये सम्पन्नम्, %2$s दोषः अस्ति</item>
+        <item quantity="other">%1$s मध्ये सम्पन्नम्, %2$s दोषाः सन्ति</item>
+    </plurals>
 </resources>
