@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="missing_chapters_warning">
+        <item quantity="one">1 ಅಧ್ಯಾಯ ಕಾಣೆಯಾಗಿದೆ</item>
+        <item quantity="other">%d ಅಧ್ಯಾಯ ಕಾಣೆಯಾಗಿವೆ</item>
+    </plurals>
+    <plurals name="restore_completed_message">
+        <item quantity="one">%2$s ದೋಷದೊಂದಿಗೆ %1$s ನಲ್ಲಿ ಮುಗಿದಿದೆ</item>
+        <item quantity="other">%2$s ದೋಷಗಳೊಂದಿಗೆ %1$s ನಲ್ಲಿ ಮುಗಿದಿದೆ</item>
+    </plurals>
+</resources>

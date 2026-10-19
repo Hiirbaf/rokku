@@ -1100,4 +1100,27 @@
     <string name="save_search_delete_message">この保存した検索クエリ「%1$s」を削除してもよろしいですか？</string>
     <string name="pref_behavior">挙動</string>
     <string name="ext_installer_summary_legacy">レガシーインストーラーはまだ実装されていないため、現在は PackageInstaller (デフォルト) にフォールバックしています</string>
+    <string name="action_bar_up_description">上に移動</string>
+    <string name="skip_this_version">このバージョンをスキップ</string>
+    <string name="skipped_reason_not_in_release_period">本日は連載更新の予定がないためスキップしました</string>
+    <string name="pref_library_update_smart_update">スマート・アップデート</string>
+    <string name="manga_interval_expected_update">新しい章はおよそ %1$s 後に公開されると予測されており、およそ %2$s ごとにチェックされます。</string>
+    <string name="manga_interval_expected_update_null">このマンガは完結しているか、あるいは発売予定日が決まっていない。</string>
+    <string name="pref_update_only_in_release_period">次の更新時間を予測</string>
+    <string name="hide_missing_chapter_indicators">欠落している章のインジケーターを非表示にする</string>
+    <string name="duplicate_in_library">重複</string>
+    <string name="page_flash_white">白</string>
+    <string name="page_flash_black">ブラック</string>
+    <string name="considering">検討中</string>
+    <string name="track_privately">非公開で追跡</string>
+    <string name="track_publicly">公開で追跡</string>
+    <string name="legacy_theme">レガシー</string>
+    <string name="palette_style_monochrome">モノクロ</string>
+    <string name="render_description_images">マンガの描写で画像をレンダリングする</string>
+    <string name="show_duplicate_in_library_items">「重複」バッジを表示</string>
+    <string name="information_webview_crashed">WebView が動作を停止し、ページが閉じられました</string>
+    <string name="action_webview_close_tab">タブを閉じる</string>
+    <string name="has_results">結果あり</string>
+    <string name="pinned_only">ピン留めのみ</string>
+    <string name="replace">置き換え</string>
 </resources>

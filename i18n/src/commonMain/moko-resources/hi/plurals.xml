@@ -36,4 +36,20 @@
         <item quantity="one">अगला अपठित अध्याय</item>
         <item quantity="other">अगले %d अपठित अध्याय</item>
     </plurals>
+    <plurals name="_updates_pending">
+        <item quantity="one">%d अपडेट बचा है</item>
+        <item quantity="other">%d अपडेट बचें है</item>
+    </plurals>
+    <plurals name="extensions_updated_plural">
+        <item quantity="one">एक्सटेंशन अपडेट हो चुका</item>
+        <item quantity="other">%d एक्सटेंशन अपडेट हो चुके</item>
+    </plurals>
+    <plurals name="pages_plural">
+        <item quantity="one">%1$d पन्ना</item>
+        <item quantity="other">%1$d पन्ने</item>
+    </plurals>
+    <plurals name="deleted_chapters">
+        <item quantity="one">एक चैप्टर को इस सूत्र से निकाल दिया गया है : \n%2$s \nइस सूत्र के डाउनलोड को मिटाएं?</item>
+        <item quantity="other">%1$s चैप्टरों को इस सूत्र से निकाल दिया गया है : \n%2$s \n \nइनके डाउनलाओ को मिटाएं?</item>
+    </plurals>
 </resources>

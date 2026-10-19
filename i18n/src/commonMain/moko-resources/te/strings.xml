@@ -235,4 +235,20 @@
     <string name="daily">ప్రతిరోజు</string>
     <string name="lock_with_biometrics">తాళమును తెరుచుట ఆవశ్యకము</string>
     <string name="library_entries">లైబ్రరీ ఎంట్రీలు</string>
+    <string name="confirm_category_deletion">క్యాటగిరీ తీసేయండి</string>
+    <string name="comfortable_grid">తేలికపాటి వరుస</string>
+    <string name="compact_grid">ఇమిడ్చిన వరుస</string>
+    <string name="label_recent_updates">తాజా నవీకరణలు</string>
+    <string name="local_source">స్థానిక సోర్స్</string>
+    <string name="global_search">ప్రాపంచిక శోధన</string>
+    <string name="ext_installer_packageinstaller">ప్రమాణము</string>
+    <string name="page_flash_white">తెలుపు</string>
+    <string name="page_flash_black">నలుపు</string>
+    <string name="trackers">సేవలు</string>
+    <string name="action_webview_back">వెనుకకు</string>
+    <string name="action_webview_forward">ముందుకు</string>
+    <string name="action_webview_refresh">నవీకరించుము</string>
+    <string name="previous">మునుపటి:</string>
+    <string name="webtoon">వెబ్‌టూన్</string>
+    <string name="refresh">నవీకరించుము</string>
 </resources>

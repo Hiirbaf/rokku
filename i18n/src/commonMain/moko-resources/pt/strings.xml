@@ -1081,4 +1081,21 @@
     <string name="untrusted_extension_message">Extensões maliciosas podem ler qualquer credencial de login armazenada ou executar código arbitrário.\n\nAo confiar nesta extensão, aceita esses riscos.</string>
     <string name="pref_hardware_bitmap_threshold">Limiar personalizado de bitmap em hardware</string>
     <string name="pref_hardware_bitmap_threshold_summary">Se o leitor carregar uma imagem em branco reduzir incrementalmente o limiar.\nEscolhido: %s</string>
+    <string name="skipped_reason_not_in_release_period">Pulado, pois nenhum lançamento é esperado para hoje</string>
+    <string name="pref_library_update_smart_update">Atualização inteligente</string>
+    <string name="manga_interval_expected_update">Novos capítulos com previsão de serem lançados em torno de %1$s, verificando em torno de cada %2$s.</string>
+    <string name="manga_interval_expected_update_null">Este mangá ou está completo ou ainda não tem uma data de lançamento prevista.</string>
+    <string name="pref_update_only_in_release_period">Fora do período esperado de lançamento</string>
+    <string name="hide_missing_chapter_indicators">Ocultar indicadores de capítulos ausentes</string>
+    <string name="long_strip">Página longa</string>
+    <string name="page_flash_white">Branco</string>
+    <string name="page_flash_black">Preto</string>
+    <string name="track_privately">Rastrear privadamente</string>
+    <string name="track_publicly">Rastrear publicamente</string>
+    <string name="legacy_theme">Legado</string>
+    <string name="palette_style_monochrome">Monocromático</string>
+    <string name="render_description_images">Renderizar imagens em descrições de mangá</string>
+    <string name="action_webview_close_tab">Fechar guia</string>
+    <string name="has_results">Há resultados</string>
+    <string name="replace">Substituir</string>
 </resources>

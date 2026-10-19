@@ -4,39 +4,88 @@
         <item quantity="one">آپدیت برای یک افرونه موجود استآپدیت برای %d افرونه موجود است</item>
         <item quantity="other"/>
     </plurals>
-
     <plurals name="chapters_plural">
         <item quantity="one">قسمت%1$s</item>
         <item quantity="other">قسمت ها%1$s</item>
     </plurals>
-
     <plurals name="restore_completed_message">
         <item quantity="one">در %1$s با %2$s خطا انجام شددر %1$s با %2$s خطا انجام شد</item>
         <item quantity="other"/>
     </plurals>
-
     <plurals name="category_plural">
         <item quantity="one">%d دسته%d دسته</item>
         <item quantity="other"/>
     </plurals>
-
     <plurals name="after_minutes">
         <item quantity="one">بعد از %1$s دقیقهبعد از %1$s دقیقه</item>
         <item quantity="other"/>
     </plurals>
-
     <plurals name="for_n_titles">
         <item quantity="one">برای ۱ مانگابرای %d مانگا</item>
         <item quantity="other"/>
     </plurals>
-
     <plurals name="next_unread_chapters">
         <item quantity="one">قسمت خوانده نشده بعدی</item>
         <item quantity="other">%d قسمت خوانده نشده بعدی</item>
     </plurals>
-
     <plurals name="missing_chapters_warning">
         <item quantity="one">1 قسمت جا افتاده است</item>
         <item quantity="other">%d قسمت جا افتاده است</item>
+    </plurals>
+    <plurals name="remove_n_chapters">
+        <item quantity="one">حذف %1$d چپتر دانلود شده؟</item>
+        <item quantity="other">حذف %1$d چپتر دانلود شده؟</item>
+    </plurals>
+    <plurals name="notification_and_n_more">
+        <item quantity="one">و %1$d چپتر دیگر</item>
+        <item quantity="other">و %1$d چپتر دیگر</item>
+    </plurals>
+    <plurals name="_updates_pending">
+        <item quantity="one">%d به روز رسانی در انتظار</item>
+        <item quantity="other">%d به روز رسانی در انتظار</item>
+    </plurals>
+    <plurals name="extensions_updated_plural">
+        <item quantity="one">افرونه به روز رسانی شد</item>
+        <item quantity="other">%d افزونه به روز رسانی شد</item>
+    </plurals>
+    <plurals name="pages_plural">
+        <item quantity="one">%1$d صفحه</item>
+        <item quantity="other">%1$d صفحه</item>
+    </plurals>
+    <plurals name="deleted_chapters">
+        <item quantity="one">یک چپتر از منبع حذف شده است:\n%2$s\nدانلود آن حذف شود؟</item>
+        <item quantity="other">%1$s چپتر از منبع حذف شده است:\n%2$s\n\nدانلودهای آنها حذف شود؟</item>
+    </plurals>
+    <plurals name="migrate_manga">
+        <item quantity="one">%1$d مجموعه %2$s انتقال منبع شود؟</item>
+        <item quantity="other">%1$d مجموعه %2$s انتقال منبع شود؟</item>
+    </plurals>
+    <plurals name="copy_manga">
+        <item quantity="one">سری %1$d%2$s کپی شود؟</item>
+        <item quantity="other">سری %1$d%2$s کپی شود؟</item>
+    </plurals>
+    <plurals name="manga_migrated">
+        <item quantity="one">%d سری مهاجرت کرد</item>
+        <item quantity="other">%d سری مهاجرت کردند</item>
+    </plurals>
+    <plurals name="cache_cleared">
+        <item quantity="one">حافظه پنهان پاک شد. %d فایل حذف شده است</item>
+        <item quantity="other">حافظه پنهان پاک شد. %d فایل حذف شده است</item>
+    </plurals>
+    <plurals name="cleanup_done">
+        <item quantity="one">پاکسازی انجام شد. %d پوشه حذف شد</item>
+        <item quantity="other">پاکسازی انجام شد. %d پوشه حذف شد</item>
+    </plurals>
+    <plurals name="_sources">
+        <item quantity="one">%d منبع</item>
+        <item quantity="other">%d منبع</item>
+    </plurals>
+    <plurals name="_statuses">
+        <item quantity="one">%d وضعیت ها</item>
+        <item quantity="other">%d وضعیت ها</item>
+    </plurals>
+    <plurals name="_languages">
+        <item quantity="one">%d زبان ها</item>
+        <item quantity="other">%d زبان ها</item>
     </plurals>
 </resources>

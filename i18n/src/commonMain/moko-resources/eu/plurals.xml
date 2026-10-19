@@ -77,4 +77,8 @@
         <item quantity="one">%1$s kapitulu</item>
         <item quantity="other">%1$s kapituluak</item>
     </plurals>
+    <plurals name="next_unread_chapters">
+        <item quantity="one">Irakurri gabeko hurrengo kapitulua</item>
+        <item quantity="other">Irakurri gabeko hurrengo %d kapituluak</item>
+    </plurals>
 </resources>

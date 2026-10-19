@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <plurals name="category_plural">
         <item quantity="other">%d kategori</item>
     </plurals>
-
     <plurals name="after_minutes">
         <item quantity="other">Sawise %1$s menit</item>
+    </plurals>
+    <plurals name="missing_chapters_warning">
+        <item quantity="other">Nglangkungi %d bab, embuh sumbere ilang utawa wis difilter</item>
+    </plurals>
+    <plurals name="next_unread_chapters">
+        <item quantity="other">Nggawe %d chapter sing gorong diwoco</item>
+    </plurals>
+    <plurals name="restore_completed_message">
+        <item quantity="other">Mari kurang %1$s karo %2$s kaluputan</item>
     </plurals>
 </resources>
