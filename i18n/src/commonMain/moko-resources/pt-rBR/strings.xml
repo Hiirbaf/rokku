@@ -645,7 +645,7 @@
     <string name="restore_missing_trackers">Monitoradores sem login realizado:</string>
     <string name="restore_content_full">Os dados do arquivo de backup serão restaurados\n\nVocê precisará instalar as extensões ausentes e fazer login nos serviços de rastreamento posteriormente para utilizá-los</string>
     <string name="restoring_backup_canceled">Restauração cancelada</string>
-    <string name="restore_duration">%02d min e %02d seg</string>
+    <string name="restore_duration">%1$02d min e %2$02d seg</string>
     <string name="source_migration_guide">Guia de migração de fonte</string>
     <string name="nsfw_sources">Fontes NSFW (+18)</string>
     <string name="does_not_prevent_unofficial_nsfw">Isso não impede que extensões não oficiais ou potencialmente sinalizadas de maneira incorreta apresentem conteúdo NSFW (+18) no aplicativo</string>
@@ -918,10 +918,10 @@
     <string name="skipped_reason_not_caught_up">Pulado porque há capítulos não lidos</string>
     <string name="skipped_reason_not_started">Pulado porque nenhum capítulo foi lido</string>
     <string name="channel_skipped">Puladas</string>
-    <string name="pref_library_update_manga_restriction">Pular a atualização de títulos</string>
-    <string name="pref_update_only_completely_read">Com capítulos não lidos</string>
-    <string name="pref_update_only_non_completed">Com o status \"Concluído\"</string>
-    <string name="pref_update_only_started">Que não tiveram a leitura iniciada</string>
+    <string name="pref_library_update_manga_restriction">Atualização inteligente</string>
+    <string name="pref_update_only_completely_read">Pular títulos com capítulos não lidos</string>
+    <string name="pref_update_only_non_completed">Pular títulos com o status “Concluído”</string>
+    <string name="pref_update_only_started">Pular títulos não iniciados</string>
     <string name="pref_clear_webview_data">Limpar os dados da WebView</string>
     <string name="webview_data_deleted">Dados da WebView limpos</string>
     <string name="tap_to_see_details">Toque para ver os detalhes</string>
@@ -1140,7 +1140,7 @@
     <string name="skipped_reason_cancelled">Pulado porque a série está cancelada</string>
     <string name="library_update_custom_time">Horário da atualização</string>
     <string name="library_update_custom_time_summary">Horário aproximado do dia em que a biblioteca irá atualizar, a cada 24 horas</string>
-    <string name="pref_update_only_cancelled">Com o status \"Cancelado\"</string>
+    <string name="pref_update_only_cancelled">Pular títulos com o status “Cancelado”</string>
     <string name="hide_missing_chapter_indicators">Ocultar os indicadores de capítulos faltantes</string>
     <string name="hide_missing_chapter_indicators_summary">Oculta o separador na lista de capítulos quando há capítulos faltando</string>
     <string name="page_flash">Piscar a tela ao virar a página</string>
@@ -1196,4 +1196,15 @@
     <string name="pref_update_only_in_release_period">Prever a data do próximo lançamento</string>
     <string name="fade">Esmaecer</string>
     <string name="information_webview_crashed">WebView parou de funcionar e a página foi fechada</string>
+    <string name="page_transition_effect">Efeito de transição de página</string>
+    <string name="page_transition_speed">Velocidade de transição de página</string>
+    <string name="slide">Deslizar</string>
+    <string name="depth">Profundidade</string>
+    <string name="zoom_out">Reduzir zoom</string>
+    <string name="slow">Lento</string>
+    <string name="very_slow">Muito lento</string>
+    <string name="preload_only_on_wifi">Pré-carregar só no Wi-Fi</string>
+    <string name="preload_only_on_wifi_summary">Economiza dados móveis: em conexões limitadas, carrega só a página que você está lendo</string>
+    <string name="tracking_legacy_notice">Você está entrando na versão antiga de “Monitoramento”</string>
+    <string name="advanced_experimental_notice">Você está entrando na versão experimental de “Avançado”</string>
 </resources>
