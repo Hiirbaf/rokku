@@ -48,4 +48,5 @@
     <string name="by_source_order">Эх үүсвэрээр эрэмбэлэх</string>
     <string name="by_chapter_number">Бүлгийн дугаараар</string>
     <string name="by_update_date">Оруулсан огноогоор</string>
+    <string name="webtoon">Вебтүүн</string>
 </resources>
