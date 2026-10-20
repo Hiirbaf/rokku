@@ -16,6 +16,7 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import co.touchlab.kermit.Logger
 import com.hippo.unifile.UniFile
+import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.source.LocalSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ensureActive
@@ -160,7 +161,7 @@ class ImportArchivesWorker(context: Context, params: WorkerParameters) : Corouti
 
     private fun progressNotification(done: Int, total: Int) =
         NotificationCompat.Builder(applicationContext, CHANNEL_ID)
-            .setSmallIcon(android.R.drawable.stat_sys_download) // TODO: replace with the Rokku icon
+            .setSmallIcon(R.drawable.ic_rokku)
             .setContentTitle(applicationContext.getString(MR.strings.importing_local_source))
             .setContentText("$done/$total")
             .setProgress(total, done, total == 0)
@@ -175,7 +176,7 @@ class ImportArchivesWorker(context: Context, params: WorkerParameters) : Corouti
 
     private fun summaryNotification(result: ArchiveImporter.Result) =
         NotificationCompat.Builder(applicationContext, CHANNEL_ID)
-            .setSmallIcon(android.R.drawable.stat_sys_download_done) // TODO: Rokku icon
+            .setSmallIcon(R.drawable.ic_rokku)
             .setContentTitle(
                 applicationContext.getString(
                     if (result.failed == 0) MR.strings.import_local_source_done else MR.strings.import_local_source_error,
