@@ -1,5 +1,8 @@
 package eu.kanade.tachiyomi.ui.source.browse
 
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -20,6 +23,10 @@ import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import co.touchlab.kermit.Logger
 import com.bluelinelabs.conductor.ControllerChangeHandler
 import com.bluelinelabs.conductor.ControllerChangeType
@@ -34,6 +41,8 @@ import eu.kanade.tachiyomi.domain.manga.models.Manga
 import eu.kanade.tachiyomi.source.CatalogueSource
 import eu.kanade.tachiyomi.source.ConfigurableSource
 import eu.kanade.tachiyomi.source.LocalSource
+import eu.kanade.tachiyomi.source.local.ArchiveImporter
+import eu.kanade.tachiyomi.source.local.ImportArchivesWorker
 import eu.kanade.tachiyomi.source.model.Filter
 import eu.kanade.tachiyomi.source.model.FilterList
 import eu.kanade.tachiyomi.source.online.HttpSource
@@ -408,6 +417,7 @@ open class BrowseSourceController(bundle: Bundle) :
 
         val isLocalSource = presenter.source is LocalSource
         menu.findItem(R.id.action_local_source_help).isVisible = isLocalSource
+        menu.findItem(R.id.action_local_source_import).isVisible = isLocalSource
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -416,6 +426,7 @@ open class BrowseSourceController(bundle: Bundle) :
             R.id.action_display_mode -> swapDisplayMode()
             R.id.action_open_in_web_view -> openInWebView()
             R.id.action_local_source_help -> openLocalSourceHelpGuide()
+            R.id.action_local_source_import -> openImportPicker()
             R.id.action_source_settings -> openSourceSettings()
             else -> return super.onOptionsItemSelected(item)
         }
@@ -653,6 +664,27 @@ open class BrowseSourceController(bundle: Bundle) :
         activity?.openInBrowser(LocalSource.HELP_URL)
     }
 
+    private fun openImportPicker() {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type = "*/*"
+            putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+            putExtra(Intent.EXTRA_MIME_TYPES, ArchiveImporter.MIME_TYPES)
+        }
+        startActivityForResult(intent, REQUEST_IMPORT_LOCAL)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode != REQUEST_IMPORT_LOCAL || resultCode != Activity.RESULT_OK || data == null) return
+        val activity = activity ?: return
+        val uris = data.clipData?.let { clip -> (0 until clip.itemCount).map { clip.getItemAt(it).uri } }
+        ?: listOfNotNull(data.data)
+        if (uris.isEmpty()) return
+        ArchiveImporter.persistReadAccess(activity, uris)
+        showImportDialog(uris)
+    }
+
     private fun openSourceSettings() {
         presenter.source.pkgName()?.let {
             router.pushController(
@@ -660,6 +692,56 @@ open class BrowseSourceController(bundle: Bundle) :
                     it,
                 ).withFadeTransaction(),
             )
+        }
+    }
+
+    private fun showImportDialog(uris: List<Uri>) {
+        val activity = activity ?: return
+        val suggested = ArchiveImporter.suggestSeriesName(activity, uris)
+        var seriesName = ""
+
+        activity.materialAlertDialog()
+            .setTitle(activity.getString(MR.strings.import_local_source_title))
+            .setTextInput(
+                hint = suggested.ifBlank { activity.getString(MR.strings.import_local_source_folder_placeholder) },
+            ) { input -> seriesName = input }
+            .setPositiveButton(MR.strings.import_local_source_action) { _, _ ->
+                // Si no escribe nada, se usa el nombre sugerido (el hint)
+                val name = seriesName.trim().ifBlank { suggested }
+                if (name.isNotBlank()) startImport(uris, name)
+            }
+            .setNegativeButton(MR.strings.cancel, null)
+            .show()
+    }
+
+    private fun startImport(uris: List<Uri>, seriesName: String) {
+        val activity = activity ?: return
+        val workManager = WorkManager.getInstance(activity)
+        val request = OneTimeWorkRequestBuilder<ImportArchivesWorker>()
+            .setInputData(
+                workDataOf(
+                    ImportArchivesWorker.KEY_URIS to uris.map(Uri::toString).toTypedArray(),
+                    ImportArchivesWorker.KEY_SERIES to seriesName,
+                ),
+            )
+            .build()
+
+        workManager.enqueue(request)
+        activity.toast(MR.strings.importing_local_source)
+
+        // Al terminar, avisar y recargar la lista de la fuente local
+        viewScope.launch {
+            workManager.getWorkInfoByIdFlow(request.id).collectLatest { info ->
+                if (info?.state?.isFinished != true) return@collectLatest
+                activity.toast(
+                    if (info.state == WorkInfo.State.SUCCEEDED) {
+                        MR.strings.import_local_source_done
+                    } else {
+                        MR.strings.import_local_source_error
+                    },
+                )
+                resetPager()
+            }
         }
     }
 
@@ -797,6 +879,12 @@ open class BrowseSourceController(bundle: Bundle) :
                 ) { openLocalSourceHelpGuide() }
             } else {
                 EmptyView.Action(MR.strings.retry, retryAction)
+            }
+
+            if (presenter.source is LocalSource) {
+                actions += EmptyView.Action(
+                    MR.strings.action_import_file,
+                ) { openImportPicker() }
             }
 
             if (presenter.source is HttpSource) {
@@ -1055,6 +1143,8 @@ open class BrowseSourceController(bundle: Bundle) :
 
     companion object {
         const val SOURCE_ID_KEY = "sourceId"
+
+        const val REQUEST_IMPORT_LOCAL = 7421
 
         const val SEARCH_QUERY_KEY = "searchQuery"
         const val USE_LATEST_KEY = "useLatest"

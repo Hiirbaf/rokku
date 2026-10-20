@@ -321,6 +321,14 @@
     <string name="sources">Sources</string>
     <string name="source_hidden">Source hidden</string>
     <string name="last_used">Last used</string>
+    <string name="action_import_file">Import CBZ/CBR</string>
+    <string name="import_local_source_title">Import to local source</string>
+    <string name="import_local_source_folder_placeholder">Nombre de la serie</string>
+    <string name="import_local_source_action">Import</string>
+    <string name="importing_local_source">Importing files…</string>
+    <string name="import_local_source_summary">Added: %1$d, Skipped: %2$d, Errors: %3$d</string>
+    <string name="import_local_source_done">Import complete</string>
+    <string name="import_local_source_error">Some files could not be imported</string>
     <string name="local_source_help_guide">Local source guide</string>
     <string name="check_site_in_web">Check website in WebView</string>
     <string name="browse_long_tap_default">Open extensions / migration menu</string>
