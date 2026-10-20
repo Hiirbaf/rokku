@@ -1,3 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <plurals name="missing_chapters_warning">
+        <item quantity="other">Манна %d түһүмэх суох</item>
+    </plurals>
+    <plurals name="restore_completed_message">
+        <item quantity="other">Туолла %1$sҕа %2$s сыаһалаах</item>
+    </plurals>
 </resources>

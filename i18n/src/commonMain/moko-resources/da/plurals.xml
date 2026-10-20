@@ -1,3 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <plurals name="next_unread_chapters">
+        <item quantity="one">Næste ulæste kapitel</item>
+        <item quantity="other">Næste %d ulæste kapitler</item>
+    </plurals>
 </resources>

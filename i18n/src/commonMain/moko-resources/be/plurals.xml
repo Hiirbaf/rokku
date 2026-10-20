@@ -1,3 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <plurals name="missing_chapters_warning">
+        <item quantity="one">Прапускаецца %d раздзел: адсутнічае ў крыніцы або адфільтраваны</item>
+        <item quantity="few">Прапускаюцца %d раздзелы: адсутнічаюць у крыніцы або адфільтраваныя</item>
+        <item quantity="many">Прапускаецца %d раздзелаў: адсутнічаюць у крыніцы або адфільтраваныя</item>
+        <item quantity="other">Прапускаецца %d раздзелаў: адсутнічаюць у крыніцы або адфільтраваныя</item>
+    </plurals>
+    <plurals name="next_unread_chapters">
+        <item quantity="one">Наступны непрачытаная раздзел</item>
+        <item quantity="few">Наступныя %d непрачытаныя раздзелы</item>
+        <item quantity="many">Наступныя %d непрачытаных раздзелаў</item>
+        <item quantity="other">Наступныя %d непрачытаных раздзелаў</item>
+    </plurals>
+    <plurals name="restore_completed_message">
+        <item quantity="one">Выканана за %1$s з %2$s памылкай</item>
+        <item quantity="few">Выканана за %1$s з %2$s памылкамі</item>
+        <item quantity="many">Выканана за %1$s з %2$s памылкамі</item>
+        <item quantity="other">Выканана за %1$s з %2$s памылкамі</item>
+    </plurals>
 </resources>
