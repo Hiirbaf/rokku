@@ -868,6 +868,12 @@ open class BrowseSourceController(bundle: Bundle) :
                 EmptyView.Action(MR.strings.retry, retryAction)
             }
 
+            if (presenter.source is LocalSource) {
+                actions += EmptyView.Action(
+                    MR.strings.action_import_from_storage,
+                ) { importPicker.launch(ArchiveImporter.MIME_TYPES) }
+            }
+
             if (presenter.source is HttpSource) {
                 actions += EmptyView.Action(
                     MR.strings.open_in_webview,
