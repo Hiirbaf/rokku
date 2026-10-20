@@ -883,7 +883,7 @@ open class BrowseSourceController(bundle: Bundle) :
 
             if (presenter.source is LocalSource) {
                 actions += EmptyView.Action(
-                    MR.strings.action_import_from_storage,
+                    MR.strings.action_import_file,
                 ) { openImportPicker() }
             }
 
