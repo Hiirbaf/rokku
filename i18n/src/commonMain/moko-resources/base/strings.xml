@@ -346,6 +346,7 @@
     <string name="import_local_source_folder_placeholder">Nombre de la serie</string>
     <string name="import_local_source_action">Import</string>
     <string name="importing_local_source">Importing files…</string>
+    <string name="import_local_source_summary">%1$d imported, %2$d skipped, %3$d with errors</string>
     <string name="import_local_source_done">Import complete</string>
     <string name="import_local_source_error">Some files could not be imported</string>
     <string name="local_source_help_guide">Local source guide</string>
