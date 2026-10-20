@@ -1,5 +1,7 @@
 package eu.kanade.tachiyomi.ui.source.browse
 
+import android.app.Activity
+import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -9,7 +11,6 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExploreOff
 import androidx.compose.runtime.getValue
@@ -168,15 +169,6 @@ open class BrowseSourceController(bundle: Bundle) :
             },
             currentSourceId = { getIncognitoSourceId() },
         )
-
-    private val importPicker = registerForActivityResult(
-        ActivityResultContracts.OpenMultipleDocuments(),
-    ) { uris ->
-        val activity = activity ?: return@registerForActivityResult
-        if (uris.isEmpty()) return@registerForActivityResult
-        ArchiveImporter.persistReadAccess(activity, uris)
-        showImportDialog(uris)
-    }
 
     /**
      * Endless loading item.
@@ -434,7 +426,7 @@ open class BrowseSourceController(bundle: Bundle) :
             R.id.action_display_mode -> swapDisplayMode()
             R.id.action_open_in_web_view -> openInWebView()
             R.id.action_local_source_help -> openLocalSourceHelpGuide()
-            R.id.action_local_source_import -> importPicker.launch(ArchiveImporter.MIME_TYPES)
+            R.id.action_local_source_import -> openImportPicker()
             R.id.action_source_settings -> openSourceSettings()
             else -> return super.onOptionsItemSelected(item)
         }
@@ -672,6 +664,27 @@ open class BrowseSourceController(bundle: Bundle) :
         activity?.openInBrowser(LocalSource.HELP_URL)
     }
 
+    private fun openImportPicker() {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type = "*/*"
+            putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+            putExtra(Intent.EXTRA_MIME_TYPES, ArchiveImporter.MIME_TYPES)
+        }
+        startActivityForResult(intent, REQUEST_IMPORT_LOCAL)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode != REQUEST_IMPORT_LOCAL || resultCode != Activity.RESULT_OK || data == null) return
+        val activity = activity ?: return
+        val uris = data.clipData?.let { clip -> (0 until clip.itemCount).map { clip.getItemAt(it).uri } }
+        ?: listOfNotNull(data.data)
+        if (uris.isEmpty()) return
+        ArchiveImporter.persistReadAccess(activity, uris)
+        showImportDialog(uris)
+    }
+
     private fun openSourceSettings() {
         presenter.source.pkgName()?.let {
             router.pushController(
@@ -871,7 +884,7 @@ open class BrowseSourceController(bundle: Bundle) :
             if (presenter.source is LocalSource) {
                 actions += EmptyView.Action(
                     MR.strings.action_import_from_storage,
-                ) { importPicker.launch(ArchiveImporter.MIME_TYPES) }
+                ) { openImportPicker() }
             }
 
             if (presenter.source is HttpSource) {
@@ -1130,6 +1143,8 @@ open class BrowseSourceController(bundle: Bundle) :
 
     companion object {
         const val SOURCE_ID_KEY = "sourceId"
+
+        const val REQUEST_IMPORT_LOCAL = 7421
 
         const val SEARCH_QUERY_KEY = "searchQuery"
         const val USE_LATEST_KEY = "useLatest"
