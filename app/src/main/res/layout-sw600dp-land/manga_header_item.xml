@@ -219,6 +219,19 @@
                 android:padding="5dp"
                 android:src="@drawable/ic_share_24dp"
                 android:tooltipText="@string/share" />
+
+            <ImageView
+                android:id="@+id/next_update_button"
+                style="@style/Theme.Widget.CustomImageButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="6dp"
+                android:contentDescription="@string/pref_library_update_smart_update"
+                android:padding="5dp"
+                android:src="@drawable/ic_hourglass_empty_24dp"
+                android:tooltipText="@string/pref_library_update_smart_update" />
         </LinearLayout>
     </HorizontalScrollView>
 

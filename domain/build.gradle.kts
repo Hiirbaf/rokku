@@ -23,6 +23,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(projects.source.api)
+                api(kotlinx.datetime)
             }
         }
         commonTest {
@@ -35,7 +36,16 @@ kotlin {
             dependencies {
             }
         }
+        getByName("androidHostTest") {
+            dependencies {
+                implementation(libs.bundles.test.runtime)
+            }
+        }
     }
+}
+
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
 }
 
 dependencies {

@@ -36,6 +36,7 @@ import eu.kanade.tachiyomi.data.preference.MANGA_CANCELLED
 import eu.kanade.tachiyomi.data.preference.MANGA_HAS_UNREAD
 import eu.kanade.tachiyomi.data.preference.MANGA_NON_COMPLETED
 import eu.kanade.tachiyomi.data.preference.MANGA_NON_READ
+import eu.kanade.tachiyomi.data.preference.MANGA_OUTSIDE_RELEASE_PERIOD
 import eu.kanade.tachiyomi.data.preference.PreferencesHelper
 import eu.kanade.tachiyomi.data.track.TrackManager
 import eu.kanade.tachiyomi.domain.manga.models.Manga
@@ -76,6 +77,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 import uy.kohesive.injekt.injectLazy
@@ -86,6 +89,7 @@ import yokai.domain.manga.interactor.GetLibraryManga
 import yokai.domain.manga.interactor.InvalidateRelatedMangaCache
 import yokai.domain.manga.interactor.UpdateManga
 import yokai.domain.manga.models.cover
+import yokai.domain.manga.services.FetchInterval
 import yokai.domain.track.interactor.GetTrack
 import yokai.domain.track.interactor.InsertTrack
 import yokai.i18n.MR
@@ -97,6 +101,7 @@ import java.util.Date
 import java.util.concurrent.CancellationException
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
+import kotlin.time.Clock
 
 class LibraryUpdateJob(private val context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
@@ -509,6 +514,13 @@ class LibraryUpdateJob(private val context: Context, workerParams: WorkerParamet
 
     private fun filterMangaToUpdate(mangaToAdd: List<LibraryManga>): List<LibraryManga> {
         val restrictions = preferences.libraryUpdateMangaRestriction().get()
+        // Manual updates always check, since the prediction only exists to spare background checks
+        val skipOutsideReleasePeriod = MANGA_OUTSIDE_RELEASE_PERIOD in restrictions && tags.contains(WORK_NAME_AUTO)
+        val timeZone = TimeZone.currentSystemDefault()
+        val releaseWindowEnd = FetchInterval.getWindow(
+            Clock.System.now().toLocalDateTime(timeZone).date,
+            timeZone,
+        ).endInclusive.toEpochMilliseconds()
         return mangaToAdd.filter { manga ->
 
             if (tags.contains(WORK_NAME_AUTO) && manga.manga.isLocal()) {
@@ -539,6 +551,10 @@ class LibraryUpdateJob(private val context: Context, workerParams: WorkerParamet
 
                 manga.manga.update_strategy != UpdateStrategy.ALWAYS_UPDATE -> {
                     skippedUpdates[manga.manga] = context.getString(MR.strings.skipped_reason_not_always_update)
+                }
+
+                skipOutsideReleasePeriod && manga.manga.next_update > releaseWindowEnd -> {
+                    skippedUpdates[manga.manga] = context.getString(MR.strings.skipped_reason_not_in_release_period)
                 }
 
                 else -> {

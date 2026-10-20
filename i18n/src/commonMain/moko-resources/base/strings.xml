@@ -3,10 +3,8 @@
     <string name="app_name" translatable="false">Rokku</string>
     <string name="app_short_name" translatable="false">Rokku</string>
     <string name="app_normalized_name" translatable="false">Rokku</string>
-
     <string name="action_menu_overflow_description">More options</string>
     <string name="action_bar_up_description">Navigate up</string>
-
     <string name="onboarding_heading">Welcome!</string>
     <string name="onboarding_description">Let\'s pick some defaults. You can always change these things later in the settings.</string>
     <string name="onboarding_finish">Get started</string>
@@ -23,11 +21,9 @@
     <string name="onboarding_permission_ignore_battery_opts">Background battery usage</string>
     <string name="onboarding_permission_ignore_battery_opts_description">Avoid interruptions to long-running library updates, downloads, and backup restores.</string>
     <string name="onboarding_permission_action_grant">Grant</string>
-
     <string name="no_location_set">No storage location set</string>
     <string name="invalid_location">Invalid location: %s</string>
     <string name="invalid_location_generic">Invalid location</string>
-
     <!--Models-->
 
     <!-- Connections section -->
@@ -93,7 +89,6 @@
     <string name="manhwa">Manhwa</string>
     <string name="manhua">Manhua</string>
     <string name="comic">Comic</string>
-
     <!-- Series -->
     <string name="library_entries">Library entries</string>
     <string name="not_started">Not started</string>
@@ -105,7 +100,6 @@
     <string name="description">Description</string>
     <string name="move_x_to">Move %1$s to…</string>
     <string name="add_x_to">Add %1$s to…</string>
-
     <!-- Status -->
     <string name="ongoing">Ongoing</string>
     <string name="unknown">Unknown</string>
@@ -115,13 +109,11 @@
     <string name="publishing_finished">Publishing finished</string>
     <string name="cancelled">Cancelled</string>
     <string name="on_hiatus">On hiatus</string>
-
     <!-- Security -->
     <string name="unlock_library">Unlock to access Library</string>
     <string name="unlock">Unlock</string>
     <string name="lock_with_biometrics">Require unlock</string>
     <string name="lock_when_idle">Lock when idle</string>
-
     <!-- Chapters -->
     <string name="chapters">Chapters</string>
     <string name="new_chapters">New chapters</string>
@@ -148,7 +140,6 @@
     <string name="by_chapter_number">By chapter number</string>
     <string name="by_update_date">By upload date</string>
     <string name="scanlators">Scanlators</string>
-
     <!-- Category -->
     <string name="category">Category</string>
     <string name="categories">Categories</string>
@@ -175,7 +166,6 @@
     <string name="category_deleted">Category deleted</string>
     <string name="long_press_category">Press and hold to edit a category</string>
     <string name="jump_to_category">Jump to category</string>
-
     <!-- Updates -->
     <string name="update">Update</string>
     <string name="updating_">Updating %1$s</string>
@@ -188,7 +178,6 @@
     <string name="release_page">Release page</string>
     <string name="could_not_install_update">Could not install update</string>
     <string name="update_completed">Update completed</string>
-
     <!-- Main Screens -->
 
     <!-- Library -->
@@ -218,20 +207,17 @@
     <string name="reorder_filters">Reorder filters</string>
     <string name="_unread">%d unread</string>
     <string name="search_globally">Search \"%1$s\" globally</string>
-
     <string name="read_progress">Read progress</string>
     <string name="series_type">Series type</string>
     <string name="series">Series</string>
     <string name="group_library_by">Group library by…</string>
     <string name="tracking_status">Tracking status</string>
     <string name="ungrouped">Ungrouped</string>
-
     <string name="pref_use_compose_library">Use experimental compose library</string>
     <string name="pref_behavior">Behavior</string>
     <string name="pref_mark_as_read_duplicate_read_chapter">Mark duplicate read chapter as read</string>
     <string name="pref_mark_as_read_duplicate_read_chapter_existing">After reading a chapter</string>
     <string name="pref_mark_as_read_duplicate_read_chapter_new">After fetching new chapter</string>
-
     <!-- Library Sort -->
     <string name="sort_by">Sort by</string>
     <string name="total_chapters">Total chapters</string>
@@ -241,7 +227,6 @@
     <string name="latest_chapter">Latest chapter</string>
     <string name="drag_and_drop">Drag &amp; Drop</string>
     <string name="random">Random</string>
-
     <!-- Library Display -->
     <string name="display_options">Display options</string>
     <string name="can_be_found_in_library_filters">Can also be found by expanding library filters</string>
@@ -267,7 +252,6 @@
     <string name="more_library_settings">More library settings</string>
     <string name="shift_one_page_over">Shift one page over</string>
     <string name="shift_double_pages">Shift double pages</string>
-
     <!-- Library update service notifications -->
     <string name="allow_notifications_recommended">Allowing notifications is recommended to keep your library and app up to date</string>
     <string name="new_chapters_found">New chapters found</string>
@@ -280,18 +264,22 @@
     <string name="skipped_reason_not_caught_up">Skipped because there are unread chapters</string>
     <string name="skipped_reason_not_started">Skipped because no chapters are read</string>
     <string name="skipped_reason_not_always_update">Skipped because series does not require updates</string>
+    <string name="skipped_reason_not_in_release_period">Skipped because no release was expected today</string>
     <string name="channel_errors">Errors</string>
     <string name="channel_skipped">Skipped</string>
-
     <!-- Library settings -->
     <string name="library_update_frequency">Library update frequency</string>
     <string name="library_update_custom_time">Update time</string>
     <string name="library_update_custom_time_summary">Approximate time of day the library will update, once every 24 hours</string>
-    <string name="pref_library_update_manga_restriction">Skip updating titles</string>
-    <string name="pref_update_only_completely_read">With unread chapter(s)</string>
-    <string name="pref_update_only_non_completed">With \"Completed\" status</string>
-    <string name="pref_update_only_cancelled">With \"Cancelled\" status</string>
-    <string name="pref_update_only_started">That haven\'t been started</string>
+    <string name="pref_library_update_manga_restriction">Smart update</string>
+    <string name="pref_update_only_completely_read">Skip entries with unread chapters</string>
+    <string name="pref_update_only_non_completed">Skip entries with \"Completed\" status</string>
+    <string name="pref_update_only_cancelled">Skip entries with \"Cancelled\" status</string>
+    <string name="pref_update_only_started">Skip unstarted entries</string>
+    <string name="pref_library_update_smart_update">Smart update</string>
+    <string name="manga_interval_expected_update">New chapters predicted to be released in around %1$s, checking around every %2$s.</string>
+    <string name="manga_interval_expected_update_null">This manga is either completed, or there is no predicted release date.</string>
+    <string name="pref_update_only_in_release_period">Predict next release time</string>
     <string name="pref_update_only_completely_read_summary">Only update series if there is no unread chapter (completely read)</string>
     <string name="library_update_restriction">Device restrictions</string>
     <string name="library_update_restriction_summary">Update only when the conditions are met</string>
@@ -316,7 +304,6 @@
     <string name="enable_chapter_swipe_action">Enable chapter swipe action</string>
     <string name="hide_missing_chapter_indicators">Hide missing chapter indicators</string>
     <string name="hide_missing_chapter_indicators_summary">Hide the separator in the chapter list whenever chapters are missing</string>
-
     <!-- Recents -->
     <string name="recents">Recents</string>
     <string name="updates_and_history">Updates &amp; history</string>
@@ -349,7 +336,6 @@
     <string name="show_download_button">Show download button</string>
     <string name="clear_history_completed">History deleted</string>
     <string name="clear_history_confirmation">Are you sure? All history will be lost.</string>
-
     <!-- Recents Settings -->
     <string name="show_reset_history_button">Show reset history button</string>
     <string name="show_read_chapters_all">Show read chapters in Grouped and All</string>
@@ -370,7 +356,6 @@
     <string name="recents_long_tap_default">Show download queue</string>
     <string name="recents_long_tap_last_read">Open last read chapter</string>
     <string name="recents_long_tap">Long tap Recents behavior</string>
-
     <!-- Browse -->
     <string name="search_filters">Search filters</string>
     <string name="no_more_results">No more results</string>
@@ -399,7 +384,6 @@
     <string name="browse_long_tap_default">Open extensions / migration menu</string>
     <string name="browse_long_tap_search">Open global search</string>
     <string name="browse_long_tap">Long tap Browse behavior</string>
-
     <!-- Other Screens -->
 
     <!-- Extensions -->
@@ -444,7 +428,6 @@
     <string name="extensions_updated">Extensions updated</string>
     <string name="action_revoke_all_extensions">Revoke all trusted extensions</string>
     <string name="confirm_revoke_all_extensions">Revoke all trusted extensions?</string>
-
     <!-- Reader -->
     <string name="set_as_cover">Set as cover</string>
     <string name="reader_settings">Reader settings</string>
@@ -471,18 +454,14 @@
     <string name="previous_page">Previous page</string>
     <string name="next_chapter">Next chapter</string>
     <string name="previous_chapter">Previous chapter</string>
-
     <string name="set_first_page_as_cover">Set first page as cover</string>
     <string name="share_first_page">Share first page</string>
     <string name="save_first_page">Save first page</string>
-
     <string name="set_second_page_as_cover">Set second page as cover</string>
     <string name="share_second_page">Share second page</string>
     <string name="save_second_page">Save second page</string>
-
     <string name="share_combined_pages">Share combined pages</string>
     <string name="save_combined_pages">Save combined pages</string>
-
     <!-- Reader settings -->
     <string name="fullscreen">Fullscreen</string>
     <string name="animate_page_transitions">Animate page transitions</string>
@@ -620,7 +599,6 @@
     <string name="pref_always_decode_long_strip_with_ssiv">Use legacy decoder for long strip reader</string>
     <string name="pref_always_decode_long_strip_with_ssiv_summary">Affects performance. Only enable if reducing bitmap threshold doesn\'t fix blank image issues</string>
     <string name="pref_double_tap_zoom">Double tap to zoom</string>
-
     <!-- Manga details -->
     <string name="about_this_">About this %1$s</string>
     <string name="start_reading">Start reading</string>
@@ -679,7 +657,6 @@
     <string name="all_read_manga">All read series</string>
     <string name="set_as_default">Set as default</string>
     <string name="filter_groups">Filter scanlator groups</string>
-
     <!-- Tracking -->
     <string name="tracking">Tracking</string>
     <string name="tracked">Tracked</string>
@@ -744,7 +721,6 @@
     <string name="myanimelist_relogin">Please log in to MAL again</string>
     <string name="use_suggested_date">Use suggested date</string>
     <string name="failed_to_update_">Failed to update %1$s</string>
-
     <!-- Migration -->
     <string name="select_sources">Select sources</string>
     <string name="source_migration">Source migration</string>
@@ -759,7 +735,7 @@
     <string name="use_most_chapters">Use source with the most chapters (slower)</string>
     <string name="use_first_source">Use first source with alternative</string>
     <string name="skip_this_step_next_time">Skip this step next time</string>
-    <string name="to_show_again_setting_sources">To show this screen again, go to Settings ->
+    <string name="to_show_again_setting_sources">To show this screen again, go to Settings -&gt;
         Sources.</string>
     <string name="latest_">Latest: %1$s</string>
     <string name="migrating_to">migrating to</string>
@@ -775,7 +751,6 @@
     <string name="no_alternatives_found">No Alternatives Found</string>
     <string name="stop_migrating">Stop migrating?</string>
     <string name="skipping_">(skipping %1$d)</string>
-
     <!-- Settings -->
     <string name="settings">Settings</string>
     <string name="general">General</string>
@@ -785,12 +760,10 @@
     <string name="about">About</string>
     <string name="help">Help</string>
     <string name="search_settings">Search settings</string>
-
     <string name="turn_on_">Turn on %s</string>
     <string name="turn_off_">Turn off %s</string>
     <string name="incognito_mode">Incognito mode</string>
     <string name="pauses_reading_history">Pauses reading history</string>
-
     <!-- General settings -->
     <string name="app_theme">App theme</string>
     <string name="light_theme">Light theme</string>
@@ -866,20 +839,17 @@
     <string name="over_any_network">Over any network</string>
     <string name="dont_auto_update">Don\'t auto-update</string>
     <string name="language_requires_app_restart">Some languages may require an app relaunch to display correctly</string>
-
     <string name="app_shortcuts">App shortcuts</string>
     <string name="show_recent_sources">Show recently used sources</string>
     <string name="show_recent_series">Show recent series</string>
     <string name="includes_recently_read_updated_added">Includes recently read, updated, and added series</string>
     <string name="series_opens_new_chapters">Series shortcuts opens new chapters</string>
     <string name="no_new_chapters_open_details">When there\'s no new chapters, the series\' details will open instead</string>
-
     <!-- Storage -->
     <string name="data_and_storage">Data and storage</string>
     <string name="storage_location">Storage location</string>
     <string name="storage_usage">Storage usage</string>
     <string name="available_disk_space_info">Available: %1$s / Total: %2$s</string>
-
     <!-- Backup -->
     <string name="backup">Backup</string>
     <string name="backup_and_restore">Backup and restore</string>
@@ -911,19 +881,17 @@
     <string name="backup_info">Automatic backups are highly recommended. You should keep copies in other places as well</string>
     <string name="what_should_backup">What do you want to backup?</string>
     <string name="restoring_backup">Restoring backup</string>
-    <string name="restore_duration">%02d min, %02d sec</string>
+    <string name="restore_duration">%1$02d min, %2$02d sec</string>
     <string name="restore_miui_warning">Backup/restore may not function properly if MIUI Optimization is disabled</string>
     <string name="progress">Progress</string>
     <string name="complete">Complete</string>
     <string name="not_logged_into_">Not logged into %1$s</string>
     <string name="backup_private_pref">Include sensitive settings (e.g. tracker login tokens)</string>
     <string name="last_auto_backup_info">Last automatically backed up: %s</string>
-
     <!-- Advanced section -->
     <string name="clear_chapter_cache">Clear chapter cache</string>
     <string name="force_download_cache_refresh">Reindex downloads</string>
     <string name="force_download_cache_refresh_summary">Force app to recheck downloaded chapters</string>
-
     <string name="data_management">Data Management</string>
     <string name="check_for_beta_releases">Check for beta releases</string>
     <string name="try_new_features">Try new features before they\'re officially released. Beta releases may be unstable and are provided to give feedback to the developer</string>
@@ -991,7 +959,6 @@
     <string name="select_uninstalled_sources">Select uninstalled sources</string>
     <string name="pref_debug_info">Debug info</string>
     <string name="label_background_activity">Background activity</string>
-
     <!-- Browse Settings -->
     <string name="pref_global_search">Global search</string>
     <string name="check_for_extension_updates">Check for extension updates</string>
@@ -1029,7 +996,6 @@
     <string name="nsfw_sources">NSFW (18+) sources</string>
     <string name="show_in_sources_and_extensions">Show in sources and extensions lists</string>
     <string name="does_not_prevent_unofficial_nsfw">This does not prevent unofficial or potentially incorrectly flagged extensions from surfacing NSFW (18+) content within the app</string>
-
     <!-- Extension repos -->
     <string name="source_repos">Extension Repos</string>
     <string name="label_add_repo">Add new repo</string>
@@ -1042,7 +1008,6 @@
     <string name="action_replace_repo">Replace</string>
     <string name="action_replace_repo_title">Signing Key Fingerprint Already Exists</string>
     <string name="action_replace_repo_message">Repository %1$s has the same Signing Key Fingerprint as %2$s.\nIf this is expected, %2$s will be replaced, otherwise contact your repo maintainer.</string>
-
     <!-- About section -->
     <string name="version">Version</string>
     <string name="build_time">Build time</string>
@@ -1057,7 +1022,6 @@
     <string name="open_source_licenses">Open source licenses</string>
     <string name="action_open_repo">Open source repo</string>
     <string name="open_in_browser_fail">Unable to open url</string>
-
     <!-- Login/Logout dialog -->
     <string name="log_in_to_">Log in to %1$s</string>
     <string name="username">Username</string>
@@ -1066,12 +1030,9 @@
     <string name="log_in">Log in</string>
     <string name="log_out">Log out</string>
     <string name="log_out_from_">Log out from %1$s?</string>
-
     <string name="successfully_logged_in">Successfully logged in</string>
     <string name="username_must_not_be_blank">Username or password cannot be blank</string>
-
     <string name="successfully_logged_out">You are now logged out</string>
-
     <!-- Downloads -->
     <string name="downloads">Downloads</string>
     <string name="download_queue">Download queue</string>
@@ -1105,12 +1066,10 @@
     <string name="download_notifier_split_failed">Couldn\'t split downloaded image</string>
     <string name="download_with_id">Auto-append ID</string>
     <string name="download_with_id_details">May fix issue with downloaded chapters conflicts with one another when they have the same name</string>
-
     <!-- Download Notification -->
     <string name="could_not_download_unexpected_error">Could not download chapter due to unexpected error</string>
     <string name="no_wifi_connection">No Wi-Fi connection available</string>
     <string name="no_network_connection">No network connection available</string>
-
     <!-- Downloads settings -->
     <string name="download_location">Download location</string>
     <string name="only_download_over_wifi">Only download over Wi-Fi</string>
@@ -1142,7 +1101,6 @@
     <string name="save_chapters_as_cbz">Save as CBZ archive</string>
     <string name="split_tall_images">Split tall images</string>
     <string name="split_tall_images_summary">Improves reader performance</string>
-
     <!-- Stats -->
     <string name="stat">Stat</string>
     <string name="stats">Stats</string>
@@ -1169,7 +1127,6 @@
     <string name="length">Length</string>
     <string name="start_year">Start year</string>
     <string name="no_data_for_filters">No data found for your current filters</string>
-
     <!-- Time -->
     <string name="manual">Manual</string>
     <string name="every_6_hours">Every 6 hours</string>
@@ -1179,13 +1136,11 @@
     <string name="every_3_days">Every 3 days</string>
     <string name="weekly">Weekly</string>
     <string name="custom">Custom</string>
-
     <!-- File Picker Titles -->
     <string name="select_cover_image">Select cover image</string>
     <string name="select_backup_file">Select backup file</string>
     <string name="file_picker_error">No file picker app found</string>
     <string name="file_picker_uri_permission_unsupported">Failed to acquire persistent folder access. The app may behave unexpectedly.</string>
-
     <!-- Webview -->
     <string name="failed_to_bypass_cloudflare">Failed to bypass Cloudflare</string>
     <string name="information_cloudflare_help">Tap here for help with Cloudflare</string>
@@ -1199,11 +1154,9 @@
     <string name="action_webview_forward">Forward</string>
     <string name="action_webview_refresh">Refresh</string>
     <string name="action_webview_close_tab">Close tab</string>
-
     <!-- App widget -->
     <string name="appwidget_updates_description">See your recently updated library entries</string>
     <string name="appwidget_unavailable_locked">Widget not available when app lock is enabled</string>
-
     <!-- Miscellaneous -->
     <string name="add">Add</string>
     <string name="apply">Apply</string>
@@ -1345,11 +1298,9 @@
     <string name="sfw">SFW</string>
     <string name="nsfw">NSFW</string>
     <string name="content_type">Content type</string>
-
     <!-- Crash screen -->
     <string name="crash_screen_title">An Unexpected Error Occurred</string>
     <string name="crash_screen_description">%s ran into an unexpected error. We suggest you screenshot this message, dump the crash logs, and then share it to a GitHub Issue.</string>
     <string name="crash_screen_restart_application">Restart the application</string>
-
     <string name="refresh">Refresh</string>
 </resources>

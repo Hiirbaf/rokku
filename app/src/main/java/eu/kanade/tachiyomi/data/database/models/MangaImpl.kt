@@ -82,9 +82,6 @@ open class MangaImpl(
 
     override var update_strategy: UpdateStrategy = UpdateStrategy.ALWAYS_UPDATE
 
-    // TODO: It's probably fine to set this to non-null string in the future
-    override var filtered_scanlators: String? = ""
-
     @Transient
     override var memo: JsonObject = JsonObject(emptyMap())
 
@@ -96,6 +93,10 @@ open class MangaImpl(
     override var ogStatus: Int = 0
 
     override var cover_last_modified: Long = 0L
+
+    override var fetch_interval: Int = 0
+
+    override var next_update: Long = 0L
 
     override fun copyFrom(other: SManga) {
         val remoteTitle = try {

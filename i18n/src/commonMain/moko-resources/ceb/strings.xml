@@ -325,4 +325,27 @@
     <string name="ext_installer_pref">Installer</string>
     <string name="library_entries">Mga entri sa basahonan</string>
     <string name="label_background_activity">Kalihokan sa background</string>
+    <string name="confirm_category_deletion">Pagtangtang sa kategorya</string>
+    <string name="selected">Napili</string>
+    <string name="comfortable_grid">Komportable nga grid</string>
+    <string name="compact_grid">Compact nga grid</string>
+    <string name="grid_size">Mga butang kada laray</string>
+    <string name="label_recent_updates">Mga update</string>
+    <string name="global_search">Pangkalibutanon nga pagpangita</string>
+    <string name="ext_installer_legacy">Kabilin</string>
+    <string name="next_title">Sunod</string>
+    <string name="long_strip">Webtoon</string>
+    <string name="page_flash_white">Puti</string>
+    <string name="page_flash_black">Itom</string>
+    <string name="pref_cutout_short">Ipakita ang sulod sa ginunting nga lugar</string>
+    <string name="dark">Sa</string>
+    <string name="legacy_theme">Kabilin</string>
+    <string name="clear_database_summary">I-delete ang history para sa manga nga wala ma-save sa imong library</string>
+    <string name="trackers">Mga serbisyo</string>
+    <string name="action_webview_back">Balik</string>
+    <string name="action_webview_forward">Sa unahan</string>
+    <string name="action_webview_refresh">I-refresh</string>
+    <string name="menu">Menu</string>
+    <string name="rotation">Uri sa rotation</string>
+    <string name="refresh">I-refresh</string>
 </resources>

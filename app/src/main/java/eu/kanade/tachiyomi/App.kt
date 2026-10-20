@@ -86,6 +86,7 @@ import yokai.domain.base.BasePreferences
 import yokai.domain.storage.StorageManager
 import yokai.i18n.MR
 import yokai.util.lang.getString
+import java.io.File
 import java.security.Security
 
 open class App : Application(), DefaultLifecycleObserver, SingletonImageLoader.Factory {
@@ -115,6 +116,14 @@ open class App : Application(), DefaultLifecycleObserver, SingletonImageLoader.F
         startKoin {
             modules(preferenceModule(this@App), appModule(this@App), domainModule())
         }
+
+        // The crash screen runs in its own process and must stay up even when the database is what crashed the app
+        if (isErrorHandlerProcess()) {
+            AppCompatDelegate.setDefaultNightMode(preferences.nightMode().get())
+            setupNotificationChannels()
+            return
+        }
+
         initExpensiveComponents(this)
 
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
@@ -257,6 +266,15 @@ open class App : Application(), DefaultLifecycleObserver, SingletonImageLoader.F
         LibraryPresenter.onLowMemory()
         RecentsPresenter.onLowMemory()
         SourcePresenter.onLowMemory()
+    }
+
+    private fun isErrorHandlerProcess(): Boolean {
+        val process = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            getProcessName()
+        } else {
+            runCatching { File("/proc/self/cmdline").readText().substringBefore('\u0000') }.getOrNull()
+        }
+        return process?.endsWith(":error_handler") == true
     }
 
     protected open fun setupNotificationChannels() {

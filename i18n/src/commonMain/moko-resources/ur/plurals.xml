@@ -1,3 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <plurals name="remove_n_chapters">
+        <item quantity="one">ڈاؤن لوڈ کردہ %1$d باب ہٹائیں؟</item>
+        <item quantity="other">ڈاؤن لوڈ کردہ %1$d ابواب ہٹائیں؟</item>
+    </plurals>
+    <plurals name="chapters_plural">
+        <item quantity="one">%1$s باب</item>
+        <item quantity="other">%1$s ابواب</item>
+    </plurals>
 </resources>

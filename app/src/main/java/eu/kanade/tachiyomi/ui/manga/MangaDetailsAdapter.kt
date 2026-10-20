@@ -196,6 +196,7 @@ class MangaDetailsAdapter(
         fun zoomImageFromThumb(thumbView: View)
         fun showCoverContextMenu(view: View)
         fun showTrackingSheet()
+        fun showNextUpdateDialog()
         fun updateScroll()
         fun setFavButtonPopup(popupView: View)
         fun openRelatedManga(manga: eu.kanade.tachiyomi.domain.manga.models.Manga)

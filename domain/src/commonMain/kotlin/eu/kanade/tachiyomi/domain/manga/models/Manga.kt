@@ -25,8 +25,6 @@ interface Manga : SManga {
 
     var hide_title: Boolean
 
-    var filtered_scanlators: String?
-
     var ogTitle: String
     var ogAuthor: String?
     var ogArtist: String?
@@ -35,6 +33,12 @@ interface Manga : SManga {
     var ogStatus: Int
 
     var cover_last_modified: Long
+
+    /** Days between releases, negative when set by the user, 0 while unknown. */
+    var fetch_interval: Int
+
+    /** Epoch milliseconds of the next expected release, 0 while unknown. */
+    var next_update: Long
 
     @Deprecated("Use ogTitle directly instead", ReplaceWith("ogTitle"))
     val originalTitle: String
@@ -222,7 +226,6 @@ interface Manga : SManga {
             hideTitle = hide_title,
             chapterFlags = chapter_flags,
             dateAdded = date_added,
-            filteredScanlators = filtered_scanlators,
             updateStrategy = update_strategy,
             memo = memo,
         )

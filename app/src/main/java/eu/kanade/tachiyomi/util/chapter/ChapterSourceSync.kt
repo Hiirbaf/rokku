@@ -8,6 +8,9 @@ import eu.kanade.tachiyomi.domain.manga.models.Manga
 import eu.kanade.tachiyomi.source.Source
 import eu.kanade.tachiyomi.source.model.SChapter
 import eu.kanade.tachiyomi.source.online.HttpSource
+import kotlinx.coroutines.CancellationException
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 import uy.kohesive.injekt.injectLazy
@@ -22,7 +25,11 @@ import yokai.domain.library.LibraryPreferences
 import yokai.domain.manga.interactor.GetExcludedScanlators
 import yokai.domain.manga.interactor.UpdateManga
 import yokai.domain.manga.models.MangaUpdate
+import yokai.domain.manga.services.ChapterReleaseDate
+import yokai.domain.manga.services.FetchInterval
 import java.util.*
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 /**
  * Helper method for syncing the list of chapters from the source with the ones from the database.
@@ -126,7 +133,11 @@ suspend fun syncChaptersWithSource(
 
     // Return if there's nothing to add, delete or change, avoid unnecessary db transactions.
     if (toAdd.isEmpty() && toDelete.isEmpty() && toChange.isEmpty()) {
-        // TODO: Predict when the next chapter gonna release
+        val timeZone = TimeZone.currentSystemDefault()
+        val window = FetchInterval.getWindow(Clock.System.now().toLocalDateTime(timeZone).date, timeZone)
+        if (manga.fetch_interval == 0 || manga.next_update < window.start.toEpochMilliseconds()) {
+            updateFetchInterval(manga, updateManga, getChapter, foundRelease = false)
+        }
         return Pair(emptyList(), emptyList())
     }
 
@@ -206,8 +217,6 @@ suspend fun syncChaptersWithSource(
             )
         }
 
-        // TODO: Predict when the next chapter gonna release
-
         // Set this manga as updated since chapters were changed
         // Note that last_update actually represents last time the chapter list changed at all
         // Those changes already checked beforehand, so we can proceed to updating the manga
@@ -217,12 +226,73 @@ suspend fun syncChaptersWithSource(
 
     val filteredScanlators = manga.id?.let { getExcludedScanlators.await(it) }.orEmpty()
 
+    // A first fetch lists the back catalogue, and chapters coming back under a deleted number were out already
+    val foundRelease = dbChapters.isNotEmpty() &&
+        toAdd.any { chapter ->
+            chapter.scanlator !in filteredScanlators &&
+                !(chapter.isRecognizedNumber && chapter.chapter_number in deletedChapterNumbers)
+        }
+    updateFetchInterval(manga, updateManga, getChapter, foundRelease)
+
     return Pair(
         updatedToAdd.filterNot {
             it.url in changedOrDuplicateReadUrls || it.scanlator in filteredScanlators
         },
         toDelete.filterNot { it.url in changedOrDuplicateReadUrls },
     )
+}
+
+/**
+ * Works out when [manga] is next expected to release and stores it. A failure here must never
+ * break the chapter sync, so it is only logged.
+ *
+ * @param restoredNextUpdate a next update from a backup, kept when it is still ahead since it was
+ * worked out with the chapters the backup came from.
+ */
+suspend fun updateFetchInterval(
+    manga: Manga,
+    updateManga: UpdateManga,
+    getChapter: GetChapter,
+    foundRelease: Boolean,
+    restoredNextUpdate: Long = 0,
+) {
+    val mangaId = manga.id ?: return
+    try {
+        val timeZone = TimeZone.currentSystemDefault()
+        val now = Clock.System.now()
+        // A custom interval doesn't depend on the chapters
+        val chapters = if (manga.fetch_interval < 0) {
+            emptyList()
+        } else {
+            getChapter.awaitAll(manga).map {
+                ChapterReleaseDate(
+                    dateUpload = it.date_upload.takeIf { upload -> upload > 0 }?.let(Instant::fromEpochMilliseconds),
+                    dateFetch = Instant.fromEpochMilliseconds(it.date_fetch),
+                )
+            }
+        }
+        val window = FetchInterval.getWindow(now.toLocalDateTime(timeZone).date, timeZone)
+        val result = FetchInterval.withFetchInterval(
+            fetchInterval = manga.fetch_interval,
+            lastUpdate = manga.last_update.takeIf { it > 0 }?.let(Instant::fromEpochMilliseconds),
+            nextUpdate = manga.next_update.takeIf { it > 0 }?.let(Instant::fromEpochMilliseconds),
+            chapters = chapters,
+            dateTime = now.toLocalDateTime(timeZone),
+            timeZone = timeZone,
+            window = window,
+            foundRelease = foundRelease,
+        )
+        manga.fetch_interval = result.fetchInterval
+        manga.next_update = restoredNextUpdate.takeIf { it >= window.start.toEpochMilliseconds() }
+            ?: result.nextUpdate.toEpochMilliseconds()
+        updateManga.await(
+            MangaUpdate(mangaId, fetchInterval = manga.fetch_interval, nextUpdate = manga.next_update),
+        )
+    } catch (e: CancellationException) {
+        throw e
+    } catch (e: Exception) {
+        Logger.w(e) { "Failed to update the fetch interval of ${manga.title}" }
+    }
 }
 
 // checks if the chapter in db needs updated

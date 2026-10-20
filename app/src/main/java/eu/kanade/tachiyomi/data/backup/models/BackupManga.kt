@@ -8,7 +8,6 @@ import eu.kanade.tachiyomi.data.library.CustomMangaManager
 import eu.kanade.tachiyomi.domain.manga.models.Manga
 import eu.kanade.tachiyomi.source.model.UpdateStrategy
 import eu.kanade.tachiyomi.source.model.safeMemo
-import eu.kanade.tachiyomi.util.chapter.ChapterUtil
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.protobuf.ProtoNumber
 import yokai.data.memoAdapter
@@ -60,6 +59,9 @@ data class BackupManga(
 
     // Same field number as Mihon's `memo` so backups are interchangeable
     @ProtoNumber(112) var memo: String? = null,
+
+    // Same field number as Mihon's `nextUpdate` (epoch millis, 0 when unknown)
+    @ProtoNumber(113) var nextUpdate: Long = 0,
 ) {
     fun getMangaImpl(): MangaImpl {
         return MangaImpl(
@@ -83,6 +85,7 @@ data class BackupManga(
             chapter_flags = this@BackupManga.chapterFlags
             update_strategy = this@BackupManga.updateStrategy
             memo = memoAdapter.decode(this@BackupManga.memo ?: "")
+            next_update = this@BackupManga.nextUpdate
         }
     }
 
@@ -137,8 +140,9 @@ data class BackupManga(
                 viewer_flags = manga.viewer_flags.takeIf { it != -1 } ?: 0,
                 chapterFlags = manga.chapter_flags,
                 updateStrategy = manga.update_strategy,
-                excludedScanlators = ChapterUtil.getScanlators(manga.filtered_scanlators),
+                excludedScanlators = emptyList(),
                 memo = manga.safeMemo().takeIf { it.isNotEmpty() }?.let(memoAdapter::encode),
+                nextUpdate = manga.next_update,
             ).also { backupManga ->
                 customMangaManager?.getManga(manga)?.let {
                     backupManga.customTitle = it.title

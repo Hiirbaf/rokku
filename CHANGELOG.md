@@ -20,8 +20,12 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Added a new Compose tracking settings screen that shows the logged-in account name under each tracker and a refresh button to re-fetch the profile and scoring type (the previous screen is still available by long-pressing Tracking in Settings). Kitsu now supports its simple, regular and advanced rating systems, tracker search results show the score, and Bangumi search now only lists manga ([@Sacha1016](https://github.com/Sacha1016))
 - Added a "Skip this version" button to the new app update dialog, so an update you don't want stops being offered at launch and in the background until a newer version comes out (checking manually from About still shows it)
 - Added a "Preload only on Wi-Fi" option in the reader settings that, on a metered connection such as mobile data, loads only the page you're reading instead of preloading the next pages (off by default)
+- Added a "Predict next release time" option to Settings > Library > Smart update (renamed from "Skip updating titles", with its options reworded to match Mihon), which predicts when each series gets its next chapter from its past release dates and skips it in automatic library updates until then (off by default, manual updates always check). A new hourglass button on the manga details screen, available for every series in the library, shows the prediction
+- Added a copy button and text selection to the crash screen, so the error can be pasted into a report
+- Added a website button next to GitHub in the About screen
 
 ### Changes
+- Updated the database schema (removed the unused `filtered_scanlators` column and added the release schedule of each series). This can't be undone and older versions can't open the updated database, so create a backup before updating
 - The Doki, Dark (default) and Flat Lime themes now tint switch tracks and outlines with their own colors when "Tint switches and outlines" is on, instead of a generic gray
 - An automatic backup that fails because its saved location is no longer accessible (folder deleted, permission revoked, storage removed) now shows a notification telling you to pick a new one, instead of failing silently
 - Aligned the accent and surface colors of the app themes with TachiyomiJ2K ([@Hiirbaf](https://github.com/Hiirbaf))
@@ -83,6 +87,10 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Fixed the Local source being left out of Global Search when its language ("Other") wasn't enabled
 - Fixed concurrent requests to a site behind a Cloudflare check each opening their own WebView, causing slowdowns and memory pressure; they now wait for a single check. Requests that aren't GET (such as logins) now solve the check on the site's root page
 - Cloudflare checks are now detected with Cloudflare's `cf-mitigated` response header instead of parsing the page
+- Fixed the app freezing when the reader showed the chapter transition page on slow storage, since the check for the next chapter being downloaded no longer runs on the main thread
+- Fixed the Statistics screen freezing the app while opening with a large library, since the numbers are now calculated in the background
+- Fixed the crash screen closing by itself when the crash was caused by the database, so the error can be read and reported
+- Fixed "Dump crash logs" not creating the file when the installed extensions couldn't be read because of a database error
 
 ### Other
 - Migrated FlexibleAdapter from JitPack to its MavenCentral release, removing a source of transient CI build failures when JitPack was unavailable

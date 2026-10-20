@@ -304,4 +304,10 @@
     <string name="label_global_search">Pangkalahatang Paghahanap</string>
     <string name="name">Pangalan</string>
     <string name="tako">Tako</string>
+    <string name="label_recent_updates">Mga Update</string>
+    <string name="page_flash_white">Puti</string>
+    <string name="page_flash_black">Itim</string>
+    <string name="next">Susunod:</string>
+    <string name="previous">Nakaraan:</string>
+    <string name="webtoon">Pa-webtoon</string>
 </resources>

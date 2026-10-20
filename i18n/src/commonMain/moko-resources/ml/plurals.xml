@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="missing_chapters_warning">
+        <item quantity="one">%d അധ്യായം ഒഴിവാക്കുന്നു, ഒന്നുകിൽ ഉറവിടം അത് കാണുന്നില്ല അല്ലെങ്കിൽ അത് ഫിൽട്ടർ ചെയ്തിരിക്കുന്നു</item>
+        <item quantity="other">%d അധ്യായങ്ങൾ ഒഴിവാക്കുന്നു, ഒന്നുകിൽ ഉറവിടം കാണുന്നില്ല അല്ലെങ്കിൽ അവ ഫിൽട്ടർ ചെയ്തിരിക്കുന്നു</item>
+    </plurals>
+    <plurals name="next_unread_chapters">
+        <item quantity="one">അടുത്ത വായിക്കാത്ത അധ്യായം</item>
+        <item quantity="other">അടുത്ത %d വായിക്കാത്ത അധ്യായങ്ങൾ</item>
+    </plurals>
+    <plurals name="restore_completed_message">
+        <item quantity="one">%2$s പിശകോടെ %1$s-നുള്ളിൽ ചെയ്തു</item>
+        <item quantity="other">%2$s പിശകുകളോടെ %1$s-നുള്ളിൽ ചെയ്തു</item>
+    </plurals>
+</resources>

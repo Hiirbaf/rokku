@@ -900,4 +900,22 @@
     <string name="label_recent_updates">Päivitykset</string>
     <string name="updates_last_update_info">Kirjasto päivitetty viimeksi: %s</string>
     <string name="collapse_grouped_chapters">Kutista ryhmitetyt luvut</string>
+    <string name="ext_installer_legacy">Perinteinen</string>
+    <string name="page_flash_white">Valkoinen</string>
+    <string name="page_flash_black">Musta</string>
+    <string name="crop_borders_long_strip">Rajaa reunat (Webtoon)</string>
+    <string name="pref_cutout_short">Näytä sisältö leikkausalueella</string>
+    <string name="legacy_theme">Perinteinen</string>
+    <string name="data_and_storage">Data ja tallennustila</string>
+    <string name="pref_verbose_logging">Yksityiskohtainen kirjaaminen</string>
+    <string name="move_series_to_bottom">Siirrä sarja pohjimmaiseksi</string>
+    <string name="statistics">Tilastotiedot</string>
+    <string name="trackers">Seurantapalvelut</string>
+    <string name="action_webview_back">Takaisin</string>
+    <string name="action_webview_forward">Eteenpäin</string>
+    <string name="action_webview_refresh">Päivitä</string>
+    <string name="apply">Käytä</string>
+    <string name="webtoon">Webtoon-tyylinen</string>
+    <string name="crash_screen_restart_application">Uudelleenkäynnistä applikaatio</string>
+    <string name="refresh">Päivitä</string>
 </resources>

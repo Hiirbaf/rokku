@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.AbstractComposeView
 import eu.kanade.tachiyomi.data.download.DownloadManager
@@ -16,6 +17,7 @@ import eu.kanade.tachiyomi.domain.manga.models.Manga
 import eu.kanade.tachiyomi.ui.reader.model.ChapterTransition
 import eu.kanade.tachiyomi.util.isLocal
 import eu.kanade.tachiyomi.util.system.ThemeUtil
+import eu.kanade.tachiyomi.util.system.withIOContext
 import yokai.presentation.reader.ChapterTransition
 import yokai.presentation.theme.YokaiTheme
 
@@ -35,14 +37,7 @@ class ReaderTransitionView @JvmOverloads constructor(context: Context, attrs: At
                 manga = manga,
                 transition = transition,
                 currChapterDownloaded = transition.from.pageLoader?.isLocal == true,
-                goingToChapterDownloaded = manga.isLocal() ||
-                    transition.to?.chapter?.let { goingToChapter ->
-                        downloadManager.isChapterDownloaded(
-                            chapter = goingToChapter,
-                            manga = manga,
-                            skipCache = true,
-                        )
-                    } ?: false,
+                downloadManager = downloadManager,
             )
         } else {
             null
@@ -52,6 +47,19 @@ class ReaderTransitionView @JvmOverloads constructor(context: Context, attrs: At
     @Composable
     override fun Content() {
         data?.let {
+            // skipCache = true walks the SAF tree, which blocks on a binder call; keep it off the main thread.
+            val goingToChapterDownloaded by produceState(initialValue = it.manga.isLocal(), it) {
+                value = it.manga.isLocal() ||
+                    it.transition.to?.chapter?.let { goingToChapter ->
+                        withIOContext {
+                            it.downloadManager.isChapterDownloaded(
+                                chapter = goingToChapter,
+                                manga = it.manga,
+                                skipCache = true,
+                            )
+                        }
+                    } ?: false
+            }
             YokaiTheme {
                 CompositionLocalProvider(
                     LocalTextStyle provides MaterialTheme.typography.bodySmall,
@@ -62,7 +70,7 @@ class ReaderTransitionView @JvmOverloads constructor(context: Context, attrs: At
                         manga = it.manga,
                         transition = it.transition,
                         currChapterDownloaded = it.currChapterDownloaded,
-                        goingToChapterDownloaded = it.goingToChapterDownloaded,
+                        goingToChapterDownloaded = goingToChapterDownloaded,
                     )
                 }
             }
@@ -74,7 +82,7 @@ class ReaderTransitionView @JvmOverloads constructor(context: Context, attrs: At
         val manga: Manga,
         val transition: ChapterTransition,
         val currChapterDownloaded: Boolean,
-        val goingToChapterDownloaded: Boolean,
+        val downloadManager: DownloadManager,
     )
 }
 

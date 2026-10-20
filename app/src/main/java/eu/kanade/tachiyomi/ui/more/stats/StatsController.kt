@@ -25,9 +25,11 @@ import eu.kanade.tachiyomi.util.isLocal
 import eu.kanade.tachiyomi.util.mapStatus
 import eu.kanade.tachiyomi.util.system.getResourceColor
 import eu.kanade.tachiyomi.util.system.roundToTwoDecimal
+import eu.kanade.tachiyomi.util.system.withIOContext
 import eu.kanade.tachiyomi.util.view.compatToolTipText
 import eu.kanade.tachiyomi.util.view.scrollViewWith
 import eu.kanade.tachiyomi.util.view.withFadeTransaction
+import kotlinx.coroutines.launch
 import yokai.i18n.MR
 import yokai.util.lang.getString
 import kotlin.math.roundToInt
@@ -50,41 +52,68 @@ class StatsController : BaseLegacyController<StatsControllerBinding>() {
     override fun onViewCreated(view: View) {
         super.onViewCreated(view)
         scrollViewWith(binding.statsScrollView, true)
-        handleGeneralStats()
-        if (mangaDistinct.isNotEmpty()) {
-            binding.viewDetailLayout.setOnClickListener {
-                router.pushController(StatsDetailsController().withFadeTransaction())
+        viewScope.launch {
+            val stats = withIOContext { loadGeneralStats() }
+            scoresList = stats.scores
+            bindGeneralStats(stats)
+            if (mangaDistinct.isNotEmpty()) {
+                binding.viewDetailLayout.setOnClickListener {
+                    router.pushController(StatsDetailsController().withFadeTransaction())
+                }
+                handleStatusDistribution()
             }
-            handleStatusDistribution()
+            if (scoresList.isNotEmpty()) handleScoreDistribution()
         }
-        if (scoresList.isNotEmpty()) handleScoreDistribution()
     }
 
-    private fun handleGeneralStats() {
+    private fun loadGeneralStats(): GeneralStats {
         val mangaTracks = mangaDistinct.map { it to presenter.getTracks(it.manga) }
-        scoresList = getScoresList(mangaTracks)
+        return GeneralStats(
+            scores = getScoresList(mangaTracks),
+            trackedManga = mangaTracks.count { it.second.isNotEmpty() },
+            downloadedChapters = mangaDistinct.sumOf { presenter.getDownloadCount(it) },
+            totalTags = mangaDistinct.flatMap { it.manga.getTags() }.distinct().count(),
+            globalUpdateManga = presenter.getGlobalUpdateManga().count(),
+            sources = presenter.getSources().count(),
+            trackers = presenter.getLoggedTrackers().count(),
+            readDuration = presenter.getReadDuration(),
+        )
+    }
+
+    private fun bindGeneralStats(stats: GeneralStats) {
         with(binding) {
             viewDetailLayout.isVisible = mangaDistinct.isNotEmpty()
             statsTotalMangaText.text = mangaDistinct.count().toString()
             statsTotalChaptersText.text = mangaDistinct.sumOf { it.totalChapters }.toString()
             statsChaptersReadText.text = mangaDistinct.sumOf { it.read }.toString()
-            statsMangaMeanScoreText.text = if (scoresList.isEmpty()) {
+            statsMangaMeanScoreText.text = if (stats.scores.isEmpty()) {
                 statsMangaMeanScoreText.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0)
                 activity?.getString(MR.strings.none)
             } else {
-                scoresList.average().roundToTwoDecimal().toString()
+                stats.scores.average().roundToTwoDecimal().toString()
             }
-            statsTrackedMangaText.text = mangaTracks.count { it.second.isNotEmpty() }.toString()
-            statsChaptersDownloadedText.text = mangaDistinct.sumOf { presenter.getDownloadCount(it) }.toString()
-            statsTotalTagsText.text = mangaDistinct.flatMap { it.manga.getTags() }.distinct().count().toString()
+            statsTrackedMangaText.text = stats.trackedManga.toString()
+            statsChaptersDownloadedText.text = stats.downloadedChapters.toString()
+            statsTotalTagsText.text = stats.totalTags.toString()
             statsMangaLocalText.text = mangaDistinct.count { it.manga.isLocal() }.toString()
-            statsGlobalUpdateMangaText.text = presenter.getGlobalUpdateManga().count().toString()
-            statsSourcesText.text = presenter.getSources().count().toString()
-            statsTrackersText.text = presenter.getLoggedTrackers().count().toString()
-            statsReadDurationText.text = presenter.getReadDuration()
+            statsGlobalUpdateMangaText.text = stats.globalUpdateManga.toString()
+            statsSourcesText.text = stats.sources.toString()
+            statsTrackersText.text = stats.trackers.toString()
+            statsReadDurationText.text = stats.readDuration
             statsReadDurationLayout.compatToolTipText = activity?.getString(MR.strings.read_duration_info)
         }
     }
+
+    private class GeneralStats(
+        val scores: List<Double>,
+        val trackedManga: Int,
+        val downloadedChapters: Int,
+        val totalTags: Int,
+        val globalUpdateManga: Int,
+        val sources: Int,
+        val trackers: Int,
+        val readDuration: String,
+    )
 
     private fun getScoresList(mangaTracks: List<Pair<LibraryManga, MutableList<Track>>>): List<Double> {
         return mangaTracks.filter { it.second.isNotEmpty() }

@@ -85,10 +85,11 @@ class MangaRepositoryImpl(private val handler: DatabaseHandler) : MangaRepositor
                     hideTitle = update.hideTitle,
                     chapterFlags = update.chapterFlags?.toLong(),
                     dateAdded = update.dateAdded,
-                    filteredScanlators = update.filteredScanlators,
                     updateStrategy = update.updateStrategy?.let(updateStrategyAdapter::encode),
                     coverLastModified = update.coverLastModified,
                     memo = update.memo?.let(memoAdapter::encode),
+                    fetchInterval = update.fetchInterval?.toLong(),
+                    nextUpdate = update.nextUpdate,
                     mangaId = update.id,
                 )
             }
@@ -114,10 +115,11 @@ class MangaRepositoryImpl(private val handler: DatabaseHandler) : MangaRepositor
                 hideTitle = manga.hide_title,
                 chapterFlags = manga.chapter_flags.toLong(),
                 dateAdded = manga.date_added,
-                filteredScanlators = manga.filtered_scanlators,
                 updateStrategy = manga.update_strategy.let(updateStrategyAdapter::encode),
                 coverLastModified = manga.cover_last_modified,
                 memo = memoAdapter.encode(manga.memo),
+                fetchInterval = manga.fetch_interval.toLong(),
+                nextUpdate = manga.next_update,
             )
             mangasQueries.selectLastInsertedRowId()
         }

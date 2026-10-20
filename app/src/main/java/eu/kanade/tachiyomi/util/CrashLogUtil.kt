@@ -35,7 +35,10 @@ class CrashLogUtil(private val context: Context) {
         try {
             val file = context.createFileInCacheDir("rokku_crash_logs.txt")
             file.appendText(getDebugInfo() + "\n\n")
-            file.appendText(getExtensionsInfo() + "\n\n")
+            // Reading the extensions opens the database, which can be the very thing that crashed the app
+            val extensionsInfo = runCatching { getExtensionsInfo() }
+                .getOrElse { "Extensions info unavailable: ${it.javaClass.simpleName}" }
+            file.appendText(extensionsInfo + "\n\n")
             exception?.let { file.appendText("$it\n\n") }
 
             // With verbose logging on, dump everything (info/debug included, e.g. Coil's

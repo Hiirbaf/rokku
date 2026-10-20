@@ -213,10 +213,11 @@ fun Manga.Companion.mapper(
     hideTitle: Boolean,
     chapterFlags: Long,
     dateAdded: Long?,
-    filteredScanlators: String?,
     updateStrategy: Long,
     coverLastModified: Long,
     memo: String,
+    fetchInterval: Long = 0,
+    nextUpdate: Long = 0,
 ) = create(url, title, source).apply {
     this.id = id
     this.artist = artist
@@ -232,10 +233,11 @@ fun Manga.Companion.mapper(
     this.chapter_flags = chapterFlags.toInt()
     this.hide_title = hideTitle
     this.date_added = dateAdded ?: 0L
-    this.filtered_scanlators = filteredScanlators
     this.update_strategy = updateStrategy.let(updateStrategyAdapter::decode)
     this.cover_last_modified = coverLastModified
     this.memo = memoAdapter.decode(memo)
+    this.fetch_interval = fetchInterval.toInt()
+    this.next_update = nextUpdate
 }
 
 fun Manga.hasCustomCover(coverCache: CoverCache = Injekt.get()): Boolean {

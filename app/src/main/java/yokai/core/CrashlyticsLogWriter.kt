@@ -151,6 +151,32 @@ class CrashlyticsLogWriter : LogWriter() {
      * folder is gone or holds a non-archive file ("… is not a valid directory",
      * "Unrecognized archive format"), and an extension signaling its own manga/chapter list
      * needs a refresh before continuing ("Refresh manga").
+     *
+     * Also skips three plain `java.lang.Exception`s raised by an extension's own code (only
+     * the message identifies them): its site probe finding nothing to read ("Nothing read from
+     * N site requests"), its page-list request failing with the site's HTTP status ("Chapter
+     * pages failed: HTTP 5xx"), and its WebView client asking the user to solve a captcha
+     * ("Open in WebView to solve the captcha…"). Also skips libarchive reporting a bad CRC
+     * while reading a downloaded CBZ - the file on the user's storage is corrupted and the
+     * reader already shows its page error.
+     *
+     * Also skips an extension's reader-page request rejected by the site ("Reader pages HTTP
+     * 403: FORBIDDEN_EXCLUSIVE"), an extension reporting a locked chapter that must be unlocked
+     * in the WebView ("Locked chapter, unlock in WebView.", same category as "Chapter locked"),
+     * and a source answering HTTP 410 Gone (same category as 404).
+     *
+     * Also skips an extension's anti-bot prompts and per-page failures: "Open in WebView to
+     * pass the site's verification", "Couldn't solve the site's captcha (HTTP error 500), open
+     * in WebView to solve it" (same category as the captcha message above) and "Chapter page N
+     * failed: HTTP 5xx" (same category as "Chapter pages failed: HTTP 5xx").
+     *
+     * Also skips more extension-raised messages the user has to resolve on their side: content
+     * the account has no license for ("User does not have the license of requested content"),
+     * credentials not filled in yet ("Username or password cannot be empty. Go to Extensions >
+     * Details...", same category as "Missing username or password"), cookies that must be set
+     * through the WebView ("Open in WebView to set necessary cookies."), and the system WebView's
+     * render process being killed by the OS ("WebView render process was killed", raised from
+     * the extension's WebViewClient.onRenderProcessGone).
      */
     internal fun Throwable.isIgnoredForCrashlytics(): Boolean {
         var current: Throwable? = this
@@ -174,7 +200,7 @@ class CrashlyticsLogWriter : LogWriter() {
 
                 is HttpException -> if (
                     current.isAuthError || current.isServerError ||
-                    current.code == 400 || current.code == 404 || current.code == 429
+                    current.code == 400 || current.code == 404 || current.code == 410 || current.code == 429
                 ) {
                     return true
                 }
@@ -277,6 +303,19 @@ class CrashlyticsLogWriter : LogWriter() {
             // A source's Cloudflare/WebView challenge not resolving in time, or a local-library
             // folder that was renamed/deleted or has a non-archive file in it - not a Rokku bug.
             if (current.message?.startsWith("Timed out waiting for WebView") == true) return true
+            if (current.message?.startsWith("Nothing read from ") == true) return true
+            if (current.message?.startsWith("Chapter pages failed: HTTP ") == true) return true
+            if (current.message?.startsWith("Reader pages HTTP ") == true) return true
+            if (current.message?.startsWith("Locked chapter, unlock in WebView") == true) return true
+            if (current.message?.startsWith("Open in WebView to solve the captcha") == true) return true
+            if (current.message?.startsWith("Open in WebView to pass the site's verification") == true) return true
+            if (current.message?.startsWith("Couldn't solve the site's captcha") == true) return true
+            if (current.message?.matches(EXTENSION_PAGE_HTTP_FAILURE) == true) return true
+            if (current.message?.startsWith("User does not have the license of requested content") == true) return true
+            if (current.message?.startsWith("Username or password cannot be empty") == true) return true
+            if (current.message?.startsWith("Open in WebView to set necessary cookies") == true) return true
+            if (current.message?.startsWith("WebView render process was killed") == true) return true
+            if (current.javaClass.simpleName == "ArchiveException" && current.message?.startsWith("ZIP bad CRC") == true) return true
             if (current.message?.endsWith("is not a valid directory") == true) return true
             if (current.message == "Unrecognized archive format") return true
             if (current.javaClass.simpleName == "ForegroundServiceStartNotAllowedException") return true
@@ -293,5 +332,8 @@ class CrashlyticsLogWriter : LogWriter() {
     private companion object {
         /** Matches the "HTTP 404 …" message MangaCoverFetcher raises as a plain IOException. */
         val HTTP_STATUS_MESSAGE = Regex("""HTTP \d{3}\b.*""")
+
+        /** Matches "Chapter page 2 failed: HTTP 521", raised by an extension for a single page request. */
+        val EXTENSION_PAGE_HTTP_FAILURE = Regex("""Chapter page \d+ failed: HTTP \d{3}\b.*""")
     }
 }

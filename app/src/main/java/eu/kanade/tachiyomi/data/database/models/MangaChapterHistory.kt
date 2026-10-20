@@ -42,10 +42,11 @@ data class MangaChapterHistory(
             hideTitle: Boolean,
             chapterFlags: Long,
             dateAdded: Long?,
-            filteredScanlators: String?,
             updateStrategy: Long,
             coverLastModified: Long,
             mangaMemo: String,
+            mangaFetchInterval: Long,
+            mangaNextUpdate: Long,
             // chapter
             chapterId: Long?,
             chapterMangaId: Long?,
@@ -85,10 +86,11 @@ data class MangaChapterHistory(
                 hideTitle = hideTitle,
                 chapterFlags = chapterFlags,
                 dateAdded = dateAdded,
-                filteredScanlators = filteredScanlators,
                 updateStrategy = updateStrategy,
                 coverLastModified = coverLastModified,
                 memo = mangaMemo,
+                fetchInterval = mangaFetchInterval,
+                nextUpdate = mangaNextUpdate,
             )
 
             val chapter = try {

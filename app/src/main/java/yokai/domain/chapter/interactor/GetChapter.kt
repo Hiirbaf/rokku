@@ -8,8 +8,10 @@ class GetChapter(
 ) {
     suspend fun awaitAll(mangaId: Long, filterScanlators: Boolean) =
         chapterRepository.getChapters(mangaId, filterScanlators)
-    suspend fun awaitAll(manga: Manga, filterScanlators: Boolean? = null) =
-        awaitAll(manga.id!!, filterScanlators ?: (manga.filtered_scanlators?.isNotEmpty() == true))
+
+    // Applying the filter with no exclusions returns every chapter, so defaulting to true is safe.
+    suspend fun awaitAll(manga: Manga, filterScanlators: Boolean = true) =
+        awaitAll(manga.id!!, filterScanlators)
 
     suspend fun awaitAllUnfiltered(mangaId: Long) = chapterRepository.getAllChapters(mangaId)
 

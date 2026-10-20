@@ -13,6 +13,7 @@ import eu.kanade.tachiyomi.data.library.LibraryUpdateJob
 import eu.kanade.tachiyomi.domain.manga.models.Manga
 import eu.kanade.tachiyomi.source.model.SChapter
 import eu.kanade.tachiyomi.util.chapter.ChapterUtil
+import eu.kanade.tachiyomi.util.chapter.updateFetchInterval
 import eu.kanade.tachiyomi.util.manga.MangaUtil
 import eu.kanade.tachiyomi.util.system.launchNow
 import uy.kohesive.injekt.Injekt
@@ -73,6 +74,7 @@ class MangaBackupRestorer(
         val tracks = backupManga.getTrackingImpl()
         val customManga = backupManga.getCustomMangaInfo()
         val filteredScanlators = backupManga.excludedScanlators
+        val backupNextUpdate = backupManga.nextUpdate
 
         try {
             val dbManga = getManga.awaitByUrlAndSource(manga.url, manga.source)
@@ -92,9 +94,10 @@ class MangaBackupRestorer(
                 // Manga in database
                 // Copy information from manga already in database
                 manga.id = dbManga.id
-                manga.filtered_scanlators = dbManga.filtered_scanlators
                 val backupMemo = manga.memo
                 manga.copyFrom(dbManga)
+                manga.fetch_interval = dbManga.fetch_interval
+                manga.next_update = dbManga.next_update
                 // copyFrom() favors the already-tracked db manga's memo, same as it does for
                 // status/update_strategy, but memo is user data rather than source-refreshed
                 // data: fall back to the backup's memo when the db manga doesn't have one yet.
@@ -105,6 +108,7 @@ class MangaBackupRestorer(
                 // Fetch rest of manga information
                 restoreExistingManga(
                     manga,
+                    backupNextUpdate,
                     chapters,
                     categories,
                     history,
@@ -146,11 +150,13 @@ class MangaBackupRestorer(
         fetchedManga.id ?: return
 
         val persistedChapters = restoreChapters(fetchedManga, chapters)
+        updateFetchInterval(fetchedManga, updateManga, getChapter, foundRelease = false, fetchedManga.next_update)
         restoreExtras(fetchedManga, persistedChapters, categories, history, tracks, backupCategories, filteredScanlators, customManga)
     }
 
     private suspend fun restoreExistingManga(
         backupManga: Manga,
+        restoredNextUpdate: Long,
         chapters: List<Chapter>,
         categories: List<Int>,
         history: List<BackupHistory>,
@@ -160,6 +166,7 @@ class MangaBackupRestorer(
         customManga: CustomMangaInfo?,
     ) {
         val persistedChapters = restoreChapters(backupManga, chapters)
+        updateFetchInterval(backupManga, updateManga, getChapter, foundRelease = false, restoredNextUpdate)
         restoreExtras(backupManga, persistedChapters, categories, history, tracks, backupCategories, filteredScanlators, customManga)
     }
 
@@ -332,12 +339,8 @@ class MangaBackupRestorer(
     }
 
     private suspend fun restoreFilteredScanlatorsForManga(manga: Manga, filteredScanlators: List<String>) {
-        // Reads current exclusions from excluded_scanlators rather than manga.filtered_scanlators:
-        // the latter is just a synced mirror (see MangaUtil.setScanlatorFilter), so it can be
-        // stale for manga whose filter changed since the last time this in-memory Manga's DB
-        // row was fetched.
         val currentExcluded = manga.id?.let { getExcludedScanlators.await(it) }.orEmpty()
         val actualList = currentExcluded + filteredScanlators
-        MangaUtil.setScanlatorFilter(setExcludedScanlators, updateManga, manga, actualList.toSet())
+        MangaUtil.setScanlatorFilter(setExcludedScanlators, manga, actualList.toSet())
     }
 }

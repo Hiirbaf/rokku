@@ -12,7 +12,6 @@ import eu.kanade.tachiyomi.data.database.models.hideChapterTitle
 import eu.kanade.tachiyomi.databinding.ChapterSortBottomSheetBinding
 import eu.kanade.tachiyomi.domain.manga.models.Manga
 import eu.kanade.tachiyomi.ui.manga.MangaDetailsController
-import eu.kanade.tachiyomi.util.chapter.ChapterUtil
 import eu.kanade.tachiyomi.util.system.dpToPx
 import eu.kanade.tachiyomi.util.system.materialAlertDialog
 import eu.kanade.tachiyomi.util.system.rootWindowInsetsCompat
@@ -166,7 +165,7 @@ class ChaptersSortBottomSheet(controller: MangaDetailsController) :
         binding.filterGroupsButton.setOnClickListener {
             val scanlators = presenter.allChapterScanlators.toList()
             val filteredScanlators =
-                presenter.manga.filtered_scanlators?.let { ChapterUtil.getScanlators(it) }.orEmpty()
+                presenter.excludedScanlators
                     .filter { it in scanlators }
                     .toMutableSet()
             val preselected = scanlators.map { it in filteredScanlators }.toBooleanArray()

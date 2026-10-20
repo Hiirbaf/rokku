@@ -81,4 +81,20 @@
         <item quantity="one">Следващата непрочетена глава</item>
         <item quantity="other">Следващите %d непрочетени глави</item>
     </plurals>
+    <plurals name="_series_types">
+        <item quantity="one">%d тип поредица</item>
+        <item quantity="other">%d типове поредици</item>
+    </plurals>
+    <plurals name="_sources">
+        <item quantity="one">%d източник</item>
+        <item quantity="other">%d източници</item>
+    </plurals>
+    <plurals name="_statuses">
+        <item quantity="one">%d статус</item>
+        <item quantity="other">%d статуси</item>
+    </plurals>
+    <plurals name="_languages">
+        <item quantity="one">%d език</item>
+        <item quantity="other">%d езици</item>
+    </plurals>
 </resources>

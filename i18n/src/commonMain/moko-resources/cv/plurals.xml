@@ -32,4 +32,8 @@
         <item quantity="one">1 сыпӑк ҫук</item>
         <item quantity="other">%d сыпӑк ҫук</item>
     </plurals>
+    <plurals name="next_unread_chapters">
+        <item quantity="one">Тепӗр вуламан сыпӑк</item>
+        <item quantity="other">Тепӗр %d вуламан сыпӑк</item>
+    </plurals>
 </resources>

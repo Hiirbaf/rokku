@@ -173,6 +173,33 @@ class CrashlyticsLogWriterTest {
     }
 
     @Test
+    fun `extension-raised plain exceptions and corrupted CBZ reads are ignored`() {
+        ignored(Exception("Nothing read from 2 site requests")) shouldBe true
+        ignored(Exception("Chapter pages failed: HTTP 503")) shouldBe true
+        ignored(
+            Exception("Open in WebView to solve the captcha, or turn on \"Solve captchas\" in extension settings"),
+        ) shouldBe true
+        ignored(IllegalStateException("Reader pages HTTP 403: FORBIDDEN_EXCLUSIVE")) shouldBe true
+        ignored(IllegalStateException("Locked chapter, unlock in WebView.")) shouldBe true
+        ignored(HttpException(410)) shouldBe true
+        ignored(IOException("Open in WebView to pass the site's verification")) shouldBe true
+        ignored(Exception("Couldn't solve the site's captcha (HTTP error 500), open in WebView to solve it")) shouldBe true
+        ignored(Exception("Chapter page 2 failed: HTTP 521")) shouldBe true
+        ignored(Exception("Chapter page 2 failed: timeout")) shouldBe false
+        ignored(IOException("User does not have the license of requested content")) shouldBe true
+        ignored(
+            IOException("Username or password cannot be empty.\nGo to Extensions > Details to input your credentials."),
+        ) shouldBe true
+        ignored(IOException("Open in WebView to set necessary cookies.")) shouldBe true
+        ignored(Exception("WebView render process was killed")) shouldBe true
+        ignored(ArchiveException("ZIP bad CRC: 0x7b114351 should be 0x3f25e0b2")) shouldBe true
+        ignored(ArchiveException("Truncated ZIP file data")) shouldBe false
+    }
+
+    // Same simple name as libarchive's exception, which the filter matches by name.
+    private class ArchiveException(message: String) : Exception(message)
+
+    @Test
     fun `the whole cause chain is walked`() {
         val wrapped = IOException("failed to load cover", IOException("stream was reset: INTERNAL_ERROR"))
         ignored(wrapped) shouldBe true

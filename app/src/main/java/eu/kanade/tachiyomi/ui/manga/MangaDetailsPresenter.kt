@@ -96,6 +96,7 @@ import yokai.domain.chapter.interactor.GetChapter
 import yokai.domain.chapter.interactor.UpdateChapter
 import yokai.domain.history.interactor.GetHistory
 import yokai.domain.library.custom.model.CustomMangaInfo
+import yokai.domain.manga.interactor.GetExcludedScanlators
 import yokai.domain.manga.interactor.GetManga
 import yokai.domain.manga.interactor.GetRelatedMangaCache
 import yokai.domain.manga.interactor.InsertManga
@@ -138,6 +139,7 @@ class MangaDetailsPresenter(
     private val updateChapter: UpdateChapter by injectLazy()
     private val updateManga: UpdateManga by injectLazy()
     private val setExcludedScanlators: SetExcludedScanlators by injectLazy()
+    private val getExcludedScanlators: GetExcludedScanlators by injectLazy()
     private val sourcePreferences: SourcePreferences by injectLazy()
     private val uiPreferences: UiPreferences by injectLazy()
     private val getRelatedMangaCache: GetRelatedMangaCache by injectLazy()
@@ -203,6 +205,8 @@ class MangaDetailsPresenter(
         private set
 
     var allChapterScanlators: Set<String> = emptySet()
+    var excludedScanlators: Set<String> = emptySet()
+        private set
 
     var allCategories: List<Category> = emptyList()
         private set
@@ -423,6 +427,7 @@ class MangaDetailsPresenter(
     }
 
     private suspend fun getChapters(queue: List<Download> = downloadManager.queueState.value) {
+        excludedScanlators = getExcludedScanlators.await(mangaId)
         val chapters = getChapter.awaitAll(mangaId, isScanlatorFiltered()).map { it.toModel() }
         allChapters = if (!isScanlatorFiltered()) chapters else getChapter.awaitAll(mangaId, false).map { it.toModel() }
 
@@ -939,7 +944,7 @@ class MangaDetailsPresenter(
         withUIContext { view?.updateChapters() }
     }
 
-    private fun isScanlatorFiltered() = manga.filtered_scanlators?.isNotEmpty() == true
+    private fun isScanlatorFiltered() = excludedScanlators.isNotEmpty()
 
     fun currentFilters(): String {
         val filtersId = mutableListOf<StringResource?>()
@@ -991,7 +996,6 @@ class MangaDetailsPresenter(
             val manga = manga
             MangaUtil.setScanlatorFilter(
                 setExcludedScanlators,
-                updateManga,
                 manga,
                 if (filteredScanlators.size == allChapterScanlators.size) emptySet() else filteredScanlators,
             )

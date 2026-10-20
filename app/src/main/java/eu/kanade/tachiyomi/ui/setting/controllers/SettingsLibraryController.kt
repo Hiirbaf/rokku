@@ -14,6 +14,7 @@ import eu.kanade.tachiyomi.data.preference.MANGA_CANCELLED
 import eu.kanade.tachiyomi.data.preference.MANGA_HAS_UNREAD
 import eu.kanade.tachiyomi.data.preference.MANGA_NON_COMPLETED
 import eu.kanade.tachiyomi.data.preference.MANGA_NON_READ
+import eu.kanade.tachiyomi.data.preference.MANGA_OUTSIDE_RELEASE_PERIOD
 import eu.kanade.tachiyomi.data.preference.changesIn
 import eu.kanade.tachiyomi.ui.category.CategoryController
 import eu.kanade.tachiyomi.ui.library.LibraryPresenter
@@ -230,8 +231,15 @@ class SettingsLibraryController : SettingsLegacyController() {
                     MR.strings.pref_update_only_started,
                     MR.strings.pref_update_only_non_completed,
                     MR.strings.pref_update_only_cancelled,
+                    MR.strings.pref_update_only_in_release_period,
                 )
-                entryValues = listOf(MANGA_HAS_UNREAD, MANGA_NON_READ, MANGA_NON_COMPLETED, MANGA_CANCELLED)
+                entryValues = listOf(
+                    MANGA_HAS_UNREAD,
+                    MANGA_NON_READ,
+                    MANGA_NON_COMPLETED,
+                    MANGA_CANCELLED,
+                    MANGA_OUTSIDE_RELEASE_PERIOD,
+                )
                 noSelectionRes = MR.strings.none
             }
 
