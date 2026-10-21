@@ -12,8 +12,8 @@
 
     <item
         android:id="@+id/action_source_settings"
-        android:title="@string/settings"
         android:icon="@drawable/ic_tune_24dp"
+        android:title="@string/settings"
         app:iconTint="?colorOnSurface"
         app:showAsAction="ifRoom" />
 
@@ -29,14 +29,14 @@
         app:showAsAction="ifRoom" />
 
     <item
-    android:id="@+id/action_local_source_import"
-    android:title="@string/action_import_file"
-    app:showAsAction="never" />
-
-    <item
         android:id="@+id/action_local_source_help"
         android:icon="@drawable/ic_help_24dp"
         android:title="@string/local_source_help_guide"
         app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_local_source_import"
+        android:title="@string/action_import_file"
+        app:showAsAction="never" />
 
 </menu>
