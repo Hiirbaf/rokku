@@ -18,10 +18,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -31,18 +31,16 @@ import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.DriveFileMove
 import androidx.compose.material.icons.outlined.ArrowDropDown
 import androidx.compose.material.icons.outlined.Close
-import androidx.compose.material.icons.outlined.ExpandLess
-import androidx.compose.material.icons.outlined.ExpandMore
 import androidx.compose.material.icons.outlined.FileOpen
 import androidx.compose.material.icons.outlined.FolderOpen
 import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -88,10 +86,9 @@ import java.io.File
 import java.util.UUID
 
 /**
- * Pantalla de importación de .cbz/.cbr (estilo ImportEpubScreen de Tsundoku, sin categorías):
- * 1. Elegir archivos o una carpeta.
- * 2. Revisar los grupos detectados; cada grupo va a un cómic nuevo o a uno existente.
- * 3. Importar (worker en foreground) y ver el resultado.
+ * Pantalla de importación de .cbz/.cbr, con el mismo diseño que ImportEpubScreen de Tsundoku
+ * (sin categorías): una tarjeta por cómic con el nombre editable arriba, y debajo cada archivo con su
+ * portada y el botón de mover siempre visible. Cada grupo va a un cómic nuevo o a uno existente.
  */
 class ImportArchiveActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -118,21 +115,24 @@ class ImportArchiveActivity : ComponentActivity() {
 // TODO: Textos en un solo sitio; moverlo a MR.strings
 private object S {
     const val TITLE = "Importar cómics"
-    const val PICK_FILES = "Archivos .cbz / .cbr"
-    const val PICK_FOLDER = "Carpeta con series"
-    const val PICK_HINT = "En una carpeta, cada subcarpeta es una serie y sus archivos son los capítulos."
-    const val ADD_FILES = "Añadir archivos"
-    const val ADD_FOLDER = "Añadir carpeta"
+    const val PICK_FILES = "Archivos"
+    const val PICK_FOLDER = "Carpeta"
+    const val PICK_HINT = "Elige archivos .cbz/.cbr o una carpeta. En una carpeta, cada subcarpeta es una serie y sus archivos son los capítulos."
+    const val SCANNING = "Leyendo archivos…"
+    const val NOTE = "Los archivos se copian a la fuente local. Cada cómic aparecerá allí con sus capítulos."
     const val NEW_COMIC = "Cómic nuevo"
     const val EXISTING_COMIC = "Agregar a existente"
     const val COMIC_NAME = "Nombre del cómic"
+    const val EXISTING_LABEL = "Cómic existente"
     const val PICK_EXISTING = "Elige un cómic existente"
     const val SEARCH = "Buscar"
     const val NAME_EMPTY = "Escribe un nombre"
     const val NAME_EXISTS = "Ya existe un cómic con ese nombre; usa «Agregar a existente»"
     const val NAME_DUPLICATED = "Otro grupo ya usa este nombre"
-    const val MOVE_TO_NEW = "Nuevo grupo"
+    const val MOVE_TO_NEW = "Mover a un grupo nuevo"
     const val NOTHING = "No se encontraron archivos válidos"
+    const val IMPORT = "Importar"
+    const val SHOW_LESS = "Mostrar menos"
     const val IMPORTING = "Importando archivos…"
     const val BACKGROUND = "Seguir en segundo plano"
     const val CANCELLED = "Importación cancelada"
@@ -141,9 +141,15 @@ private object S {
     const val CLOSE = "Cerrar"
     const val CANCEL = "Cancelar"
     fun filesCount(n: Int) = if (n == 1) "1 archivo" else "$n archivos"
+    fun groupsHeader(n: Int) = "Cómics detectados ($n)"
+    fun showAll(n: Int) = "Mostrar los $n archivos"
+    fun moveTo(label: String) = "Mover a $label"
     fun ignored(n: Int) = "$n archivo(s) ignorados (formato no soportado)"
     fun importButton(n: Int) = "Importar ${filesCount(n)}"
 }
+
+/** Cuántos archivos de cada grupo se muestran con portada antes de "Mostrar todos". */
+private const val COLLAPSED_FILES = 3
 
 private enum class Destination { NEW, EXISTING }
 
@@ -251,7 +257,7 @@ fun ImportArchiveScreen(onClose: (imported: Boolean) -> Unit) {
         Destination.EXISTING -> if (group.existing == null) S.PICK_EXISTING else null
     }
 
-    val canImport = groups.isNotEmpty() && groups.all { errorOf(it) == null }
+    val canImport = groups.isNotEmpty() && !isScanning && groups.all { errorOf(it) == null }
 
     fun startImport() {
         val plan = groups.map { g ->
@@ -290,162 +296,228 @@ fun ImportArchiveScreen(onClose: (imported: Boolean) -> Unit) {
             .fillMaxSize()
             .padding(padding)
 
-        when {
-            workId != null -> ProgressStage(workInfo, modifier, onClose)
-            isScanning -> Box(modifier, contentAlignment = Alignment.Center) { CircularProgressIndicator() }
-            groups.isEmpty() -> PickStage(
+        if (workId != null) {
+            ProgressStage(workInfo, modifier, onClose)
+        } else {
+            SelectionContent(
                 modifier = modifier,
-                onFiles = { filePicker.launch(ArchiveImporter.MIME_TYPES) },
-                onFolder = { folderPicker.launch(null) },
+                groups = groups,
+                existingSeries = existingSeries,
+                isScanning = isScanning,
+                canImport = canImport,
+                errorOf = { errorOf(it) },
+                onPickFiles = { filePicker.launch(ArchiveImporter.MIME_TYPES) },
+                onPickFolder = { folderPicker.launch(null) },
+                onRemoveGroup = { removeGroup(it) },
+                onRemoveFile = { group, file -> removeFile(group, file) },
+                onMoveFile = { from, file, to -> moveFile(from, file, to) },
+                onImport = { startImport() },
             )
-            else -> Column(modifier) {
-                LazyColumn(
-                    modifier = Modifier.weight(1f),
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                ) {
-                    item {
-                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            OutlinedButton(onClick = { filePicker.launch(ArchiveImporter.MIME_TYPES) }) {
-                                Text(S.ADD_FILES)
-                            }
-                            OutlinedButton(onClick = { folderPicker.launch(null) }) { Text(S.ADD_FOLDER) }
-                        }
-                    }
-                    items(groups, key = { it.id }) { group ->
-                        GroupCard(
-                            group = group,
-                            otherGroups = groups.filter { it !== group },
-                            existingSeries = existingSeries,
-                            error = errorOf(group),
-                            onMoveFile = { file, to -> moveFile(group, file, to) },
-                            onRemoveFile = { file -> removeFile(group, file) },
-                            onRemoveGroup = { removeGroup(group) },
-                        )
-                    }
+        }
+    }
+}
+
+/** Equivale a ImportSelectionContent de Tsundoku: botones de selección, progreso, tarjetas e importar. */
+@Composable
+private fun SelectionContent(
+    modifier: Modifier,
+    groups: List<GroupState>,
+    existingSeries: List<String>,
+    isScanning: Boolean,
+    canImport: Boolean,
+    errorOf: (GroupState) -> String?,
+    onPickFiles: () -> Unit,
+    onPickFolder: () -> Unit,
+    onRemoveGroup: (GroupState) -> Unit,
+    onRemoveFile: (GroupState, ImportFile) -> Unit,
+    onMoveFile: (GroupState, ImportFile, GroupState?) -> Unit,
+    onImport: () -> Unit,
+) {
+    val totalFiles = groups.sumOf { it.files.size }
+
+    LazyColumn(
+        modifier = modifier,
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        item {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedButton(onClick = onPickFiles, modifier = Modifier.weight(1f)) {
+                    Icon(Icons.Outlined.FileOpen, contentDescription = null)
+                    Spacer(Modifier.width(8.dp))
+                    Text(S.PICK_FILES)
                 }
-                Button(
-                    onClick = { startImport() },
-                    enabled = canImport,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                ) {
-                    Text(S.importButton(groups.sumOf { it.files.size }))
+                OutlinedButton(onClick = onPickFolder, modifier = Modifier.weight(1f)) {
+                    Icon(Icons.Outlined.FolderOpen, contentDescription = null)
+                    Spacer(Modifier.width(8.dp))
+                    Text(S.PICK_FOLDER)
                 }
+            }
+        }
+
+        if (isScanning) {
+            item {
+                Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(S.SCANNING)
+                    LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+                }
+            }
+        }
+
+        if (groups.isEmpty() && !isScanning) {
+            item {
+                Text(
+                    text = S.PICK_HINT,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+
+        if (groups.isNotEmpty()) {
+            item { Text(S.groupsHeader(groups.size), style = MaterialTheme.typography.titleMedium) }
+
+            items(groups, key = { it.id }) { group ->
+                GroupCard(
+                    group = group,
+                    otherGroups = groups.filter { it !== group },
+                    existingSeries = existingSeries,
+                    error = errorOf(group),
+                    onRemoveGroup = { onRemoveGroup(group) },
+                    onRemoveFile = { file -> onRemoveFile(group, file) },
+                    onMoveFile = { file, to -> onMoveFile(group, file, to) },
+                )
+            }
+
+            item {
+                Text(
+                    text = S.NOTE,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+
+        item {
+            Button(onClick = onImport, enabled = canImport, modifier = Modifier.fillMaxWidth()) {
+                Text(if (totalFiles == 0) S.IMPORT else S.importButton(totalFiles))
             }
         }
     }
 }
 
-@Composable
-private fun PickStage(modifier: Modifier, onFiles: () -> Unit, onFolder: () -> Unit) {
-    Column(
-        modifier = modifier.padding(24.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Button(onClick = onFiles, modifier = Modifier.fillMaxWidth()) {
-            Icon(Icons.Outlined.FileOpen, contentDescription = null)
-            Spacer(Modifier.width(8.dp))
-            Text(S.PICK_FILES)
-        }
-        OutlinedButton(onClick = onFolder, modifier = Modifier.fillMaxWidth()) {
-            Icon(Icons.Outlined.FolderOpen, contentDescription = null)
-            Spacer(Modifier.width(8.dp))
-            Text(S.PICK_FOLDER)
-        }
-        Text(
-            text = S.PICK_HINT,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-    }
-}
-
+/**
+ * Equivale a VolumeGroupCard de Tsundoku: nombre editable arriba con el botón de quitar, resumen,
+ * y una fila por archivo con portada, formato/tamaño, nombre y los botones de mover y quitar.
+ */
 @Composable
 private fun GroupCard(
     group: GroupState,
     otherGroups: List<GroupState>,
     existingSeries: List<String>,
     error: String?,
-    onMoveFile: (ImportFile, GroupState?) -> Unit,
-    onRemoveFile: (ImportFile) -> Unit,
     onRemoveGroup: () -> Unit,
+    onRemoveFile: (ImportFile) -> Unit,
+    onMoveFile: (ImportFile, GroupState?) -> Unit,
 ) {
+    val context = LocalContext.current
     var showExistingDialog by remember { mutableStateOf(false) }
+    val totalSize = group.files.sumOf { it.sizeBytes.coerceAtLeast(0L) }
+    val visibleFiles = if (group.expanded) group.files.toList() else group.files.take(COLLAPSED_FILES)
 
     Card(shape = RoundedCornerShape(12.dp)) {
-        Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                CoverThumbnail(group.files.firstOrNull(), Modifier.size(width = 64.dp, height = 96.dp))
-                Spacer(Modifier.width(12.dp))
-                Column(Modifier.weight(1f)) {
-                    Text(
-                        text = group.displayName(),
-                        style = MaterialTheme.typography.titleSmall,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            // Nombre del cómic arriba (editable si es nuevo; selector si es existente)
+            Row(
+                verticalAlignment = Alignment.Top,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                when (group.destination) {
+                    Destination.NEW -> OutlinedTextField(
+                        value = group.title,
+                        onValueChange = { group.title = it },
+                        modifier = Modifier.weight(1f),
+                        label = { Text(S.COMIC_NAME) },
+                        singleLine = true,
+                        isError = error != null,
+                        supportingText = if (error != null) {
+                            { Text(error) }
+                        } else {
+                            null
+                        },
                     )
-                    Text(
-                        text = S.filesCount(group.files.size),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
+                    Destination.EXISTING -> Box(Modifier.weight(1f)) {
+                        OutlinedTextField(
+                            value = group.existing.orEmpty(),
+                            onValueChange = {},
+                            modifier = Modifier.fillMaxWidth(),
+                            readOnly = true,
+                            label = { Text(S.EXISTING_LABEL) },
+                            placeholder = { Text(S.PICK_EXISTING) },
+                            singleLine = true,
+                            isError = error != null,
+                            trailingIcon = { Icon(Icons.Outlined.ArrowDropDown, contentDescription = null) },
+                            supportingText = if (error != null) {
+                                { Text(error) }
+                            } else {
+                                null
+                            },
+                        )
+                        // Capa transparente: tocar el campo abre el buscador de cómics existentes
+                        Box(
+                            Modifier
+                                .matchParentSize()
+                                .clickable { showExistingDialog = true },
+                        )
+                    }
                 }
-                IconButton(onClick = onRemoveGroup) { Icon(Icons.Outlined.Close, contentDescription = null) }
+
+                IconButton(onClick = onRemoveGroup, modifier = Modifier.padding(top = 4.dp)) {
+                    Icon(imageVector = Icons.Outlined.Close, contentDescription = null)
+                }
             }
 
+            // Cómic nuevo / agregar a existente
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                DestinationButton(S.NEW_COMIC, group.destination == Destination.NEW, true) {
-                    group.destination = Destination.NEW
-                }
                 DestinationButton(
-                    S.EXISTING_COMIC,
-                    group.destination == Destination.EXISTING,
-                    existingSeries.isNotEmpty(),
+                    text = S.NEW_COMIC,
+                    selected = group.destination == Destination.NEW,
+                    enabled = true,
+                    modifier = Modifier.weight(1f),
+                ) { group.destination = Destination.NEW }
+                DestinationButton(
+                    text = S.EXISTING_COMIC,
+                    selected = group.destination == Destination.EXISTING,
+                    enabled = existingSeries.isNotEmpty(),
+                    modifier = Modifier.weight(1f),
                 ) { group.destination = Destination.EXISTING }
             }
 
-            when (group.destination) {
-                Destination.NEW -> OutlinedTextField(
-                    value = group.title,
-                    onValueChange = { group.title = it },
-                    label = { Text(S.COMIC_NAME) },
-                    singleLine = true,
-                    isError = error != null,
-                    supportingText = if (error != null) {
-                        { Text(error) }
-                    } else {
-                        null
-                    },
-                    modifier = Modifier.fillMaxWidth(),
+            Text(
+                text = "${S.filesCount(group.files.size)} • ${Formatter.formatShortFileSize(context, totalSize)}",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+
+            visibleFiles.forEachIndexed { index, file ->
+                HorizontalDivider()
+                FileRow(
+                    file = file,
+                    withCover = index < COLLAPSED_FILES,
+                    otherGroups = otherGroups,
+                    onMoveFile = { to -> onMoveFile(file, to) },
+                    onRemove = { onRemoveFile(file) },
                 )
-                Destination.EXISTING -> {
-                    OutlinedButton(onClick = { showExistingDialog = true }, modifier = Modifier.fillMaxWidth()) {
-                        Text(
-                            text = group.existing ?: S.PICK_EXISTING,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.weight(1f),
-                        )
-                        Icon(Icons.Outlined.ArrowDropDown, contentDescription = null)
-                    }
-                    if (error != null) {
-                        Text(error, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error)
-                    }
-                }
             }
 
-            TextButton(onClick = { group.expanded = !group.expanded }) {
-                Icon(if (group.expanded) Icons.Outlined.ExpandLess else Icons.Outlined.ExpandMore, null)
-                Spacer(Modifier.width(4.dp))
-                Text(S.filesCount(group.files.size))
-            }
-
-            if (group.expanded) {
-                group.files.toList().forEach { file ->
-                    FileRow(file, otherGroups, onMoveFile = { to -> onMoveFile(file, to) }, onRemove = { onRemoveFile(file) })
+            if (group.files.size > COLLAPSED_FILES) {
+                TextButton(onClick = { group.expanded = !group.expanded }) {
+                    Text(if (group.expanded) S.SHOW_LESS else S.showAll(group.files.size))
                 }
             }
         }
@@ -460,6 +532,114 @@ private fun GroupCard(
             },
             onDismiss = { showExistingDialog = false },
         )
+    }
+}
+
+/** Equivale a la fila de cada volumen en Tsundoku: portada de 64 dp, etiqueta, nombre y acciones. */
+@Composable
+private fun FileRow(
+    file: ImportFile,
+    withCover: Boolean,
+    otherGroups: List<GroupState>,
+    onMoveFile: (GroupState?) -> Unit,
+    onRemove: () -> Unit,
+) {
+    val context = LocalContext.current
+    var moveMenuExpanded by remember(file.uri) { mutableStateOf(false) }
+
+    val format = file.fileName.substringAfterLast('.', "").uppercase()
+    val label = if (file.sizeBytes >= 0) {
+        "$format • ${Formatter.formatShortFileSize(context, file.sizeBytes)}"
+    } else {
+        format
+    }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 8.dp),
+        verticalAlignment = Alignment.Top,
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+    ) {
+        if (withCover) {
+            CoverThumbnail(file, Modifier.width(64.dp).aspectRatio(2f / 3f))
+        }
+
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Text(
+                text = file.fileName,
+                style = MaterialTheme.typography.bodySmall,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.fillMaxWidth(),
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.End,
+            ) {
+                // Mover a otro grupo: siempre visible
+                Box {
+                    IconButton(onClick = { moveMenuExpanded = true }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Outlined.DriveFileMove,
+                            contentDescription = S.MOVE_TO_NEW,
+                        )
+                    }
+                    DropdownMenu(
+                        expanded = moveMenuExpanded,
+                        onDismissRequest = { moveMenuExpanded = false },
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text(S.MOVE_TO_NEW) },
+                            onClick = {
+                                moveMenuExpanded = false
+                                onMoveFile(null)
+                            },
+                        )
+                        otherGroups.forEach { target ->
+                            DropdownMenuItem(
+                                text = {
+                                    Text(S.moveTo(target.displayName()), maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                },
+                                onClick = {
+                                    moveMenuExpanded = false
+                                    onMoveFile(target)
+                                },
+                            )
+                        }
+                    }
+                }
+
+                IconButton(onClick = onRemove) {
+                    Icon(imageVector = Icons.Outlined.Close, contentDescription = null)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun DestinationButton(
+    text: String,
+    selected: Boolean,
+    enabled: Boolean,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    if (selected) {
+        Button(onClick = onClick, enabled = enabled, modifier = modifier) { Text(text, maxLines = 1) }
+    } else {
+        OutlinedButton(onClick = onClick, enabled = enabled, modifier = modifier) { Text(text, maxLines = 1) }
     }
 }
 
@@ -492,65 +672,6 @@ private fun CoverThumbnail(file: ImportFile?, modifier: Modifier = Modifier) {
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
-    }
-}
-
-@Composable
-private fun DestinationButton(text: String, selected: Boolean, enabled: Boolean, onClick: () -> Unit) {
-    if (selected) {
-        Button(onClick = onClick, enabled = enabled) { Text(text) }
-    } else {
-        OutlinedButton(onClick = onClick, enabled = enabled) { Text(text) }
-    }
-}
-
-@Composable
-private fun FileRow(
-    file: ImportFile,
-    otherGroups: List<GroupState>,
-    onMoveFile: (GroupState?) -> Unit,
-    onRemove: () -> Unit,
-) {
-    val context = LocalContext.current
-    var menuOpen by remember { mutableStateOf(false) }
-
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        CoverThumbnail(file, Modifier.size(width = 40.dp, height = 60.dp))
-        Spacer(Modifier.width(8.dp))
-        Column(Modifier.weight(1f)) {
-            Text(file.fileName, style = MaterialTheme.typography.bodyMedium, maxLines = 2, overflow = TextOverflow.Ellipsis)
-            if (file.sizeBytes >= 0) {
-                Text(
-                    text = Formatter.formatShortFileSize(context, file.sizeBytes),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-        }
-        Box {
-            IconButton(onClick = { menuOpen = true }) {
-                Icon(Icons.AutoMirrored.Outlined.DriveFileMove, contentDescription = null)
-            }
-            DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
-                DropdownMenuItem(
-                    text = { Text(S.MOVE_TO_NEW) },
-                    onClick = {
-                        menuOpen = false
-                        onMoveFile(null)
-                    },
-                )
-                otherGroups.forEach { target ->
-                    DropdownMenuItem(
-                        text = { Text(target.displayName(), maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                        onClick = {
-                            menuOpen = false
-                            onMoveFile(target)
-                        },
-                    )
-                }
-            }
-        }
-        IconButton(onClick = onRemove) { Icon(Icons.Outlined.Close, contentDescription = null) }
     }
 }
 
