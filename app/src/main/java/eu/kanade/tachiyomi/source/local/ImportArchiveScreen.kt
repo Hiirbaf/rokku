@@ -123,6 +123,9 @@ private object S {
     const val NEW_COMIC = "Cómic nuevo"
     const val EXISTING_COMIC = "Agregar a existente"
     const val COMIC_NAME = "Nombre del cómic"
+    const val CHAPTER_TITLE = "Título del capítulo"
+    const val TITLE_EMPTY = "Escribe un título"
+    const val TITLE_DUPLICATED = "Título repetido en este cómic"
     const val EXISTING_LABEL = "Cómic existente"
     const val PICK_EXISTING = "Elige un cómic existente"
     const val SEARCH = "Buscar"
@@ -153,12 +156,21 @@ private const val COLLAPSED_FILES = 3
 
 private enum class Destination { NEW, EXISTING }
 
+/** Un archivo a importar con su título de capítulo editable (el nombre del archivo, sin extensión). */
+private class FileState(val file: ImportFile) {
+    val extension = file.fileName.substringAfterLast('.', "")
+    var title by mutableStateOf(file.fileName.substringBeforeLast('.', file.fileName))
+
+    /** Nombre con el que se copia: LocalSource usa el nombre del archivo como nombre del capítulo. */
+    fun finalName() = if (extension.isBlank()) title.trim() else "${title.trim()}.$extension"
+}
+
 private class GroupState(val id: String, title: String, files: List<ImportFile>) {
     var title by mutableStateOf(title)
     var destination by mutableStateOf(Destination.NEW)
     var existing by mutableStateOf<String?>(null)
     var expanded by mutableStateOf(false)
-    val files = mutableStateListOf<ImportFile>().also { it.addAll(files) }
+    val files = mutableStateListOf<FileState>().also { list -> list.addAll(files.map { FileState(it) }) }
 
     fun displayName() = when (destination) {
         Destination.NEW -> title.ifBlank { "(sin nombre)" }
@@ -195,7 +207,7 @@ fun ImportArchiveScreen(onClose: (imported: Boolean) -> Unit) {
             val result = scan()
             isScanning = false
 
-            val known = groups.flatMap { g -> g.files.map { it.uri } }.toSet()
+            val known = groups.flatMap { g -> g.files.map { it.file.uri } }.toSet()
             val fresh = result.files.filter { it.uri !in known }
             if (fresh.isEmpty()) {
                 snackbar.showSnackbar(S.NOTHING)
@@ -226,17 +238,19 @@ fun ImportArchiveScreen(onClose: (imported: Boolean) -> Unit) {
         groups.remove(group)
     }
 
-    fun removeFile(group: GroupState, file: ImportFile) {
+    fun removeFile(group: GroupState, file: FileState) {
         group.files.remove(file)
         if (group.files.isEmpty()) groups.remove(group)
     }
 
-    fun moveFile(from: GroupState, file: ImportFile, to: GroupState?) {
+    // Se mueve el mismo FileState, así el título editado se conserva
+    fun moveFile(from: GroupState, file: FileState, to: GroupState?) {
         from.files.remove(file)
         if (to != null) {
             to.files.add(file)
         } else {
-            val fresh = GroupState(UUID.randomUUID().toString(), titleFromFileName(file.fileName), listOf(file))
+            val fresh = GroupState(UUID.randomUUID().toString(), titleFromFileName(file.file.fileName), emptyList())
+            fresh.files.add(file)
             groups.add((groups.indexOf(from) + 1).coerceAtLeast(0), fresh)
         }
         if (from.files.isEmpty()) groups.remove(from)
@@ -257,13 +271,26 @@ fun ImportArchiveScreen(onClose: (imported: Boolean) -> Unit) {
         Destination.EXISTING -> if (group.existing == null) S.PICK_EXISTING else null
     }
 
-    val canImport = groups.isNotEmpty() && !isScanning && groups.all { errorOf(it) == null }
+    fun fileErrorOf(group: GroupState, state: FileState): String? {
+        val title = state.title.trim()
+        return when {
+            title.isBlank() -> S.TITLE_EMPTY
+            group.files.any {
+                it !== state && it.extension.equals(state.extension, ignoreCase = true) &&
+                    it.title.trim().equals(title, ignoreCase = true)
+            } -> S.TITLE_DUPLICATED
+            else -> null
+        }
+    }
+
+    val canImport = groups.isNotEmpty() && !isScanning &&
+        groups.all { g -> errorOf(g) == null && g.files.all { fileErrorOf(g, it) == null } }
 
     fun startImport() {
         val plan = groups.map { g ->
             PlanGroup(
                 series = if (g.destination == Destination.NEW) g.title.trim() else g.existing.orEmpty(),
-                files = g.files.map { PlanFile(it.uri.toString(), it.fileName) },
+                files = g.files.map { PlanFile(it.file.uri.toString(), it.finalName()) },
             )
         }.filter { it.files.isNotEmpty() }
 
@@ -306,6 +333,7 @@ fun ImportArchiveScreen(onClose: (imported: Boolean) -> Unit) {
                 isScanning = isScanning,
                 canImport = canImport,
                 errorOf = { errorOf(it) },
+                fileErrorOf = { group, file -> fileErrorOf(group, file) },
                 onPickFiles = { filePicker.launch(ArchiveImporter.MIME_TYPES) },
                 onPickFolder = { folderPicker.launch(null) },
                 onRemoveGroup = { removeGroup(it) },
@@ -326,11 +354,12 @@ private fun SelectionContent(
     isScanning: Boolean,
     canImport: Boolean,
     errorOf: (GroupState) -> String?,
+    fileErrorOf: (GroupState, FileState) -> String?,
     onPickFiles: () -> Unit,
     onPickFolder: () -> Unit,
     onRemoveGroup: (GroupState) -> Unit,
-    onRemoveFile: (GroupState, ImportFile) -> Unit,
-    onMoveFile: (GroupState, ImportFile, GroupState?) -> Unit,
+    onRemoveFile: (GroupState, FileState) -> Unit,
+    onMoveFile: (GroupState, FileState, GroupState?) -> Unit,
     onImport: () -> Unit,
 ) {
     val totalFiles = groups.sumOf { it.files.size }
@@ -383,6 +412,7 @@ private fun SelectionContent(
                     otherGroups = groups.filter { it !== group },
                     existingSeries = existingSeries,
                     error = errorOf(group),
+                    fileErrorOf = { file -> fileErrorOf(group, file) },
                     onRemoveGroup = { onRemoveGroup(group) },
                     onRemoveFile = { file -> onRemoveFile(group, file) },
                     onMoveFile = { file, to -> onMoveFile(group, file, to) },
@@ -407,8 +437,8 @@ private fun SelectionContent(
 }
 
 /**
- * Equivale a VolumeGroupCard de Tsundoku: nombre editable arriba con el botón de quitar, resumen,
- * y una fila por archivo con portada, formato/tamaño, nombre y los botones de mover y quitar.
+ * Tarjeta de un cómic: portada y nombre editable arriba (con el botón de quitar), selector de destino
+ * y una fila por archivo con su título de capítulo editable y los botones de mover y quitar.
  */
 @Composable
 private fun GroupCard(
@@ -416,13 +446,14 @@ private fun GroupCard(
     otherGroups: List<GroupState>,
     existingSeries: List<String>,
     error: String?,
+    fileErrorOf: (FileState) -> String?,
     onRemoveGroup: () -> Unit,
-    onRemoveFile: (ImportFile) -> Unit,
-    onMoveFile: (ImportFile, GroupState?) -> Unit,
+    onRemoveFile: (FileState) -> Unit,
+    onMoveFile: (FileState, GroupState?) -> Unit,
 ) {
     val context = LocalContext.current
     var showExistingDialog by remember { mutableStateOf(false) }
-    val totalSize = group.files.sumOf { it.sizeBytes.coerceAtLeast(0L) }
+    val totalSize = group.files.sumOf { it.file.sizeBytes.coerceAtLeast(0L) }
     val visibleFiles = if (group.expanded) group.files.toList() else group.files.take(COLLAPSED_FILES)
 
     Card(shape = RoundedCornerShape(12.dp)) {
@@ -432,49 +463,48 @@ private fun GroupCard(
                 .padding(12.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            // Nombre del cómic arriba (editable si es nuevo; selector si es existente)
+            // Portada a la izquierda, nombre editable y resumen en el centro, quitar a la derecha
             Row(
                 verticalAlignment = Alignment.Top,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
             ) {
-                when (group.destination) {
-                    Destination.NEW -> OutlinedTextField(
-                        value = group.title,
-                        onValueChange = { group.title = it },
-                        modifier = Modifier.weight(1f),
-                        label = { Text(S.COMIC_NAME) },
-                        singleLine = true,
-                        isError = error != null,
-                        supportingText = if (error != null) {
-                            { Text(error) }
-                        } else {
-                            null
-                        },
-                    )
-                    Destination.EXISTING -> Box(Modifier.weight(1f)) {
-                        OutlinedTextField(
-                            value = group.existing.orEmpty(),
-                            onValueChange = {},
+                CoverThumbnail(group.files.firstOrNull()?.file, Modifier.width(64.dp).aspectRatio(2f / 3f))
+
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    when (group.destination) {
+                        Destination.NEW -> OutlinedTextField(
+                            value = group.title,
+                            onValueChange = { group.title = it },
                             modifier = Modifier.fillMaxWidth(),
-                            readOnly = true,
-                            label = { Text(S.EXISTING_LABEL) },
-                            placeholder = { Text(S.PICK_EXISTING) },
-                            singleLine = true,
-                            isError = error != null,
-                            trailingIcon = { Icon(Icons.Outlined.ArrowDropDown, contentDescription = null) },
-                            supportingText = if (error != null) {
-                                { Text(error) }
-                            } else {
-                                null
-                            },
-                        )
-                        // Capa transparente: tocar el campo abre el buscador de cómics existentes
-                        Box(
-                            Modifier
-                                .matchParentSize()
-                                .clickable { showExistingDialog = true },
-                        )
+                                readOnly = true,
+                                label = { Text(S.EXISTING_LABEL) },
+                                placeholder = { Text(S.PICK_EXISTING) },
+                                singleLine = true,
+                                isError = error != null,
+                                trailingIcon = { Icon(Icons.Outlined.ArrowDropDown, contentDescription = null) },
+                                supportingText = if (error != null) {
+                                    { Text(error) }
+                                } else {
+                                    null
+                                },
+                            )
+                            // Capa transparente: tocar el campo abre el buscador de cómics existentes
+                            Box(
+                                Modifier
+                                    .matchParentSize()
+                                    .clickable { showExistingDialog = true },
+                            )
+                        }
                     }
+
+                    Text(
+                        text = "${S.filesCount(group.files.size)} • ${Formatter.formatShortFileSize(context, totalSize)}",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
                 }
 
                 IconButton(onClick = onRemoveGroup, modifier = Modifier.padding(top = 4.dp)) {
@@ -498,20 +528,15 @@ private fun GroupCard(
                 ) { group.destination = Destination.EXISTING }
             }
 
-            Text(
-                text = "${S.filesCount(group.files.size)} • ${Formatter.formatShortFileSize(context, totalSize)}",
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-
-            visibleFiles.forEachIndexed { index, file ->
+            visibleFiles.forEachIndexed { index, state ->
                 HorizontalDivider()
                 FileRow(
-                    file = file,
+                    state = state,
                     withCover = index < COLLAPSED_FILES,
+                    error = fileErrorOf(state),
                     otherGroups = otherGroups,
-                    onMoveFile = { to -> onMoveFile(file, to) },
-                    onRemove = { onRemoveFile(file) },
+                    onMoveFile = { to -> onMoveFile(state, to) },
+                    onRemove = { onRemoveFile(state) },
                 )
             }
 
@@ -535,19 +560,21 @@ private fun GroupCard(
     }
 }
 
-/** Equivale a la fila de cada volumen en Tsundoku: portada de 64 dp, etiqueta, nombre y acciones. */
+/** Fila de un archivo: portada, formato y tamaño, título de capítulo editable y botones mover/quitar. */
 @Composable
 private fun FileRow(
-    file: ImportFile,
+    state: FileState,
     withCover: Boolean,
+    error: String?,
     otherGroups: List<GroupState>,
     onMoveFile: (GroupState?) -> Unit,
     onRemove: () -> Unit,
 ) {
     val context = LocalContext.current
-    var moveMenuExpanded by remember(file.uri) { mutableStateOf(false) }
+    var moveMenuExpanded by remember(state) { mutableStateOf(false) }
 
-    val format = file.fileName.substringAfterLast('.', "").uppercase()
+    val file = state.file
+    val format = state.extension.uppercase()
     val label = if (file.sizeBytes >= 0) {
         "$format • ${Formatter.formatShortFileSize(context, file.sizeBytes)}"
     } else {
@@ -574,12 +601,24 @@ private fun FileRow(
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            Text(
-                text = file.fileName,
-                style = MaterialTheme.typography.bodySmall,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
+
+            OutlinedTextField(
+                value = state.title,
+                onValueChange = { state.title = it },
                 modifier = Modifier.fillMaxWidth(),
+                label = { Text(S.CHAPTER_TITLE) },
+                singleLine = true,
+                suffix = if (state.extension.isNotBlank()) {
+                    { Text(".${state.extension}") }
+                } else {
+                    null
+                },
+                isError = error != null,
+                supportingText = if (error != null) {
+                    { Text(error) }
+                } else {
+                    null
+                },
             )
 
             Row(
