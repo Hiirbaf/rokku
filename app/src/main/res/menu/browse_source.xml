@@ -36,7 +36,8 @@
 
     <item
         android:id="@+id/action_local_source_import"
+        android:icon="@drawable/ic_import_24dp"
         android:title="@string/action_import_file"
-        app:showAsAction="never" />
+        app:showAsAction="ifRoom" />
 
 </menu>
