@@ -809,9 +809,10 @@ open class BrowseSourceController(bundle: Bundle) :
         }
 
         if (adapter.isEmpty) {
-            val actions = emptyList<EmptyView.Action>().toMutableList()
+            val actions = mutableListOf<EmptyView.Action>()
+            val isLocalSource = presenter.source is LocalSource
 
-            actions += if (presenter.source is LocalSource) {
+            actions += if (isLocalSource) {
                 EmptyView.Action(
                     MR.strings.local_source_help_guide,
                 ) { openLocalSourceHelpGuide() }
@@ -819,7 +820,7 @@ open class BrowseSourceController(bundle: Bundle) :
                 EmptyView.Action(MR.strings.retry, retryAction)
             }
 
-            if (presenter.source is LocalSource) {
+            if (isLocalSource) {
                 actions += EmptyView.Action(
                     MR.strings.action_import_file,
                 ) { openImportScreen() }
@@ -845,6 +846,7 @@ open class BrowseSourceController(bundle: Bundle) :
                 setAction(MR.strings.retry) { retryAction() }
             }
         }
+
         if (isControllerVisible) {
             activityBinding?.appBar?.lockYPos = false
         }
