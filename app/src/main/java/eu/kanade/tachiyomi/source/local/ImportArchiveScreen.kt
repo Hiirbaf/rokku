@@ -31,6 +31,8 @@ import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.DriveFileMove
 import androidx.compose.material.icons.outlined.ArrowDropDown
 import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.ExpandLess
+import androidx.compose.material.icons.outlined.ExpandMore
 import androidx.compose.material.icons.outlined.FileOpen
 import androidx.compose.material.icons.outlined.FolderOpen
 import androidx.compose.material.icons.outlined.Image
@@ -135,7 +137,8 @@ private object S {
     const val MOVE_TO_NEW = "Mover a un grupo nuevo"
     const val NOTHING = "No se encontraron archivos válidos"
     const val IMPORT = "Importar"
-    const val SHOW_LESS = "Mostrar menos"
+    const val HIDE_CHAPTERS = "Ocultar capítulos"
+    const val CHECK_TITLES = "Hay títulos de capítulo por corregir"
     const val IMPORTING = "Importando archivos…"
     const val BACKGROUND = "Seguir en segundo plano"
     const val CANCELLED = "Importación cancelada"
@@ -145,14 +148,11 @@ private object S {
     const val CANCEL = "Cancelar"
     fun filesCount(n: Int) = if (n == 1) "1 archivo" else "$n archivos"
     fun groupsHeader(n: Int) = "Cómics detectados ($n)"
-    fun showAll(n: Int) = "Mostrar los $n archivos"
+    fun showChapters(n: Int) = "Mostrar capítulos ($n)"
     fun moveTo(label: String) = "Mover a $label"
     fun ignored(n: Int) = "$n archivo(s) ignorados (formato no soportado)"
     fun importButton(n: Int) = "Importar ${filesCount(n)}"
 }
-
-/** Cuántos archivos de cada grupo se muestran con portada antes de "Mostrar todos". */
-private const val COLLAPSED_FILES = 3
 
 private enum class Destination { NEW, EXISTING }
 
@@ -454,7 +454,6 @@ private fun GroupCard(
     val context = LocalContext.current
     var showExistingDialog by remember { mutableStateOf(false) }
     val totalSize = group.files.sumOf { it.file.sizeBytes.coerceAtLeast(0L) }
-    val visibleFiles = if (group.expanded) group.files.toList() else group.files.take(COLLAPSED_FILES)
 
     Card(shape = RoundedCornerShape(12.dp)) {
         Column(
@@ -542,21 +541,35 @@ private fun GroupCard(
                 ) { group.destination = Destination.EXISTING }
             }
 
-            visibleFiles.forEachIndexed { index, state ->
-                HorizontalDivider()
-                FileRow(
-                    state = state,
-                    withCover = index < COLLAPSED_FILES,
-                    error = fileErrorOf(state),
-                    otherGroups = otherGroups,
-                    onMoveFile = { to -> onMoveFile(state, to) },
-                    onRemove = { onRemoveFile(state) },
+            // Capítulos: plegados por defecto; al mostrarlos, cada uno con su portada pequeña
+            TextButton(onClick = { group.expanded = !group.expanded }) {
+                Icon(
+                    imageVector = if (group.expanded) Icons.Outlined.ExpandLess else Icons.Outlined.ExpandMore,
+                    contentDescription = null,
+                )
+                Spacer(Modifier.width(4.dp))
+                Text(if (group.expanded) S.HIDE_CHAPTERS else S.showChapters(group.files.size))
+            }
+
+            // Si hay errores en capítulos plegados, avisar para que el botón Importar bloqueado tenga explicación
+            if (!group.expanded && group.files.any { fileErrorOf(it) != null }) {
+                Text(
+                    text = S.CHECK_TITLES,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error,
                 )
             }
 
-            if (group.files.size > COLLAPSED_FILES) {
-                TextButton(onClick = { group.expanded = !group.expanded }) {
-                    Text(if (group.expanded) S.SHOW_LESS else S.showAll(group.files.size))
+            if (group.expanded) {
+                group.files.toList().forEach { state ->
+                    HorizontalDivider()
+                    FileRow(
+                        state = state,
+                        error = fileErrorOf(state),
+                        otherGroups = otherGroups,
+                        onMoveFile = { to -> onMoveFile(state, to) },
+                        onRemove = { onRemoveFile(state) },
+                    )
                 }
             }
         }
@@ -574,11 +587,10 @@ private fun GroupCard(
     }
 }
 
-/** Fila de un archivo: portada, formato y tamaño, título de capítulo editable y botones mover/quitar. */
+/** Fila de un capítulo: portada pequeña, formato y tamaño con mover/quitar, y el título editable. */
 @Composable
 private fun FileRow(
     state: FileState,
-    withCover: Boolean,
     error: String?,
     otherGroups: List<GroupState>,
     onMoveFile: (GroupState?) -> Unit,
@@ -600,46 +612,22 @@ private fun FileRow(
             .fillMaxWidth()
             .padding(top = 8.dp),
         verticalAlignment = Alignment.Top,
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        if (withCover) {
-            CoverThumbnail(file, Modifier.width(64.dp).aspectRatio(2f / 3f))
-        }
+        CoverThumbnail(file, Modifier.width(40.dp).aspectRatio(2f / 3f))
 
         Column(
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(6.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            Text(
-                text = label,
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = label,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.weight(1f),
+                )
 
-            OutlinedTextField(
-                value = state.title,
-                onValueChange = { state.title = it },
-                modifier = Modifier.fillMaxWidth(),
-                label = { Text(S.CHAPTER_TITLE) },
-                singleLine = true,
-                suffix = if (state.extension.isNotBlank()) {
-                    { Text(".${state.extension}") }
-                } else {
-                    null
-                },
-                isError = error != null,
-                supportingText = if (error != null) {
-                    { Text(error) }
-                } else {
-                    null
-                },
-            )
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.End,
-            ) {
                 // Mover a otro grupo: siempre visible
                 Box {
                     IconButton(onClick = { moveMenuExpanded = true }) {
@@ -677,6 +665,25 @@ private fun FileRow(
                     Icon(imageVector = Icons.Outlined.Close, contentDescription = null)
                 }
             }
+
+            OutlinedTextField(
+                value = state.title,
+                onValueChange = { state.title = it },
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text(S.CHAPTER_TITLE) },
+                singleLine = true,
+                suffix = if (state.extension.isNotBlank()) {
+                    { Text(".${state.extension}") }
+                } else {
+                    null
+                },
+                isError = error != null,
+                supportingText = if (error != null) {
+                    { Text(error) }
+                } else {
+                    null
+                },
+            )
         }
     }
 }
