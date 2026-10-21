@@ -174,7 +174,7 @@ object ArchiveImporter {
 
     private fun extractCover(context: Context, file: ImportFile, out: File) {
         val source = (
-            if (file.uri.scheme == "content") UniFile.fromSingleUri(context, file.uri) else UniFile.fromUri(context, file.uri)
+            if (file.uri.scheme == "content") UniFile.fromUri(context, file.uri) else UniFile.fromUri(context, file.uri)
             ) ?: return
 
         if (file.fileName.substringAfterLast('.', "").equals("epub", ignoreCase = true)) {
