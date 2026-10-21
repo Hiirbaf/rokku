@@ -18,15 +18,21 @@ import co.touchlab.kermit.Logger
 import com.hippo.unifile.UniFile
 import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.source.LocalSource
+import eu.kanade.tachiyomi.util.lang.compareToCaseInsensitiveNaturalOrder
+import eu.kanade.tachiyomi.util.system.ImageUtil
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONObject
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
+import yokai.core.archive.util.archiveReader
+import yokai.core.archive.util.epubReader
 import yokai.domain.storage.StorageManager
 import yokai.i18n.MR
 import yokai.util.lang.getString
@@ -125,6 +131,67 @@ object ArchiveImporter {
             .filter { it.isDirectory && it.name?.startsWith('.') == false }
             .mapNotNull { it.name }
             .sortedBy { it.lowercase() }
+    }
+
+    // ---------- Portadas de la previsualización ----------
+
+    private val coverSemaphore = Semaphore(2) // leer archivos grandes en paralelo satura el disco
+
+    /**
+     * Archivo de imagen con la primera página del archivo (mismo criterio que LocalSource: primera
+     * imagen en orden natural; en EPUB, la primera imagen de las páginas). Se cachea en disco; si
+     * falla, se guarda un marcador vacío para no reintentar en cada recomposición. Devuelve null si
+     * no hay portada. La decodificación y el reescalado los hace Coil al mostrarla.
+     */
+    suspend fun loadCoverFile(context: Context, file: ImportFile): File? =
+        coverSemaphore.withPermit {
+            withContext(Dispatchers.IO) {
+                val cached = coverCacheFile(context, file)
+                if (!cached.exists()) {
+                    cached.parentFile?.mkdirs()
+                    val ok = runCatching { extractCover(context, file, cached) }
+                        .onFailure { Logger.w(it) { "Sin portada para ${file.fileName}" } }
+                        .isSuccess
+                    if (!ok || !cached.exists()) {
+                        cached.delete()
+                        cached.createNewFile()
+                    }
+                }
+                cached.takeIf { it.length() > 0 }
+            }
+        }
+
+    fun clearCoverCache(context: Context) {
+        File(context.cacheDir, COVER_DIR).deleteRecursively()
+    }
+
+    private const val COVER_DIR = "import_covers"
+
+    private fun coverCacheFile(context: Context, file: ImportFile): File {
+        val key = UUID.nameUUIDFromBytes(file.uri.toString().toByteArray()).toString()
+        return File(File(context.cacheDir, COVER_DIR), "$key.img")
+    }
+
+    private fun extractCover(context: Context, file: ImportFile, out: File) {
+        val source = (
+            if (file.uri.scheme == "content") UniFile.fromSingleUri(context, file.uri) else UniFile.fromUri(context, file.uri)
+            ) ?: return
+
+        if (file.fileName.substringAfterLast('.', "").equals("epub", ignoreCase = true)) {
+            source.epubReader(context).use { epub ->
+                val entry = epub.getImagesFromPages().firstOrNull() ?: return
+                epub.getInputStream(entry)?.use { input -> out.outputStream().use { input.copyTo(it) } }
+            }
+        } else {
+            source.archiveReader(context).use { reader ->
+                val entry = reader.useEntries { entries ->
+                    entries
+                        .sortedWith { f1, f2 -> f1.name.compareToCaseInsensitiveNaturalOrder(f2.name) }
+                        .find { it.isFile && ImageUtil.isImage(it.name) { reader.getInputStream(it.name)!! } }
+                } ?: return
+                reader.getInputStream(entry.name)?.use { input -> out.outputStream().use { input.copyTo(it) } }
+            }
+        }
     }
 
     // ---------- Plan (se pasa por archivo: Data tiene un límite de ~10 KB) ----------
