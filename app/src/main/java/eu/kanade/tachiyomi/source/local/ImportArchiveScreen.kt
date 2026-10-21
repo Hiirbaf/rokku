@@ -479,6 +479,20 @@ private fun GroupCard(
                             value = group.title,
                             onValueChange = { group.title = it },
                             modifier = Modifier.fillMaxWidth(),
+                            label = { Text(S.COMIC_NAME) },
+                            singleLine = true,
+                            isError = error != null,
+                            supportingText = if (error != null) {
+                                { Text(error) }
+                            } else {
+                                null
+                            },
+                        )
+                        Destination.EXISTING -> Box(Modifier.fillMaxWidth()) {
+                            OutlinedTextField(
+                                value = group.existing.orEmpty(),
+                                onValueChange = {},
+                                modifier = Modifier.fillMaxWidth(),
                                 readOnly = true,
                                 label = { Text(S.EXISTING_LABEL) },
                                 placeholder = { Text(S.PICK_EXISTING) },
