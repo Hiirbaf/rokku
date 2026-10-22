@@ -49,6 +49,7 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -69,6 +70,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
@@ -86,6 +89,7 @@ import uy.kohesive.injekt.api.get
 import yokai.domain.storage.StorageManager
 import java.io.File
 import java.util.UUID
+import kotlin.math.ln
 
 /**
  * Pantalla de importación de .cbz/.cbr, con el mismo diseño que ImportEpubScreen de Tsundoku
@@ -155,6 +159,23 @@ private object S {
 }
 
 private enum class Destination { NEW, EXISTING }
+
+/** Campos de texto con el acento (colorSecondary) y el borde del resto de pantallas de Rokku. */
+@Composable
+private fun legacyFieldColors() = OutlinedTextFieldDefaults.colors(
+    focusedBorderColor = MaterialTheme.colorScheme.secondary,
+    focusedLabelColor = MaterialTheme.colorScheme.secondary,
+    cursorColor = MaterialTheme.colorScheme.secondary,
+    unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
+)
+
+/** Fondo de los diálogos: colorSurface con el overlay de colorSecondary a 6 dp de elevación. */
+@Composable
+private fun legacyDialogColor(): Color {
+    val colors = MaterialTheme.colorScheme
+    val overlayAlpha = (4.5f * ln(6f + 1f) + 2f) / 100f
+    return colors.secondary.copy(alpha = overlayAlpha).compositeOver(colors.surface)
+}
 
 /** Un archivo a importar con su título de capítulo editable (el nombre del archivo, sin extensión). */
 private class FileState(val file: ImportFile) {
@@ -475,6 +496,7 @@ private fun GroupCard(
                 ) {
                     when (group.destination) {
                         Destination.NEW -> OutlinedTextField(
+                            colors = legacyFieldColors(),
                             value = group.title,
                             onValueChange = { group.title = it },
                             modifier = Modifier.fillMaxWidth(),
@@ -489,6 +511,7 @@ private fun GroupCard(
                         )
                         Destination.EXISTING -> Box(Modifier.fillMaxWidth()) {
                             OutlinedTextField(
+                                colors = legacyFieldColors(),
                                 value = group.existing.orEmpty(),
                                 onValueChange = {},
                                 modifier = Modifier.fillMaxWidth(),
@@ -619,6 +642,7 @@ private fun FileRow(
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             OutlinedTextField(
+                colors = legacyFieldColors(),
                 value = state.title,
                 onValueChange = { state.title = it },
                 modifier = Modifier.fillMaxWidth(),
@@ -737,10 +761,13 @@ private fun ExistingSeriesDialog(series: List<String>, onPick: (String) -> Unit,
 
     AlertDialog(
         onDismissRequest = onDismiss,
+        containerColor = legacyDialogColor(),
+        shape = RoundedCornerShape(28.dp),
         title = { Text(S.PICK_EXISTING) },
         text = {
             Column {
                 OutlinedTextField(
+                    colors = legacyFieldColors(),
                     value = query,
                     onValueChange = { query = it },
                     label = { Text(S.SEARCH) },
