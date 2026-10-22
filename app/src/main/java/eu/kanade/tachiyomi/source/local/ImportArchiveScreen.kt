@@ -2,13 +2,9 @@
 
 package eu.kanade.tachiyomi.source.local
 
-import android.app.Activity
-import android.os.Bundle
 import android.text.format.Formatter
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -56,6 +52,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -78,43 +75,49 @@ import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import coil3.compose.AsyncImage
+import eu.kanade.tachiyomi.ui.base.controller.BaseComposeController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 import yokai.domain.storage.StorageManager
-import yokai.presentation.theme.YokaiTheme
 import java.io.File
 import java.util.UUID
 import kotlin.math.ln
 
 /**
- * Pantalla de importación de .cbz/.cbr, con el mismo diseño que ImportEpubScreen de Tsundoku
+ * Pantalla de importación de .cbz/.cbr (se muestra como Controller con BaseComposeController, así
+ * hereda YokaiTheme, la barra y los insets de la app), con el mismo diseño que ImportEpubScreen de Tsundoku
  * (sin categorías): una tarjeta por cómic con el nombre editable arriba, y debajo cada archivo con su
  * portada y el botón de mover siempre visible. Cada grupo va a un cómic nuevo o a uno existente.
  */
-class ImportArchiveActivity : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        // AppCompatActivity respeta el modo claro/oscuro de la app. Si los colores no coinciden con el
-        // tema elegido (AMOLED, colores personalizados), aplica aquí el mismo setTheme(...) que MainActivity.
-        setContent {
-            YokaiTheme {
-                ImportArchiveScreen(
-                    onClose = { imported ->
-                        setResult(if (imported) Activity.RESULT_OK else Activity.RESULT_CANCELED)
-                        finish()
-                    },
-                )
-            }
-        }
+class ImportArchiveController : BaseComposeController() {
+
+    @Composable
+    override fun ScreenContent() {
+        val context = LocalContext.current
+        DisposableEffect(Unit) { onDispose { ArchiveImporter.clearCoverCache(context) } }
+
+        ImportArchiveScreen(
+            onClose = { imported ->
+                if (imported) LocalImportEvents.markPending()
+                router.popCurrentController()
+            },
+        )
+    }
+}
+
+/** Avisa a la fuente local de que hubo una importación, para que recargue su lista al volver. */
+object LocalImportEvents {
+    @Volatile
+    private var pending = false
+
+    fun markPending() {
+        pending = true
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        if (isFinishing) ArchiveImporter.clearCoverCache(this)
-    }
+    fun consumeRefresh(): Boolean = pending.also { pending = false }
 }
 
 // TODO: Textos en un solo sitio; moverlo a MR.strings
