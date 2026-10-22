@@ -196,6 +196,20 @@ class CrashlyticsLogWriterTest {
         ignored(ArchiveException("Truncated ZIP file data")) shouldBe false
     }
 
+    @Test
+    fun `extension server errors, WebView prompts and logged-out Hikka are ignored`() {
+        ignored(Exception("HTTP error 503")) shouldBe true
+        ignored(Exception("HTTP error 521")) shouldBe true
+        ignored(Exception("HTTP error 418")) shouldBe false
+        ignored(Exception("HTTP error 5000")) shouldBe false
+        ignored(IllegalStateException("Could not load images. Open in WebView and try again.")) shouldBe true
+        ignored(IllegalStateException("Could not load images")) shouldBe false
+        ignored(IOException("Manga catalog not found")) shouldBe true
+        ignored(IOException("Manga catalog not found in cache dir")) shouldBe false
+        ignored(IOException("java.lang.Exception: Hikka: You are not authorized", Exception("Hikka: You are not authorized"))) shouldBe true
+        ignored(Exception("Hikka: Auth token info failed")) shouldBe false
+    }
+
     // Same simple name as libarchive's exception, which the filter matches by name.
     private class ArchiveException(message: String) : Exception(message)
 
