@@ -1,7 +1,5 @@
 package eu.kanade.tachiyomi.ui.source.browse
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -40,8 +38,9 @@ import eu.kanade.tachiyomi.domain.manga.models.Manga
 import eu.kanade.tachiyomi.source.CatalogueSource
 import eu.kanade.tachiyomi.source.ConfigurableSource
 import eu.kanade.tachiyomi.source.LocalSource
-import eu.kanade.tachiyomi.source.local.ImportArchiveActivity
+import eu.kanade.tachiyomi.source.local.ImportArchiveController
 import eu.kanade.tachiyomi.source.local.ImportArchivesWorker
+import eu.kanade.tachiyomi.source.local.LocalImportEvents
 import eu.kanade.tachiyomi.source.model.Filter
 import eu.kanade.tachiyomi.source.model.FilterList
 import eu.kanade.tachiyomi.source.online.HttpSource
@@ -664,13 +663,12 @@ open class BrowseSourceController(bundle: Bundle) :
     }
 
     private fun openImportScreen() {
-        val activity = activity ?: return
-        startActivityForResult(Intent(activity, ImportArchiveActivity::class.java), REQUEST_IMPORT_LOCAL)
+        router.pushController(ImportArchiveController().withFadeTransaction())
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_IMPORT_LOCAL && resultCode == Activity.RESULT_OK) resetPager()
+    override fun onAttach(view: View) {
+        super.onAttach(view)
+        if (isLocalSource && LocalImportEvents.consumeRefresh()) resetPager()
     }
 
     private fun openSourceSettings() {
@@ -1083,8 +1081,6 @@ open class BrowseSourceController(bundle: Bundle) :
 
     companion object {
         const val SOURCE_ID_KEY = "sourceId"
-
-        const val REQUEST_IMPORT_LOCAL = 7421
 
         const val SEARCH_QUERY_KEY = "searchQuery"
         const val USE_LATEST_KEY = "useLatest"
