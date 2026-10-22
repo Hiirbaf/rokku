@@ -5,13 +5,12 @@ package eu.kanade.tachiyomi.source.local
 import android.app.Activity
 import android.os.Bundle
 import android.text.format.Formatter
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -56,8 +55,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -87,6 +84,7 @@ import kotlinx.coroutines.withContext
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 import yokai.domain.storage.StorageManager
+import yokai.presentation.theme.YokaiTheme
 import java.io.File
 import java.util.UUID
 import kotlin.math.ln
@@ -96,12 +94,13 @@ import kotlin.math.ln
  * (sin categorías): una tarjeta por cómic con el nombre editable arriba, y debajo cada archivo con su
  * portada y el botón de mover siempre visible. Cada grupo va a un cómic nuevo o a uno existente.
  */
-class ImportArchiveActivity : ComponentActivity() {
+class ImportArchiveActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // AppCompatActivity respeta el modo claro/oscuro de la app. Si los colores no coinciden con el
+        // tema elegido (AMOLED, colores personalizados), aplica aquí el mismo setTheme(...) que MainActivity.
         setContent {
-            // TODO: reemplazar por el tema de Compose de Rokku, si tiene uno
-            MaterialTheme(colorScheme = if (isSystemInDarkTheme()) darkColorScheme() else lightColorScheme()) {
+            YokaiTheme {
                 ImportArchiveScreen(
                     onClose = { imported ->
                         setResult(if (imported) Activity.RESULT_OK else Activity.RESULT_CANCELED)
