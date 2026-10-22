@@ -531,13 +531,11 @@ private fun GroupCard(
                     text = S.NEW_COMIC,
                     selected = group.destination == Destination.NEW,
                     enabled = true,
-                    modifier = Modifier.weight(1f),
                 ) { group.destination = Destination.NEW }
                 DestinationButton(
                     text = S.EXISTING_COMIC,
                     selected = group.destination == Destination.EXISTING,
                     enabled = existingSeries.isNotEmpty(),
-                    modifier = Modifier.weight(1f),
                 ) { group.destination = Destination.EXISTING }
             }
 
@@ -587,7 +585,7 @@ private fun GroupCard(
     }
 }
 
-/** Fila de un capítulo: portada pequeña, formato y tamaño con mover/quitar, y el título editable. */
+/** Fila de un capítulo: portada pequeña, título editable arriba, y debajo formato y tamaño con mover/quitar. */
 @Composable
 private fun FileRow(
     state: FileState,
@@ -620,6 +618,20 @@ private fun FileRow(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
+            OutlinedTextField(
+                value = state.title,
+                onValueChange = { state.title = it },
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text(S.CHAPTER_TITLE) },
+                singleLine = true,
+                isError = error != null,
+                supportingText = if (error != null) {
+                    { Text(error) }
+                } else {
+                    null
+                },
+            )
+
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     text = label,
@@ -665,25 +677,6 @@ private fun FileRow(
                     Icon(imageVector = Icons.Outlined.Close, contentDescription = null)
                 }
             }
-
-            OutlinedTextField(
-                value = state.title,
-                onValueChange = { state.title = it },
-                modifier = Modifier.fillMaxWidth(),
-                label = { Text(S.CHAPTER_TITLE) },
-                singleLine = true,
-                suffix = if (state.extension.isNotBlank()) {
-                    { Text(".${state.extension}") }
-                } else {
-                    null
-                },
-                isError = error != null,
-                supportingText = if (error != null) {
-                    { Text(error) }
-                } else {
-                    null
-                },
-            )
         }
     }
 }
@@ -697,9 +690,9 @@ private fun DestinationButton(
     onClick: () -> Unit,
 ) {
     if (selected) {
-        Button(onClick = onClick, enabled = enabled, modifier = modifier) { Text(text, maxLines = 1) }
+        Button(onClick = onClick, enabled = enabled, modifier = modifier) { Text(text) }
     } else {
-        OutlinedButton(onClick = onClick, enabled = enabled, modifier = modifier) { Text(text, maxLines = 1) }
+        OutlinedButton(onClick = onClick, enabled = enabled, modifier = modifier) { Text(text) }
     }
 }
 
