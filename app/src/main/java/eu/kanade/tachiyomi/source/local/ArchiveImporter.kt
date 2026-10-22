@@ -149,9 +149,15 @@ object ArchiveImporter {
                 val cached = coverCacheFile(context, file)
                 if (!cached.exists()) {
                     cached.parentFile?.mkdirs()
-                    val ok = runCatching { extractCover(context, file, cached) }
-                        .onFailure { Logger.w(it) { "Sin portada para ${file.fileName}" } }
-                        .isSuccess
+                    val ok = try {
+                        extractCover(context, file, cached)
+                        true
+                    } catch (e: CancellationException) {
+                        throw e
+                    } catch (e: Exception) {
+                        Logger.w(e) { "Sin portada para ${file.fileName}" }
+                        false
+                    }
                     if (!ok || !cached.exists()) {
                         cached.delete()
                         cached.createNewFile()
@@ -166,6 +172,7 @@ object ArchiveImporter {
     }
 
     private const val COVER_DIR = "import_covers"
+    private const val PLAN_DIR = "import_plans"
 
     private fun coverCacheFile(context: Context, file: ImportFile): File {
         val key = UUID.nameUUIDFromBytes(file.uri.toString().toByteArray()).toString()
@@ -173,9 +180,7 @@ object ArchiveImporter {
     }
 
     private fun extractCover(context: Context, file: ImportFile, out: File) {
-        val source = (
-            if (file.uri.scheme == "content") UniFile.fromUri(context, file.uri) else UniFile.fromUri(context, file.uri)
-            ) ?: return
+        val source = UniFile.fromUri(context, file.uri) ?: return
 
         if (file.fileName.substringAfterLast('.', "").equals("epub", ignoreCase = true)) {
             source.epubReader(context).use { epub ->
@@ -203,7 +208,9 @@ object ArchiveImporter {
             group.files.forEach { files.put(JSONObject().put("uri", it.uri).put("name", it.fileName)) }
             json.put(JSONObject().put("series", group.series).put("files", files))
         }
-        val file = File(context.cacheDir, "import_plan_${UUID.randomUUID()}.json")
+        val planDir = File(context.filesDir, PLAN_DIR)
+        check(planDir.exists() || planDir.mkdirs()) { "No se pudo crear el directorio de planes de importación" }
+        val file = File(planDir, "import_plan_${UUID.randomUUID()}.json")
         file.writeText(json.toString())
         return file.absolutePath
     }
@@ -266,18 +273,32 @@ object ArchiveImporter {
                     seriesDir.findFile(fileName) != null -> skipped++
                     else -> {
                         val target = seriesDir.createFile(fileName)
-                        val ok = target != null && runCatching {
-                            item.open()!!.use { input ->
-                                target.openOutputStream().use { output ->
-                                    input.copyTo(output, bufferSize = 64 * 1024)
+                        val ok = if (target == null) {
+                            false
+                        } else {
+                            try {
+                                val input = item.open() ?: error("No se pudo abrir el archivo de origen: $fileName")
+                                input.use { source ->
+                                    target.openOutputStream().use { output ->
+                                        source.copyTo(output, bufferSize = 64 * 1024)
+                                    }
                                 }
+                                currentCoroutineContext().ensureActive()
+                                true
+                            } catch (e: CancellationException) {
+                                runCatching { target.delete() }
+                                throw e
+                            } catch (e: Exception) {
+                                Logger.e(e) { "Error importando $fileName" }
+                                runCatching { target.delete() }
+                                false
                             }
-                        }.onFailure { Logger.e(it) { "Error importando $fileName" } }.isSuccess
+                        }
 
                         if (ok) {
                             imported++
                         } else {
-                            target?.delete()
+                            if (target != null) runCatching { target.delete() }
                             failed++
                         }
                     }
@@ -311,15 +332,22 @@ class ImportArchivesWorker(context: Context, params: WorkerParameters) : Corouti
 
     override suspend fun doWork(): Result {
         val planPath = inputData.getString(KEY_PLAN) ?: return Result.failure()
-        val localDir = Injekt.get<StorageManager>().getLocalSourceDirectory() ?: return Result.failure()
-        val groups = runCatching { ArchiveImporter.readPlan(planPath) }.getOrNull() ?: return Result.failure()
-        val total = groups.sumOf { it.files.size }
-
-        createChannel()
-        runCatching { setForeground(foregroundInfo(0, total)) }
-            .onFailure { Logger.w(it) { "No se pudo iniciar el servicio en foreground" } }
 
         try {
+            val localDir = Injekt.get<StorageManager>().getLocalSourceDirectory()
+                ?: return Result.failure()
+            val groups = try {
+                ArchiveImporter.readPlan(planPath)
+            } catch (e: Exception) {
+                Logger.e(e) { "No se pudo leer el plan de importación" }
+                return Result.failure()
+            }
+            val total = groups.sumOf { it.files.size }
+
+            createChannel()
+            runCatching { setForeground(foregroundInfo(0, total)) }
+                .onFailure { Logger.w(it) { "No se pudo iniciar el servicio en foreground" } }
+
             val result = ArchiveImporter.importPlan(applicationContext, groups, localDir) { done, count ->
                 notificationManager.notify(NOTIFICATION_ID, progressNotification(done, count))
                 setProgressAsync(workDataOf(KEY_DONE to done, KEY_TOTAL to count))
@@ -339,7 +367,9 @@ class ImportArchivesWorker(context: Context, params: WorkerParameters) : Corouti
             Logger.e(e) { "Error al importar" }
             return Result.failure()
         } finally {
-            runCatching { File(planPath).delete() }
+            withContext(Dispatchers.IO) {
+                runCatching { File(planPath).delete() }
+            }
         }
     }
 
