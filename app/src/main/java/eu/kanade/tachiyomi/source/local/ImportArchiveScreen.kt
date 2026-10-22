@@ -76,6 +76,7 @@ import androidx.work.WorkManager
 import androidx.work.workDataOf
 import coil3.compose.AsyncImage
 import eu.kanade.tachiyomi.ui.base.controller.BaseComposeController
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -146,6 +147,8 @@ private object S {
     const val HIDE_CHAPTERS = "Ocultar capítulos"
     const val CHECK_TITLES = "Hay títulos de capítulo por corregir"
     const val IMPORTING = "Importando archivos…"
+    const val PARTIAL = "Importación completada con errores"
+    const val PREPARING = "Preparando importación…"
     const val BACKGROUND = "Seguir en segundo plano"
     const val CANCELLED = "Importación cancelada"
     const val ERROR = "No se pudo completar la importación"
@@ -210,11 +213,14 @@ fun ImportArchiveScreen(onClose: (imported: Boolean) -> Unit) {
     val groups = remember { mutableStateListOf<GroupState>() }
     var existingSeries by remember { mutableStateOf<List<String>>(emptyList()) }
     var isScanning by remember { mutableStateOf(false) }
+    var isPreparingImport by remember { mutableStateOf(false) }
     var workId by remember { mutableStateOf<UUID?>(null) }
 
     LaunchedEffect(Unit) {
-        val dir = Injekt.get<StorageManager>().getLocalSourceDirectory()
-        existingSeries = dir?.let { ArchiveImporter.listExistingSeries(it) }.orEmpty()
+        existingSeries = withContext(Dispatchers.IO) {
+            val dir = Injekt.get<StorageManager>().getLocalSourceDirectory()
+            dir?.let { ArchiveImporter.listExistingSeries(it) }.orEmpty()
+        }
     }
 
     val workInfo by produceState<WorkInfo?>(null, workId) {
@@ -225,22 +231,36 @@ fun ImportArchiveScreen(onClose: (imported: Boolean) -> Unit) {
     // ---------- carga de archivos ----------
 
     fun ingest(scan: suspend () -> ScanResult) {
+        if (isScanning || isPreparingImport || workId != null) return
         scope.launch {
             isScanning = true
-            val result = scan()
-            isScanning = false
-
-            val known = groups.flatMap { g -> g.files.map { it.file.uri } }.toSet()
-            val fresh = result.files.filter { it.uri !in known }
-            if (fresh.isEmpty()) {
-                snackbar.showSnackbar(S.NOTHING)
-                return@launch
+            try {
+                val result = scan()
+                val known = groups.flatMap { group -> group.files.map { it.file.uri } }.toSet()
+                val fresh = result.files.distinctBy { it.uri }.filter { it.uri !in known }
+                if (fresh.isEmpty()) {
+                    snackbar.showSnackbar(S.NOTHING)
+                    if (result.ignored > 0) snackbar.showSnackbar(S.ignored(result.ignored))
+                    return@launch
+                }
+                buildGroups(fresh, existingSeries).forEach { incoming ->
+                    val same = groups.firstOrNull {
+                        normalizeKey(it.displayName()) == normalizeKey(incoming.displayName())
+                    }
+                    if (same != null) {
+                        same.files.addAll(incoming.files)
+                    } else {
+                        groups.add(incoming)
+                    }
+                }
+                if (result.ignored > 0) snackbar.showSnackbar(S.ignored(result.ignored))
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                snackbar.showSnackbar(S.ERROR)
+            } finally {
+                isScanning = false
             }
-            buildGroups(fresh, existingSeries).forEach { incoming ->
-                val same = groups.firstOrNull { normalizeKey(it.displayName()) == normalizeKey(incoming.displayName()) }
-                if (same != null) same.files.addAll(incoming.files) else groups.add(incoming)
-            }
-            if (result.ignored > 0) snackbar.showSnackbar(S.ignored(result.ignored))
         }
     }
 
@@ -306,24 +326,41 @@ fun ImportArchiveScreen(onClose: (imported: Boolean) -> Unit) {
         }
     }
 
-    val canImport = groups.isNotEmpty() && !isScanning &&
+    val canImport = groups.isNotEmpty() && !isScanning && !isPreparingImport &&
         groups.all { g -> errorOf(g) == null && g.files.all { fileErrorOf(g, it) == null } }
 
     fun startImport() {
-        val plan = groups.map { g ->
+        if (!canImport || isPreparingImport || isScanning || workId != null) return
+
+        val plan = groups.map { group ->
             PlanGroup(
-                series = if (g.destination == Destination.NEW) g.title.trim() else g.existing.orEmpty(),
-                files = g.files.map { PlanFile(it.file.uri.toString(), it.finalName()) },
+                series = if (group.destination == Destination.NEW) group.title.trim() else group.existing.orEmpty(),
+                files = group.files.map { PlanFile(it.file.uri.toString(), it.finalName()) },
             )
         }.filter { it.files.isNotEmpty() }
 
+        if (plan.isEmpty()) return
+
         scope.launch {
-            val path = withContext(Dispatchers.IO) { ArchiveImporter.writePlan(context, plan) }
-            val request = OneTimeWorkRequestBuilder<ImportArchivesWorker>()
-                .setInputData(workDataOf(ImportArchivesWorker.KEY_PLAN to path))
-                .build()
-            WorkManager.getInstance(context).enqueue(request)
-            workId = request.id
+            isPreparingImport = true
+            var planPath: String? = null
+            try {
+                val path = withContext(Dispatchers.IO) { ArchiveImporter.writePlan(context, plan) }
+                planPath = path
+                val request = OneTimeWorkRequestBuilder<ImportArchivesWorker>()
+                    .setInputData(workDataOf(ImportArchivesWorker.KEY_PLAN to path))
+                    .build()
+                WorkManager.getInstance(context).enqueue(request)
+                workId = request.id
+            } catch (e: CancellationException) {
+                planPath?.let { withContext(Dispatchers.IO) { File(it).delete() } }
+                throw e
+            } catch (e: Exception) {
+                planPath?.let { withContext(Dispatchers.IO) { File(it).delete() } }
+                snackbar.showSnackbar(S.ERROR)
+            } finally {
+                isPreparingImport = false
+            }
         }
     }
 
@@ -354,6 +391,7 @@ fun ImportArchiveScreen(onClose: (imported: Boolean) -> Unit) {
                 groups = groups,
                 existingSeries = existingSeries,
                 isScanning = isScanning,
+                isPreparingImport = isPreparingImport,
                 canImport = canImport,
                 errorOf = { errorOf(it) },
                 fileErrorOf = { group, file -> fileErrorOf(group, file) },
@@ -375,6 +413,7 @@ private fun SelectionContent(
     groups: List<GroupState>,
     existingSeries: List<String>,
     isScanning: Boolean,
+    isPreparingImport: Boolean,
     canImport: Boolean,
     errorOf: (GroupState) -> String?,
     fileErrorOf: (GroupState, FileState) -> String?,
@@ -394,12 +433,20 @@ private fun SelectionContent(
     ) {
         item {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedButton(onClick = onPickFiles, modifier = Modifier.weight(1f)) {
+                OutlinedButton(
+                    onClick = onPickFiles,
+                    enabled = !isScanning && !isPreparingImport,
+                    modifier = Modifier.weight(1f),
+                ) {
                     Icon(Icons.Outlined.FileOpen, contentDescription = null)
                     Spacer(Modifier.width(8.dp))
                     Text(S.PICK_FILES)
                 }
-                OutlinedButton(onClick = onPickFolder, modifier = Modifier.weight(1f)) {
+                OutlinedButton(
+                    onClick = onPickFolder,
+                    enabled = !isScanning && !isPreparingImport,
+                    modifier = Modifier.weight(1f),
+                ) {
                     Icon(Icons.Outlined.FolderOpen, contentDescription = null)
                     Spacer(Modifier.width(8.dp))
                     Text(S.PICK_FOLDER)
@@ -452,8 +499,18 @@ private fun SelectionContent(
         }
 
         item {
-            Button(onClick = onImport, enabled = canImport, modifier = Modifier.fillMaxWidth()) {
-                Text(if (totalFiles == 0) S.IMPORT else S.importButton(totalFiles))
+            Button(
+                onClick = onImport,
+                enabled = canImport,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text(
+                    when {
+                        isPreparingImport -> S.PREPARING
+                        totalFiles == 0 -> S.IMPORT
+                        else -> S.importButton(totalFiles)
+                    },
+                )
             }
         }
     }
@@ -829,7 +886,11 @@ private fun ProgressStage(info: WorkInfo?, modifier: Modifier, onClose: (Boolean
                 if (failed < 0) {
                     Text(S.ERROR, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.error)
                 } else {
-                    Text(S.DONE, style = MaterialTheme.typography.titleMedium)
+                    Text(
+                        if (failed > 0) S.PARTIAL else S.DONE,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = if (failed > 0) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                    )
                     Text(
                         "✓ ${data?.getInt(ImportArchivesWorker.KEY_IMPORTED, 0)} importados",
                         color = MaterialTheme.colorScheme.primary,
@@ -839,7 +900,9 @@ private fun ProgressStage(info: WorkInfo?, modifier: Modifier, onClose: (Boolean
                         Text("✗ $failed con error", color = MaterialTheme.colorScheme.error)
                     }
                 }
-                Button(onClick = { onClose(true) }) { Text(S.CLOSE) }
+                Button(onClick = { onClose((data?.getInt(ImportArchivesWorker.KEY_IMPORTED, 0) ?: 0) > 0) }) {
+                    Text(S.CLOSE)
+                }
             }
         }
     }
