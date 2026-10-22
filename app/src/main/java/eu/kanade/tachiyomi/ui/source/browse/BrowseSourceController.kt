@@ -668,7 +668,7 @@ open class BrowseSourceController(bundle: Bundle) :
 
     override fun onAttach(view: View) {
         super.onAttach(view)
-        if (isLocalSource && LocalImportEvents.consumeRefresh()) resetPager()
+        if (presenter.source is LocalSource && LocalImportEvents.consumeRefresh()) resetPager()
     }
 
     private fun openSourceSettings() {
