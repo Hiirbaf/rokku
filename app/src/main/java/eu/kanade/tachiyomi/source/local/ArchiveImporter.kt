@@ -40,11 +40,15 @@ import yokai.util.lang.getString
 import java.io.File
 import java.io.InputStream
 import java.util.UUID
+import java.util.concurrent.ConcurrentHashMap
 
 /** Un archivo detectado al escanear. [folder] es la subcarpeta de origen (modo carpeta). */
 data class ImportFile(val uri: Uri, val fileName: String, val sizeBytes: Long, val folder: String? = null)
 
 data class ScanResult(val files: List<ImportFile>, val ignored: Int)
+
+/** Datos de ComicInfo.xml del archivo. Todo null = sin ComicInfo o no legible. */
+data class ArchiveMeta(val series: String?, val title: String?, val number: Float?)
 
 /** Plan de importación que la pantalla entrega al worker: serie destino + archivos. */
 data class PlanFile(val uri: String, val fileName: String)
@@ -168,8 +172,50 @@ object ArchiveImporter {
             }
         }
 
+    // ---------- ComicInfo.xml (sugerencias de serie, título y número) ----------
+
+    private val metaCache = ConcurrentHashMap<String, ArchiveMeta>()
+    private val metaSemaphore = Semaphore(2)
+
+    /** Lee ComicInfo.xml del archivo (con la misma lectura que usa LocalSource). Nunca devuelve null. */
+    suspend fun loadMeta(context: Context, file: ImportFile): ArchiveMeta {
+        val key = file.uri.toString()
+        metaCache[key]?.let { return it }
+        return metaSemaphore.withPermit {
+            withContext(Dispatchers.IO) {
+                val meta = try {
+                    readMeta(context, file)
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    Logger.w(e) { "No se pudo leer ComicInfo de ${file.fileName}" }
+                    null
+                }
+                (meta ?: ArchiveMeta(null, null, null)).also { metaCache[key] = it }
+            }
+        }
+    }
+
+    private fun readMeta(context: Context, file: ImportFile): ArchiveMeta? {
+        if (file.fileName.substringAfterLast('.', "").equals("epub", ignoreCase = true)) return null
+        val source = UniFile.fromUri(context, file.uri) ?: return null
+
+        return source.archiveReader(context).use { reader ->
+            val entry = reader.useEntries { entries ->
+                entries.find { it.isFile && it.name.substringAfterLast('/').equals("ComicInfo.xml", ignoreCase = true) }
+            } ?: return null
+            val info = reader.getInputStream(entry.name)?.use { LocalSource.decodeComicInfo(it) } ?: return null
+            ArchiveMeta(
+                series = info.series?.value?.trim()?.takeIf { it.isNotBlank() },
+                title = info.title?.value?.trim()?.takeIf { it.isNotBlank() },
+                number = info.number?.value?.toFloatOrNull(),
+            )
+        }
+    }
+
     fun clearCoverCache(context: Context) {
         File(context.cacheDir, COVER_DIR).deleteRecursively()
+        metaCache.clear()
     }
 
     private const val COVER_DIR = "import_covers"
@@ -370,9 +416,12 @@ class ImportArchivesWorker(context: Context, params: WorkerParameters) : Corouti
             Logger.e(e) { "Error al importar" }
             return Result.failure()
         } finally {
+            // NonCancellable: si el usuario cancela, un withContext normal lanzaría y no borraría el plan
             withContext(NonCancellable + Dispatchers.IO) {
                 runCatching { File(planPath).delete() }
             }
+            // Recarga la lista de la fuente local aunque la pantalla de importación ya esté cerrada
+            LocalImportEvents.notifyFinished()
         }
     }
 
