@@ -265,6 +265,12 @@ open class BrowseSourceController(bundle: Bundle) :
         binding.progress.isVisible = true
 
         presenter.restartPager()
+
+        viewScope.launch {
+            LocalImportEvents.finished.collect {
+                if (presenter.source is LocalSource && LocalImportEvents.consumeRefresh()) resetPager()
+            }
+        }
     }
 
     override fun onDestroyView(view: View) {
