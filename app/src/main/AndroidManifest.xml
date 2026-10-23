@@ -112,12 +112,27 @@
         </activity-alias>
 
         <activity-alias
-            android:name="${applicationId}.MainActivityBlue"
+            android:name="${applicationId}.MainActivityPink"
             android:targetActivity=".ui.main.MainActivity"
             android:enabled="false"
             android:label="@string/app_name"
-            android:icon="@mipmap/ic_launcher_blue"
-            android:roundIcon="@mipmap/ic_launcher_round_blue"
+            android:icon="@mipmap/ic_launcher_pink"
+            android:roundIcon="@mipmap/ic_launcher_round_pink"
+            android:exported="true">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="${applicationId}.MainActivityRed"
+            android:targetActivity=".ui.main.MainActivity"
+            android:enabled="false"
+            android:label="@string/app_name"
+            android:icon="@mipmap/ic_launcher_red"
+            android:roundIcon="@mipmap/ic_launcher_round_red"
             android:exported="true">
 
             <intent-filter>
@@ -142,12 +157,72 @@
         </activity-alias>
 
         <activity-alias
-            android:name="${applicationId}.MainActivityGray"
+            android:name="${applicationId}.MainActivityGold"
             android:targetActivity=".ui.main.MainActivity"
             android:enabled="false"
             android:label="@string/app_name"
-            android:icon="@mipmap/ic_launcher_gray"
-            android:roundIcon="@mipmap/ic_launcher_round_gray"
+            android:icon="@mipmap/ic_launcher_gold"
+            android:roundIcon="@mipmap/ic_launcher_round_gold"
+            android:exported="true">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="${applicationId}.MainActivityTeal"
+            android:targetActivity=".ui.main.MainActivity"
+            android:enabled="false"
+            android:label="@string/app_name"
+            android:icon="@mipmap/ic_launcher_teal"
+            android:roundIcon="@mipmap/ic_launcher_round_teal"
+            android:exported="true">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="${applicationId}.MainActivityPurple"
+            android:targetActivity=".ui.main.MainActivity"
+            android:enabled="false"
+            android:label="@string/app_name"
+            android:icon="@mipmap/ic_launcher_purple"
+            android:roundIcon="@mipmap/ic_launcher_round_purple"
+            android:exported="true">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="${applicationId}.MainActivityLilac"
+            android:targetActivity=".ui.main.MainActivity"
+            android:enabled="false"
+            android:label="@string/app_name"
+            android:icon="@mipmap/ic_launcher_lilac"
+            android:roundIcon="@mipmap/ic_launcher_round_lilac"
+            android:exported="true">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name="${applicationId}.MainActivityWhite"
+            android:targetActivity=".ui.main.MainActivity"
+            android:enabled="false"
+            android:label="@string/app_name"
+            android:icon="@mipmap/ic_launcher_white"
+            android:roundIcon="@mipmap/ic_launcher_round_white"
             android:exported="true">
 
             <intent-filter>

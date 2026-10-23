@@ -57,11 +57,18 @@ class BasePreferences(private val preferenceStore: PreferenceStore) {
 
     fun appIcon() = preferenceStore.getEnum("pref_app_icon", AppIcons.DEFAULT)
 
-    enum class AppIcons(val displayName: String, val id: String, val icon: Int) {
-        DEFAULT("Default", "${BuildConfig.APPLICATION_ID}.MainActivityDefault", R.mipmap.ic_launcher_round),
-        BLUE("Blue", "${BuildConfig.APPLICATION_ID}.MainActivityBlue", R.mipmap.ic_launcher_round_blue),
-        ORANGE("Orange", "${BuildConfig.APPLICATION_ID}.MainActivityOrange", R.mipmap.ic_launcher_round_orange),
-        GRAY("Gray", "${BuildConfig.APPLICATION_ID}.MainActivityGray", R.mipmap.ic_launcher_round_gray),
-        CLASSIC("Classic", "${BuildConfig.APPLICATION_ID}.MainActivityClassic", R.mipmap.ic_launcher_round_classic),
+    fun appIconFollowsTheme() = preferenceStore.getBoolean("pref_app_icon_follows_theme", false)
+
+    enum class AppIcons(val nameRes: StringResource, val id: String, val icon: Int) {
+        DEFAULT(MR.strings.app_icon_default, "${BuildConfig.APPLICATION_ID}.MainActivityDefault", R.mipmap.ic_launcher_round),
+        PINK(MR.strings.app_icon_pink, "${BuildConfig.APPLICATION_ID}.MainActivityPink", R.mipmap.ic_launcher_round_pink),
+        RED(MR.strings.app_icon_red, "${BuildConfig.APPLICATION_ID}.MainActivityRed", R.mipmap.ic_launcher_round_red),
+        ORANGE(MR.strings.app_icon_orange, "${BuildConfig.APPLICATION_ID}.MainActivityOrange", R.mipmap.ic_launcher_round_orange),
+        GOLD(MR.strings.app_icon_gold, "${BuildConfig.APPLICATION_ID}.MainActivityGold", R.mipmap.ic_launcher_round_gold),
+        TEAL(MR.strings.app_icon_teal, "${BuildConfig.APPLICATION_ID}.MainActivityTeal", R.mipmap.ic_launcher_round_teal),
+        PURPLE(MR.strings.app_icon_purple, "${BuildConfig.APPLICATION_ID}.MainActivityPurple", R.mipmap.ic_launcher_round_purple),
+        LILAC(MR.strings.app_icon_lilac, "${BuildConfig.APPLICATION_ID}.MainActivityLilac", R.mipmap.ic_launcher_round_lilac),
+        WHITE(MR.strings.app_icon_white, "${BuildConfig.APPLICATION_ID}.MainActivityWhite", R.mipmap.ic_launcher_round_white),
+        CLASSIC(MR.strings.app_icon_classic, "${BuildConfig.APPLICATION_ID}.MainActivityClassic", R.mipmap.ic_launcher_round_classic),
     }
 }
