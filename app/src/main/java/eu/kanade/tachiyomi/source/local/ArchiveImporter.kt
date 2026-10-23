@@ -22,6 +22,7 @@ import eu.kanade.tachiyomi.util.lang.compareToCaseInsensitiveNaturalOrder
 import eu.kanade.tachiyomi.util.system.ImageUtil
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.sync.Semaphore
@@ -210,6 +211,8 @@ object ArchiveImporter {
         }
         val planDir = File(context.filesDir, PLAN_DIR)
         check(planDir.exists() || planDir.mkdirs()) { "No se pudo crear el directorio de planes de importación" }
+        val cutoff = System.currentTimeMillis() - 24 * 60 * 60 * 1000L
+        planDir.listFiles()?.forEach { if (it.lastModified() < cutoff) it.delete() }
         val file = File(planDir, "import_plan_${UUID.randomUUID()}.json")
         file.writeText(json.toString())
         return file.absolutePath
@@ -367,7 +370,7 @@ class ImportArchivesWorker(context: Context, params: WorkerParameters) : Corouti
             Logger.e(e) { "Error al importar" }
             return Result.failure()
         } finally {
-            withContext(Dispatchers.IO) {
+            withContext(NonCancellable + Dispatchers.IO) {
                 runCatching { File(planPath).delete() }
             }
         }
