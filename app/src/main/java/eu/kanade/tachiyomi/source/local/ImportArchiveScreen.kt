@@ -3,7 +3,6 @@
 package eu.kanade.tachiyomi.source.local
 
 import android.text.format.Formatter
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -35,6 +34,7 @@ import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -80,10 +80,14 @@ import eu.kanade.tachiyomi.ui.base.controller.BaseComposeController
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
+import yokai.domain.chapter.services.ChapterRecognition
 import yokai.domain.storage.StorageManager
 import java.io.File
 import java.util.UUID
@@ -116,8 +120,18 @@ object LocalImportEvents {
     @Volatile
     private var pending = false
 
+    private val _finished = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+
+    /** Se emite cuando termina una importación (el worker), esté o no abierta la pantalla. */
+    val finished: SharedFlow<Unit> = _finished.asSharedFlow()
+
     fun markPending() {
         pending = true
+    }
+
+    fun notifyFinished() {
+        pending = true
+        _finished.tryEmit(Unit)
     }
 
     fun consumeRefresh(): Boolean = pending.also { pending = false }
@@ -148,6 +162,8 @@ private object S {
     const val IMPORT = "Importar"
     const val HIDE_CHAPTERS = "Ocultar capítulos"
     const val CHECK_TITLES = "Hay títulos de capítulo por corregir"
+    const val USE = "Usar"
+    const val NO_NUMBER = "No se detecta el número de capítulo; el orden puede salir mal"
     const val IMPORTING = "Importando archivos…"
     const val PARTIAL = "Importación completada con errores"
     const val PREPARING = "Preparando importación…"
@@ -160,6 +176,8 @@ private object S {
     fun filesCount(n: Int) = if (n == 1) "1 archivo" else "$n archivos"
     fun groupsHeader(n: Int) = "Cómics detectados ($n)"
     fun showChapters(n: Int) = "Mostrar capítulos ($n)"
+    fun comicInfo(text: String) = "ComicInfo: $text"
+    fun detected(n: String) = "Capítulo detectado: $n"
     fun moveTo(label: String) = "Mover a $label"
     fun ignored(n: Int) = "$n archivo(s) ignorados (formato no soportado)"
     fun importButton(n: Int) = "Importar ${filesCount(n)}"
@@ -198,6 +216,9 @@ private class GroupState(val id: String, title: String, files: List<ImportFile>)
     var destination by mutableStateOf(Destination.NEW)
     var existing by mutableStateOf<String?>(null)
     var expanded by mutableStateOf(false)
+    var titleEdited by mutableStateOf(false)
+    var metaApplied by mutableStateOf(false)
+    var allowMetaTitle by mutableStateOf(true) // false si el nombre viene de una carpeta elegida por el usuario
     val files = mutableStateListOf<FileState>().also { list -> list.addAll(files.map { FileState(it) }) }
 
     fun displayName() = when (destination) {
@@ -219,9 +240,6 @@ fun ImportArchiveScreen(onClose: (imported: Boolean) -> Unit) {
     var workId by remember { mutableStateOf<UUID?>(null) }
 
     LaunchedEffect(Unit) {
-        // TEMPORAL
-        val pendientes = File(context.filesDir, "import_plans").list()?.size ?: 0
-        Toast.makeText(context, "planes: $pendientes", Toast.LENGTH_LONG).show()
         existingSeries = withContext(Dispatchers.IO) {
             val dir = Injekt.get<StorageManager>().getLocalSourceDirectory()
             dir?.let { ArchiveImporter.listExistingSeries(it) }.orEmpty()
@@ -540,7 +558,24 @@ private fun GroupCard(
     var showExistingDialog by remember { mutableStateOf(false) }
     val totalSize = group.files.sumOf { it.file.sizeBytes.coerceAtLeast(0L) }
 
-    Card(shape = RoundedCornerShape(12.dp)) {
+    // Serie sugerida por ComicInfo.xml del primer archivo (una vez, y solo si el usuario no tocó el nombre)
+    val firstFile = group.files.firstOrNull()?.file
+    LaunchedEffect(firstFile?.uri) {
+        if (firstFile == null || group.metaApplied || !group.allowMetaTitle || group.titleEdited) return@LaunchedEffect
+        val series = ArchiveImporter.loadMeta(context, firstFile).series
+        group.metaApplied = true
+        if (series == null || group.titleEdited) return@LaunchedEffect
+        group.title = series
+        existingSeries.firstOrNull { normalizeKey(it) == normalizeKey(series) }?.let {
+            group.destination = Destination.EXISTING
+            group.existing = it
+        }
+    }
+
+    Card(
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -562,7 +597,10 @@ private fun GroupCard(
                         Destination.NEW -> OutlinedTextField(
                             colors = legacyFieldColors(),
                             value = group.title,
-                            onValueChange = { group.title = it },
+                            onValueChange = {
+                                group.title = it
+                                group.titleEdited = true
+                            },
                             modifier = Modifier.fillMaxWidth(),
                             label = { Text(S.COMIC_NAME) },
                             singleLine = true,
@@ -650,6 +688,7 @@ private fun GroupCard(
                     HorizontalDivider()
                     FileRow(
                         state = state,
+                        seriesTitle = group.displayName(),
                         error = fileErrorOf(state),
                         otherGroups = otherGroups,
                         onMoveFile = { to -> onMoveFile(state, to) },
@@ -676,6 +715,7 @@ private fun GroupCard(
 @Composable
 private fun FileRow(
     state: FileState,
+    seriesTitle: String,
     error: String?,
     otherGroups: List<GroupState>,
     onMoveFile: (GroupState?) -> Unit,
@@ -685,6 +725,7 @@ private fun FileRow(
     var moveMenuExpanded by remember(state) { mutableStateOf(false) }
 
     val file = state.file
+    val meta by produceState<ArchiveMeta?>(null, file.uri) { value = ArchiveImporter.loadMeta(context, file) }
     val format = state.extension.uppercase()
     val label = if (file.sizeBytes >= 0) {
         "$format • ${Formatter.formatShortFileSize(context, file.sizeBytes)}"
@@ -719,6 +760,35 @@ private fun FileRow(
                     null
                 },
             )
+
+            // ComicInfo.xml: lo que LocalSource mostrará; si no hay, el número que detectará del título
+            meta?.let { m ->
+                if (m.title != null || m.number != null) {
+                    val suggested = suggestedTitle(m)
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = S.comicInfo(describeMeta(m)),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.weight(1f),
+                        )
+                        if (suggested != null && suggested != state.title.trim()) {
+                            TextButton(onClick = { state.title = suggested }) { Text(S.USE) }
+                        }
+                    }
+                } else {
+                    val number = ChapterRecognition.parseChapterNumber(state.title, seriesTitle, -1f)
+                    Text(
+                        text = if (number >= 0f) S.detected(formatChapterNumber(number)) else S.NO_NUMBER,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = if (number >= 0f) {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        } else {
+                            MaterialTheme.colorScheme.error
+                        },
+                    )
+                }
+            }
 
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
@@ -795,7 +865,7 @@ private fun CoverThumbnail(file: ImportFile?, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(8.dp))
-            .background(MaterialTheme.colorScheme.surfaceVariant),
+            .background(MaterialTheme.colorScheme.surface),
         contentAlignment = Alignment.Center,
     ) {
         val image = cover
@@ -913,6 +983,23 @@ private fun ProgressStage(info: WorkInfo?, modifier: Modifier, onClose: (Boolean
     }
 }
 
+// ---------- ComicInfo ----------
+
+private fun formatChapterNumber(n: Float) = if (n % 1f == 0f) n.toInt().toString() else n.toString()
+
+private fun describeMeta(m: ArchiveMeta): String =
+    listOfNotNull(m.number?.let { "Cap. ${formatChapterNumber(it)}" }, m.title).joinToString(" • ")
+
+/** Nombre de archivo sugerido: conserva el número en el nombre aunque LocalSource use el título de ComicInfo. */
+private fun suggestedTitle(m: ArchiveMeta): String? {
+    val number = m.number?.let { formatChapterNumber(it) }
+    return when {
+        number != null && m.title != null -> "Cap. $number - ${m.title}"
+        number != null -> "Cap. $number"
+        else -> m.title
+    }
+}
+
 // ---------- agrupación por nombre de archivo ----------
 
 private val BRACKETS_REGEX = Regex("""\[[^]]*]|\([^)]*\)""")
@@ -942,15 +1029,18 @@ private fun normalizeKey(raw: String) = raw.lowercase().replace(NON_WORD_REGEX, 
 private fun buildGroups(files: List<ImportFile>, existing: List<String>): List<GroupState> {
     val byKey = LinkedHashMap<String, MutableList<ImportFile>>()
     val titles = HashMap<String, String>()
+    val folderKeys = HashSet<String>()
     files.forEach { file ->
         val title = file.folder ?: titleFromFileName(file.fileName)
         val key = normalizeKey(title)
+        if (file.folder != null) folderKeys.add(key)
         byKey.getOrPut(key) { mutableListOf() }.add(file)
         titles.putIfAbsent(key, title)
     }
     val existingByKey = existing.associateBy { normalizeKey(it) }
     return byKey.map { (key, list) ->
         GroupState(UUID.randomUUID().toString(), titles.getValue(key), list.sortedBy { it.fileName.lowercase() }).also { g ->
+            g.allowMetaTitle = key !in folderKeys
             existingByKey[key]?.let {
                 g.destination = Destination.EXISTING
                 g.existing = it
