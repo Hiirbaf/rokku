@@ -3,6 +3,7 @@
 package eu.kanade.tachiyomi.source.local
 
 import android.text.format.Formatter
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -218,6 +219,9 @@ fun ImportArchiveScreen(onClose: (imported: Boolean) -> Unit) {
     var workId by remember { mutableStateOf<UUID?>(null) }
 
     LaunchedEffect(Unit) {
+        // TEMPORAL
+        val pendientes = File(context.filesDir, "import_plans").list()?.size ?: 0
+        Toast.makeText(context, "planes: $pendientes", Toast.LENGTH_LONG).show()
         existingSeries = withContext(Dispatchers.IO) {
             val dir = Injekt.get<StorageManager>().getLocalSourceDirectory()
             dir?.let { ArchiveImporter.listExistingSeries(it) }.orEmpty()
