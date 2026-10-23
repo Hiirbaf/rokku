@@ -36,6 +36,7 @@ import androidx.appcompat.view.menu.ActionMenuItemView
 import androidx.appcompat.view.menu.MenuItemImpl
 import androidx.appcompat.widget.ActionMenuView
 import androidx.appcompat.widget.Toolbar
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
 import androidx.core.animation.doOnEnd
 import androidx.core.content.getSystemService
@@ -123,6 +124,7 @@ import eu.kanade.tachiyomi.util.system.launchUI
 import eu.kanade.tachiyomi.util.system.materialAlertDialog
 import eu.kanade.tachiyomi.util.system.prepareSideNavContext
 import eu.kanade.tachiyomi.util.system.rootWindowInsetsCompat
+import eu.kanade.tachiyomi.util.system.syncAppIconWithTheme
 import eu.kanade.tachiyomi.util.system.toast
 import eu.kanade.tachiyomi.util.system.tryTakePersistableUriPermission
 import eu.kanade.tachiyomi.util.system.withUIContext
@@ -163,6 +165,7 @@ import yokai.presentation.settings.screen.about.awaitNewUpdateDialog
 import yokai.presentation.theme.YokaiTheme
 import yokai.util.lang.getString
 import kotlin.collections.set
+import kotlin.coroutines.resume
 import kotlin.math.abs
 import kotlin.math.min
 import kotlin.math.roundToLong
@@ -1035,6 +1038,7 @@ open class MainActivity : BaseActivity<MainActivityBinding>() {
         lifecycleScope.launchIO {
             extensionManager.getExtensionUpdates(false)
         }
+        lifecycleScope.launchIO { syncAppIconWithTheme(preferences, basePreferences) }
         setExtensionsBadge()
         showDLQueueTutorial()
         reEnableBackPressedCallBack()
@@ -1090,18 +1094,28 @@ open class MainActivity : BaseActivity<MainActivityBinding>() {
     private val dialogHostState = DialogHostState()
     private var isDialogHostAttached = false
 
-    private fun showNewUpdateDialog(data: NewUpdateData) {
+    private fun attachDialogHost() {
         // Compose is only set up once there is a dialog to show, to keep it out of the app's startup
-        if (!isDialogHostAttached) {
-            isDialogHostAttached = true
-            addContentView(
-                ComposeView(this).apply {
-                    setContent { YokaiTheme { dialogHostState.value?.invoke() } }
-                },
-                ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT),
-            )
-        }
+        if (isDialogHostAttached) return
+        isDialogHostAttached = true
+        addContentView(
+            ComposeView(this).apply {
+                setContent { YokaiTheme { dialogHostState.value?.invoke() } }
+            },
+            ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT),
+        )
+    }
+
+    private fun showNewUpdateDialog(data: NewUpdateData) {
+        attachDialogHost()
         lifecycleScope.launch { dialogHostState.awaitNewUpdateDialog(data) }
+    }
+
+    fun showComposeDialog(content: @Composable (dismiss: () -> Unit) -> Unit) {
+        attachDialogHost()
+        lifecycleScope.launch {
+            dialogHostState.dialog<Unit> { cont -> content { cont.resume(Unit) } }
+        }
     }
 
     private fun checkForAppUpdates() {

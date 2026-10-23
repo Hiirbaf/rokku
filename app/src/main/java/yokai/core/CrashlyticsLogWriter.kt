@@ -177,6 +177,20 @@ class CrashlyticsLogWriter : LogWriter() {
      * through the WebView ("Open in WebView to set necessary cookies."), and the system WebView's
      * render process being killed by the OS ("WebView render process was killed", raised from
      * the extension's WebViewClient.onRenderProcessGone).
+     *
+     * Also skips an extension's own HTTP client giving up on a 5xx answer from its site (a plain
+     * `Exception("HTTP error 503")`, same category as "Chapter pages failed: HTTP 5xx"), an
+     * extension asking the user to open the chapter in the WebView ("Could not load images. Open
+     * in WebView and try again.", same category as "Locked chapter, unlock in WebView."), an
+     * extension finding no manga catalog on its site ("Manga catalog not found"), and the Hikka
+     * tracker being used while logged out ("Hikka: You are not authorized" - the tracking sheet
+     * already shows that message to the user in its empty view).
+     *
+     * Also skips an extension's captcha handling giving up: the site's challenge failing inside
+     * the WebView ("Captcha Failed! Challenge failed in this browser (code: 300010)") and a
+     * challenge that needs the user's input while the app is in the background ("Captcha needs
+     * interaction, but the app isn't in the foreground") - same category as the captcha
+     * messages above, the user solves it in the WebView.
      */
     internal fun Throwable.isIgnoredForCrashlytics(): Boolean {
         var current: Throwable? = this
@@ -290,6 +304,9 @@ class CrashlyticsLogWriter : LogWriter() {
                 current.message == "Refresh manga" ||
                 current.message == "Chapter encryption unavailable" ||
                 current.message == "Set Tachidesk server url in extension settings" ||
+                current.message == "Hikka: You are not authorized" ||
+                current.message == "Could not load images. Open in WebView and try again." ||
+                current.message == "Manga catalog not found" ||
                 // The full message is "<prefix>: <raw SQL query> - Can't find FULLTEXT index ...".
                 current.message?.endsWith("Can't find FULLTEXT index matching the column list") == true ||
                 // Extensions phrase this differently (e.g. "Refresh the chapter list."); match loosely.
@@ -310,7 +327,10 @@ class CrashlyticsLogWriter : LogWriter() {
             if (current.message?.startsWith("Open in WebView to solve the captcha") == true) return true
             if (current.message?.startsWith("Open in WebView to pass the site's verification") == true) return true
             if (current.message?.startsWith("Couldn't solve the site's captcha") == true) return true
+            if (current.message?.startsWith("Captcha Failed! Challenge failed in this browser") == true) return true
+            if (current.message == "Captcha needs interaction, but the app isn't in the foreground") return true
             if (current.message?.matches(EXTENSION_PAGE_HTTP_FAILURE) == true) return true
+            if (current.message?.matches(EXTENSION_SERVER_ERROR) == true) return true
             if (current.message?.startsWith("User does not have the license of requested content") == true) return true
             if (current.message?.startsWith("Username or password cannot be empty") == true) return true
             if (current.message?.startsWith("Open in WebView to set necessary cookies") == true) return true
@@ -335,5 +355,6 @@ class CrashlyticsLogWriter : LogWriter() {
 
         /** Matches "Chapter page 2 failed: HTTP 521", raised by an extension for a single page request. */
         val EXTENSION_PAGE_HTTP_FAILURE = Regex("""Chapter page \d+ failed: HTTP \d{3}\b.*""")
+        val EXTENSION_SERVER_ERROR = Regex("""HTTP error 5\d{2}""")
     }
 }

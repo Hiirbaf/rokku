@@ -16,9 +16,12 @@ import eu.kanade.tachiyomi.ui.setting.defaultValue
 import eu.kanade.tachiyomi.ui.setting.infoPreference
 import eu.kanade.tachiyomi.ui.setting.intListPreference
 import eu.kanade.tachiyomi.ui.setting.onChange
+import eu.kanade.tachiyomi.ui.setting.onClick
+import eu.kanade.tachiyomi.ui.setting.preference
 import eu.kanade.tachiyomi.ui.setting.preferenceCategory
 import eu.kanade.tachiyomi.ui.setting.switchPreference
 import eu.kanade.tachiyomi.ui.setting.themePreference
+import eu.kanade.tachiyomi.util.lang.addBetaTag
 import eu.kanade.tachiyomi.util.system.SideNavMode
 import eu.kanade.tachiyomi.util.system.appDelegateNightMode
 import eu.kanade.tachiyomi.util.system.coverThemeOptions
@@ -26,11 +29,14 @@ import eu.kanade.tachiyomi.util.system.dpToPx
 import eu.kanade.tachiyomi.util.system.getPrefTheme
 import eu.kanade.tachiyomi.util.system.isInNightMode
 import eu.kanade.tachiyomi.util.system.labelRes
+import eu.kanade.tachiyomi.util.system.matchingAppIcon
+import eu.kanade.tachiyomi.util.system.setAppIcon
 import eu.kanade.tachiyomi.util.view.activityBinding
 import eu.kanade.tachiyomi.util.view.moveRecyclerViewUp
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import yokai.i18n.MR
+import yokai.presentation.settings.AppIconDialog
 import yokai.util.lang.getString
 import kotlin.math.max
 import eu.kanade.tachiyomi.data.preference.PreferenceKeys as Keys
@@ -110,6 +116,12 @@ class SettingsAppearanceController : SettingsLegacyController() {
                     (activity as? MainActivity)?.recreateFully() ?: activity?.recreate()
                     true
                 }
+            }
+
+            preference {
+                title = context.getString(MR.strings.app_icon).addBetaTag(context)
+                basePreferences.appIcon().changesIn(viewScope) { summary = context.getString(it.nameRes) }
+                onClick { showAppIconDialog() }
             }
         }
 
@@ -235,5 +247,22 @@ class SettingsAppearanceController : SettingsLegacyController() {
         lastThemeXDark = savedViewState.getInt(::lastThemeXDark.name)
         themePreference?.lastScrollPostionLight = lastThemeXLight
         themePreference?.lastScrollPostionDark = lastThemeXDark
+    }
+
+    private fun showAppIconDialog() {
+        val mainActivity = activity as? MainActivity ?: return
+        mainActivity.showComposeDialog { dismiss ->
+            AppIconDialog(
+                selected = basePreferences.appIcon().get(),
+                followsTheme = basePreferences.appIconFollowsTheme().get(),
+                themeIcon = mainActivity.getPrefTheme(preferences).matchingAppIcon(),
+                onApply = { icon, follows ->
+                    basePreferences.appIconFollowsTheme().set(follows)
+                    if (icon != basePreferences.appIcon().get()) mainActivity.setAppIcon(basePreferences, icon)
+                    dismiss()
+                },
+                onDismiss = dismiss,
+            )
+        }
     }
 }

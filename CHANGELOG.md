@@ -22,6 +22,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Added a "Preload only on Wi-Fi" option in the reader settings that, on a metered connection such as mobile data, loads only the page you're reading instead of preloading the next pages (off by default)
 - Added a "Predict next release time" option to Settings > Library > Smart update (renamed from "Skip updating titles", with its options reworded to match Mihon), which predicts when each series gets its next chapter from its past release dates and skips it in automatic library updates until then (off by default, manual updates always check). A new hourglass button on the manga details screen, available for every series in the library, shows the prediction
 - Added a copy button and text selection to the crash screen, so the error can be pasted into a report
+- Added an app icon color picker (beta) under Settings > Appearance > App icon, with a preview, ten predefined colors and an option to make the icon follow the selected app theme. The old Blue and Gray icons were removed
 - Added a website button next to GitHub in the About screen
 
 ### Changes
