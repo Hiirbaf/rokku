@@ -210,6 +210,14 @@ class CrashlyticsLogWriterTest {
         ignored(Exception("Hikka: Auth token info failed")) shouldBe false
     }
 
+    @Test
+    fun `extension captcha failures are ignored`() {
+        ignored(Exception("Captcha Failed! Challenge failed in this browser (code: 300010)")) shouldBe true
+        ignored(IllegalStateException("Captcha needs interaction, but the app isn't in the foreground")) shouldBe true
+        ignored(IllegalStateException("Captcha needs interaction")) shouldBe false
+        ignored(Exception("Captcha Failed! Unexpected response")) shouldBe false
+    }
+
     // Same simple name as libarchive's exception, which the filter matches by name.
     private class ArchiveException(message: String) : Exception(message)
 

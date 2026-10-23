@@ -185,6 +185,12 @@ class CrashlyticsLogWriter : LogWriter() {
      * extension finding no manga catalog on its site ("Manga catalog not found"), and the Hikka
      * tracker being used while logged out ("Hikka: You are not authorized" - the tracking sheet
      * already shows that message to the user in its empty view).
+     *
+     * Also skips an extension's captcha handling giving up: the site's challenge failing inside
+     * the WebView ("Captcha Failed! Challenge failed in this browser (code: 300010)") and a
+     * challenge that needs the user's input while the app is in the background ("Captcha needs
+     * interaction, but the app isn't in the foreground") - same category as the captcha
+     * messages above, the user solves it in the WebView.
      */
     internal fun Throwable.isIgnoredForCrashlytics(): Boolean {
         var current: Throwable? = this
@@ -321,6 +327,8 @@ class CrashlyticsLogWriter : LogWriter() {
             if (current.message?.startsWith("Open in WebView to solve the captcha") == true) return true
             if (current.message?.startsWith("Open in WebView to pass the site's verification") == true) return true
             if (current.message?.startsWith("Couldn't solve the site's captcha") == true) return true
+            if (current.message?.startsWith("Captcha Failed! Challenge failed in this browser") == true) return true
+            if (current.message == "Captcha needs interaction, but the app isn't in the foreground") return true
             if (current.message?.matches(EXTENSION_PAGE_HTTP_FAILURE) == true) return true
             if (current.message?.matches(EXTENSION_SERVER_ERROR) == true) return true
             if (current.message?.startsWith("User does not have the license of requested content") == true) return true
