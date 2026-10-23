@@ -78,6 +78,7 @@ import coil3.compose.AsyncImage
 import eu.kanade.tachiyomi.ui.base.controller.BaseComposeController
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import uy.kohesive.injekt.Injekt
@@ -353,7 +354,7 @@ fun ImportArchiveScreen(onClose: (imported: Boolean) -> Unit) {
                 WorkManager.getInstance(context).enqueue(request)
                 workId = request.id
             } catch (e: CancellationException) {
-                planPath?.let { withContext(Dispatchers.IO) { File(it).delete() } }
+                planPath?.let { withContext(NonCancellable + Dispatchers.IO) { File(it).delete() } }
                 throw e
             } catch (e: Exception) {
                 planPath?.let { withContext(Dispatchers.IO) { File(it).delete() } }
