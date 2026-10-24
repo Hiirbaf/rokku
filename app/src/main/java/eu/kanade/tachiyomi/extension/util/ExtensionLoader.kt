@@ -36,9 +36,6 @@ internal object ExtensionLoader {
 
     private val preferences: PreferencesHelper by injectLazy()
     private val trustExtension: TrustExtension by injectLazy()
-    private val loadNsfwSource by lazy {
-        preferences.showNsfwSources().get()
-    }
 
     private const val EXTENSION_FEATURE = "tachiyomi.extension"
     private const val METADATA_SOURCE_CLASS = "tachiyomi.extension.class"
@@ -332,10 +329,6 @@ internal object ExtensionLoader {
             contentWarning == 1 -> ContentWarning.MIXED
             metaData.getInt(METADATA_NSFW) == 1 -> ContentWarning.NSFW
             else -> ContentWarning.SAFE
-        }
-        if (!loadNsfwSource && warning != ContentWarning.SAFE) {
-            Logger.w { "NSFW extension $pkgName not allowed" }
-            return LoadResult.Error
         }
 
         val hasReadme = metaData.getInt(METADATA_HAS_README, 0) == 1
