@@ -170,7 +170,7 @@ class ExtensionBottomPresenter : BaseMigrationPresenter<ExtensionBottomSheet>() 
             )
         val untrustedSorted = untrusted.sortedBy { it.name }
         val availableSorted = available
-        // Filter out already installed extensions, disabled languages and disallowed content warnings
+            // Filter out already installed extensions, disabled languages and disallowed content warnings
             .filter { avail ->
                 installed.none { it.pkgName == avail.pkgName } &&
                     untrusted.none { it.pkgName == avail.pkgName } &&
