@@ -136,7 +136,6 @@ class ExtensionHolder(view: View, val adapter: ExtensionAdapter) :
             if (isPrivate) context.getString(MR.strings.ext_installer_private) else null,
             secondaryColor,
         )
-        binding.warning.isVisible = statusRes != null || warning != null || isPrivate
         binding.installProgress.progress = item.sessionProgress ?: 0
         binding.installProgress.isVisible = item.sessionProgress != null
         binding.cancelButton.isVisible = item.sessionProgress != null
