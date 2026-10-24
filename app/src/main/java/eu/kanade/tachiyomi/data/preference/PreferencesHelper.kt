@@ -471,6 +471,11 @@ class PreferencesHelper(val context: Context, val preferenceStore: PreferenceSto
     // TODO: SourcePref
     fun showNsfwSources() = preferenceStore.getBoolean(Keys.showNsfwSource, true)
 
+    fun enabledContentWarnings() = preferenceStore.getEnumSet(
+        "enabled_content_warnings",
+        ContentWarning.entries.toSet(),
+    )
+
     fun themeMangaDetails() = preferenceStore.getBoolean(Keys.themeMangaDetails, true)
     fun themeMangaDetailsBackground() = preferenceStore.getBoolean(Keys.themeMangaDetailsBackground, false)
     fun groupedChapterCards() = preferenceStore.getBoolean(Keys.groupedChapterCards, false)
