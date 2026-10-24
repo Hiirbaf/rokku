@@ -470,7 +470,6 @@ class PreferencesHelper(val context: Context, val preferenceStore: PreferenceSto
     fun sideNavIconAlignment() = preferenceStore.getInt(Keys.sideNavIconAlignment, 1)
 
     // TODO: SourcePref
-    fun showNsfwSources() = preferenceStore.getBoolean(Keys.showNsfwSource, true)
 
     fun enabledContentWarnings() = preferenceStore.getStringSet(
         "enabled_content_warnings",
