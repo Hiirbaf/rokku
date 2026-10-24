@@ -365,8 +365,6 @@
     <string name="installed_">Installed %1$s</string>
     <string name="unofficial">Unofficial</string>
     <string name="extensions_miui_warning">MIUI Optimization must be disabled to install extensions.</string>
-    <string name="may_contain_nsfw">May contain NSFW (18+) content</string>
-    <string name="may_contain_mixed">May contain both safe and 18+ content</string>
     <string name="app_info">App info</string>
     <string name="_must_be_enabled_first">%1$s must be enabled first</string>
     <string name="could_not_install_extension">Could not install extension</string>
