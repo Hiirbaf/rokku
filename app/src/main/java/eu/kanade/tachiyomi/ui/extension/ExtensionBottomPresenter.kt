@@ -128,7 +128,8 @@ class ExtensionBottomPresenter : BaseMigrationPresenter<ExtensionBottomSheet>() 
     private fun toItems(tuple: ExtensionTuple): List<ExtensionItem> {
         val context = view?.context ?: return emptyList()
         val activeLangs = preferences.enabledLanguages().get()
-        val showNsfwSources = preferences.showNsfwSources().get()
+        val activeLangs = preferences.enabledLanguages().get()
+        val enabledContentWarnings = preferences.enabledContentWarnings().get()
 
         val (installed, untrusted, available) = tuple
 
@@ -143,10 +144,10 @@ class ExtensionBottomPresenter : BaseMigrationPresenter<ExtensionBottomSheet>() 
             firstLoad = false
         }
 
-        val updatesSorted = installed.filter { it.hasUpdate && (showNsfwSources || !it.isNsfw) }.sortedBy { it.name }
+        val updatesSorted = installed.filter { it.hasUpdate }.sortedBy { it.name }
         val sortOrder = InstalledExtensionsOrder.fromPreference(preferences)
         val installedSorted = installed
-            .filter { !it.hasUpdate && (showNsfwSources || !it.isNsfw) }
+            .filter { !it.hasUpdate }
             .sortedWith(
                 compareBy(
                     { !it.isObsolete },
@@ -170,12 +171,12 @@ class ExtensionBottomPresenter : BaseMigrationPresenter<ExtensionBottomSheet>() 
             )
         val untrustedSorted = untrusted.sortedBy { it.name }
         val availableSorted = available
-            // Filter out already installed extensions and disabled languages
+        // Filter out already installed extensions, disabled languages and disallowed content warnings
             .filter { avail ->
                 installed.none { it.pkgName == avail.pkgName } &&
                     untrusted.none { it.pkgName == avail.pkgName } &&
                     (avail.lang in activeLangs) &&
-                    (showNsfwSources || !avail.isNsfw)
+                    avail.contentWarning.name in enabledContentWarnings
             }
             .sortedBy { it.name }
 
