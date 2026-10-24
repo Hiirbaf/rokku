@@ -16,6 +16,7 @@ import coil3.size.SizeResolver
 import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.data.coil.CoverViewTarget
 import eu.kanade.tachiyomi.databinding.ExtensionCardItemBinding
+import eu.kanade.tachiyomi.extension.model.ContentWarning
 import eu.kanade.tachiyomi.extension.model.Extension
 import eu.kanade.tachiyomi.extension.model.InstallStep
 import eu.kanade.tachiyomi.extension.model.InstalledExtensionsOrder
@@ -29,7 +30,6 @@ import eu.kanade.tachiyomi.util.view.resetStrokeColor
 import eu.kanade.tachiyomi.util.view.setText
 import yokai.i18n.MR
 import yokai.util.lang.getString
-import java.util.*
 import android.R as AR
 
 class ExtensionHolder(view: View, val adapter: ExtensionAdapter) :
@@ -112,10 +112,31 @@ class ExtensionHolder(view: View, val adapter: ExtensionAdapter) :
 
         binding.version.text = infoText.joinToString(" • ")
         binding.lang.text = LocaleHelper.getLocalizedDisplayName(extension.lang)
-        binding.warning.text = when {
-            extension.isNsfw -> itemView.context.getString(MR.strings.nsfw_short)
-            else -> ""
-        }.plusRepo(extension).uppercase(Locale.ROOT)
+        val context = itemView.context
+        val errorColor = context.getResourceColor(R.attr.colorError)
+        val primaryColor = context.getResourceColor(R.attr.colorPrimary)
+        val secondaryColor = context.getResourceColor(AR.attr.textColorSecondary)
+        val warnings = buildList {
+            when (extension.contentWarning) {
+                ContentWarning.NSFW -> add(context.getString(MR.strings.nsfw_short) to errorColor)
+                ContentWarning.MIXED -> add(context.getString(MR.strings.ext_mixed_short) to primaryColor)
+                ContentWarning.SAFE -> Unit
+            }
+            if (extension is Extension.Untrusted) {
+                add(context.getString(MR.strings.untrusted) to errorColor)
+            } else if (extension is Extension.Installed && extension.isObsolete) {
+                add(context.getString(MR.strings.obsolete) to errorColor)
+            }
+            if (extension is Extension.Installed && !extension.isShared) {
+                add(context.getString(MR.strings.ext_installer_private) to secondaryColor)
+            }
+        }
+        binding.warning.text = buildSpannedString {
+            warnings.forEachIndexed { index, (text, textColor) ->
+                if (index > 0) append(" - ")
+                color(textColor) { append(text) }
+            }
+        }
         binding.installProgress.progress = item.sessionProgress ?: 0
         binding.installProgress.isVisible = item.sessionProgress != null
         binding.cancelButton.isVisible = item.sessionProgress != null
@@ -169,22 +190,6 @@ class ExtensionHolder(view: View, val adapter: ExtensionAdapter) :
             }
         }
         bindButton(item)
-    }
-
-    private fun String.plusRepo(extension: Extension): String {
-        val repoText = when {
-            extension is Extension.Untrusted -> itemView.context.getString(MR.strings.untrusted)
-            extension is Extension.Installed && extension.isObsolete -> itemView.context.getString(MR.strings.obsolete)
-            else -> ""
-        }
-
-        if (repoText.isEmpty()) return this
-
-        return if (isEmpty()) {
-            this
-        } else {
-            "$this • "
-        } + repoText
     }
 
     @Suppress("ResourceType")

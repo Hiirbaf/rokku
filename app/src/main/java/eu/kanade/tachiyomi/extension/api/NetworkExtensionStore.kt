@@ -1,6 +1,7 @@
 package eu.kanade.tachiyomi.extension.api
 
 import android.annotation.SuppressLint
+import eu.kanade.tachiyomi.extension.model.ContentWarning
 import eu.kanade.tachiyomi.extension.model.Extension
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -84,6 +85,12 @@ data class NetworkExtensionStoreList(
     @SerialName("extensions") val extensions: List<NetworkExtensionStore.StoreExtension>,
 )
 
+private fun NetworkExtensionStore.ContentWarning.toModel() = when (this) {
+    NetworkExtensionStore.ContentWarning.NSFW -> ContentWarning.NSFW
+    NetworkExtensionStore.ContentWarning.MIXED -> ContentWarning.MIXED
+    else -> ContentWarning.SAFE
+}
+
 fun NetworkExtensionStore.ExtensionList.toExtensions(repoUrl: String): List<Extension.Available> {
     return extensions.toExtensions(repoUrl)
 }
@@ -98,7 +105,7 @@ fun List<NetworkExtensionStore.StoreExtension>.toExtensions(repoUrl: String): Li
             versionCode = extension.versionCode,
             libVersion = extension.extensionLib.toDouble(),
             lang = if (lang.size == 1) lang.first() else "all",
-            isNsfw = extension.contentWarning >= NetworkExtensionStore.ContentWarning.MIXED,
+            contentWarning = extension.contentWarning.toModel(),
             apkName = extension.resources.apkUrl,
             iconUrl = extension.resources.iconUrl,
             sources = extension.sources.map { source ->

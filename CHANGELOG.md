@@ -28,6 +28,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 ### Changes
 - Updated the database schema (removed the unused `filtered_scanlators` column and added the release schedule of each series). This can't be undone and older versions can't open the updated database, so create a backup before updating
 - The Doki, Dark (default) and Flat Lime themes now tint switch tracks and outlines with their own colors when "Tint switches and outlines" is on, instead of a generic gray
+- Extensions marked "Mixed" by their repository now show a "Mixed" label instead of "18+", in the extension list and details, so only extensions that are mainly 18+ content get the "18+" label, and extensions installed privately now show a "Private" label
 - An automatic backup that fails because its saved location is no longer accessible (folder deleted, permission revoked, storage removed) now shows a notification telling you to pick a new one, instead of failing silently
 - Aligned the accent and surface colors of the app themes with TachiyomiJ2K ([@Hiirbaf](https://github.com/Hiirbaf))
 

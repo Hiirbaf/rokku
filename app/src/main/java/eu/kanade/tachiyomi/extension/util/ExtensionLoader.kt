@@ -10,6 +10,7 @@ import androidx.core.content.pm.PackageInfoCompat
 import co.touchlab.kermit.Logger
 import eu.kanade.tachiyomi.BuildConfig
 import eu.kanade.tachiyomi.data.preference.PreferencesHelper
+import eu.kanade.tachiyomi.extension.model.ContentWarning
 import eu.kanade.tachiyomi.extension.model.Extension
 import eu.kanade.tachiyomi.extension.model.LoadResult
 import eu.kanade.tachiyomi.source.CatalogueSource
@@ -326,8 +327,13 @@ internal object ExtensionLoader {
         // Repositories publish this metadata as either a String or Int.
         val contentWarning = metaData.get(METADATA_CONTENT_WARNING)?.toString()?.toIntOrNull()
             ?: 0
-        val isNsfw = contentWarning > 0 || metaData.getInt(METADATA_NSFW) == 1
-        if (!loadNsfwSource && isNsfw) {
+        val warning = when {
+            contentWarning >= 2 -> ContentWarning.NSFW
+            contentWarning == 1 -> ContentWarning.MIXED
+            metaData.getInt(METADATA_NSFW) == 1 -> ContentWarning.NSFW
+            else -> ContentWarning.SAFE
+        }
+        if (!loadNsfwSource && warning != ContentWarning.SAFE) {
             Logger.w { "NSFW extension $pkgName not allowed" }
             return LoadResult.Error
         }
@@ -381,7 +387,7 @@ internal object ExtensionLoader {
             versionCode = versionCode,
             libVersion = libVersion,
             lang = lang,
-            isNsfw = isNsfw,
+            contentWarning = warning,
             sources = sources,
             pkgFactory = metaData.getString(METADATA_SOURCE_FACTORY),
             icon = appInfo.loadIcon(pkgManager),
