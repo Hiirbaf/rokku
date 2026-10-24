@@ -4,6 +4,8 @@ import android.animation.AnimatorInflater
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.view.View
+import android.widget.TextView
+import androidx.core.graphics.ColorUtils
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.core.text.scale
@@ -128,12 +130,29 @@ class ExtensionHolder(view: View, val adapter: ExtensionAdapter) :
                 add(context.getString(MR.strings.ext_installer_private) to secondaryColor)
             }
         }
-        binding.warning.text = buildSpannedString {
-            warnings.forEachIndexed { index, (text, textColor) ->
-                if (index > 0) append(" - ")
-                color(textColor) { append(text) }
-            }
+        val errorColor = context.getResourceColor(R.attr.colorError)
+        val secondaryColor = context.getResourceColor(AR.attr.textColorSecondary)
+
+        val statusRes = when {
+            extension is Extension.Untrusted -> MR.strings.untrusted
+            extension is Extension.Installed && extension.isObsolete -> MR.strings.obsolete
+            else -> null
         }
+        val warning = extension.contentWarning.label
+        val isPrivate = extension is Extension.Installed && !extension.isShared
+
+        bindPill(binding.pillStatus, statusRes?.let { context.getString(it) }, errorColor)
+        bindPill(
+            binding.pillContentWarning,
+            warning?.let { context.getString(it.title) },
+            warning?.let { context.getResourceColor(it.colorAttr) } ?: 0,
+        )
+        bindPill(
+            binding.pillPrivate,
+            if (isPrivate) context.getString(MR.strings.ext_installer_private) else null,
+            secondaryColor,
+        )
+        binding.warning.isVisible = statusRes != null || warning != null || isPrivate
         binding.installProgress.progress = item.sessionProgress ?: 0
         binding.installProgress.isVisible = item.sessionProgress != null
         binding.cancelButton.isVisible = item.sessionProgress != null
@@ -187,6 +206,14 @@ class ExtensionHolder(view: View, val adapter: ExtensionAdapter) :
             }
         }
         bindButton(item)
+    }
+
+    private fun bindPill(view: TextView, text: String?, color: Int) {
+        view.isVisible = text != null
+        if (text == null) return
+        view.text = text
+        view.setTextColor(color)
+        view.backgroundTintList = ColorStateList.valueOf(ColorUtils.setAlphaComponent(color, 31))
     }
 
     @Suppress("ResourceType")
