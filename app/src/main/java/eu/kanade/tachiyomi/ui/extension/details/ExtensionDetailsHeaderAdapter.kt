@@ -9,8 +9,8 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.databinding.ExtensionDetailHeaderBinding
-import eu.kanade.tachiyomi.extension.model.ContentWarning
 import eu.kanade.tachiyomi.ui.extension.getApplicationIcon
+import eu.kanade.tachiyomi.ui.extension.label
 import eu.kanade.tachiyomi.util.system.LocaleHelper
 import eu.kanade.tachiyomi.util.system.getResourceColor
 import eu.kanade.tachiyomi.util.system.materialAlertDialog
@@ -54,12 +54,19 @@ class ExtensionDetailsHeaderAdapter(private val presenter: ExtensionDetailsPrese
             binding.extensionVersion.text = context.getString(MR.strings.version_, extension.versionName)
             binding.extensionLang.text =
                 context.getString(MR.strings.language_, LocaleHelper.getSourceDisplayName(extension.lang, context))
-            binding.extensionNsfw.isVisible = extension.isNsfw
-            val isMixed = extension.contentWarning == ContentWarning.MIXED
-            binding.extensionNsfw.setText(if (isMixed) MR.strings.may_contain_mixed else MR.strings.may_contain_nsfw)
-            binding.extensionNsfw.setTextColor(
-                context.getResourceColor(if (isMixed) R.attr.colorPrimary else R.attr.colorError),
-            )
+            val warning = extension.contentWarning.label
+            binding.extensionNsfw.isVisible = warning != null
+            if (warning != null) {
+                binding.extensionNsfw.text = context.getString(warning.title) + " ⓘ"
+                binding.extensionNsfw.setTextColor(context.getResourceColor(warning.colorAttr))
+                binding.extensionNsfw.setOnClickListener {
+                    context.materialAlertDialog()
+                        .setTitle(context.getString(warning.title))
+                        .setMessage(context.getString(warning.description))
+                        .setPositiveButton(AR.string.ok, null)
+                        .show()
+                }
+            }
             binding.extensionPkg.text = extension.pkgName
 
             binding.extensionUninstallButton.setOnClickListener {
