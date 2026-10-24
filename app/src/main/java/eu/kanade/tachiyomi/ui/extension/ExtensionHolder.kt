@@ -115,22 +115,7 @@ class ExtensionHolder(view: View, val adapter: ExtensionAdapter) :
         binding.version.text = infoText.joinToString(" • ")
         binding.lang.text = LocaleHelper.getLocalizedDisplayName(extension.lang)
         val context = itemView.context
-        val errorColor = context.getResourceColor(AR.attr.colorError)
-        val secondaryColor = context.getResourceColor(AR.attr.textColorSecondary)
-        val warnings = buildList {
-            if (extension is Extension.Untrusted) {
-                add(context.getString(MR.strings.untrusted) to errorColor)
-            } else if (extension is Extension.Installed && extension.isObsolete) {
-                add(context.getString(MR.strings.obsolete) to errorColor)
-            }
-            extension.contentWarning.label?.let {
-                add(context.getString(it.title) to context.getResourceColor(it.colorAttr))
-            }
-            if (extension is Extension.Installed && !extension.isShared) {
-                add(context.getString(MR.strings.ext_installer_private) to secondaryColor)
-            }
-        }
-        val errorColor = context.getResourceColor(AR.attr.colorError)
+        val errorColor = context.getResourceColor(R.attr.colorError)
         val secondaryColor = context.getResourceColor(AR.attr.textColorSecondary)
 
         val statusRes = when {
