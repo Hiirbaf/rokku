@@ -114,18 +114,15 @@ class ExtensionHolder(view: View, val adapter: ExtensionAdapter) :
         binding.lang.text = LocaleHelper.getLocalizedDisplayName(extension.lang)
         val context = itemView.context
         val errorColor = context.getResourceColor(R.attr.colorError)
-        val primaryColor = context.getResourceColor(R.attr.colorPrimary)
         val secondaryColor = context.getResourceColor(AR.attr.textColorSecondary)
         val warnings = buildList {
-            when (extension.contentWarning) {
-                ContentWarning.NSFW -> add(context.getString(MR.strings.nsfw_short) to errorColor)
-                ContentWarning.MIXED -> add(context.getString(MR.strings.ext_mixed_short) to primaryColor)
-                ContentWarning.SAFE -> Unit
-            }
             if (extension is Extension.Untrusted) {
                 add(context.getString(MR.strings.untrusted) to errorColor)
             } else if (extension is Extension.Installed && extension.isObsolete) {
                 add(context.getString(MR.strings.obsolete) to errorColor)
+            }
+            extension.contentWarning.label?.let {
+                add(context.getString(it.title) to context.getResourceColor(it.colorAttr))
             }
             if (extension is Extension.Installed && !extension.isShared) {
                 add(context.getString(MR.strings.ext_installer_private) to secondaryColor)
