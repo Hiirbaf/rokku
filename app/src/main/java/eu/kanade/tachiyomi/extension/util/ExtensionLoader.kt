@@ -331,6 +331,11 @@ internal object ExtensionLoader {
             else -> ContentWarning.SAFE
         }
 
+        if (warning.name !in preferences.enabledContentWarnings().get()) {
+            Logger.w { "Extension $pkgName not allowed ($warning)" }
+            return LoadResult.Error
+        }
+
         val hasReadme = metaData.getInt(METADATA_HAS_README, 0) == 1
         val hasChangelog = metaData.getInt(METADATA_HAS_CHANGELOG, 0) == 1
 
