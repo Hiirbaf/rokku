@@ -10,6 +10,7 @@ import eu.kanade.tachiyomi.core.preference.getEnum
 import eu.kanade.tachiyomi.core.storage.preference.asDateFormat
 import eu.kanade.tachiyomi.data.updater.AppDownloadInstallJob
 import eu.kanade.tachiyomi.domain.manga.models.Manga
+import eu.kanade.tachiyomi.extension.model.ContentWarning
 import eu.kanade.tachiyomi.extension.model.InstalledExtensionsOrder
 import eu.kanade.tachiyomi.ui.library.LibraryItem
 import eu.kanade.tachiyomi.ui.library.filter.FilterBottomSheet
