@@ -330,7 +330,6 @@ internal object ExtensionLoader {
             metaData.getInt(METADATA_NSFW) == 1 -> ContentWarning.NSFW
             else -> ContentWarning.SAFE
         }
-
         if (warning.name !in preferences.enabledContentWarnings().get()) {
             Logger.w { "Extension $pkgName not allowed ($warning)" }
             return LoadResult.Error
