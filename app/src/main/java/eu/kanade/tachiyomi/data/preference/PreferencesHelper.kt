@@ -470,7 +470,6 @@ class PreferencesHelper(val context: Context, val preferenceStore: PreferenceSto
     fun sideNavIconAlignment() = preferenceStore.getInt(Keys.sideNavIconAlignment, 1)
 
     // TODO: SourcePref
-
     fun enabledContentWarnings() = preferenceStore.getStringSet(
         "enabled_content_warnings",
         ContentWarning.entries.map { it.name }.toSet(),
