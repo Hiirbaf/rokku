@@ -114,7 +114,6 @@ class ExtensionHolder(view: View, val adapter: ExtensionAdapter) :
 
         binding.version.text = infoText.joinToString(" • ")
         binding.lang.text = LocaleHelper.getLocalizedDisplayName(extension.lang)
-        val context = itemView.context
         val errorColor = context.getResourceColor(R.attr.colorError)
         val secondaryColor = context.getResourceColor(AR.attr.textColorSecondary)
 
