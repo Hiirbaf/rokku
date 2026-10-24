@@ -97,21 +97,37 @@
             app:layout_constraintEnd_toStartOf="@id/warning"
             tools:text="Updated 5 days ago" />
 
-        <TextView
+        <LinearLayout
             android:id="@+id/warning"
-            style="?textAppearanceBodySmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
-            android:maxLines="1"
-            android:textColor="?attr/colorError"
-            android:textSize="12sp"
             android:layout_marginEnd="6dp"
+            android:divider="@drawable/divider_extension_pill"
+            android:orientation="horizontal"
+            android:showDividers="middle"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintBottom_toBottomOf="@id/version"
             app:layout_constraintEnd_toStartOf="@id/button_layout"
-            app:layout_constraintTop_toBottomOf="@+id/ext_title"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@id/date"
-            tools:text="Warning" />
+            app:layout_constraintTop_toTopOf="@id/version">
+
+            <TextView
+                android:id="@+id/pill_status"
+                style="@style/Widget.Tachiyomi.ExtensionPill"
+                tools:text="Obsolete" />
+
+            <TextView
+                android:id="@+id/pill_content_warning"
+                style="@style/Widget.Tachiyomi.ExtensionPill"
+                tools:text="NSFW" />
+
+            <TextView
+                android:id="@+id/pill_private"
+                style="@style/Widget.Tachiyomi.ExtensionPill"
+                tools:text="Private" />
+        </LinearLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/button_layout"
