@@ -128,7 +128,6 @@ class ExtensionBottomPresenter : BaseMigrationPresenter<ExtensionBottomSheet>() 
     private fun toItems(tuple: ExtensionTuple): List<ExtensionItem> {
         val context = view?.context ?: return emptyList()
         val activeLangs = preferences.enabledLanguages().get()
-        val activeLangs = preferences.enabledLanguages().get()
         val enabledContentWarnings = preferences.enabledContentWarnings().get()
 
         val (installed, untrusted, available) = tuple
