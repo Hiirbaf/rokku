@@ -144,7 +144,7 @@ class SettingsBrowseController : SettingsLegacyController() {
                 when (this) {
                     ContentWarning.SAFE -> MR.strings.ext_content_warning_safe
                     ContentWarning.MIXED -> MR.strings.ext_mixed_short
-                    ContentWarning.NSFW -> MR.nsfw_short
+                    ContentWarning.NSFW -> MR.strings.nsfw_short
                 },
             )
 
