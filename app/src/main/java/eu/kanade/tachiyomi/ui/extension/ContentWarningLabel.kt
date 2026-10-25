@@ -16,12 +16,12 @@ val ContentWarning.label: ContentWarningLabel?
     get() = when (this) {
         ContentWarning.SAFE -> null
         ContentWarning.MIXED -> ContentWarningLabel(
-            MR.strings.ext_content_warning_mixed,
+            MR.strings.ext_mixed_short,
             MR.strings.ext_content_warning_mixed_description,
             R.attr.colorPrimary,
         )
         ContentWarning.NSFW -> ContentWarningLabel(
-            MR.strings.ext_content_warning_nsfw,
+            MR.strings.nsfw_short,
             MR.strings.ext_content_warning_nsfw_description,
             R.attr.colorError,
         )
