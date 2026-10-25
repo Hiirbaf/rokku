@@ -8,7 +8,7 @@ import yokai.core.migration.Migration
 import yokai.core.migration.MigrationContext
 
 class ContentWarningMigration : Migration {
-    override val version: Float = 160f // pon el versionCode de la build que lo publica
+    override val version: Float = 161f
 
     override suspend fun invoke(migrationContext: MigrationContext): Boolean {
         val context = migrationContext.get<Application>() ?: return false
