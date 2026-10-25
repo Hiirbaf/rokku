@@ -143,8 +143,8 @@ class SettingsBrowseController : SettingsLegacyController() {
             fun ContentWarning.title() = context.getString(
                 when (this) {
                     ContentWarning.SAFE -> MR.strings.ext_content_warning_safe
-                    ContentWarning.MIXED -> MR.strings.ext_content_warning_mixed
-                    ContentWarning.NSFW -> MR.strings.ext_content_warning_nsfw
+                    ContentWarning.MIXED -> MR.strings.ext_mixed_short
+                    ContentWarning.NSFW -> MR.nsfw_short
                 },
             )
 
