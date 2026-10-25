@@ -116,7 +116,6 @@ class ExtensionHolder(view: View, val adapter: ExtensionAdapter) :
         binding.lang.text = LocaleHelper.getLocalizedDisplayName(extension.lang)
         val errorColor = context.getResourceColor(R.attr.colorError)
         val secondaryColor = context.getResourceColor(AR.attr.textColorSecondary)
-
         val statusRes = when {
             extension is Extension.Untrusted -> MR.strings.untrusted
             extension is Extension.Installed && extension.isObsolete -> MR.strings.obsolete
