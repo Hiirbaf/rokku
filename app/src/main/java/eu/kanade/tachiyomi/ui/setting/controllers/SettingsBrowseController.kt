@@ -41,9 +41,9 @@ import yokai.domain.ui.UiPreferences
 import yokai.i18n.MR
 import yokai.presentation.extension.repo.ExtensionRepoController
 import yokai.util.lang.getString
+import android.R as AR
 import eu.kanade.tachiyomi.ui.setting.summaryMRes as summaryRes
 import eu.kanade.tachiyomi.ui.setting.titleMRes as titleRes
-import android.R as AR
 
 class SettingsBrowseController : SettingsLegacyController() {
 
