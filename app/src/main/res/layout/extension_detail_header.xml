@@ -75,13 +75,14 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="1"
+            android:background="?attr/selectableItemBackground"
             android:elevation="3dp"
             android:gravity="center"
-            android:text="@string/may_contain_nsfw"
-            android:textColor="?attr/colorError"
             android:visibility="gone"
             app:layout_constraintStart_toStartOf="@id/extension_title"
             app:layout_constraintTop_toBottomOf="@id/extension_lang"
+            tools:text="NSFW ⓘ"
+            tools:textColor="?attr/colorError"
             tools:visibility="visible" />
 
         <TextView
