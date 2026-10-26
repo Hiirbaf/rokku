@@ -848,7 +848,7 @@ private fun ExistingSeriesDialog(series: List<String>, onPick: (String) -> Unit,
                     colors = legacyFieldColors(),
                     value = query,
                     onValueChange = { query = it },
-                    label = { Text(stringResource(MR.strings.import_search)) },
+                    label = { Text(stringResource(MR.strings.search)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                 )
@@ -897,7 +897,7 @@ private fun ProgressStage(info: WorkInfo?, modifier: Modifier, onClose: () -> Un
             }
             state == WorkInfo.State.CANCELLED -> {
                 Text(stringResource(MR.strings.import_cancelled), style = MaterialTheme.typography.titleMedium)
-                Button(onClick = onClose) { Text(stringResource(MR.strings.import_close)) }
+                Button(onClick = onClose) { Text(stringResource(MR.strings.close)) }
             }
             else -> {
                 val data = info?.outputData
@@ -906,7 +906,7 @@ private fun ProgressStage(info: WorkInfo?, modifier: Modifier, onClose: () -> Un
                     Text(stringResource(MR.strings.import_failed), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.error)
                 } else {
                     Text(
-                        if (failed > 0) stringResource(MR.strings.import_partial) else stringResource(MR.strings.import_local_source_done),
+                        if (failed > 0) stringResource(MR.strings.import_partial) else stringResource(MR.strings.import_done),
                         style = MaterialTheme.typography.titleMedium,
                         color = if (failed > 0) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
                     )
@@ -919,7 +919,7 @@ private fun ProgressStage(info: WorkInfo?, modifier: Modifier, onClose: () -> Un
                         Text(stringResource(MR.strings.import_result_failed, failed), color = MaterialTheme.colorScheme.error)
                     }
                 }
-                Button(onClick = onClose) { Text(stringResource(MR.strings.import_close)) }
+                Button(onClick = onClose) { Text(stringResource(MR.strings.close)) }
             }
         }
     }
