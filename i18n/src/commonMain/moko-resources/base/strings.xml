@@ -359,7 +359,7 @@
     <string name="import_background">Seguir en segundo plano</string>
     <string name="import_cancelled">Importación cancelada</string>
     <string name="import_done">Import complete</string>
-    <string name="import_local_source_error">Some files could not be imported</string>
+    <string name="import_error">Some files could not be imported</string>
     <string name="import_failed">No se pudo completar la importación</string>
     <string name="import_partial">Importación completada con errores</string>
     <string name="import_no_name">(sin nombre)</string>
