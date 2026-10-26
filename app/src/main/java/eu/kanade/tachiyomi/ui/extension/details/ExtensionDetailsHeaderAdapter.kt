@@ -50,7 +50,7 @@ class ExtensionDetailsHeaderAdapter(private val presenter: ExtensionDetailsPrese
             val extension = presenter.extension ?: return
             val context = view.context
 
-            extension.getApplicationIcon(context)?.let { binding.extensionIcon.setImageDrawable(it) }
+            (extension.icon ?: extension.getApplicationIcon(context))?.let { binding.extensionIcon.setImageDrawable(it) }
             binding.extensionTitle.text = extension.name
             binding.extensionVersion.text = context.getString(MR.strings.version_, extension.versionName)
             binding.extensionLang.text =
