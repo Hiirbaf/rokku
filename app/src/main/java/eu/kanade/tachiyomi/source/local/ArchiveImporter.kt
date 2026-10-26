@@ -454,7 +454,7 @@ class ImportArchivesWorker(context: Context, params: WorkerParameters) : Corouti
             .setSmallIcon(R.drawable.ic_rokku)
             .setContentTitle(
                 applicationContext.getString(
-                    if (result.failed == 0) MR.strings.import_local_source_done else MR.strings.import_local_source_error,
+                    if (result.failed == 0) MR.strings.import_done else MR.strings.import_error,
                 ),
             )
             .setContentText(
