@@ -826,7 +826,7 @@ open class BrowseSourceController(bundle: Bundle) :
 
             if (isLocalSource) {
                 actions += EmptyView.Action(
-                    MR.strings.action_import_file,
+                    MR.strings.import_files_title,
                 ) { openImportScreen() }
             }
 
