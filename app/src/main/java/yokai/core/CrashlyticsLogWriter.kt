@@ -191,6 +191,14 @@ class CrashlyticsLogWriter : LogWriter() {
      * challenge that needs the user's input while the app is in the background ("Captcha needs
      * interaction, but the app isn't in the foreground") - same category as the captcha
      * messages above, the user solves it in the WebView.
+     *
+     * Also skips a source answering HTTP 451 (blocked for legal reasons, same category as 404),
+     * an extension's own HTTP interceptor failing with a localized hint
+     * ("HTTP error 404. Проверьте сайт. Попробуйте авторизоваться через WebView…", same category
+     * as the HTTP status messages above), the self-hosted Komga extension when its
+     * server address was never filled in ("Set Address in Settings", same category as "Set
+     * Tachidesk server url in extension settings"), and an extension asking the user to log in
+     * through the WebView and subscribe to the site's service.
      */
     internal fun Throwable.isIgnoredForCrashlytics(): Boolean {
         var current: Throwable? = this
@@ -214,7 +222,8 @@ class CrashlyticsLogWriter : LogWriter() {
 
                 is HttpException -> if (
                     current.isAuthError || current.isServerError ||
-                    current.code == 400 || current.code == 404 || current.code == 410 || current.code == 429
+                    current.code == 400 || current.code == 404 || current.code == 410 || current.code == 429 ||
+                    current.code == 451
                 ) {
                     return true
                 }
@@ -248,7 +257,8 @@ class CrashlyticsLogWriter : LogWriter() {
                     current.message?.startsWith("stream was reset: ") == true ||
                     current.message?.startsWith("Too many follow-up requests") == true ||
                     current.message?.startsWith("unexpected end of stream on ") == true ||
-                    current.message?.matches(HTTP_STATUS_MESSAGE) == true
+                    current.message?.matches(HTTP_STATUS_MESSAGE) == true ||
+                    current.message?.matches(EXTENSION_HTTP_HINT) == true
                 ) {
                     return true
                 }
@@ -304,6 +314,8 @@ class CrashlyticsLogWriter : LogWriter() {
                 current.message == "Refresh manga" ||
                 current.message == "Chapter encryption unavailable" ||
                 current.message == "Set Tachidesk server url in extension settings" ||
+                current.message == "Set Address in Settings" ||
+                current.message == "Log in via WebView and subscribe to the website's service." ||
                 current.message == "Hikka: You are not authorized" ||
                 current.message == "Could not load images. Open in WebView and try again." ||
                 current.message == "Manga catalog not found" ||
@@ -356,5 +368,8 @@ class CrashlyticsLogWriter : LogWriter() {
         /** Matches "Chapter page 2 failed: HTTP 521", raised by an extension for a single page request. */
         val EXTENSION_PAGE_HTTP_FAILURE = Regex("""Chapter page \d+ failed: HTTP \d{3}\b.*""")
         val EXTENSION_SERVER_ERROR = Regex("""HTTP error 5\d{2}""")
+
+        /** Matches "HTTP error 404. Проверьте сайт. …", an extension's interceptor message for a failed request. */
+        val EXTENSION_HTTP_HINT = Regex("""HTTP error \d{3}\. Проверьте сайт.*""")
     }
 }
