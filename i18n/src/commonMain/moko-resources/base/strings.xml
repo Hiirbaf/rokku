@@ -321,20 +321,61 @@
     <string name="sources">Sources</string>
     <string name="source_hidden">Source hidden</string>
     <string name="last_used">Last used</string>
-    <string name="action_import_file">Import CBZ/CBR</string>
-    <string name="import_local_source_title">Import to local source</string>
-    <string name="import_local_source_folder_placeholder">Nombre de la serie</string>
-    <string name="import_local_source_action">Import</string>
-    <string name="importing_local_source">Importing files…</string>
-    <string name="import_local_source_summary">Added: %1$d, Skipped: %2$d, Errors: %3$d</string>
-    <string name="import_local_source_done">Import complete</string>
-    <string name="import_local_source_error">Some files could not be imported</string>
     <string name="local_source_help_guide">Local source guide</string>
     <string name="check_site_in_web">Check website in WebView</string>
     <string name="browse_long_tap_default">Open extensions / migration menu</string>
     <string name="browse_long_tap_search">Open global search</string>
     <string name="browse_long_tap">Long tap Browse behavior</string>
     <!-- Other Screens -->
+
+    <!-- Local Import -->
+    <string name="import_files_title">Import CBZ/CBR</string>
+    <string name="import_local_source_title">Import to local source</string>
+    <string name="import_pick_files">Archivos</string>
+    <string name="import_pick_folder">Carpeta</string>
+    <string name="import_pick_hint">Elige archivos .cbz/.cbr o una carpeta. En una carpeta, cada subcarpeta es una serie y sus archivos son los capítulos.</string>
+    <string name="import_scanning">Leyendo archivos…</string>
+    <string name="import_note">Los archivos se copian a la fuente local. Cada cómic aparecerá allí con sus capítulos.</string>
+    <string name="import_new_comic">Cómic nuevo</string>
+    <string name="import_existing_comic">Agregar a existente</string>
+    <string name="import_comic_name">Nombre del cómic</string>
+    <string name="import_chapter_title">Título del capítulo</string>
+    <string name="import_title_empty">Escribe un título</string>
+    <string name="import_title_duplicated">Título repetido en este cómic</string>
+    <string name="import_existing_label">Cómic existente</string>
+    <string name="import_pick_existing">Elige un cómic existente</string>
+    <string name="import_name_empty">Escribe un nombre</string>
+    <string name="import_name_exists">Ya existe un cómic con ese nombre; usa «Agregar a existente»</string>
+    <string name="import_name_duplicated">Otro grupo ya usa este nombre</string>
+    <string name="import_move_to_new_group">Mover a un grupo nuevo</string>
+    <string name="import_nothing_found">No se encontraron archivos válidos</string>
+    <string name="import_action">Import</string>
+    <string name="import_hide_chapters">Ocultar capítulos</string>
+    <string name="import_check_titles">Hay títulos de capítulo por corregir</string>
+    <string name="import_use_suggestion">Usar</string>
+    <string name="import_no_chapter_number">No se detecta el número de capítulo; el orden puede salir mal</string>
+    <string name="import_preparing">Preparando importación…</string>
+    <string name="importing_local_source">Importing files…</string>
+    <string name="import_background">Seguir en segundo plano</string>
+    <string name="import_cancelled">Importación cancelada</string>
+    <string name="import_done">Import complete</string>
+    <string name="import_local_source_error">Some files could not be imported</string>
+    <string name="import_failed">No se pudo completar la importación</string>
+    <string name="import_partial">Importación completada con errores</string>
+    <string name="import_no_name">(sin nombre)</string>
+
+    <!-- Con argumentos -->
+    <string name="import_groups_header">Cómics detectados (%1$d)</string>
+    <string name="import_show_chapters">Mostrar capítulos (%1$d)</string>
+    <string name="import_comicinfo">ComicInfo: %1$s</string>
+    <string name="import_chapter_detected">Capítulo detectado: %1$s</string>
+    <string name="import_move_to">Mover a %1$s</string>
+    <string name="import_ignored_files">%1$d archivo(s) ignorados (formato no soportado)</string>
+    <string name="import_button_count">Importar %1$s</string>
+    <string name="import_result_imported">✓ %1$d importados</string>
+    <string name="import_result_skipped">• %1$d omitidos (duplicados o no soportados)</string>
+    <string name="import_local_source_summary">Added: %1$d, Skipped: %2$d, Errors: %3$d</string>
+    <string name="import_result_failed">✗ %1$d con error</string>
 
     <!-- Extensions -->
     <string name="extensions">Extensions</string>
