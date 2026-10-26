@@ -1207,4 +1207,26 @@
     <string name="preload_only_on_wifi_summary">Economiza dados móveis: em conexões limitadas, carrega só a página que você está lendo</string>
     <string name="tracking_legacy_notice">Você está entrando na versão antiga de “Monitoramento”</string>
     <string name="advanced_experimental_notice">Você está entrando na versão experimental de “Avançado”</string>
+    <string name="pref_allowed_content_warnings">Avisos de conteúdo permitidos</string>
+    <string name="ext_content_warning_safe">Seguro</string>
+    <string name="ext_mixed_short">Misto</string>
+    <string name="ext_content_warning_mixed_description">Esta extensão pode incluir fontes com conteúdo adulto ou sugestivo</string>
+    <plurals name="ext_content_warning_nsfw_description">
+        <item quantity="one">Esta extensão inclui fontes com conteúdo adulto explícito</item>
+    </plurals>
+    <string name="app_icon">Ícone do aplicativo</string>
+    <string name="app_icon_color">Cor do ícone</string>
+    <string name="app_icon_match_theme">Seguir tema do aplicativo</string>
+    <string name="app_icon_match_theme_summary">A cor do ícone acompanha o tema selecionado</string>
+    <string name="app_icon_experimental_note">Recurso experimental: trocar o ícone pode fechar o aplicativo, e a tela inicial do seu dispositivo pode demorar um pouco para atualizá-lo</string>
+    <string name="app_icon_default">Padrão</string>
+    <string name="app_icon_classic">Clássico</string>
+    <string name="app_icon_pink">Rosa</string>
+    <string name="app_icon_red">Vermelho</string>
+    <string name="app_icon_orange">Laranja</string>
+    <string name="app_icon_gold">Dourado</string>
+    <string name="app_icon_teal">Verde-azulado</string>
+    <string name="app_icon_purple">Roxo</string>
+    <string name="app_icon_lilac">Lilás</string>
+    <string name="app_icon_white">Branco</string>
 </resources>
