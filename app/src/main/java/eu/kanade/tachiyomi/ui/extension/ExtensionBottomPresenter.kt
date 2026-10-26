@@ -18,6 +18,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
+import yokai.domain.extension.repo.interactor.GetExtensionRepo
 import yokai.i18n.MR
 import yokai.util.lang.getString
 
@@ -38,12 +39,18 @@ class ExtensionBottomPresenter : BaseMigrationPresenter<ExtensionBottomSheet>() 
 
     private var firstLoad = true
 
+    private val getExtensionRepo: GetExtensionRepo = Injekt.get()
+
+    var repoNames = emptyMap<String, String>()
+        private set
+
     override fun onCreate() {
         super.onCreate()
 
         presenterScope.launch {
             val extensionJob = async {
                 extensionManager.findAvailableExtensions()
+                loadRepoNames()
                 extensions = toItems(
                     Triple(
                         extensionManager.installedExtensionsFlow.value,
@@ -100,7 +107,12 @@ class ExtensionBottomPresenter : BaseMigrationPresenter<ExtensionBottomSheet>() 
         }
     }
 
+    private suspend fun loadRepoNames() {
+        repoNames = getExtensionRepo.getAll().associate { it.baseUrl to (it.shortName ?: it.name) }
+    }
+
     private suspend fun rebuildExtensions() {
+        loadRepoNames()
         extensions = toItems(
             Triple(
                 extensionManager.installedExtensionsFlow.value,
@@ -113,6 +125,7 @@ class ExtensionBottomPresenter : BaseMigrationPresenter<ExtensionBottomSheet>() 
 
     fun refreshExtensions() {
         presenterScope.launch {
+            loadRepoNames()
             extensions = toItems(
                 Triple(
                     extensionManager.installedExtensionsFlow.value,

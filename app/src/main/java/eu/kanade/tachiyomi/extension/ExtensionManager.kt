@@ -416,7 +416,7 @@ class ExtensionManager(
      * @param extension The extension to be registered.
      */
     private fun registerNewExtension(extension: Extension.Installed) {
-        _installedExtensionsFlow.value += extension
+        _installedExtensionsFlow.value += extension.withRepoUrl()
         emitToInstaller(
             "Finished/${extension.pkgName}",
             ExtensionIntallInfo(InstallStep.Installed, null),
@@ -435,13 +435,17 @@ class ExtensionManager(
         if (oldExtension != null) {
             mutInstalledExtensions -= oldExtension
         }
-        mutInstalledExtensions += extension
+        mutInstalledExtensions += extension.withRepoUrl()
         _installedExtensionsFlow.value = mutInstalledExtensions
         emitToInstaller(
             "Finished/${extension.pkgName}",
             ExtensionIntallInfo(InstallStep.Installed, null),
         )
     }
+
+    private fun Extension.Installed.withRepoUrl() = copy(
+        repoUrl = repoUrl ?: availableExtensionsFlow.value.find { it.pkgName == pkgName }?.repoUrl,
+    )
 
     fun emitToInstaller(name: String, extensionInfo: ExtensionIntallInfo) =
         installer.emitToFlow(name, extensionInfo)

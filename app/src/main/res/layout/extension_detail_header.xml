@@ -88,6 +88,22 @@
             tools:visibility="visible" />
 
         <TextView
+            android:id="@+id/extension_repo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:elevation="3dp"
+            android:ellipsize="end"
+            android:layout_marginTop="6dp"
+            android:maxLines="1"
+            android:textColor="?attr/colorSecondary"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/extension_title"
+            app:layout_constraintTop_toBottomOf="@id/extension_nsfw"
+            tools:text="Keiyoushi"
+            tools:visibility="visible" />
+
+        <TextView
             android:id="@+id/extension_pkg"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -97,7 +113,7 @@
             android:maxLines="1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/extension_title"
-            app:layout_constraintTop_toBottomOf="@id/extension_nsfw"
+            app:layout_constraintTop_toBottomOf="@id/extension_repo"
             tools:text="eu.kanade.tachiyomi.extension.en.myext" />
 
         <Button

@@ -72,6 +72,7 @@ class ExtensionDetailsController(bundle: Bundle? = null) :
     private var lastOpenPreferencePosition: Int = 0
 
     private var preferenceScreen: PreferenceScreen? = null
+    private var headerAdapter: ExtensionDetailsHeaderAdapter? = null
 
     private val preferences: PreferencesHelper = Injekt.get()
     private val network: NetworkHelper by injectLazy()
@@ -137,6 +138,7 @@ class ExtensionDetailsController(bundle: Bundle? = null) :
         screen.setShouldUseGeneratedIds(true)
         val extHeaderAdapter = ExtensionDetailsHeaderAdapter(presenter)
         extHeaderAdapter.setHasStableIds(true)
+        headerAdapter = extHeaderAdapter
         binding.extensionPrefsRecycler.adapter = ConcatAdapter(
             concatAdapterConfig,
             extHeaderAdapter,
@@ -147,7 +149,12 @@ class ExtensionDetailsController(bundle: Bundle? = null) :
 
     override fun onDestroyView(view: View) {
         preferenceScreen = null
+        headerAdapter = null
         super.onDestroyView(view)
+    }
+
+    fun onRepoLoaded() {
+        headerAdapter?.notifyItemChanged(0)
     }
 
     fun onExtensionUninstalled() {

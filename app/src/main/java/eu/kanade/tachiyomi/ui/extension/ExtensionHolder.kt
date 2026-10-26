@@ -133,6 +133,14 @@ class ExtensionHolder(view: View, val adapter: ExtensionAdapter) :
                 color(textColor) { append(text) }
             }
         }
+        val repoUrl = when (extension) {
+            is Extension.Available -> extension.repoUrl
+            is Extension.Installed -> extension.repoUrl
+            is Extension.Untrusted -> null
+        }
+        val repoName = repoUrl?.let { adapter.repoNames[it] }
+        binding.repoName.text = repoName
+        binding.repoName.isVisible = repoName != null
         binding.installProgress.progress = item.sessionProgress ?: 0
         binding.installProgress.isVisible = item.sessionProgress != null
         binding.cancelButton.isVisible = item.sessionProgress != null

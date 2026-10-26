@@ -23,6 +23,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Added a "Predict next release time" option to Settings > Library > Smart update (renamed from "Skip updating titles", with its options reworded to match Mihon), which predicts when each series gets its next chapter from its past release dates and skips it in automatic library updates until then (off by default, manual updates always check). A new hourglass button on the manga details screen, available for every series in the library, shows the prediction
 - Added a copy button and text selection to the crash screen, so the error can be pasted into a report
 - Added an app icon color picker (beta) under Settings > Appearance > App icon, with a preview, ten predefined colors and an option to make the icon follow the selected app theme. The old Blue and Gray icons were removed
+- Added the extension repository name under each extension in Browse > Extensions, and on the extension info screen
 - Added a website button next to GitHub in the About screen
 - Added an "Allowed content warnings" setting in Settings > Browse to choose which extensions are shown and loaded by their content warning (Safe, Mixed or 18+), replacing the "Show in sources and extensions lists" switch. Tapping the "Mixed" or "18+" label in an extension's details now explains what it means. If the old switch was off, only Safe and Mixed stay allowed ([@Hiirbaf](https://github.com/Hiirbaf))
 

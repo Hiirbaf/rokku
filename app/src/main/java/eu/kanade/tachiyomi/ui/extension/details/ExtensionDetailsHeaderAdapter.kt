@@ -72,6 +72,10 @@ class ExtensionDetailsHeaderAdapter(private val presenter: ExtensionDetailsPrese
             }
             binding.extensionPkg.text = extension.pkgName
 
+            val repo = presenter.repo
+            binding.extensionRepo.isVisible = repo != null
+            binding.extensionRepo.text = repo?.name
+
             binding.extensionUninstallButton.setOnClickListener {
                 if (extension.isShared) {
                     presenter.uninstallExtension()
