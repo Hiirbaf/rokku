@@ -32,11 +32,10 @@ fun Source.pkgName() = Injekt.get<ExtensionManager>().getPackageName(this.id)
 fun isIncognitoModeForSource(
     sourceId: Long?,
     preferences: PreferencesHelper = Injekt.get(),
-    extensionManager: ExtensionManager = Injekt.get(),
 ): Boolean {
     if (preferences.incognitoMode().get()) return true
     if (sourceId == null) return false
-    val pkgName = extensionManager.getPackageName(sourceId) ?: return false
+    val pkgName = Injekt.get<ExtensionManager>().getPackageName(sourceId) ?: return false
     return pkgName in preferences.incognitoExtensions().get()
 }
 
