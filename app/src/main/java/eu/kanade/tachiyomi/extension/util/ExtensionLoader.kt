@@ -25,6 +25,7 @@ import kotlinx.coroutines.runBlocking
 import uy.kohesive.injekt.injectLazy
 import yokai.domain.extension.interactor.TrustExtension
 import java.io.File
+import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.attribute.BasicFileAttributes
 
@@ -86,8 +87,10 @@ internal object ExtensionLoader {
         }
 
         val target = File(getPrivateExtensionDir(context), "${extension.packageName}.$PRIVATE_EXTENSION_EXTENSION")
+        val staged = File(target.parentFile, "${target.name}.part")
         return try {
-            file.copyTo(target, overwrite = true)
+            file.copyTo(staged, overwrite = true)
+            if (!staged.renameTo(target)) throw IOException("Unable to replace ${target.name}")
             if (currentExtension != null) {
                 ExtensionInstallReceiver.notifyReplaced(context, extension.packageName)
             } else {
@@ -96,8 +99,9 @@ internal object ExtensionLoader {
             true
         } catch (e: Exception) {
             Logger.e { "Failed to copy extension file." }
-            target.delete()
             false
+        } finally {
+            staged.delete()
         }
     }
 

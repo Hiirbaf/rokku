@@ -34,6 +34,7 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Aligned the accent and surface colors of the app themes with TachiyomiJ2K ([@Hiirbaf](https://github.com/Hiirbaf))
 
 ### Fixes
+- Fixed an installed private extension being deleted when updating it failed partway
 - Made the status bar transparent instead of theme-colored, matching upstream (only visible on Android versions predating edge-to-edge enforcement)
 - Adjusted the accent color of the Tachiyomi, Flat Lime, Strawberries, and Yotsuba themes to match upstream
 - Fixed the Popular/Latest/Filter buttons in Browse rendering in the accent color instead of a neutral one
