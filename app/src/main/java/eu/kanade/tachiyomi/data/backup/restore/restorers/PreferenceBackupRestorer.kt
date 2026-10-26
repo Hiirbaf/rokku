@@ -20,6 +20,7 @@ import eu.kanade.tachiyomi.source.sourcePreferences
 import eu.kanade.tachiyomi.ui.library.LibrarySort
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
+import yokai.core.migration.migrations.convertLegacyNsfwPreference
 import yokai.domain.base.BasePreferences
 import yokai.domain.ui.settings.ReaderPreferences
 
@@ -29,6 +30,7 @@ class PreferenceBackupRestorer(
 ) {
     fun restoreAppPreferences(preferences: List<BackupPreference>, onComplete: () -> Unit) {
         restorePreferences(preferences, preferenceStore)
+        convertLegacyNsfwPreference(preferenceStore)
 
         ExtensionUpdateJob.setupTask(context)
         LibraryUpdateJob.setupTask(context)

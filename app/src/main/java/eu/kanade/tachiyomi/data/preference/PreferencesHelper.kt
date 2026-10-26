@@ -471,7 +471,7 @@ class PreferencesHelper(val context: Context, val preferenceStore: PreferenceSto
 
     // TODO: SourcePref
     fun enabledContentWarnings() = preferenceStore.getStringSet(
-        "enabled_content_warnings",
+        Keys.enabledContentWarnings,
         ContentWarning.entries.map { it.name }.toSet(),
     )
 

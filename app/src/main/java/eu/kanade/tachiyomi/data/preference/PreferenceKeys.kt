@@ -220,6 +220,8 @@ object PreferenceKeys {
 
     const val useShizuku = "use_shizuku"
 
+    const val enabledContentWarnings = "enabled_content_warnings"
+
     const val themeMangaDetails = "theme_manga_details"
 
     const val themeMangaDetailsBackground = "theme_manga_details_background"

@@ -151,12 +151,11 @@ class SettingsBrowseController : SettingsLegacyController() {
             pref.changesIn(viewScope) { enabled ->
                 summary = ContentWarning.entries
                     .filter { it.name in enabled }
-                    .joinToString { it.title() }
-                    .ifBlank { context.getString(MR.strings.none) }
+                    .joinToString { it.title() } + "\n" + context.getString(MR.strings.requires_app_restart)
             }
 
             onClick {
-                val entries = ContentWarning.entries
+                val entries = ContentWarning.entries.filter { it != ContentWarning.SAFE }
                 val current = pref.get()
                 val checked = BooleanArray(entries.size) { entries[it].name in current }
 
@@ -167,7 +166,9 @@ class SettingsBrowseController : SettingsLegacyController() {
                         checked,
                     ) { _, which, isChecked -> checked[which] = isChecked }
                     .setPositiveButton(AR.string.ok) { _, _ ->
-                        pref.set(entries.filterIndexed { i, _ -> checked[i] }.map { it.name }.toSet())
+                        pref.set(
+                            entries.filterIndexed { i, _ -> checked[i] }.map { it.name }.toSet() + ContentWarning.SAFE.name,
+                        )
                     }
                     .setNegativeButton(AR.string.cancel, null)
                     .show()

@@ -1,6 +1,7 @@
 package eu.kanade.tachiyomi.ui.extension.details
 
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.net.Uri
 import android.provider.Settings
 import android.view.View
@@ -49,7 +50,7 @@ class ExtensionDetailsHeaderAdapter(private val presenter: ExtensionDetailsPrese
             val extension = presenter.extension ?: return
             val context = view.context
 
-            extension.icon?.let { binding.extensionIcon.setImageDrawable(it) }
+            extension.getApplicationIcon(context)?.let { binding.extensionIcon.setImageDrawable(it) }
             binding.extensionTitle.text = extension.name
             binding.extensionVersion.text = context.getString(MR.strings.version_, extension.versionName)
             binding.extensionLang.text =
@@ -57,8 +58,10 @@ class ExtensionDetailsHeaderAdapter(private val presenter: ExtensionDetailsPrese
             val warning = extension.contentWarning.label
             binding.extensionNsfw.isVisible = warning != null
             if (warning != null) {
-                binding.extensionNsfw.text = context.getString(warning.title) + " ⓘ"
-                binding.extensionNsfw.setTextColor(context.getResourceColor(warning.colorAttr))
+                val color = context.getResourceColor(warning.colorAttr)
+                binding.extensionNsfw.text = context.getString(warning.title)
+                binding.extensionNsfw.setTextColor(color)
+                binding.extensionNsfw.compoundDrawableTintList = ColorStateList.valueOf(color)
                 binding.extensionNsfw.setOnClickListener {
                     context.materialAlertDialog()
                         .setTitle(context.getString(warning.title))

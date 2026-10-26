@@ -76,12 +76,14 @@
             android:layout_gravity="center"
             android:layout_weight="1"
             android:background="?attr/selectableItemBackground"
+            android:drawableEnd="@drawable/ic_info_outline_24dp"
+            android:drawablePadding="4dp"
             android:elevation="3dp"
             android:gravity="center"
             android:visibility="gone"
             app:layout_constraintStart_toStartOf="@id/extension_title"
             app:layout_constraintTop_toBottomOf="@id/extension_lang"
-            tools:text="NSFW ⓘ"
+            tools:text="18+"
             tools:textColor="?attr/colorError"
             tools:visibility="visible" />
 
