@@ -106,12 +106,7 @@ class ImportArchiveController : BaseComposeController() {
         val context = LocalContext.current
         DisposableEffect(Unit) { onDispose { ArchiveImporter.clearCoverCache(context) } }
 
-        ImportArchiveScreen(
-            onClose = { imported ->
-                if (imported) LocalImportEvents.markPending()
-                router.popCurrentController()
-            },
-        )
+        ImportArchiveScreen(onClose = { router.popCurrentController() })
     }
 }
 
@@ -124,10 +119,6 @@ object LocalImportEvents {
 
     /** Se emite cuando termina una importación (el worker), esté o no abierta la pantalla. */
     val finished: SharedFlow<Unit> = _finished.asSharedFlow()
-
-    fun markPending() {
-        pending = true
-    }
 
     fun notifyFinished() {
         pending = true
@@ -216,9 +207,7 @@ private class GroupState(val id: String, title: String, files: List<ImportFile>)
     var destination by mutableStateOf(Destination.NEW)
     var existing by mutableStateOf<String?>(null)
     var expanded by mutableStateOf(false)
-    var titleEdited by mutableStateOf(false)
-    var metaApplied by mutableStateOf(false)
-    var allowMetaTitle by mutableStateOf(true) // false si el nombre viene de una carpeta elegida por el usuario
+    var metaDone by mutableStateOf(false)
     val files = mutableStateListOf<FileState>().also { list -> list.addAll(files.map { FileState(it) }) }
 
     fun displayName() = when (destination) {
@@ -228,7 +217,7 @@ private class GroupState(val id: String, title: String, files: List<ImportFile>)
 }
 
 @Composable
-fun ImportArchiveScreen(onClose: (imported: Boolean) -> Unit) {
+fun ImportArchiveScreen(onClose: () -> Unit) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val snackbar = remember { SnackbarHostState() }
@@ -394,7 +383,7 @@ fun ImportArchiveScreen(onClose: (imported: Boolean) -> Unit) {
             TopAppBar(
                 title = { Text(S.TITLE) },
                 navigationIcon = {
-                    IconButton(onClick = { onClose(workInfo?.state?.isFinished == true) }) {
+                    IconButton(onClick = onClose) {
                         Icon(Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = null)
                     }
                 },
@@ -561,10 +550,11 @@ private fun GroupCard(
     // Serie sugerida por ComicInfo.xml del primer archivo (una vez, y solo si el usuario no tocó el nombre)
     val firstFile = group.files.firstOrNull()?.file
     LaunchedEffect(firstFile?.uri) {
-        if (firstFile == null || group.metaApplied || !group.allowMetaTitle || group.titleEdited) return@LaunchedEffect
+        if (firstFile == null || group.metaDone) return@LaunchedEffect
         val series = ArchiveImporter.loadMeta(context, firstFile).series
-        group.metaApplied = true
-        if (series == null || group.titleEdited) return@LaunchedEffect
+        if (group.metaDone) return@LaunchedEffect
+        group.metaDone = true
+        if (series == null) return@LaunchedEffect
         group.title = series
         existingSeries.firstOrNull { normalizeKey(it) == normalizeKey(series) }?.let {
             group.destination = Destination.EXISTING
@@ -582,7 +572,6 @@ private fun GroupCard(
                 .padding(12.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            // Portada a la izquierda, nombre editable y resumen en el centro, quitar a la derecha
             Row(
                 verticalAlignment = Alignment.Top,
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -599,7 +588,7 @@ private fun GroupCard(
                             value = group.title,
                             onValueChange = {
                                 group.title = it
-                                group.titleEdited = true
+                                group.metaDone = true
                             },
                             modifier = Modifier.fillMaxWidth(),
                             label = { Text(S.COMIC_NAME) },
@@ -844,13 +833,12 @@ private fun DestinationButton(
     text: String,
     selected: Boolean,
     enabled: Boolean,
-    modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
     if (selected) {
-        Button(onClick = onClick, enabled = enabled, modifier = modifier) { Text(text) }
+        Button(onClick = onClick, enabled = enabled) { Text(text) }
     } else {
-        OutlinedButton(onClick = onClick, enabled = enabled, modifier = modifier) { Text(text) }
+        OutlinedButton(onClick = onClick, enabled = enabled) { Text(text) }
     }
 }
 
@@ -928,7 +916,7 @@ private fun ExistingSeriesDialog(series: List<String>, onPick: (String) -> Unit,
 }
 
 @Composable
-private fun ProgressStage(info: WorkInfo?, modifier: Modifier, onClose: (Boolean) -> Unit) {
+private fun ProgressStage(info: WorkInfo?, modifier: Modifier, onClose: () -> Unit) {
     val state = info?.state
     val running = state == null || state == WorkInfo.State.ENQUEUED ||
         state == WorkInfo.State.RUNNING || state == WorkInfo.State.BLOCKED
@@ -949,11 +937,11 @@ private fun ProgressStage(info: WorkInfo?, modifier: Modifier, onClose: (Boolean
                 } else {
                     LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
                 }
-                OutlinedButton(onClick = { onClose(false) }) { Text(S.BACKGROUND) }
+                OutlinedButton(onClick = onClose) { Text(S.BACKGROUND) }
             }
             state == WorkInfo.State.CANCELLED -> {
                 Text(S.CANCELLED, style = MaterialTheme.typography.titleMedium)
-                Button(onClick = { onClose(true) }) { Text(S.CLOSE) }
+                Button(onClick = onClose) { Text(S.CLOSE) }
             }
             else -> {
                 val data = info?.outputData
@@ -975,9 +963,7 @@ private fun ProgressStage(info: WorkInfo?, modifier: Modifier, onClose: (Boolean
                         Text("✗ $failed con error", color = MaterialTheme.colorScheme.error)
                     }
                 }
-                Button(onClick = { onClose((data?.getInt(ImportArchivesWorker.KEY_IMPORTED, 0) ?: 0) > 0) }) {
-                    Text(S.CLOSE)
-                }
+                Button(onClick = onClose) { Text(S.CLOSE) }
             }
         }
     }
@@ -1040,7 +1026,7 @@ private fun buildGroups(files: List<ImportFile>, existing: List<String>): List<G
     val existingByKey = existing.associateBy { normalizeKey(it) }
     return byKey.map { (key, list) ->
         GroupState(UUID.randomUUID().toString(), titles.getValue(key), list.sortedBy { it.fileName.lowercase() }).also { g ->
-            g.allowMetaTitle = key !in folderKeys
+            g.metaDone = key in folderKeys
             existingByKey[key]?.let {
                 g.destination = Destination.EXISTING
                 g.existing = it
