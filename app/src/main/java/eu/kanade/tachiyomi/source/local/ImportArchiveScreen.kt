@@ -76,6 +76,8 @@ import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import coil3.compose.AsyncImage
+import dev.icerock.moko.resources.compose.pluralStringResource
+import dev.icerock.moko.resources.compose.stringResource
 import eu.kanade.tachiyomi.ui.base.controller.BaseComposeController
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -89,6 +91,8 @@ import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 import yokai.domain.chapter.services.ChapterRecognition
 import yokai.domain.storage.StorageManager
+import yokai.i18n.MR
+import yokai.util.lang.getString
 import java.io.File
 import java.util.UUID
 import kotlin.math.ln
@@ -128,52 +132,6 @@ object LocalImportEvents {
     fun consumeRefresh(): Boolean = pending.also { pending = false }
 }
 
-// TODO: Textos en un solo sitio; moverlo a MR.strings
-private object S {
-    const val TITLE = "Importar cómics"
-    const val PICK_FILES = "Archivos"
-    const val PICK_FOLDER = "Carpeta"
-    const val PICK_HINT = "Elige archivos .cbz/.cbr o una carpeta. En una carpeta, cada subcarpeta es una serie y sus archivos son los capítulos."
-    const val SCANNING = "Leyendo archivos…"
-    const val NOTE = "Los archivos se copian a la fuente local. Cada cómic aparecerá allí con sus capítulos."
-    const val NEW_COMIC = "Cómic nuevo"
-    const val EXISTING_COMIC = "Agregar a existente"
-    const val COMIC_NAME = "Nombre del cómic"
-    const val CHAPTER_TITLE = "Título del capítulo"
-    const val TITLE_EMPTY = "Escribe un título"
-    const val TITLE_DUPLICATED = "Título repetido en este cómic"
-    const val EXISTING_LABEL = "Cómic existente"
-    const val PICK_EXISTING = "Elige un cómic existente"
-    const val SEARCH = "Buscar"
-    const val NAME_EMPTY = "Escribe un nombre"
-    const val NAME_EXISTS = "Ya existe un cómic con ese nombre; usa «Agregar a existente»"
-    const val NAME_DUPLICATED = "Otro grupo ya usa este nombre"
-    const val MOVE_TO_NEW = "Mover a un grupo nuevo"
-    const val NOTHING = "No se encontraron archivos válidos"
-    const val IMPORT = "Importar"
-    const val HIDE_CHAPTERS = "Ocultar capítulos"
-    const val CHECK_TITLES = "Hay títulos de capítulo por corregir"
-    const val USE = "Usar"
-    const val NO_NUMBER = "No se detecta el número de capítulo; el orden puede salir mal"
-    const val IMPORTING = "Importando archivos…"
-    const val PARTIAL = "Importación completada con errores"
-    const val PREPARING = "Preparando importación…"
-    const val BACKGROUND = "Seguir en segundo plano"
-    const val CANCELLED = "Importación cancelada"
-    const val ERROR = "No se pudo completar la importación"
-    const val DONE = "Importación completada"
-    const val CLOSE = "Cerrar"
-    const val CANCEL = "Cancelar"
-    fun filesCount(n: Int) = if (n == 1) "1 archivo" else "$n archivos"
-    fun groupsHeader(n: Int) = "Cómics detectados ($n)"
-    fun showChapters(n: Int) = "Mostrar capítulos ($n)"
-    fun comicInfo(text: String) = "ComicInfo: $text"
-    fun detected(n: String) = "Capítulo detectado: $n"
-    fun moveTo(label: String) = "Mover a $label"
-    fun ignored(n: Int) = "$n archivo(s) ignorados (formato no soportado)"
-    fun importButton(n: Int) = "Importar ${filesCount(n)}"
-}
-
 private enum class Destination { NEW, EXISTING }
 
 /** Campos de texto con el acento (colorSecondary) y el borde del resto de pantallas de Rokku. */
@@ -211,8 +169,8 @@ private class GroupState(val id: String, title: String, files: List<ImportFile>)
     val files = mutableStateListOf<FileState>().also { list -> list.addAll(files.map { FileState(it) }) }
 
     fun displayName() = when (destination) {
-        Destination.NEW -> title.ifBlank { "(sin nombre)" }
-        Destination.EXISTING -> existing ?: title.ifBlank { "(sin nombre)" }
+        Destination.NEW -> title
+        Destination.EXISTING -> existing ?: title
     }
 }
 
@@ -251,8 +209,8 @@ fun ImportArchiveScreen(onClose: () -> Unit) {
                 val known = groups.flatMap { group -> group.files.map { it.file.uri } }.toSet()
                 val fresh = result.files.distinctBy { it.uri }.filter { it.uri !in known }
                 if (fresh.isEmpty()) {
-                    snackbar.showSnackbar(S.NOTHING)
-                    if (result.ignored > 0) snackbar.showSnackbar(S.ignored(result.ignored))
+                    snackbar.showSnackbar(context.getString(MR.strings.import_nothing_found))
+                    if (result.ignored > 0) snackbar.showSnackbar(context.getString(MR.strings.import_ignored_files).format(result.ignored))
                     return@launch
                 }
                 buildGroups(fresh, existingSeries).forEach { incoming ->
@@ -265,11 +223,11 @@ fun ImportArchiveScreen(onClose: () -> Unit) {
                         groups.add(incoming)
                     }
                 }
-                if (result.ignored > 0) snackbar.showSnackbar(S.ignored(result.ignored))
+                if (result.ignored > 0) snackbar.showSnackbar(context.getString(MR.strings.import_ignored_files).format(result.ignored))
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                snackbar.showSnackbar(S.ERROR)
+                snackbar.showSnackbar(context.getString(MR.strings.import_failed))
             } finally {
                 isScanning = false
             }
@@ -315,25 +273,25 @@ fun ImportArchiveScreen(onClose: () -> Unit) {
         Destination.NEW -> {
             val name = group.title.trim()
             when {
-                name.isBlank() -> S.NAME_EMPTY
-                existingSeries.any { it.equals(name, ignoreCase = true) } -> S.NAME_EXISTS
+                name.isBlank() -> context.getString(MR.strings.import_name_empty)
+                existingSeries.any { it.equals(name, ignoreCase = true) } -> context.getString(MR.strings.import_name_exists)
                 groups.any {
                     it !== group && it.destination == Destination.NEW && it.title.trim().equals(name, ignoreCase = true)
-                } -> S.NAME_DUPLICATED
+                } -> context.getString(MR.strings.import_name_duplicated)
                 else -> null
             }
         }
-        Destination.EXISTING -> if (group.existing == null) S.PICK_EXISTING else null
+        Destination.EXISTING -> if (group.existing == null) context.getString(MR.strings.import_pick_existing) else null
     }
 
     fun fileErrorOf(group: GroupState, state: FileState): String? {
         val title = state.title.trim()
         return when {
-            title.isBlank() -> S.TITLE_EMPTY
+            title.isBlank() -> context.getString(MR.strings.import_title_empty)
             group.files.any {
                 it !== state && it.extension.equals(state.extension, ignoreCase = true) &&
                     it.title.trim().equals(title, ignoreCase = true)
-            } -> S.TITLE_DUPLICATED
+            } -> context.getString(MR.strings.import_title_duplicated)
             else -> null
         }
     }
@@ -369,7 +327,7 @@ fun ImportArchiveScreen(onClose: () -> Unit) {
                 throw e
             } catch (e: Exception) {
                 planPath?.let { withContext(Dispatchers.IO) { File(it).delete() } }
-                snackbar.showSnackbar(S.ERROR)
+                snackbar.showSnackbar(context.getString(MR.strings.import_failed))
             } finally {
                 isPreparingImport = false
             }
@@ -381,7 +339,7 @@ fun ImportArchiveScreen(onClose: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(S.TITLE) },
+                title = { Text(stringResource(MR.strings.import_comics_title)) },
                 navigationIcon = {
                     IconButton(onClick = onClose) {
                         Icon(Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = null)
@@ -452,7 +410,7 @@ private fun SelectionContent(
                 ) {
                     Icon(Icons.Outlined.FileOpen, contentDescription = null)
                     Spacer(Modifier.width(8.dp))
-                    Text(S.PICK_FILES)
+                    Text(stringResource(MR.strings.import_pick_files))
                 }
                 OutlinedButton(
                     onClick = onPickFolder,
@@ -461,7 +419,7 @@ private fun SelectionContent(
                 ) {
                     Icon(Icons.Outlined.FolderOpen, contentDescription = null)
                     Spacer(Modifier.width(8.dp))
-                    Text(S.PICK_FOLDER)
+                    Text(stringResource(MR.strings.import_pick_folder))
                 }
             }
         }
@@ -469,7 +427,7 @@ private fun SelectionContent(
         if (isScanning) {
             item {
                 Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(S.SCANNING)
+                    Text(stringResource(MR.strings.import_scanning))
                     LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
                 }
             }
@@ -478,7 +436,7 @@ private fun SelectionContent(
         if (groups.isEmpty() && !isScanning) {
             item {
                 Text(
-                    text = S.PICK_HINT,
+                    text = stringResource(MR.strings.import_pick_hint),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -486,7 +444,7 @@ private fun SelectionContent(
         }
 
         if (groups.isNotEmpty()) {
-            item { Text(S.groupsHeader(groups.size), style = MaterialTheme.typography.titleMedium) }
+            item { Text(stringResource(MR.strings.import_groups_header, groups.size), style = MaterialTheme.typography.titleMedium) }
 
             items(groups, key = { it.id }) { group ->
                 GroupCard(
@@ -503,7 +461,7 @@ private fun SelectionContent(
 
             item {
                 Text(
-                    text = S.NOTE,
+                    text = stringResource(MR.strings.import_note),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -518,9 +476,9 @@ private fun SelectionContent(
             ) {
                 Text(
                     when {
-                        isPreparingImport -> S.PREPARING
-                        totalFiles == 0 -> S.IMPORT
-                        else -> S.importButton(totalFiles)
+                        isPreparingImport -> stringResource(MR.strings.import_preparing)
+                        totalFiles == 0 -> stringResource(MR.strings.import_action)
+                        else -> stringResource(MR.strings.import_button_count, pluralStringResource(MR.plurals.import_files_count, totalFiles, totalFiles))
                     },
                 )
             }
@@ -552,7 +510,7 @@ private fun GroupCard(
     LaunchedEffect(firstFile?.uri) {
         if (firstFile == null || group.metaDone) return@LaunchedEffect
         val series = ArchiveImporter.loadMeta(context, firstFile).series
-        if (group.metaDone) return@LaunchedEffect
+        if (group.metaDone) return@LaunchedEffect // el usuario editó el nombre mientras se leía
         group.metaDone = true
         if (series == null) return@LaunchedEffect
         group.title = series
@@ -591,7 +549,7 @@ private fun GroupCard(
                                 group.metaDone = true
                             },
                             modifier = Modifier.fillMaxWidth(),
-                            label = { Text(S.COMIC_NAME) },
+                            label = { Text(stringResource(MR.strings.import_comic_name)) },
                             singleLine = true,
                             isError = error != null,
                             supportingText = if (error != null) {
@@ -607,8 +565,8 @@ private fun GroupCard(
                                 onValueChange = {},
                                 modifier = Modifier.fillMaxWidth(),
                                 readOnly = true,
-                                label = { Text(S.EXISTING_LABEL) },
-                                placeholder = { Text(S.PICK_EXISTING) },
+                                label = { Text(stringResource(MR.strings.import_existing_label)) },
+                                placeholder = { Text(stringResource(MR.strings.import_pick_existing)) },
                                 singleLine = true,
                                 isError = error != null,
                                 trailingIcon = { Icon(Icons.Outlined.ArrowDropDown, contentDescription = null) },
@@ -618,7 +576,6 @@ private fun GroupCard(
                                     null
                                 },
                             )
-                            // Capa transparente: tocar el campo abre el buscador de cómics existentes
                             Box(
                                 Modifier
                                     .matchParentSize()
@@ -628,7 +585,7 @@ private fun GroupCard(
                     }
 
                     Text(
-                        text = "${S.filesCount(group.files.size)} • ${Formatter.formatShortFileSize(context, totalSize)}",
+                        text = "${pluralStringResource(MR.plurals.import_files_count, group.files.size, group.files.size)} • ${Formatter.formatShortFileSize(context, totalSize)}",
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -639,15 +596,14 @@ private fun GroupCard(
                 }
             }
 
-            // Cómic nuevo / agregar a existente
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 DestinationButton(
-                    text = S.NEW_COMIC,
+                    text = stringResource(MR.strings.import_new_comic),
                     selected = group.destination == Destination.NEW,
                     enabled = true,
                 ) { group.destination = Destination.NEW }
                 DestinationButton(
-                    text = S.EXISTING_COMIC,
+                    text = stringResource(MR.strings.import_existing_comic),
                     selected = group.destination == Destination.EXISTING,
                     enabled = existingSeries.isNotEmpty(),
                 ) { group.destination = Destination.EXISTING }
@@ -660,13 +616,13 @@ private fun GroupCard(
                     contentDescription = null,
                 )
                 Spacer(Modifier.width(4.dp))
-                Text(if (group.expanded) S.HIDE_CHAPTERS else S.showChapters(group.files.size))
+                Text(if (group.expanded) stringResource(MR.strings.import_hide_chapters) else stringResource(MR.strings.import_show_chapters, group.files.size))
             }
 
             // Si hay errores en capítulos plegados, avisar para que el botón Importar bloqueado tenga explicación
             if (!group.expanded && group.files.any { fileErrorOf(it) != null }) {
                 Text(
-                    text = S.CHECK_TITLES,
+                    text = stringResource(MR.strings.import_check_titles),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.error,
                 )
@@ -740,7 +696,7 @@ private fun FileRow(
                 value = state.title,
                 onValueChange = { state.title = it },
                 modifier = Modifier.fillMaxWidth(),
-                label = { Text(S.CHAPTER_TITLE) },
+                label = { Text(stringResource(MR.strings.import_chapter_title)) },
                 singleLine = true,
                 isError = error != null,
                 supportingText = if (error != null) {
@@ -756,19 +712,19 @@ private fun FileRow(
                     val suggested = suggestedTitle(m)
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            text = S.comicInfo(describeMeta(m)),
+                            text = stringResource(MR.strings.import_comicinfo, describeMeta(m)),
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.weight(1f),
                         )
                         if (suggested != null && suggested != state.title.trim()) {
-                            TextButton(onClick = { state.title = suggested }) { Text(S.USE) }
+                            TextButton(onClick = { state.title = suggested }) { Text(stringResource(MR.strings.import_use_suggestion)) }
                         }
                     }
                 } else {
                     val number = ChapterRecognition.parseChapterNumber(state.title, seriesTitle, -1f)
                     Text(
-                        text = if (number >= 0f) S.detected(formatChapterNumber(number)) else S.NO_NUMBER,
+                        text = if (number >= 0f) stringResource(MR.strings.import_chapter_detected, formatChapterNumber(number)) else stringResource(MR.strings.import_no_chapter_number),
                         style = MaterialTheme.typography.labelSmall,
                         color = if (number >= 0f) {
                             MaterialTheme.colorScheme.onSurfaceVariant
@@ -792,7 +748,7 @@ private fun FileRow(
                     IconButton(onClick = { moveMenuExpanded = true }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Outlined.DriveFileMove,
-                            contentDescription = S.MOVE_TO_NEW,
+                            contentDescription = stringResource(MR.strings.import_move_to_new_group),
                         )
                     }
                     DropdownMenu(
@@ -800,7 +756,7 @@ private fun FileRow(
                         onDismissRequest = { moveMenuExpanded = false },
                     ) {
                         DropdownMenuItem(
-                            text = { Text(S.MOVE_TO_NEW) },
+                            text = { Text(stringResource(MR.strings.import_move_to_new_group)) },
                             onClick = {
                                 moveMenuExpanded = false
                                 onMoveFile(null)
@@ -809,7 +765,7 @@ private fun FileRow(
                         otherGroups.forEach { target ->
                             DropdownMenuItem(
                                 text = {
-                                    Text(S.moveTo(target.displayName()), maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                    Text(stringResource(MR.strings.import_move_to, target.displayName().ifBlank { stringResource(MR.strings.import_no_name) }), maxLines = 1, overflow = TextOverflow.Ellipsis)
                                 },
                                 onClick = {
                                     moveMenuExpanded = false
@@ -885,14 +841,14 @@ private fun ExistingSeriesDialog(series: List<String>, onPick: (String) -> Unit,
         onDismissRequest = onDismiss,
         containerColor = legacyDialogColor(),
         shape = RoundedCornerShape(28.dp),
-        title = { Text(S.PICK_EXISTING) },
+        title = { Text(stringResource(MR.strings.import_pick_existing)) },
         text = {
             Column {
                 OutlinedTextField(
                     colors = legacyFieldColors(),
                     value = query,
                     onValueChange = { query = it },
-                    label = { Text(S.SEARCH) },
+                    label = { Text(stringResource(MR.strings.import_search)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                 )
@@ -911,7 +867,7 @@ private fun ExistingSeriesDialog(series: List<String>, onPick: (String) -> Unit,
             }
         },
         confirmButton = {},
-        dismissButton = { TextButton(onClick = onDismiss) { Text(S.CANCEL) } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(MR.strings.cancel)) } },
     )
 }
 
@@ -930,40 +886,40 @@ private fun ProgressStage(info: WorkInfo?, modifier: Modifier, onClose: () -> Un
             running -> {
                 val done = info?.progress?.getInt(ImportArchivesWorker.KEY_DONE, 0) ?: 0
                 val total = info?.progress?.getInt(ImportArchivesWorker.KEY_TOTAL, 0) ?: 0
-                Text(S.IMPORTING, style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(MR.strings.importing_local_source), style = MaterialTheme.typography.titleMedium)
                 if (total > 0) {
                     LinearProgressIndicator(progress = { done.toFloat() / total }, modifier = Modifier.fillMaxWidth())
                     Text("$done/$total", style = MaterialTheme.typography.bodySmall)
                 } else {
                     LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
                 }
-                OutlinedButton(onClick = onClose) { Text(S.BACKGROUND) }
+                OutlinedButton(onClick = onClose) { Text(stringResource(MR.strings.import_background)) }
             }
             state == WorkInfo.State.CANCELLED -> {
-                Text(S.CANCELLED, style = MaterialTheme.typography.titleMedium)
-                Button(onClick = onClose) { Text(S.CLOSE) }
+                Text(stringResource(MR.strings.import_cancelled), style = MaterialTheme.typography.titleMedium)
+                Button(onClick = onClose) { Text(stringResource(MR.strings.import_close)) }
             }
             else -> {
                 val data = info?.outputData
                 val failed = data?.getInt(ImportArchivesWorker.KEY_FAILED, -1) ?: -1
                 if (failed < 0) {
-                    Text(S.ERROR, style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.error)
+                    Text(stringResource(MR.strings.import_failed), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.error)
                 } else {
                     Text(
-                        if (failed > 0) S.PARTIAL else S.DONE,
+                        if (failed > 0) stringResource(MR.strings.import_partial) else stringResource(MR.strings.import_local_source_done),
                         style = MaterialTheme.typography.titleMedium,
                         color = if (failed > 0) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
                     )
                     Text(
-                        "✓ ${data?.getInt(ImportArchivesWorker.KEY_IMPORTED, 0)} importados",
+                        stringResource(MR.strings.import_result_imported, data?.getInt(ImportArchivesWorker.KEY_IMPORTED, 0) ?: 0),
                         color = MaterialTheme.colorScheme.primary,
                     )
-                    Text("• ${data?.getInt(ImportArchivesWorker.KEY_SKIPPED, 0)} omitidos (duplicados o no soportados)")
+                    Text(stringResource(MR.strings.import_result_skipped, data?.getInt(ImportArchivesWorker.KEY_SKIPPED, 0) ?: 0))
                     if (failed > 0) {
-                        Text("✗ $failed con error", color = MaterialTheme.colorScheme.error)
+                        Text(stringResource(MR.strings.import_result_failed, failed), color = MaterialTheme.colorScheme.error)
                     }
                 }
-                Button(onClick = onClose) { Text(S.CLOSE) }
+                Button(onClick = onClose) { Text(stringResource(MR.strings.import_close)) }
             }
         }
     }
