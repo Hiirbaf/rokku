@@ -478,7 +478,7 @@ private fun SelectionContent(
                     when {
                         isPreparingImport -> stringResource(MR.strings.import_preparing)
                         totalFiles == 0 -> stringResource(MR.strings.import_action)
-                        else -> stringResource(MR.strings.import_button_count, pluralStringResource(MR.plurals.import_files_count, totalFiles, totalFiles))
+                        else -> stringResource(MR.strings.import_button_count, pluralStringResource(MR.plurals.files_plural, totalFiles, totalFiles))
                     },
                 )
             }
@@ -585,7 +585,7 @@ private fun GroupCard(
                     }
 
                     Text(
-                        text = "${pluralStringResource(MR.plurals.import_files_count, group.files.size, group.files.size)} • ${Formatter.formatShortFileSize(context, totalSize)}",
+                        text = "${pluralStringResource(MR.plurals.files_plural, group.files.size, group.files.size)} • ${Formatter.formatShortFileSize(context, totalSize)}",
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
