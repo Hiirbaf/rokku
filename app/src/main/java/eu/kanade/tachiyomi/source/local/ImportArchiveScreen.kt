@@ -339,7 +339,7 @@ fun ImportArchiveScreen(onClose: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(MR.strings.import_comics_title)) },
+                title = { Text(stringResource(MR.strings.import_files_title)) },
                 navigationIcon = {
                     IconButton(onClick = onClose) {
                         Icon(Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = null)
