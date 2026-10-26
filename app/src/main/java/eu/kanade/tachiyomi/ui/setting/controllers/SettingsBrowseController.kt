@@ -15,6 +15,7 @@ import eu.kanade.tachiyomi.data.preference.changesIn
 import eu.kanade.tachiyomi.data.updater.AppDownloadInstallJob
 import eu.kanade.tachiyomi.extension.ExtensionManager
 import eu.kanade.tachiyomi.extension.ExtensionUpdateJob
+import eu.kanade.tachiyomi.extension.model.ContentWarning
 import eu.kanade.tachiyomi.source.SourceManager
 import eu.kanade.tachiyomi.ui.main.MainActivity
 import eu.kanade.tachiyomi.ui.migration.MigrationController
@@ -29,6 +30,7 @@ import eu.kanade.tachiyomi.ui.setting.preference
 import eu.kanade.tachiyomi.ui.setting.preferenceCategory
 import eu.kanade.tachiyomi.ui.setting.switchPreference
 import eu.kanade.tachiyomi.ui.source.searchhistory.clearSearchHistory
+import eu.kanade.tachiyomi.util.system.materialAlertDialog
 import eu.kanade.tachiyomi.util.view.setAction
 import eu.kanade.tachiyomi.util.view.snack
 import eu.kanade.tachiyomi.util.view.withFadeTransaction
@@ -39,6 +41,7 @@ import yokai.domain.ui.UiPreferences
 import yokai.i18n.MR
 import yokai.presentation.extension.repo.ExtensionRepoController
 import yokai.util.lang.getString
+import android.R as AR
 import eu.kanade.tachiyomi.ui.setting.summaryMRes as summaryRes
 import eu.kanade.tachiyomi.ui.setting.titleMRes as titleRes
 
@@ -132,6 +135,45 @@ class SettingsBrowseController : SettingsLegacyController() {
                 }
             }
         }
+
+        preference {
+            titleRes = MR.strings.pref_allowed_content_warnings
+
+            val pref = preferences.enabledContentWarnings()
+            fun ContentWarning.title() = context.getString(
+                when (this) {
+                    ContentWarning.SAFE -> MR.strings.ext_content_warning_safe
+                    ContentWarning.MIXED -> MR.strings.ext_mixed_short
+                    ContentWarning.NSFW -> MR.strings.nsfw_short
+                },
+            )
+
+            pref.changesIn(viewScope) { enabled ->
+                summary = ContentWarning.entries
+                    .filter { it.name in enabled }
+                    .joinToString { it.title() }
+                    .ifBlank { context.getString(MR.strings.none) }
+            }
+
+            onClick {
+                val entries = ContentWarning.entries
+                val current = pref.get()
+                val checked = BooleanArray(entries.size) { entries[it].name in current }
+
+                context.materialAlertDialog()
+                    .setTitle(context.getString(MR.strings.pref_allowed_content_warnings))
+                    .setMultiChoiceItems(
+                        entries.map { it.title() }.toTypedArray(),
+                        checked,
+                    ) { _, which, isChecked -> checked[which] = isChecked }
+                    .setPositiveButton(AR.string.ok) { _, _ ->
+                        pref.set(entries.filterIndexed { i, _ -> checked[i] }.map { it.name }.toSet())
+                    }
+                    .setNegativeButton(AR.string.cancel, null)
+                    .show()
+            }
+        }
+        infoPreference(MR.strings.does_not_prevent_unofficial_nsfw)
 
         preferenceCategory {
             titleRes = MR.strings.pref_global_search
@@ -258,18 +300,6 @@ class SettingsBrowseController : SettingsLegacyController() {
 
                 visibleIf(sourcePreferences.relatedMangas()) { it }
             }
-        }
-
-        preferenceCategory {
-            titleRes = MR.strings.nsfw_sources
-
-            switchPreference {
-                key = PreferenceKeys.showNsfwSource
-                titleRes = MR.strings.show_in_sources_and_extensions
-                summaryRes = MR.strings.requires_app_restart
-                defaultValue = true
-            }
-            infoPreference(MR.strings.does_not_prevent_unofficial_nsfw)
         }
     }
 
