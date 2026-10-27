@@ -8,6 +8,7 @@ import android.content.pm.ServiceInfo
 import android.net.Uri
 import android.os.Build
 import android.provider.OpenableColumns
+import android.util.Xml
 import androidx.core.app.NotificationCompat
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
@@ -19,6 +20,7 @@ import com.hippo.unifile.UniFile
 import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.source.LocalSource
 import eu.kanade.tachiyomi.util.lang.compareToCaseInsensitiveNaturalOrder
+import eu.kanade.tachiyomi.util.system.extension
 import eu.kanade.tachiyomi.util.system.ImageUtil
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -30,10 +32,12 @@ import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONObject
+import org.xmlpull.v1.XmlPullParser
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 import yokai.core.archive.util.archiveReader
 import yokai.core.archive.util.epubReader
+import yokai.core.metadata.COMIC_INFO_FILE
 import yokai.domain.storage.StorageManager
 import yokai.i18n.MR
 import yokai.util.lang.getString
@@ -292,8 +296,80 @@ object ArchiveImporter {
                 Item(group.series, file.fileName) { context.contentResolver.openInputStream(Uri.parse(file.uri)) }
             }
         }
-        copyAll(items, localDir, onProgress)
+        val result = copyAll(items, localDir, onProgress)
+        groups.forEach { group ->
+            ensureActive()
+            runCatching { writeSeriesComicInfo(context, group, localDir) }
+                .onFailure { Logger.w(it) { "No se pudo copiar ComicInfo a ${group.series}" } }
+        }
+        result
     }
+
+    // ---------- ComicInfo.xml a nivel de serie ----------
+
+    // Solo los campos que LocalSource lee del ComicInfo.xml de la carpeta del cómic. Los de capítulo
+    // (Title, Number, Volume, páginas…) se quedan en cada archivo, y Series no se copia para no pisar
+    // el nombre que el usuario eligió al importar.
+    private val SERIES_FIELDS = listOf("Writer", "Penciller", "Summary", "Genre", "Tags", "LanguageISO")
+    private const val STATUS_FIELD = "PublishingStatusTachiyomi"
+    private const val STATUS_NAMESPACE = "http://www.w3.org/2001/XMLSchema"
+    private const val MAX_META_FILES = 5
+
+    /**
+     * Crea <serie>/ComicInfo.xml con los datos de serie que traigan los primeros archivos del grupo.
+     * No toca una carpeta que ya tenga metadatos: LocalSource da prioridad a ComicInfo.xml sobre el
+     * details.json antiguo, y la app reescribe ese archivo cuando el usuario edita el cómic.
+     */
+    private fun writeSeriesComicInfo(context: Context, group: PlanGroup, localDir: UniFile) {
+        val seriesDir = localDir.findFile(folderName(group.series)) ?: return
+        val hasMetadata = seriesDir.listFiles().orEmpty()
+            .any { it.name == COMIC_INFO_FILE || it.extension.orEmpty().equals("json", ignoreCase = true) }
+        if (hasMetadata) return
+
+        val fields = mutableMapOf<String, String>()
+        group.files.take(MAX_META_FILES).forEach { file ->
+            val source = UniFile.fromUri(context, Uri.parse(file.uri)) ?: return@forEach
+            runCatching { readSeriesFields(context, source) }.getOrNull()
+                ?.forEach { (name, value) -> fields.putIfAbsent(name, value) }
+        }
+        if (fields.isEmpty()) return
+
+        seriesDir.createFile(COMIC_INFO_FILE)?.openOutputStream()?.use {
+            it.write(buildSeriesComicInfo(fields).toByteArray())
+        }
+    }
+
+    private fun readSeriesFields(context: Context, source: UniFile): Map<String, String> {
+        val wanted = SERIES_FIELDS + STATUS_FIELD
+        val fields = mutableMapOf<String, String>()
+        source.archiveReader(context).use { reader ->
+            val stream = reader.getInputStream(COMIC_INFO_FILE) ?: return emptyMap()
+            stream.use { input ->
+                val parser = Xml.newPullParser().apply { setInput(input, null) }
+                var event = parser.eventType
+                while (event != XmlPullParser.END_DOCUMENT) {
+                    if (event == XmlPullParser.START_TAG) {
+                        val name = parser.name.substringAfterLast(':') // quita el prefijo (ty:)
+                        if (name in wanted) {
+                            parser.nextText().trim().takeIf { it.isNotBlank() }?.let { fields.putIfAbsent(name, it) }
+                        }
+                    }
+                    event = parser.next()
+                }
+            }
+        }
+        return fields
+    }
+
+    private fun buildSeriesComicInfo(fields: Map<String, String>): String = buildString {
+        append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n")
+        append("<ComicInfo xmlns:ty=\"$STATUS_NAMESPACE\">\n")
+        SERIES_FIELDS.forEach { name -> fields[name]?.let { append("  <$name>${escapeXml(it)}</$name>\n") } }
+        fields[STATUS_FIELD]?.let { append("  <ty:$STATUS_FIELD>${escapeXml(it)}</ty:$STATUS_FIELD>\n") }
+        append("</ComicInfo>\n")
+    }
+
+    private fun escapeXml(text: String) = text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
     private suspend fun copyAll(
         items: List<Item>,
@@ -312,7 +388,7 @@ object ArchiveImporter {
             if (!LocalSource.isImportable(fileName.substringAfterLast('.', ""))) {
                 skipped++
             } else {
-                val safeSeries = sanitize(item.series).ifBlank { "Sin título" }
+                val safeSeries = folderName(item.series)
                 val seriesDir = seriesDirs.getOrPut(safeSeries) {
                     localDir.findFile(safeSeries) ?: localDir.createDirectory(safeSeries)
                 }
@@ -365,6 +441,8 @@ object ArchiveImporter {
                 if (c.moveToFirst()) c.getString(0) to (if (c.isNull(1)) -1L else c.getLong(1)) else null to -1L
             }
             ?: (null to -1L)
+
+    private fun folderName(series: String) = sanitize(series).ifBlank { "Sin título" }
 
     // LocalSource ignora carpetas que empiezan por '.', por eso también se quita el punto inicial.
     private fun sanitize(name: String) =
