@@ -1211,9 +1211,7 @@
     <string name="ext_content_warning_safe">Seguro</string>
     <string name="ext_mixed_short">Misto</string>
     <string name="ext_content_warning_mixed_description">Esta extensão pode incluir fontes com conteúdo adulto ou sugestivo</string>
-    <plurals name="ext_content_warning_nsfw_description">
-        <item quantity="one">Esta extensão inclui fontes com conteúdo adulto explícito</item>
-    </plurals>
+    <string name="ext_content_warning_nsfw_description">Esta extensão inclui fontes com conteúdo adulto explícito</string>
     <string name="app_icon">Ícone do aplicativo</string>
     <string name="app_icon_color">Cor do ícone</string>
     <string name="app_icon_match_theme">Seguir tema do aplicativo</string>
