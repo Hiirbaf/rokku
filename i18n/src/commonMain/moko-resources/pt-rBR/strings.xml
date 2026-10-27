@@ -362,7 +362,7 @@
     <string name="date_format">Formato de data</string>
     <string name="check_for_updates">Procurar por atualizações</string>
     <string name="secure_screen">Tela segura</string>
-    <string name="security">Segurança e Privacidade</string>
+    <string name="security">Segurança e privacidade</string>
     <!-- Storage -->
     <string name="data_and_storage">Dados e armazenamento</string>
     <string name="storage_location">Local de armazenamento</string>
@@ -643,7 +643,7 @@
     <string name="backup_has_no_manga">O backup não possui nenhum mangá.</string>
     <string name="restore_missing_sources">Fontes faltando:</string>
     <string name="restore_missing_trackers">Monitoradores sem login realizado:</string>
-    <string name="restore_content_full">Os dados do arquivo de backup serão restaurados\n\nVocê precisará instalar as extensões ausentes e fazer login nos serviços de rastreamento posteriormente para utilizá-los</string>
+    <string name="restore_content_full">Os dados do arquivo de backup serão restaurados.\n\nVocê precisará instalar as extensões ausentes e fazer login nos serviços de monitoramento depois para utilizá-los</string>
     <string name="restoring_backup_canceled">Restauração cancelada</string>
     <string name="restore_duration">%1$02d min e %2$02d seg</string>
     <string name="source_migration_guide">Guia de migração de fonte</string>
@@ -781,7 +781,7 @@
     <string name="automatic_removal">Remoção automática</string>
     <string name="show_on_long_press">Mostrar no toque longo</string>
     <string name="actions">Ações</string>
-    <string name="search_tips_show_periodically">Dicas de pesquisa aparecerão periodicamente. Pressione e segure para pesquisar</string>
+    <string name="search_tips_show_periodically">Dicas de pesquisa aparecerão periodicamente. Mantenha a sugestão pressionada para pesquisá-la</string>
     <string name="search_suggestions">Sugestões de pesquisa</string>
     <string name="release_page">Página de lançamento</string>
     <string name="mark_range_as_unread">Marcar um intervalo de capítulos como não lido</string>
@@ -841,7 +841,7 @@
     <string name="restrictions_">Restrições: %1$s</string>
     <string name="by_source_order">Pela ordem da fonte</string>
     <string name="not_bookmarked">Não foi marcado</string>
-    <string name="default_behavior">Padrão</string>
+    <string name="default_behavior">Comportamento padrão</string>
     <string name="by_default_side_nav_info">Por padrão, a navegação lateral é utilizada para certos celulares e pequenos tablets quando em modo panorama, e sempre ativa em tablets maiores</string>
     <string name="keep_both_on_service">Mantenha ambos em %1$s e apenas substitua localmente</string>
     <string name="remove_x_from_service_and_add_y">Remova %1$s de %2$s e adicione%3$s</string>
@@ -1075,7 +1075,7 @@
     <string name="pref_behavior">Comportamento</string>
     <string name="pref_mark_as_read_duplicate_read_chapter">Marcar capítulo duplicado como lido</string>
     <string name="pref_mark_as_read_duplicate_read_chapter_existing">Depois de ler um capítulo</string>
-    <string name="pref_mark_as_read_duplicate_read_chapter_new">Depois de encontrar um capítulo</string>
+    <string name="pref_mark_as_read_duplicate_read_chapter_new">Depois de buscar um novo capítulo</string>
     <string name="random">Aleatório</string>
     <string name="enable_chapter_swipe_action">Habilitar função de “Swipe” dos capítulos</string>
     <string name="label_recent_updates">Atualizações</string>
@@ -1113,7 +1113,7 @@
     <string name="crash_screen_restart_application">Reiniciar a aplicação</string>
     <string name="refresh">Atualizar</string>
     <string name="migrating_progress">Migrando…</string>
-    <string name="vertical_seekbar">Usar a barra vertical para navegar</string>
+    <string name="vertical_seekbar">Usar barra de navegação vertical em</string>
     <string name="vertical_seekbar_dock_left">Posicionar a barra vertical no lado esquerdo</string>
     <string name="vertical_seekbar_height">Altura da barra vertical</string>
     <string name="pref_always_decode_long_strip_with_ssiv">Usar o decodificador legado para leitura de tiras longas</string>
@@ -1155,16 +1155,16 @@
     <string name="download_paused_low_space">Downloads pausados, pouco espaço de armazenamento disponível</string>
     <string name="pause_downloads_low_space">Pausa os downloads quando o espaço de armazenamento estiver baixo</string>
     <string name="custom">Customizado</string>
-    <string name="recent_searches">Buscas recentes</string>
+    <string name="recent_searches">Pesquisas recentes</string>
     <string name="only_x">Apenas %1$s</string>
     <string name="clear_all">Limpar tudo</string>
-    <string name="edit_search">Editar busca</string>
-    <string name="duplicate_in_library">Duplicar</string>
+    <string name="edit_search">Editar pesquisa</string>
+    <string name="duplicate_in_library">Duplicata</string>
     <string name="track_login_expired">Sessão de Login expirada, por favor logue novamente no menu de Monitoramento</string>
     <string name="theme_background_based_on_cover">Tema de fundo baseado na capa</string>
     <string name="cover_theme_style">Estilo do tema da capa</string>
     <string name="palette_style_tonal_spot">Tom Suave</string>
-    <string name="legacy_theme">Clássico</string>
+    <string name="legacy_theme">Legado</string>
     <string name="palette_style_neutral">Neutro</string>
     <string name="palette_style_vibrant">Vibrante</string>
     <string name="palette_style_expressive">Expressivo</string>
