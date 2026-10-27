@@ -11,6 +11,8 @@ import androidx.webkit.WebSettingsCompat
 import androidx.webkit.WebViewFeature
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.suspendCancellableCoroutine
+import okhttp3.Headers
+import java.util.Locale
 import kotlin.coroutines.resume
 
 object WebViewUtil {
@@ -171,3 +173,27 @@ private fun WebView.getDefaultUserAgentString(): String {
 suspend fun WebView.getHtml(): String = suspendCancellableCoroutine {
     evaluateJavascript("document.documentElement.outerHTML") { html -> it.resume(html) }
 }
+
+fun Headers.toWebViewHeaders(): Map<String, String> {
+    return this
+        // Keeping unsafe header makes webview throw [net::ERR_INVALID_ARGUMENT]
+        .filter { (name, value) ->
+            isRequestHeaderSafe(name, value)
+        }
+        .groupBy(keySelector = { (name, _) -> name }) { (_, value) -> value }
+        .mapValues { it.value.getOrNull(0).orEmpty() }
+}
+
+// Based on [IsRequestHeaderSafe] in https://source.chromium.org/chromium/chromium/src/+/main:services/network/public/cpp/header_util.cc
+private fun isRequestHeaderSafe(_name: String, _value: String): Boolean {
+    val name = _name.lowercase(Locale.ENGLISH)
+    val value = _value.lowercase(Locale.ENGLISH)
+    if (name in unsafeHeaderNames || name.startsWith("proxy-")) return false
+    if (name == "connection" && value == "upgrade") return false
+    return true
+}
+private val unsafeHeaderNames = listOf(
+    "content-length", "host", "trailer", "te", "upgrade", "cookie2", "keep-alive", "transfer-encoding", "set-cookie",
+    // Renderer is killed if it doesn't match the request initiator
+    "origin",
+)

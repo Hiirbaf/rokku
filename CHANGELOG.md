@@ -23,15 +23,20 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Added a "Predict next release time" option to Settings > Library > Smart update (renamed from "Skip updating titles", with its options reworded to match Mihon), which predicts when each series gets its next chapter from its past release dates and skips it in automatic library updates until then (off by default, manual updates always check). A new hourglass button on the manga details screen, available for every series in the library, shows the prediction
 - Added a copy button and text selection to the crash screen, so the error can be pasted into a report
 - Added an app icon color picker (beta) under Settings > Appearance > App icon, with a preview, ten predefined colors and an option to make the icon follow the selected app theme. The old Blue and Gray icons were removed
+- Added the extension repository name under each extension in Browse > Extensions, and on the extension info screen
 - Added a website button next to GitHub in the About screen
+- Added an "Allowed content warnings" setting in Settings > Browse to choose which extensions are shown and loaded by their content warning (Safe, Mixed or 18+), replacing the "Show in sources and extensions lists" switch. Tapping the "Mixed" or "18+" label in an extension's details now explains what it means. If the old switch was off, only Safe and Mixed stay allowed ([@Hiirbaf](https://github.com/Hiirbaf))
 
 ### Changes
 - Updated the database schema (removed the unused `filtered_scanlators` column and added the release schedule of each series). This can't be undone and older versions can't open the updated database, so create a backup before updating
 - The Doki, Dark (default) and Flat Lime themes now tint switch tracks and outlines with their own colors when "Tint switches and outlines" is on, instead of a generic gray
+- Extensions marked "Mixed" by their repository now show a "Mixed" label instead of "18+", in the extension list and details, so only extensions that are mainly 18+ content get the "18+" label, and extensions installed privately now show a "Private" label
 - An automatic backup that fails because its saved location is no longer accessible (folder deleted, permission revoked, storage removed) now shows a notification telling you to pick a new one, instead of failing silently
 - Aligned the accent and surface colors of the app themes with TachiyomiJ2K ([@Hiirbaf](https://github.com/Hiirbaf))
 
 ### Fixes
+- Fixed an installed private extension being deleted when updating it failed partway
+- Fixed the in-app browser closing unexpectedly when a source sets an Origin header, and stopped sending a source's headers to other websites opened from its pages
 - Made the status bar transparent instead of theme-colored, matching upstream (only visible on Android versions predating edge-to-edge enforcement)
 - Adjusted the accent color of the Tachiyomi, Flat Lime, Strawberries, and Yotsuba themes to match upstream
 - Fixed the Popular/Latest/Filter buttons in Browse rendering in the accent color instead of a neutral one
@@ -92,6 +97,8 @@ The format is simplified version of [Keep a Changelog](https://keepachangelog.co
 - Fixed the Statistics screen freezing the app while opening with a large library, since the numbers are now calculated in the background
 - Fixed the crash screen closing by itself when the crash was caused by the database, so the error can be read and reported
 - Fixed "Dump crash logs" not creating the file when the installed extensions couldn't be read because of a database error
+- Fixed the extension info screen showing the default icon instead of the extension's own icon for extensions installed privately
+- Fixed the app freezing on launch while extensions were still loading, since opening the main screen no longer waits for the extension list when no source is involved
 
 ### Other
 - Migrated FlexibleAdapter from JitPack to its MavenCentral release, removing a source of transient CI build failures when JitPack was unavailable

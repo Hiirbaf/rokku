@@ -43,6 +43,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import cafe.adriel.voyager.core.stack.mutableStateStackOf
 import co.touchlab.kermit.Logger
 import com.kevinnzou.web.AccompanistWebChromeClient
@@ -94,6 +95,7 @@ fun WebViewScreenContent(
     onUrlChange: (String) -> Unit = {},
 ) {
     val coroutineScope = rememberCoroutineScope()
+    val headersHost = remember { url.toUri().host }
 
     val windowStack = remember {
         mutableStateStackOf(
@@ -161,6 +163,8 @@ fun WebViewScreenContent(
                 // Only open valid web urls
                 if (url.startsWith("http") || url.startsWith("https")) {
                     if (url != view?.url) {
+                        // Source headers are only meant for the source itself
+                        if (request?.url?.host != headersHost) return false
                         view?.loadUrl(url, headers)
                         return true
                     }

@@ -3,6 +3,7 @@ package eu.kanade.tachiyomi.extension.api
 import android.content.Context
 import co.touchlab.kermit.Logger
 import eu.kanade.tachiyomi.extension.ExtensionManager
+import eu.kanade.tachiyomi.extension.model.ContentWarning
 import eu.kanade.tachiyomi.extension.model.Extension
 import eu.kanade.tachiyomi.extension.model.LoadResult
 import eu.kanade.tachiyomi.extension.util.ExtensionLoader
@@ -181,7 +182,7 @@ internal class ExtensionApi {
                     versionCode = it.code,
                     libVersion = it.extractLibVersion(),
                     lang = it.lang,
-                    isNsfw = it.nsfw == 1,
+                    contentWarning = if (it.nsfw == 1) ContentWarning.NSFW else ContentWarning.SAFE,
                     sources = it.sources ?: emptyList(),
                     apkName = it.apk,
                     iconUrl = "$repoUrl/icon/${it.pkg}.png",

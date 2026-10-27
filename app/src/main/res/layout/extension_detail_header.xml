@@ -75,13 +75,32 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="1"
+            android:background="?attr/selectableItemBackground"
+            android:drawableEnd="@drawable/ic_info_outline_24dp"
+            android:drawablePadding="4dp"
             android:elevation="3dp"
             android:gravity="center"
-            android:text="@string/may_contain_nsfw"
-            android:textColor="?attr/colorError"
             android:visibility="gone"
             app:layout_constraintStart_toStartOf="@id/extension_title"
             app:layout_constraintTop_toBottomOf="@id/extension_lang"
+            tools:text="18+"
+            tools:textColor="?attr/colorError"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/extension_repo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:elevation="3dp"
+            android:ellipsize="end"
+            android:layout_marginTop="6dp"
+            android:maxLines="1"
+            android:textColor="?attr/colorSecondary"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/extension_title"
+            app:layout_constraintTop_toBottomOf="@id/extension_nsfw"
+            tools:text="Keiyoushi"
             tools:visibility="visible" />
 
         <TextView
@@ -94,7 +113,7 @@
             android:maxLines="1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/extension_title"
-            app:layout_constraintTop_toBottomOf="@id/extension_nsfw"
+            app:layout_constraintTop_toBottomOf="@id/extension_repo"
             tools:text="eu.kanade.tachiyomi.extension.en.myext" />
 
         <Button

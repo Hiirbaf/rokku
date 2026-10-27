@@ -10,6 +10,7 @@ import eu.kanade.tachiyomi.core.preference.getEnum
 import eu.kanade.tachiyomi.core.storage.preference.asDateFormat
 import eu.kanade.tachiyomi.data.updater.AppDownloadInstallJob
 import eu.kanade.tachiyomi.domain.manga.models.Manga
+import eu.kanade.tachiyomi.extension.model.ContentWarning
 import eu.kanade.tachiyomi.extension.model.InstalledExtensionsOrder
 import eu.kanade.tachiyomi.ui.library.LibraryItem
 import eu.kanade.tachiyomi.ui.library.filter.FilterBottomSheet
@@ -469,7 +470,10 @@ class PreferencesHelper(val context: Context, val preferenceStore: PreferenceSto
     fun sideNavIconAlignment() = preferenceStore.getInt(Keys.sideNavIconAlignment, 1)
 
     // TODO: SourcePref
-    fun showNsfwSources() = preferenceStore.getBoolean(Keys.showNsfwSource, true)
+    fun enabledContentWarnings() = preferenceStore.getStringSet(
+        Keys.enabledContentWarnings,
+        ContentWarning.entries.map { it.name }.toSet(),
+    )
 
     fun themeMangaDetails() = preferenceStore.getBoolean(Keys.themeMangaDetails, true)
     fun themeMangaDetailsBackground() = preferenceStore.getBoolean(Keys.themeMangaDetailsBackground, false)

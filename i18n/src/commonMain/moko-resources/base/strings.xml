@@ -414,11 +414,15 @@
     <string name="unofficial_extension_message">This extension is not from the official Tachiyomi extensions list.</string>
     <string name="version_">Version: %1$s</string>
     <string name="language_">Language: %1$s</string>
+    <string name="pref_allowed_content_warnings">Allowed content warnings</string>
+    <string name="ext_content_warning_safe">Safe</string>
     <string name="nsfw_short">18+</string>
+    <string name="ext_mixed_short">Mixed</string>
+    <string name="ext_content_warning_mixed_description">This extension may include sources with mature or suggestive content.</string>
+    <string name="ext_content_warning_nsfw_description">This extension includes sources with explicit adult content.</string>
     <string name="installed_">Installed %1$s</string>
     <string name="unofficial">Unofficial</string>
     <string name="extensions_miui_warning">MIUI Optimization must be disabled to install extensions.</string>
-    <string name="may_contain_nsfw">May contain NSFW (18+) content</string>
     <string name="app_info">App info</string>
     <string name="_must_be_enabled_first">%1$s must be enabled first</string>
     <string name="could_not_install_extension">Could not install extension</string>
@@ -1008,8 +1012,6 @@
     <string name="related_mangas">Suggestions</string>
     <string name="related_mangas_site_suggestions">Site suggestions</string>
     <string name="no_related_mangas_found">No suggestions found</string>
-    <string name="nsfw_sources">NSFW (18+) sources</string>
-    <string name="show_in_sources_and_extensions">Show in sources and extensions lists</string>
     <string name="does_not_prevent_unofficial_nsfw">This does not prevent unofficial or potentially incorrectly flagged extensions from surfacing NSFW (18+) content within the app</string>
     <!-- Extension repos -->
     <string name="source_repos">Extension Repos</string>

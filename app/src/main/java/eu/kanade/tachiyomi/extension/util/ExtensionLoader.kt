@@ -10,6 +10,7 @@ import androidx.core.content.pm.PackageInfoCompat
 import co.touchlab.kermit.Logger
 import eu.kanade.tachiyomi.BuildConfig
 import eu.kanade.tachiyomi.data.preference.PreferencesHelper
+import eu.kanade.tachiyomi.extension.model.ContentWarning
 import eu.kanade.tachiyomi.extension.model.Extension
 import eu.kanade.tachiyomi.extension.model.LoadResult
 import eu.kanade.tachiyomi.source.CatalogueSource
@@ -24,6 +25,7 @@ import kotlinx.coroutines.runBlocking
 import uy.kohesive.injekt.injectLazy
 import yokai.domain.extension.interactor.TrustExtension
 import java.io.File
+import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.attribute.BasicFileAttributes
 
@@ -35,9 +37,6 @@ internal object ExtensionLoader {
 
     private val preferences: PreferencesHelper by injectLazy()
     private val trustExtension: TrustExtension by injectLazy()
-    private val loadNsfwSource by lazy {
-        preferences.showNsfwSources().get()
-    }
 
     private const val EXTENSION_FEATURE = "tachiyomi.extension"
     private const val METADATA_SOURCE_CLASS = "tachiyomi.extension.class"
@@ -88,8 +87,10 @@ internal object ExtensionLoader {
         }
 
         val target = File(getPrivateExtensionDir(context), "${extension.packageName}.$PRIVATE_EXTENSION_EXTENSION")
+        val staged = File(target.parentFile, "${target.name}.part")
         return try {
-            file.copyTo(target, overwrite = true)
+            file.copyTo(staged, overwrite = true)
+            if (!staged.renameTo(target)) throw IOException("Unable to replace ${target.name}")
             if (currentExtension != null) {
                 ExtensionInstallReceiver.notifyReplaced(context, extension.packageName)
             } else {
@@ -98,8 +99,9 @@ internal object ExtensionLoader {
             true
         } catch (e: Exception) {
             Logger.e { "Failed to copy extension file." }
-            target.delete()
             false
+        } finally {
+            staged.delete()
         }
     }
 
@@ -326,9 +328,14 @@ internal object ExtensionLoader {
         // Repositories publish this metadata as either a String or Int.
         val contentWarning = metaData.get(METADATA_CONTENT_WARNING)?.toString()?.toIntOrNull()
             ?: 0
-        val isNsfw = contentWarning > 0 || metaData.getInt(METADATA_NSFW) == 1
-        if (!loadNsfwSource && isNsfw) {
-            Logger.w { "NSFW extension $pkgName not allowed" }
+        val warning = when {
+            contentWarning >= 2 -> ContentWarning.NSFW
+            contentWarning == 1 -> ContentWarning.MIXED
+            metaData.getInt(METADATA_NSFW) == 1 -> ContentWarning.NSFW
+            else -> ContentWarning.SAFE
+        }
+        if (warning.name !in preferences.enabledContentWarnings().get()) {
+            Logger.w { "Extension $pkgName not allowed ($warning)" }
             return LoadResult.Error
         }
 
@@ -381,7 +388,7 @@ internal object ExtensionLoader {
             versionCode = versionCode,
             libVersion = libVersion,
             lang = lang,
-            isNsfw = isNsfw,
+            contentWarning = warning,
             sources = sources,
             pkgFactory = metaData.getString(METADATA_SOURCE_FACTORY),
             icon = appInfo.loadIcon(pkgManager),

@@ -22,6 +22,7 @@ class ExtensionAdapter(val listener: OnButtonClickListener) :
 
     var installedSortOrder = preferences.installedExtensionsOrder().get()
     var installPrivately = basePreferences.extensionInstaller().get() == ExtensionInstaller.PRIVATE
+    var repoNames = emptyMap<String, String>()
 
     init {
         setDisplayHeadersAtStartUp(true)

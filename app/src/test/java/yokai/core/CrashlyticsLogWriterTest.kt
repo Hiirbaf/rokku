@@ -218,6 +218,20 @@ class CrashlyticsLogWriterTest {
         ignored(Exception("Captcha Failed! Unexpected response")) shouldBe false
     }
 
+    @Test
+    fun `legal blocks, localized extension HTTP hints and unconfigured extensions are ignored`() {
+        ignored(HttpException(451)) shouldBe true
+        ignored(HttpException(418)) shouldBe false
+        ignored(
+            IOException("HTTP error 404. Проверьте сайт. Попробуйте авторизоваться через WebView и обновите список."),
+        ) shouldBe true
+        ignored(IOException("HTTP error 404. Something else")) shouldBe false
+        ignored(Exception("Set Address in Settings")) shouldBe true
+        ignored(Exception("Set Address in Settings, then restart")) shouldBe false
+        ignored(Exception("Log in via WebView and subscribe to the website's service.")) shouldBe true
+        ignored(Exception("Log in via WebView")) shouldBe false
+    }
+
     // Same simple name as libarchive's exception, which the filter matches by name.
     private class ArchiveException(message: String) : Exception(message)
 

@@ -1,6 +1,7 @@
 package eu.kanade.tachiyomi.ui.extension.details
 
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.net.Uri
 import android.provider.Settings
 import android.view.View
@@ -10,7 +11,9 @@ import androidx.recyclerview.widget.RecyclerView
 import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.databinding.ExtensionDetailHeaderBinding
 import eu.kanade.tachiyomi.ui.extension.getApplicationIcon
+import eu.kanade.tachiyomi.ui.extension.label
 import eu.kanade.tachiyomi.util.system.LocaleHelper
+import eu.kanade.tachiyomi.util.system.getResourceColor
 import eu.kanade.tachiyomi.util.system.materialAlertDialog
 import eu.kanade.tachiyomi.util.view.inflate
 import eu.kanade.tachiyomi.util.view.setPositiveButton
@@ -47,13 +50,31 @@ class ExtensionDetailsHeaderAdapter(private val presenter: ExtensionDetailsPrese
             val extension = presenter.extension ?: return
             val context = view.context
 
-            extension.getApplicationIcon(context)?.let { binding.extensionIcon.setImageDrawable(it) }
+            (extension.icon ?: extension.getApplicationIcon(context))?.let { binding.extensionIcon.setImageDrawable(it) }
             binding.extensionTitle.text = extension.name
             binding.extensionVersion.text = context.getString(MR.strings.version_, extension.versionName)
             binding.extensionLang.text =
                 context.getString(MR.strings.language_, LocaleHelper.getSourceDisplayName(extension.lang, context))
-            binding.extensionNsfw.isVisible = extension.isNsfw
+            val warning = extension.contentWarning.label
+            binding.extensionNsfw.isVisible = warning != null
+            if (warning != null) {
+                val color = context.getResourceColor(warning.colorAttr)
+                binding.extensionNsfw.text = context.getString(warning.title)
+                binding.extensionNsfw.setTextColor(color)
+                binding.extensionNsfw.compoundDrawableTintList = ColorStateList.valueOf(color)
+                binding.extensionNsfw.setOnClickListener {
+                    context.materialAlertDialog()
+                        .setTitle(context.getString(warning.title))
+                        .setMessage(context.getString(warning.description))
+                        .setPositiveButton(AR.string.ok, null)
+                        .show()
+                }
+            }
             binding.extensionPkg.text = extension.pkgName
+
+            val repo = presenter.repo
+            binding.extensionRepo.isVisible = repo != null
+            binding.extensionRepo.text = repo?.name
 
             binding.extensionUninstallButton.setOnClickListener {
                 if (extension.isShared) {

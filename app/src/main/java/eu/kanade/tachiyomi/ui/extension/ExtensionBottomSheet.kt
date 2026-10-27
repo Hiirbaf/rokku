@@ -392,6 +392,7 @@ class ExtensionBottomSheet @JvmOverloads constructor(context: Context, attrs: At
     }
 
     fun drawExtensions() {
+        extAdapter?.repoNames = presenter.repoNames
         if (controller.extQuery.isNotBlank()) {
             extAdapter?.updateDataSet(
                 extensions.filter {

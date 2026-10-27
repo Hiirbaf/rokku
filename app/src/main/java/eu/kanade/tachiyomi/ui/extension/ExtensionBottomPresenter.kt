@@ -18,6 +18,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
+import yokai.domain.extension.repo.interactor.GetExtensionRepo
 import yokai.i18n.MR
 import yokai.util.lang.getString
 
@@ -38,12 +39,18 @@ class ExtensionBottomPresenter : BaseMigrationPresenter<ExtensionBottomSheet>() 
 
     private var firstLoad = true
 
+    private val getExtensionRepo: GetExtensionRepo = Injekt.get()
+
+    var repoNames = emptyMap<String, String>()
+        private set
+
     override fun onCreate() {
         super.onCreate()
 
         presenterScope.launch {
             val extensionJob = async {
                 extensionManager.findAvailableExtensions()
+                loadRepoNames()
                 extensions = toItems(
                     Triple(
                         extensionManager.installedExtensionsFlow.value,
@@ -100,7 +107,12 @@ class ExtensionBottomPresenter : BaseMigrationPresenter<ExtensionBottomSheet>() 
         }
     }
 
+    private suspend fun loadRepoNames() {
+        repoNames = getExtensionRepo.getAll().associate { it.baseUrl to (it.shortName ?: it.name) }
+    }
+
     private suspend fun rebuildExtensions() {
+        loadRepoNames()
         extensions = toItems(
             Triple(
                 extensionManager.installedExtensionsFlow.value,
@@ -113,6 +125,7 @@ class ExtensionBottomPresenter : BaseMigrationPresenter<ExtensionBottomSheet>() 
 
     fun refreshExtensions() {
         presenterScope.launch {
+            loadRepoNames()
             extensions = toItems(
                 Triple(
                     extensionManager.installedExtensionsFlow.value,
@@ -128,7 +141,7 @@ class ExtensionBottomPresenter : BaseMigrationPresenter<ExtensionBottomSheet>() 
     private fun toItems(tuple: ExtensionTuple): List<ExtensionItem> {
         val context = view?.context ?: return emptyList()
         val activeLangs = preferences.enabledLanguages().get()
-        val showNsfwSources = preferences.showNsfwSources().get()
+        val enabledContentWarnings = preferences.enabledContentWarnings().get()
 
         val (installed, untrusted, available) = tuple
 
@@ -143,10 +156,10 @@ class ExtensionBottomPresenter : BaseMigrationPresenter<ExtensionBottomSheet>() 
             firstLoad = false
         }
 
-        val updatesSorted = installed.filter { it.hasUpdate && (showNsfwSources || !it.isNsfw) }.sortedBy { it.name }
+        val updatesSorted = installed.filter { it.hasUpdate }.sortedBy { it.name }
         val sortOrder = InstalledExtensionsOrder.fromPreference(preferences)
         val installedSorted = installed
-            .filter { !it.hasUpdate && (showNsfwSources || !it.isNsfw) }
+            .filter { !it.hasUpdate }
             .sortedWith(
                 compareBy(
                     { !it.isObsolete },
@@ -170,12 +183,12 @@ class ExtensionBottomPresenter : BaseMigrationPresenter<ExtensionBottomSheet>() 
             )
         val untrustedSorted = untrusted.sortedBy { it.name }
         val availableSorted = available
-            // Filter out already installed extensions and disabled languages
+            // Filter out already installed extensions, disabled languages and disallowed content warnings
             .filter { avail ->
                 installed.none { it.pkgName == avail.pkgName } &&
                     untrusted.none { it.pkgName == avail.pkgName } &&
                     (avail.lang in activeLangs) &&
-                    (showNsfwSources || !avail.isNsfw)
+                    avail.contentWarning.name in enabledContentWarnings
             }
             .sortedBy { it.name }
 
