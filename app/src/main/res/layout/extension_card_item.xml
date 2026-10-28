@@ -138,19 +138,6 @@
                 tools:text="Keiyoushi" />
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/date"
-            style="?textAppearanceBodySmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:ellipsize="start"
-            app:layout_constrainedWidth="true"
-            app:layout_constraintTop_toBottomOf="@+id/ext_title"
-            app:layout_constraintStart_toEndOf="@id/version"
-            app:layout_constraintEnd_toStartOf="@id/button_layout"
-            tools:text="Updated 5 days ago" />
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/button_layout"
             android:layout_width="wrap_content"
