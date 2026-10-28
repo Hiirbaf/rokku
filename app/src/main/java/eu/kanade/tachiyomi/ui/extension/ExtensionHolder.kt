@@ -46,6 +46,9 @@ class ExtensionHolder(view: View, val adapter: ExtensionAdapter) :
     private var boundIconKey: String? = null
 
     init {
+        binding.settingsButton.setOnClickListener {
+            adapter.buttonClickListener.onButtonClick(flexibleAdapterPosition)
+        }
         binding.extButton.setOnClickListener {
             adapter.buttonClickListener.onButtonClick(flexibleAdapterPosition)
         }
@@ -239,6 +242,11 @@ class ExtensionHolder(view: View, val adapter: ExtensionAdapter) :
         binding.installProgress.isVisible = item.sessionProgress != null
         val extension = item.extension
         val installStep = item.installStep
+        val showSettings = installStep == null &&
+            extension is Extension.Installed &&
+            !extension.hasUpdate
+        binding.settingsButton.isVisible = showSettings
+        isVisible = !showSettings
         binding.webviewButton.isVisible =
             item.sessionProgress == null &&
             extension is Extension.Available &&
@@ -263,22 +271,12 @@ class ExtensionHolder(view: View, val adapter: ExtensionAdapter) :
                 isClickable = false
             }
         } else if (extension is Extension.Installed) {
-            when {
-                extension.hasUpdate -> {
-                    isActivated = true
-                    stateListAnimator =
-                        AnimatorInflater.loadStateListAnimator(context, R.animator.icon_btn_state_list_anim)
-                    rippleColor = ColorStateList.valueOf(context.getColor(R.color.on_secondary_highlight))
-                    setText(MR.strings.update)
-                }
-
-                else -> {
-                    text = null
-                    setIconResource(R.drawable.ic_settings_24dp)
-                    iconTint = ColorStateList.valueOf(
-                        context.getResourceColor(R.attr.colorOnSurface),
-                    )
-                }
+            if (extension.hasUpdate) {
+                isActivated = true
+                stateListAnimator =
+                    AnimatorInflater.loadStateListAnimator(context, R.animator.icon_btn_state_list_anim)
+                rippleColor = ColorStateList.valueOf(context.getColor(R.color.on_secondary_highlight))
+                setText(MR.strings.update)
             }
         } else if (extension is Extension.Untrusted) {
             resetStrokeColor()
