@@ -48,7 +48,7 @@
             android:maxLines="1"
             android:textAppearance="?textAppearanceBodyMedium"
             android:textSize="14sp"
-            app:layout_constraintBottom_toTopOf="@id/version"
+            app:layout_constraintBottom_toTopOf="@id/metadata_flow"
             app:layout_constraintEnd_toStartOf="@id/button_layout"
             app:layout_constraintStart_toEndOf="@id/source_image"
             app:layout_constraintTop_toTopOf="parent"
@@ -61,14 +61,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:maxLines="1"
-            android:layout_marginEnd="4dp"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintVertical_bias="0.0"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/source_image"
-            app:layout_constraintEnd_toStartOf="@id/version"
-            app:layout_constraintTop_toBottomOf="@+id/ext_title"
             tools:text="English"
             tools:visibility="visible" />
 
@@ -79,34 +71,62 @@
             android:layout_height="wrap_content"
             android:maxLines="1"
             android:ellipsize="middle"
-            app:layout_constraintTop_toBottomOf="@+id/ext_title"
-            app:layout_constraintBottom_toTopOf="@id/line3"
-            app:layout_constraintStart_toEndOf="@id/lang"
-            app:layout_constraintEnd_toStartOf="@id/date"
             tools:text="Version • " />
+
+        <TextView
+            android:id="@+id/date"
+            style="?textAppearanceBodySmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="start"
+            android:maxLines="1"
+            tools:text="Updated 5 days ago" />
+
+        <TextView
+            android:id="@+id/pill_status"
+            style="@style/Widget.Tachiyomi.ExtensionPill"
+            tools:text="Obsolete" />
+
+        <TextView
+            android:id="@+id/pill_content_warning"
+            style="@style/Widget.Tachiyomi.ExtensionPill"
+            tools:text="Mixed" />
+
+        <TextView
+            android:id="@+id/pill_private"
+            style="@style/Widget.Tachiyomi.ExtensionPill"
+            tools:text="Private" />
+
+        <androidx.constraintlayout.helper.widget.Flow
+            android:id="@+id/metadata_flow"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="4dp"
+            app:constraint_referenced_ids="lang,version,date,pill_status,pill_content_warning,pill_private"
+            app:flow_horizontalBias="0"
+            app:flow_horizontalGap="4dp"
+            app:flow_horizontalStyle="packed"
+            app:flow_verticalAlign="center"
+            app:flow_verticalGap="2dp"
+            app:flow_wrapMode="chain"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/source_image"
+            app:layout_constraintTop_toBottomOf="@id/ext_title"
+            app:layout_constraintEnd_toStartOf="@id/button_layout"/>
 
         <LinearLayout
             android:id="@+id/line3"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
+            android:layout_marginStart="72dp"
             android:layout_marginEnd="4dp"
             android:orientation="vertical"
-            app:layout_constraintTop_toBottomOf="@id/version"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/source_image"
-            app:layout_constraintEnd_toStartOf="@id/button_layout">
-
-            <TextView
-                android:id="@+id/warning"
-                style="?textAppearanceBodySmall"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:textColor="?attr/colorError"
-                android:textSize="12sp"
-                tools:text="Warning" />
+            android:visibility="gone"
+            app:layout_constraintEnd_toStartOf="@id/button_layout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/metadata_flow">
 
             <TextView
                 android:id="@+id/repo_name"
@@ -117,19 +137,6 @@
                 android:maxLines="1"
                 tools:text="Keiyoushi" />
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/date"
-            style="?textAppearanceBodySmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:ellipsize="start"
-            app:layout_constrainedWidth="true"
-            app:layout_constraintTop_toBottomOf="@+id/ext_title"
-            app:layout_constraintStart_toEndOf="@id/version"
-            app:layout_constraintEnd_toStartOf="@id/button_layout"
-            tools:text="Updated 5 days ago" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/button_layout"
