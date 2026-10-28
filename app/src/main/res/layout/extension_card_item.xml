@@ -188,6 +188,23 @@
                 tools:text="Details" />
 
             <ImageButton
+                android:id="@+id/settings_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?selectableItemBackgroundBorderless"
+                android:contentDescription="@string/settings"
+                android:padding="12dp"
+                android:tooltipText="@string/settings"
+                android:visibility="gone"
+                tools:visibility="visible"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:srcCompat="@drawable/ic_settings_24dp"
+                app:tint="?attr/colorSecondary" />
+    
+            <ImageButton
                 android:id="@+id/cancel_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
