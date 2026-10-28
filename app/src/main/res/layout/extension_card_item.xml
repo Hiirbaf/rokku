@@ -48,12 +48,26 @@
             android:maxLines="1"
             android:textAppearance="?textAppearanceBodyMedium"
             android:textSize="14sp"
-            app:layout_constraintBottom_toTopOf="@id/metadata_flow"
+            app:layout_constraintBottom_toTopOf="@id/repo_name"
             app:layout_constraintEnd_toStartOf="@id/button_layout"
             app:layout_constraintStart_toEndOf="@id/source_image"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="packed"
             tools:text="Batoto" />
+
+        <TextView
+            android:id="@+id/repo_name"
+            style="?textAppearanceBodySmall"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            app:layout_constraintTop_toBottomOf="@id/ext_title"
+            app:layout_constraintBottom_toTopOf="@id/metadata_flow"
+            app:layout_constraintStart_toEndOf="@id/source_image"
+            app:layout_constraintEnd_toStartOf="@id/button_layout"
+            tools:text="Keiyoushi" />
 
         <TextView
             android:id="@+id/lang"
@@ -113,7 +127,7 @@
             app:flow_wrapMode="chain"
             app:layout_constraintBottom_toTopOf="@id/line3"
             app:layout_constraintStart_toEndOf="@id/source_image"
-            app:layout_constraintTop_toBottomOf="@id/ext_title"
+            app:layout_constraintTop_toBottomOf="@id/repo_name"
             app:layout_constraintEnd_toStartOf="@id/button_layout"/>
 
         <LinearLayout
@@ -128,14 +142,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/metadata_flow">
 
-            <TextView
-                android:id="@+id/repo_name"
-                style="?textAppearanceBodySmall"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLines="1"
-                tools:text="Keiyoushi" />
         </LinearLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
