@@ -4,6 +4,8 @@ import android.animation.AnimatorInflater
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.view.View
+import android.widget.TextView
+import androidx.core.graphics.ColorUtils
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.core.text.scale
@@ -44,6 +46,9 @@ class ExtensionHolder(view: View, val adapter: ExtensionAdapter) :
     private var boundIconKey: String? = null
 
     init {
+        binding.settingsButton.setOnClickListener {
+            adapter.buttonClickListener.onButtonClick(flexibleAdapterPosition)
+        }
         binding.extButton.setOnClickListener {
             adapter.buttonClickListener.onButtonClick(flexibleAdapterPosition)
         }
@@ -111,29 +116,43 @@ class ExtensionHolder(view: View, val adapter: ExtensionAdapter) :
 
         binding.version.text = infoText.joinToString(" • ")
         binding.lang.text = LocaleHelper.getLocalizedDisplayName(extension.lang)
-        val context = itemView.context
+
+        // Extension pills
+
         val errorColor = context.getResourceColor(R.attr.colorError)
         val secondaryColor = context.getResourceColor(AR.attr.textColorSecondary)
-        val warnings = buildList {
-            extension.contentWarning.label?.let {
-                add(context.getString(it.title) to context.getResourceColor(it.colorAttr))
-            }
-            if (extension is Extension.Untrusted) {
-                add(context.getString(MR.strings.untrusted) to errorColor)
-            } else if (extension is Extension.Installed && extension.isObsolete) {
-                add(context.getString(MR.strings.obsolete) to errorColor)
-            }
-            if (extension is Extension.Installed && !extension.isShared) {
-                add(context.getString(MR.strings.ext_installer_private) to secondaryColor)
-            }
+
+        val statusRes = when {
+            extension is Extension.Untrusted -> MR.strings.untrusted
+            extension is Extension.Installed && extension.isObsolete -> MR.strings.obsolete
+            else -> null
         }
-        binding.warning.isVisible = warnings.isNotEmpty()
-        binding.warning.text = buildSpannedString {
-            warnings.forEachIndexed { index, (text, textColor) ->
-                if (index > 0) append(" - ")
-                color(textColor) { append(text) }
-            }
-        }
+
+        val warning = extension.contentWarning.label
+        val isPrivate = extension is Extension.Installed && !extension.isShared
+
+        bindPill(
+            binding.pillStatus,
+            statusRes?.let { context.getString(it) },
+            errorColor,
+        )
+
+        bindPill(
+            binding.pillContentWarning,
+            warning?.let { context.getString(it.title) },
+            warning?.let { context.getResourceColor(it.colorAttr) } ?: 0,
+        )
+
+        bindPill(
+            binding.pillPrivate,
+            if (isPrivate) {
+                context.getString(MR.strings.ext_installer_private)
+            } else {
+                null
+            },
+            secondaryColor,
+        )
+
         val repoUrl = when (extension) {
             is Extension.Available -> extension.repoUrl
             is Extension.Installed -> extension.repoUrl
@@ -197,18 +216,37 @@ class ExtensionHolder(view: View, val adapter: ExtensionAdapter) :
         bindButton(item)
     }
 
+    private fun bindPill(view: TextView, text: String?, color: Int) {
+        view.isVisible = text != null
+
+        if (text == null) return
+
+        view.text = text
+        view.setTextColor(color)
+        view.backgroundTintList =
+            ColorStateList.valueOf(ColorUtils.setAlphaComponent(color, 31))
+    }
+
     @Suppress("ResourceType")
     fun bindButton(item: ExtensionItem) = with(binding.extButton) {
         if (item.installStep == InstallStep.Done) return@with
         isEnabled = true
         isClickable = true
         isActivated = false
+        text = null
+        icon = null
+        iconTint = null
 
         binding.installProgress.progress = item.sessionProgress ?: 0
         binding.cancelButton.isVisible = item.sessionProgress != null
         binding.installProgress.isVisible = item.sessionProgress != null
         val extension = item.extension
         val installStep = item.installStep
+        val showSettings = installStep == null &&
+            extension is Extension.Installed &&
+            !extension.hasUpdate
+        binding.settingsButton.isVisible = showSettings
+        isVisible = !showSettings
         binding.webviewButton.isVisible =
             item.sessionProgress == null &&
             extension is Extension.Available &&
@@ -233,18 +271,12 @@ class ExtensionHolder(view: View, val adapter: ExtensionAdapter) :
                 isClickable = false
             }
         } else if (extension is Extension.Installed) {
-            when {
-                extension.hasUpdate -> {
-                    isActivated = true
-                    stateListAnimator =
-                        AnimatorInflater.loadStateListAnimator(context, R.animator.icon_btn_state_list_anim)
-                    rippleColor = ColorStateList.valueOf(context.getColor(R.color.on_secondary_highlight))
-                    setText(MR.strings.update)
-                }
-
-                else -> {
-                    setText(MR.strings.settings)
-                }
+            if (extension.hasUpdate) {
+                isActivated = true
+                stateListAnimator =
+                    AnimatorInflater.loadStateListAnimator(context, R.animator.icon_btn_state_list_anim)
+                rippleColor = ColorStateList.valueOf(context.getColor(R.color.on_secondary_highlight))
+                setText(MR.strings.update)
             }
         } else if (extension is Extension.Untrusted) {
             resetStrokeColor()
