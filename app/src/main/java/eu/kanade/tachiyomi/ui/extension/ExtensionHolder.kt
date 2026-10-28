@@ -230,6 +230,9 @@ class ExtensionHolder(view: View, val adapter: ExtensionAdapter) :
         isEnabled = true
         isClickable = true
         isActivated = false
+        text = null
+        icon = null
+        iconTint = null
 
         binding.installProgress.progress = item.sessionProgress ?: 0
         binding.cancelButton.isVisible = item.sessionProgress != null
@@ -270,7 +273,11 @@ class ExtensionHolder(view: View, val adapter: ExtensionAdapter) :
                 }
 
                 else -> {
-                    setText(MR.strings.settings)
+                    text = null
+                    setIconResource(R.drawable.ic_settings_24dp)
+                    iconTint = ColorStateList.valueOf(
+                        context.getResourceColor(R.attr.colorOnSurface),
+                    )
                 }
             }
         } else if (extension is Extension.Untrusted) {
